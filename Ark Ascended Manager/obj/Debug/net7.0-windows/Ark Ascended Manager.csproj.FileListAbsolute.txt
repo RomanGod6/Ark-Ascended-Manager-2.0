@@ -1,0 +1,58 @@
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.exe
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.deps.json
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.runtimeconfig.json
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.pdb
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.CommandLine.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.Json.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.UserSecrets.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Hosting.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.Configuration.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.Console.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.Debug.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.EventLog.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Logging.EventSource.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Options.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Primitives.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\bin\Debug\net7.0-windows\Wpf.Ui.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.AssemblyReference.cache
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\App.baml
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DataPage.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\App.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_Content.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.cache
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.lref
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.baml
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DataPage.baml
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.baml
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.baml
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.g.resources
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.AssemblyInfoInputs.cache
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.AssemblyInfo.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.CoreCompileInputs.cache
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.CopyComplete
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\refint\Ark Ascended Manager.dll
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.pdb
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.genruntimeconfig.cache
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\ref\Ark Ascended Manager.dll

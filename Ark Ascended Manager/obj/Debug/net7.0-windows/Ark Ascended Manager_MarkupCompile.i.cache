@@ -1,0 +1,20 @@
+﻿Ark Ascended Manager
+1.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\
+Ark_Ascended_Manager
+none
+false
+TRACE;DEBUG;NET;NET7_0;NETCOREAPP
+C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\App.xaml
+4-1625266654
+1282391436
+191605544906
+226-1797557642
+Views\Pages\DashboardPage.xaml;Views\Pages\DataPage.xaml;Views\Pages\SettingsPage.xaml;Views\Windows\MainWindow.xaml;
+
+True
+
