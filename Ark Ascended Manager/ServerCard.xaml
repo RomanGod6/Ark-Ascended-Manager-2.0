@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="Ark_Ascended_Manager.Views.Controls.ServerCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="5" Padding="10" Width="Auto">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="10" Direction="320" ShadowDepth="5"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Server Name -->
+            <TextBlock Grid.Row="0" Text="{Binding ServerName}" 
+                       Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                       FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+
+            <!-- Max Players -->
+            <TextBlock Grid.Row="1" Text="{Binding MaxPlayerCount}" 
+                       Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                       FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+            <!-- Listen Port -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Listen Port: " 
+                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding ListenPort}"
+                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            </StackPanel>
+
+            <!-- RCON Port -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <TextBlock Text="RCON Port: " 
+                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding RCONPort}"
+                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

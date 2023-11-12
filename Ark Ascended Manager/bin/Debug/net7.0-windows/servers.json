@@ -1,0 +1,17 @@
+[
+  {
+    "ProfileName": "Triad1",
+    "ServerPath": "C:\\",
+    "MapName": "TheIsland_WP",
+    "AppId": "2430930",
+    "ServerName": "TriadArk25x",
+    "ListenPort": 32619,
+    "RCONPort": 0,
+    "Mods": null,
+    "AdminPassword": "Test",
+    "ServerPassword": "Test",
+    "UseBattlEye": false,
+    "ForceRespawnDinos": true,
+    "PreventSpawnAnimation": true
+  }
+]

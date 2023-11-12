@@ -39,13 +39,18 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
+                services.AddTransient<CreateServersPage>();
+                services.AddTransient<ConfigPage>();
 
-                services.AddSingleton<DashboardPage>();
+
+               services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
-                services.AddSingleton<DataPage>();
-                services.AddSingleton<DataViewModel>();
+                services.AddSingleton<ServersPage>();
+                services.AddSingleton<ServersViewModel>();
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
+                services.AddTransient<CreateServersPageViewModel>();
+                services.AddTransient<ConfigPageViewModel>();
             }).Build();
 
         /// <summary>

@@ -1,0 +1,83 @@
+<Page
+    x:Class="Ark_Ascended_Manager.Views.Pages.CreateServersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:Ark_Ascended_Manager.Models"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="CreateServersPage"
+    d:DataContext="{d:DesignInstance local:CreateServersPage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20">
+        
+        <Label Content="Profile Name"/>
+        <TextBox Text="{Binding ProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Server Path"/>
+        <StackPanel Margin="20">
+    <!-- Other controls... -->
+    
+        <Label Content="Server Path"/>
+        <StackPanel Orientation="Horizontal">
+            <TextBox Text="{Binding ServerPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Width="300" />
+            <Button Content="Browse..."
+                    Margin="5,0,0,0"
+                    Click="BrowseFolderButton_Click" />
+        </StackPanel>
+    
+    <!-- Other controls... -->
+        </StackPanel>
+        <Label Content="Server Name"/>
+        <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label Content="Select Map"/>
+            <ComboBox ItemsSource="{Binding OptionsList}"
+          SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
+          Width="742"/>
+
+
+            <Label Content="Listen Port"/>
+        <TextBox Text="{Binding ListenPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Rcon Port"/>
+        <TextBox Text="{Binding RconPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Mods (comma-separated)"/>
+        <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Admin Password"/>
+        <TextBox Text="{Binding AdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Server Password"/>
+        <TextBox Text="{Binding ServerPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Max Player Count"/>
+        <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Use Battleye"/>
+        <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Force Respawn Dinos"/>
+        <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <Label Content="Prevent Spawn Animation"/>
+        <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Button Content="Create Server" Click="CreateServer_Click" />
+
+        </StackPanel>
+</ScrollViewer>
+
+</Page>

@@ -25,9 +25,9 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             },
             new NavigationViewItem()
             {
-                Content = "Data",
+                Content = "Servers",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-                TargetPageType = typeof(Views.Pages.DataPage)
+                TargetPageType = typeof(Views.Pages.ServersPage)
             }
         };
 

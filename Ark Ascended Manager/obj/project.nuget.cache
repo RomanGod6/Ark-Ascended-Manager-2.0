@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bZfQadMlPWq2M9iMFVbiolBtoGH7WuQ41O8usoQMVSYgLHfpSxXGXy8w/4XDyGv2EFrycobqI1tPNNGfoYP63Q==",
+  "dgSpecHash": "CyzayH94tmRfeAnpLrx1Il5Q+sfQwo5IwAcJv9OenLXY7GZhI07lKv7JL/KlueBMh5eXSUVZHCcHZxs0bnsKbQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dillon Griffey\\source\\repos\\Ark Ascended Manager\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
+  "projectFilePath": "C:\\Users\\Dillon Griffey\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.1\\communitytoolkit.mvvm.8.2.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",
@@ -31,6 +31,7 @@
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\7.0.0\\microsoft.extensions.options.configurationextensions.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\Dillon Griffey\\.nuget\\packages\\ookii.dialogs.wpf\\5.0.1\\ookii.dialogs.wpf.5.0.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.diagnostics.diagnosticsource\\7.0.1\\system.diagnostics.diagnosticsource.7.0.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0\\system.diagnostics.eventlog.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512",

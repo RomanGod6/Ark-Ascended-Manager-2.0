@@ -1,6 +1,13 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Ark Ascended Manager",
+    "\\Ark Ascended Manager\\ViewModels",
+    "\\Ark Ascended Manager\\ViewModels\\Pages",
+    "\\Ark Ascended Manager\\ViewModels\\Windows",
+    "\\Ark Ascended Manager\\Views",
+    "\\Ark Ascended Manager\\Views\\Pages",
+    "\\Ark Ascended Manager\\Views\\Windows"
   ],
   "PreviewInSolutionExplorer": false
 }

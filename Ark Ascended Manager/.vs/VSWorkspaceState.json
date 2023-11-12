@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\bin",
+    "\\bin\\Debug",
+    "\\bin\\Debug\\net7.0-windows",
+    "\\ViewModels",
+    "\\ViewModels\\Pages",
+    "\\ViewModels\\Windows",
+    "\\Views",
+    "\\Views\\Pages",
+    "\\Views\\Windows"
+  ],
+  "SelectedNode": "\\Views\\Pages\\CreateServersPage.xaml.cs",
+  "PreviewInSolutionExplorer": false
+}
