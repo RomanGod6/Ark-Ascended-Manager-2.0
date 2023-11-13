@@ -29,19 +29,23 @@
         <!-- In ServersPage.xaml -->
         <ScrollViewer VerticalScrollBarVisibility="Auto"  Padding="2">
             <ItemsControl ItemsSource="{Binding ServerConfigs}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Margin="10" Command="{Binding DataContext.NavigateToConfigCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}" CommandParameter="{Binding}">
-                            <controls:ServerCard Margin="5"/>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="10"
+                    Command="{Binding DataContext.SaveServerProfileCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                    CommandParameter="{Binding}">
+                            <controls:ServerCard Margin="5"/>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
         </ScrollViewer>
 
     </Grid>
