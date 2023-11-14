@@ -69,330 +69,355 @@
                 </Grid>
             </TabItem>
             <TabItem Header="GameUserSettings">
-                <ScrollViewer>
-                    <StackPanel Margin="10">
-                        <Label Content="Harvest Amount Multiplier:"/>
-                        <TextBox Text="{Binding HarvestAmountMultiplier}"/>
-
-                        <Label Content="Allow Third Person Player:"/>
-                        <CheckBox IsChecked="{Binding AllowThirdPersonPlayer}"/>
-
-                        <Label Content="Allow Cave Building PvE:"/>
-                        <CheckBox IsChecked="{Binding AllowCaveBuildingPvE}"/>
-
-                        <Label Content="Always Notify Player Joined:"/>
-                        <CheckBox IsChecked="{Binding AlwaysNotifyPlayerJoined}"/>
-
-                        <Label Content="Always Notify Player Left:"/>
-                        <CheckBox IsChecked="{Binding AlwaysNotifyPlayerLeft}"/>
-
-                        <Label Content="Allow Flyer Carry PvE:"/>
-                        <CheckBox IsChecked="{Binding AllowFlyerCarryPvE}"/>
-
-                        <Label Content="Disable Structure Decay PvE:"/>
-                        <CheckBox IsChecked="{Binding DisableStructureDecayPvE}"/>
-
-                        <Label Content="Global Voice Chat:"/>
-                        <CheckBox IsChecked="{Binding GlobalVoiceChat}"/>
-
-                        <Label Content="Max Structures In Range:"/>
-                        <TextBox Text="{Binding MaxStructuresInRange}"/>
-
-                        <Label Content="No Tribute Downloads:"/>
-                        <CheckBox IsChecked="{Binding NoTributeDownloads}"/>
-
-                        <Label Content="Prevent Download Survivors:"/>
-                        <CheckBox IsChecked="{Binding PreventDownloadSurvivors}"/>
-
-                        <Label Content="Prevent Download Items:"/>
-                        <CheckBox IsChecked="{Binding PreventDownloadItems}"/>
-
-                        <Label Content="Prevent Download Dinos:"/>
-                        <CheckBox IsChecked="{Binding PreventDownloadDinos}"/>
-
-                        <Label Content="Proximity Chat:"/>
-                        <CheckBox IsChecked="{Binding ProximityChat}"/>
-
-                        <Label Content="Resource No Replenish Radius Structures:"/>
-                        <TextBox Text="{Binding ResourceNoReplenishRadiusStructures}"/>
-
-                        <Label Content="Server Admin Password:"/>
-                        <TextBox Text="{Binding ServerAdminPassword}"/>
-
-                        <Label Content="Server Crosshair:"/>
-                        <CheckBox IsChecked="{Binding ServerCrosshair}"/>
-
-                        <Label Content="Server Force No Hud:"/>
-                        <CheckBox IsChecked="{Binding ServerForceNoHud}"/>
-
-                        <Label Content="Server Hardcore:"/>
-                        <CheckBox IsChecked="{Binding ServerHardcore}"/>
-
-                        <Label Content="Server Password:"/>
-                        <TextBox Text="{Binding ServerPassword}"/>
-
-                        <Label Content="Server PvE:"/>
-                        <CheckBox IsChecked="{Binding ServerPvE}"/>
-
-                        <Label Content="Show Map Player Location:"/>
-                        <CheckBox IsChecked="{Binding ShowMapPlayerLocation}"/>
-
-                        <Label Content="Tamed Dino Damage Multiplier:"/>
-                        <TextBox Text="{Binding TamedDinoDamageMultiplier}"/>
-
-                        <Label Content="Tamed Dino Resistance Multiplier:"/>
-                        <TextBox Text="{Binding TamedDinoResistanceMultiplier}"/>
-
-                        <Label Content="Taming Speed Multiplier:"/>
-                        <TextBox Text="{Binding TamingSpeedMultiplier}"/>
-
-                        <Label Content="XPMultiplier:"/>
-                        <TextBox Text="{Binding XPMultiplier}"/>
-
-                        <Label Content="EnablePVPGamma:"/>
-                        <CheckBox IsChecked="{Binding EnablePVPGamma}"/>
-
-                        <Label Content="EnablePVEGamma:"/>
-                        <CheckBox IsChecked="{Binding EnablePVEGamma}"/>
-
-                        <Label Content="SpectatorPassword:"/>
-                        <TextBox Text="{Binding SpectatorPassword}"/>
-
-                        <Label Content="DifficultyOffset:"/>
-                        <TextBox Text="{Binding DifficultyOffset}"/>
-
-                        <Label Content="PvEStructureDecayDestructionPeriod:"/>
-                        <TextBox Text="{Binding PvEStructureDecayDestructionPeriod}"/>
-
-                        <Label Content="Banlist:"/>
-                        <TextBox Text="{Binding Banlist}"/>
-
-                        <Label Content="PvPStructureDecay:"/>
-                        <TextBox Text="{Binding PvPStructureDecay}"/>
-
-                        <Label Content="DisableDinoDecayPvE:"/>
-                        <CheckBox IsChecked="{Binding DisableDinoDecayPvE}"/>
-
-                        <Label Content="PvEDinoDecayPeriodMultiplier:"/>
-                        <TextBox Text="{Binding PvEDinoDecayPeriodMultiplier}"/>
-
-                        <Label Content="AdminLogging:"/>
-                        <CheckBox IsChecked="{Binding AdminLogging}"/>
-
-                        <Label Content="MaxTamedDinos:"/>
-                        <TextBox Text="{Binding MaxTamedDinos}"/>
-
-                        <Label Content="MaxNumbersofPlayersInTribe:"/>
-                        <TextBox Text="{Binding MaxNumbersofPlayersInTribe}"/>
-
-                        <Label Content="BattleNumOfTribestoStartGame:"/>
-                        <TextBox Text="{Binding BattleNumOfTribestoStartGame}"/>
-
-                        <Label Content="TimeToCollapseROD:"/>
-                        <TextBox Text="{Binding TimeToCollapseROD}"/>
-
-                        <Label Content="BattleAutoStartGameInterval:"/>
-                        <TextBox Text="{Binding BattleAutoStartGameInterval}"/>
-
-                        <Label Content="BattleSuddenDeathInterval:"/>
-                        <TextBox Text="{Binding BattleSuddenDeathInterval}"/>
-
-                        <Label Content="KickIdlePlayersPeriod:"/>
-                        <TextBox Text="{Binding KickIdlePlayersPeriod}"/>
-
-                        <Label Content="PerPlatformMaxStructuresMultiplier:"/>
-                        <TextBox Text="{Binding PerPlatformMaxStructuresMultiplier}"/>
-
-                        <Label Content="Force All Structure Locking:"/>
-                        <CheckBox IsChecked="{Binding ForceAllStructureLocking}"/>
-
-                        <Label Content="Auto Destroy Old Structures Multiplier:"/>
-                        <TextBox Text="{Binding AutoDestroyOldStructuresMultiplier}"/>
-
-                        <Label Content="Use VSync:"/>
-                        <CheckBox IsChecked="{Binding UseVSync}"/>
-
-                        <Label Content="Max Platform Saddle Structure Limit:"/>
-                        <TextBox Text="{Binding MaxPlatformSaddleStructureLimit}"/>
-
-                        <Label Content="Passive Defenses Damage Riderless Dinos:"/>
-                        <CheckBox IsChecked="{Binding PassiveDefensesDamageRiderlessDinos}"/>
-
-                        <Label Content="RCONPort:"/>
-                        <TextBox Text="{Binding RCONPort}"/>
-
-                        <Label Content="Auto Save Period Minutes:"/>
-                        <TextBox Text="{Binding AutoSavePeriodMinutes}"/>
-
-                        <Label Content="RCONServerGameLogBuffer:"/>
-                        <TextBox Text="{Binding RCONServerGameLogBuffer}"/>
-
-                        <Label Content="OverrideStructurePlatformPrevention:"/>
-                        <CheckBox IsChecked="{Binding OverrideStructurePlatformPrevention}"/>
-
-                        <Label Content="Prevent Offline PvP Interval:"/>
-                        <TextBox Text="{Binding PreventOfflinePvPInterval}"/>
-
-                        <Label Content="bPvPDinoDecay:"/>
-                        <CheckBox IsChecked="{Binding bPvPDinoDecay}"/>
-
-                        <Label Content="bPvPStructureDecay:"/>
-                        <CheckBox IsChecked="{Binding bPvPStructureDecay}"/>
-
-                        <Label Content="Disable Imprint Dino Buff:"/>
-                        <CheckBox IsChecked="{Binding DisableImprintDinoBuff}"/>
-
-                        <Label Content="Allow Anyone Baby Imprint Cuddle:"/>
-                        <CheckBox IsChecked="{Binding AllowAnyoneBabyImprintCuddle}"/>
-
-                        <Label Content="Enable Extra Structure Prevention Volumes:"/>
-                        <CheckBox IsChecked="{Binding EnableExtraStructurePreventionVolumes}"/>
-
-                        <Label Content="Show Floating Damage Text:"/>
-                        <CheckBox IsChecked="{Binding ShowFloatingDamageText}"/>
-
-                        <Label Content="Destroy Unconnected Water Pipes:"/>
-                        <CheckBox IsChecked="{Binding DestroyUnconnectedWaterPipes}"/>
-
-                        <Label Content="Override Official Difficulty:"/>
-                        <TextBox Text="{Binding OverrideOfficialDifficulty}"/>
-
-                        <Label Content="TheMaxStructuresInRange:"/>
-                        <TextBox Text="{Binding TheMaxStructuresInRange}"/>
-
-                        <Label Content="Minimum Dino Reupload Interval:"/>
-                        <CheckBox IsChecked="{Binding MinimumDinoReuploadInterval}"/>
-
-                        <Label Content="PvEAllowStructuresAtSupplyDrops:"/>
-                        <CheckBox IsChecked="{Binding PvEAllowStructuresAtSupplyDrops}"/>
-
-                        <Label Content="NPCNetworkStasisRangeScalePlayerCountStart:"/>
-                        <TextBox Text="{Binding NPCNetworkStasisRangeScalePlayerCountStart}"/>
-
-                        <Label Content="NPCNetworkStasisRangeScalePlayerCountEnd:"/>
-                        <TextBox Text="{Binding NPCNetworkStasisRangeScalePlayerCountEnd}"/>
-
-                        <Label Content="NPCNetworkStasisRangeScalePercentEnd:"/>
-                        <TextBox Text="{Binding NPCNetworkStasisRangeScalePercentEnd}"/>
-
-                        <Label Content="MaxPersonalTamedDinos:"/>
-                        <TextBox Text="{Binding MaxPersonalTamedDinos}"/>
-
-                        <Label Content="AutoDestroyDecayedDinos:"/>
-                        <CheckBox IsChecked="{Binding AutoDestroyDecayedDinos}"/>
-
-                        <Label Content="ClampItemSpoilingTimes:"/>
-                        <CheckBox IsChecked="{Binding ClampItemSpoilingTimes}"/>
-
-                        <Label Content="UseOptimizedHarvestingHealth:"/>
-                        <CheckBox IsChecked="{Binding UseOptimizedHarvestingHealth}"/>
-
-                        <Label Content="AllowCrateSpawnsOnTopOfStructures:"/>
-                        <CheckBox IsChecked="{Binding AllowCrateSpawnsOnTopOfStructures}"/>
-
-                        <Label Content="ForceFlyerExplosives:"/>
-                        <CheckBox IsChecked="{Binding ForceFlyerExplosives}"/>
-
-                        <Label Content="PreventOfflinePvP:"/>
-                        <CheckBox IsChecked="{Binding PreventOfflinePvP}"/>
-
-                        <Label Content="Allow Flying Stamina Recovery:"/>
-                        <CheckBox IsChecked="{Binding AllowFlyingStaminaRecovery}"/>
-
-                        <Label Content="Oxygen Swim Speed Stat Multiplier:"/>
-                        <TextBox Text="{Binding OxygenSwimSpeedStatMultiplier}"/>
-
-                        <Label Content="bPvEDisableFriendlyFire:"/>
-                        <CheckBox IsChecked="{Binding bPvEDisableFriendlyFire}"/>
-
-                        <Label Content="ServerAutoForceRespawnWildDinosInterval:"/>
-                        <TextBox Text="{Binding ServerAutoForceRespawnWildDinosInterval}"/>
-
-                        <Label Content="DisableWeatherFog:"/>
-                        <CheckBox IsChecked="{Binding DisableWeatherFog}"/>
-
-                        <Label Content="RandomSupplyCratePoints:"/>
-                        <CheckBox IsChecked="{Binding RandomSupplyCratePoints}"/>
-
-                        <Label Content="CrossARKAllowForeignDinoDownloads:"/>
-                        <CheckBox IsChecked="{Binding CrossARKAllowForeignDinoDownloads}"/>
-
-                        <Label Content="PersonalTamedDinosSaddleStructureCost:"/>
-                        <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost}"/>
-
-                        <Label Content="StructurePreventResourceRadiusMultiplier:"/>
-                        <TextBox Text="{Binding StructurePreventResourceRadiusMultiplier}"/>
-
-                        <Label Content="TribeNameChangeCooldown:"/>
-                        <TextBox Text="{Binding TribeNameChangeCooldown}"/>
-
-                        <Label Content="PlatformSaddleBuildAreaBoundsMultiplier:"/>
-                        <TextBox Text="{Binding PlatformSaddleBuildAreaBoundsMultiplier}"/>
-
-                        <Label Content="AlwaysAllowStructurePickup:"/>
-                        <CheckBox IsChecked="{Binding AlwaysAllowStructurePickup}"/>
-
-                        <Label Content="StructurePickupTimeAfterPlacement:"/>
-                        <TextBox Text="{Binding StructurePickupTimeAfterPlacement}"/>
-
-                        <Label Content="StructurePickupHoldDuration:"/>
-                        <TextBox Text="{Binding StructurePickupHoldDuration}"/>
-
-                        <Label Content="AllowHideDamageSourceFromLogs:"/>
-                        <CheckBox IsChecked="{Binding AllowHideDamageSourceFromLogs}"/>
-
-                        <Label Content="RaidDinoCharacterFoodDrainMultiplier:"/>
-                        <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier}"/>
-
-                        <Label Content="ItemStackSizeMultiplier:"/>
-                        <TextBox Text="{Binding ItemStackSizeMultiplier}"/>
-
-                        <Label Content="AllowHitMarkers:"/>
-                        <CheckBox IsChecked="{Binding AllowHitMarkers}"/>
-
-                        <!-- Allow Multiple Attached C4 -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Allow Multiple Attached C4:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="AllowMultipleAttachedC4Toggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- Disable Weather Fog -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Disable Weather Fog:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="DisableWeatherFogToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- Random Supply Crate Points -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Random Supply Crate Points:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="RandomSupplyCratePointsToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- CrossARK Allow Foreign Dino Downloads -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="CrossARK Allow Foreign Dino Downloads:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="CrossARKAllowForeignDinoDownloadsToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- Always Allow Structure Pickup -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Always Allow Structure Pickup:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="AlwaysAllowStructurePickupToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- Allow Hide Damage Source From Logs -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Allow Hide Damage Source From Logs:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="AllowHideDamageSourceFromLogsToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
-
-                        <!-- Allow Hit Markers -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-                            <Label Content="Allow Hit Markers:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                            <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" x:Name="AllowHitMarkersToggle" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </StackPanel>
+                <Grid>
+                    <!-- The Grid will contain both the Button and the ScrollViewer -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Row for the Button -->
+                        <RowDefinition Height="*"/>
+                        <!-- Row for the ScrollViewer -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Save Button -->
+                    <Button Content="Save GameUserSettings" 
+                Command="{Binding SaveGameUserSettingsCommand}" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top"
+                Margin="10"
+                Grid.Row="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <TextBox x:Name="SearchBox" Width="200" Margin="5"/>
+                        <Button Content="Search" Margin="5" Click="SearchButton_Click"/>
                     </StackPanel>
+
+                    <!-- ScrollViewer for the rest of the content -->
+                    <ScrollViewer Grid.Row="1" Margin="10">
+                        <StackPanel x:Name="GUSSearch">
+                            <!-- Your existing controls go here -->
+                            <Label Content="Harvest Amount Multiplier:"/>
+                            <TextBox Text="{Binding HarvestAmountMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="Allow Third Person Player:"/>
+                            <CheckBox IsChecked="{Binding AllowThirdPersonPlayer, Mode=TwoWay}"/>
+
+                            <Label Content="Allow Cave Building PvE:"/>
+                            <CheckBox IsChecked="{Binding AllowCaveBuildingPvE, Mode=TwoWay}"/>
+
+                            <Label Content="Always Notify Player Joined:"/>
+                            <CheckBox IsChecked="{Binding AlwaysNotifyPlayerJoined, Mode=TwoWay}"/>
+
+                            <Label Content="Always Notify Player Left:"/>
+                            <CheckBox IsChecked="{Binding AlwaysNotifyPlayerLeft, Mode=TwoWay}"/>
+
+                            <Label Content="Allow Flyer Carry PvE:"/>
+                            <CheckBox IsChecked="{Binding AllowFlyerCarryPvE, Mode=TwoWay}"/>
+
+                            <Label Content="Disable Structure Decay PvE:"/>
+                            <CheckBox IsChecked="{Binding DisableStructureDecayPvE, Mode=TwoWay}"/>
+
+                            <Label Content="Global Voice Chat:"/>
+                            <CheckBox IsChecked="{Binding GlobalVoiceChat, Mode=TwoWay}"/>
+
+                            <Label Content="Max Structures In Range:"/>
+                            <TextBox Text="{Binding MaxStructuresInRange, Mode=TwoWay}"/>
+
+                            <Label Content="No Tribute Downloads:"/>
+                            <CheckBox IsChecked="{Binding NoTributeDownloads, Mode=TwoWay}"/>
+
+                            <Label Content="Prevent Download Survivors:"/>
+                            <CheckBox IsChecked="{Binding PreventDownloadSurvivors, Mode=TwoWay}"/>
+
+                            <Label Content="Prevent Download Items:"/>
+                            <CheckBox IsChecked="{Binding PreventDownloadItems, Mode=TwoWay}"/>
+
+                            <Label Content="Prevent Download Dinos:"/>
+                            <CheckBox IsChecked="{Binding PreventDownloadDinos, Mode=TwoWay}"/>
+
+                            <Label Content="Proximity Chat:"/>
+                            <CheckBox IsChecked="{Binding ProximityChat, Mode=TwoWay}"/>
+
+                            <Label Content="Resource No Replenish Radius Structures:"/>
+                            <TextBox Text="{Binding ResourceNoReplenishRadiusStructures, Mode=TwoWay}"/>
+
+                            <Label Content="Server Admin Password:"/>
+                            <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}"/>
+
+                            <Label Content="Server Crosshair:"/>
+                            <CheckBox IsChecked="{Binding ServerCrosshair, Mode=TwoWay}"/>
+
+                            <Label Content="Server Force No Hud:"/>
+                            <CheckBox IsChecked="{Binding ServerForceNoHud, Mode=TwoWay}"/>
+
+                            <Label Content="Server Hardcore:"/>
+                            <CheckBox IsChecked="{Binding ServerHardcore, Mode=TwoWay}"/>
+
+                            <Label Content="Server Password:"/>
+                            <TextBox Text="{Binding ServerPassword, Mode=TwoWay}"/>
+
+                            <Label Content="Server PvE:"/>
+                            <CheckBox IsChecked="{Binding ServerPvE, Mode=TwoWay}"/>
+
+                            <Label Content="Show Map Player Location:"/>
+                            <CheckBox IsChecked="{Binding ShowMapPlayerLocation, Mode=TwoWay}"/>
+
+                            <Label Content="Tamed Dino Damage Multiplier:"/>
+                            <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="Tamed Dino Resistance Multiplier:"/>
+                            <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="Taming Speed Multiplier:"/>
+                            <TextBox Text="{Binding TamingSpeedMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="XPMultiplier:"/>
+                            <TextBox Text="{Binding XPMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="EnablePVPGamma:"/>
+                            <CheckBox IsChecked="{Binding EnablePVPGamma, Mode=TwoWay}"/>
+
+                            <Label Content="EnablePVEGamma:"/>
+                            <CheckBox IsChecked="{Binding EnablePVEGamma, Mode=TwoWay}"/>
+
+                            <Label Content="SpectatorPassword:"/>
+                            <TextBox Text="{Binding SpectatorPassword, Mode=TwoWay}"/>
+
+                            <Label Content="DifficultyOffset:"/>
+                            <TextBox Text="{Binding DifficultyOffset, Mode=TwoWay}"/>
+
+                            <Label Content="PvEStructureDecayDestructionPeriod:"/>
+                            <TextBox Text="{Binding PvEStructureDecayDestructionPeriod, Mode=TwoWay}"/>
+
+                            <Label Content="Banlist:"/>
+                            <TextBox Text="{Binding Banlist, Mode=TwoWay}"/>
+
+                            <Label Content="PvPStructureDecay:"/>
+                            <CheckBox IsChecked="{Binding BPvPStructureDecay, Mode=TwoWay}"/>
+
+                            <Label Content="DisableDinoDecayPvE:"/>
+                            <CheckBox IsChecked="{Binding DisableDinoDecayPvE, Mode=TwoWay}"/>
+
+                            <Label Content="PvEDinoDecayPeriodMultiplier:"/>
+                            <TextBox Text="{Binding PvEDinoDecayPeriodMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="AdminLogging:"/>
+                            <CheckBox IsChecked="{Binding AdminLogging, Mode=TwoWay}"/>
+
+                            <Label Content="MaxTamedDinos:"/>
+                            <TextBox Text="{Binding MaxTamedDinos, Mode=TwoWay}"/>
+
+                            <Label Content="MaxNumbersofPlayersInTribe:"/>
+                            <TextBox Text="{Binding MaxNumbersofPlayersInTribe, Mode=TwoWay}"/>
+
+                            <Label Content="BattleNumOfTribestoStartGame:"/>
+                            <TextBox Text="{Binding BattleNumOfTribestoStartGame, Mode=TwoWay}"/>
+
+                            <Label Content="TimeToCollapseROD:"/>
+                            <TextBox Text="{Binding TimeToCollapseROD, Mode=TwoWay}"/>
+
+                            <Label Content="BattleAutoStartGameInterval:"/>
+                            <TextBox Text="{Binding BattleAutoStartGameInterval, Mode=TwoWay}"/>
+
+                            <Label Content="BattleSuddenDeathInterval:"/>
+                            <TextBox Text="{Binding BattleSuddenDeathInterval, Mode=TwoWay}"/>
+
+                            <Label Content="KickIdlePlayersPeriod:"/>
+                            <TextBox Text="{Binding KickIdlePlayersPeriod, Mode=TwoWay}"/>
+
+                            <Label Content="PerPlatformMaxStructuresMultiplier:"/>
+                            <TextBox Text="{Binding PerPlatformMaxStructuresMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="Force All Structure Locking:"/>
+                            <CheckBox IsChecked="{Binding ForceAllStructureLocking, Mode=TwoWay}"/>
+
+                            <Label Content="Auto Destroy Old Structures Multiplier:"/>
+                            <TextBox Text="{Binding AutoDestroyOldStructuresMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="Use VSync:"/>
+                            <CheckBox IsChecked="{Binding UseVSync, Mode=TwoWay}"/>
+
+                            <Label Content="Max Platform Saddle Structure Limit:"/>
+                            <TextBox Text="{Binding MaxPlatformSaddleStructureLimit, Mode=TwoWay}"/>
+
+                            <Label Content="Passive Defenses Damage Riderless Dinos:"/>
+                            <CheckBox IsChecked="{Binding PassiveDefensesDamageRiderlessDinos, Mode=TwoWay}"/>
+
+                            <Label Content="RCONPort:"/>
+                            <TextBox Text="{Binding RCONPort, Mode=TwoWay}"/>
+
+                            <Label Content="Auto Save Period Minutes:"/>
+                            <TextBox Text="{Binding AutoSavePeriodMinutes, Mode=TwoWay}"/>
+
+                            <Label Content="RCONServerGameLogBuffer:"/>
+                            <TextBox Text="{Binding RCONServerGameLogBuffer, Mode=TwoWay}"/>
+
+                            <Label Content="OverrideStructurePlatformPrevention:"/>
+                            <CheckBox IsChecked="{Binding OverrideStructurePlatformPrevention, Mode=TwoWay}"/>
+
+                            <Label Content="Prevent Offline PvP Interval:"/>
+                            <TextBox Text="{Binding PreventOfflinePvPInterval, Mode=TwoWay}"/>
+
+                            <Label Content="PvPDinoDecay:"/>
+                            <CheckBox IsChecked="{Binding BPvPDinoDecay, Mode=TwoWay}"/>
+
+
+                            <Label Content="Disable Imprint Dino Buff:"/>
+                            <CheckBox IsChecked="{Binding DisableImprintDinoBuff, Mode=TwoWay}"/>
+
+                            <Label Content="Allow Anyone Baby Imprint Cuddle:"/>
+                            <CheckBox IsChecked="{Binding AllowAnyoneBabyImprintCuddle, Mode=TwoWay}"/>
+
+                            <Label Content="Enable Extra Structure Prevention Volumes:"/>
+                            <CheckBox IsChecked="{Binding EnableExtraStructurePreventionVolumes, Mode=TwoWay}"/>
+
+                            <Label Content="Show Floating Damage Text:"/>
+                            <CheckBox IsChecked="{Binding ShowFloatingDamageText, Mode=TwoWay}"/>
+
+                            <Label Content="Destroy Unconnected Water Pipes:"/>
+                            <CheckBox IsChecked="{Binding DestroyUnconnectedWaterPipes, Mode=TwoWay}"/>
+
+                            <Label Content="Override Official Difficulty:"/>
+                            <TextBox Text="{Binding OverrideOfficialDifficulty, Mode=TwoWay}"/>
+
+                            <Label Content="TheMaxStructuresInRange:"/>
+                            <TextBox Text="{Binding TheMaxStructuresInRange, Mode=TwoWay}"/>
+
+                            <Label Content="Minimum Dino Reupload Interval:"/>
+                            <CheckBox IsChecked="{Binding MinimumDinoReuploadInterval, Mode=TwoWay}"/>
+
+                            <Label Content="PvEAllowStructuresAtSupplyDrops:"/>
+                            <CheckBox IsChecked="{Binding PvEAllowStructuresAtSupplyDrops, Mode=TwoWay}"/>
+
+                            <Label Content="NPCNetworkStasisRangeScalePlayerCountStart:"/>
+                            <TextBox Text="{Binding NPCNetworkStasisRangeScalePlayerCountStart, Mode=TwoWay}"/>
+
+                            <Label Content="NPCNetworkStasisRangeScalePlayerCountEnd:"/>
+                            <TextBox Text="{Binding NPCNetworkStasisRangeScalePlayerCountEnd, Mode=TwoWay}"/>
+
+                            <Label Content="NPCNetworkStasisRangeScalePercentEnd:"/>
+                            <TextBox Text="{Binding NPCNetworkStasisRangeScalePercentEnd, Mode=TwoWay}"/>
+
+                            <Label Content="MaxPersonalTamedDinos:"/>
+                            <TextBox Text="{Binding MaxPersonalTamedDinos, Mode=TwoWay}"/>
+
+                            <Label Content="AutoDestroyDecayedDinos:"/>
+                            <CheckBox IsChecked="{Binding AutoDestroyDecayedDinos, Mode=TwoWay}"/>
+
+                            <Label Content="ClampItemSpoilingTimes:"/>
+                            <CheckBox IsChecked="{Binding ClampItemSpoilingTimes, Mode=TwoWay}"/>
+
+                            <Label Content="UseOptimizedHarvestingHealth:"/>
+                            <CheckBox IsChecked="{Binding UseOptimizedHarvestingHealth, Mode=TwoWay}"/>
+
+                            <Label Content="AllowCrateSpawnsOnTopOfStructures:"/>
+                            <CheckBox IsChecked="{Binding AllowCrateSpawnsOnTopOfStructures, Mode=TwoWay}"/>
+
+                            <Label Content="ForceFlyerExplosives:"/>
+                            <CheckBox IsChecked="{Binding ForceFlyerExplosives, Mode=TwoWay}"/>
+
+
+                            <Label Content="PreventOfflinePvP:"/>
+                            <CheckBox IsChecked="{Binding PreventOfflinePvP, Mode=TwoWay}"/>
+
+                            <Label Content="Allow Flying Stamina Recovery:"/>
+                            <CheckBox IsChecked="{Binding AllowFlyingStaminaRecovery, Mode=TwoWay}"/>
+
+                            <Label Content="Oxygen Swim Speed Stat Multiplier:"/>
+                            <TextBox Text="{Binding OxygenSwimSpeedStatMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="bPvEDisableFriendlyFire:"/>
+                            <CheckBox IsChecked="{Binding BPvEDisableFriendlyFire, Mode=TwoWay}"/>
+
+                            <Label Content="ServerAutoForceRespawnWildDinosInterval:"/>
+                            <TextBox Text="{Binding ServerAutoForceRespawnWildDinosInterval, Mode=TwoWay}"/>
+
+                            <Label Content="DisableWeatherFog:"/>
+                            <CheckBox IsChecked="{Binding DisableWeatherFog, Mode=TwoWay}"/>
+
+                            <Label Content="RandomSupplyCratePoints:"/>
+                            <CheckBox IsChecked="{Binding RandomSupplyCratePoints, Mode=TwoWay}"/>
+
+                            <Label Content="CrossARKAllowForeignDinoDownloads:"/>
+                            <CheckBox IsChecked="{Binding CrossARKAllowForeignDinoDownloads, Mode=TwoWay}"/>
+
+                            <Label Content="PersonalTamedDinosSaddleStructureCost:"/>
+                            <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost, Mode=TwoWay}"/>
+
+                            <Label Content="StructurePreventResourceRadiusMultiplier:"/>
+                            <TextBox Text="{Binding StructurePreventResourceRadiusMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="TribeNameChangeCooldown:"/>
+                            <TextBox Text="{Binding TribeNameChangeCooldown, Mode=TwoWay}"/>
+
+                            <Label Content="PlatformSaddleBuildAreaBoundsMultiplier:"/>
+                            <TextBox Text="{Binding PlatformSaddleBuildAreaBoundsMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="AlwaysAllowStructurePickup:"/>
+                            <CheckBox IsChecked="{Binding AlwaysAllowStructurePickup, Mode=TwoWay}"/>
+
+                            <Label Content="StructurePickupTimeAfterPlacement:"/>
+                            <TextBox Text="{Binding StructurePickupTimeAfterPlacement, Mode=TwoWay}"/>
+
+                            <Label Content="StructurePickupHoldDuration:"/>
+                            <TextBox Text="{Binding StructurePickupHoldDuration, Mode=TwoWay}"/>
+
+                            <Label Content="AllowHideDamageSourceFromLogs:"/>
+                            <CheckBox IsChecked="{Binding AllowHideDamageSourceFromLogs, Mode=TwoWay}"/>
+
+                            <Label Content="RaidDinoCharacterFoodDrainMultiplier:"/>
+                            <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="ItemStackSizeMultiplier:"/>
+                            <TextBox Text="{Binding ItemStackSizeMultiplier, Mode=TwoWay}"/>
+
+                            <Label Content="AllowHitMarkers:"/>
+                            <CheckBox IsChecked="{Binding AllowHitMarkers, Mode=TwoWay}"/>
+
+                            <!-- Allow Multiple Attached C4 -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Allow Multiple Attached C4:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding AllowMultipleAttachedC4}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Disable Weather Fog -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Disable Weather Fog:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding DisableWeatherFog}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Random Supply Crate Points -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Random Supply Crate Points:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding RandomSupplyCratePoints}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- CrossARK Allow Foreign Dino Downloads -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="CrossARK Allow Foreign Dino Downloads:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding CrossARKAllowForeignDinoDownloads}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Always Allow Structure Pickup -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Always Allow Structure Pickup:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding AlwaysAllowStructurePickup}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Allow Hide Damage Source From Logs -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Allow Hide Damage Source From Logs:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding AllowHideDamageSourceFromLogs, Mode=TwoWay}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+
+                            <!-- Allow Hit Markers -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                                <Label Content="Allow Hit Markers:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <CheckBox Style="{StaticResource iPhoneToggleSwitchStyle}" IsChecked="{Binding AllowHitMarkers}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+
+                        </StackPanel>
                 </ScrollViewer>
+                </Grid>
             </TabItem>
             <TabItem Header="Launch Parameters">
                 <!-- Content for Launch Parameters -->

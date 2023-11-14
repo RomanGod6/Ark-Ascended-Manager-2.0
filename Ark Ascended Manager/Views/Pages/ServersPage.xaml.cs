@@ -18,6 +18,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             DataContext = ViewModel;
 
+
             // Assuming LoadServerConfigs is properly implemented in ServersViewModel
             ViewModel.LoadServerConfigs();
         }

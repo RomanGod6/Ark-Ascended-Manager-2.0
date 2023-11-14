@@ -23,6 +23,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void OnNavigatedTo()
         {
+            LoadServerConfigs();
             // Initialization logic specific to the servers page
         }
 
