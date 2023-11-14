@@ -5,6 +5,7 @@ using static Ark_Ascended_Manager.Views.Pages.CreateServersPage;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Input;
+using System.Globalization;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -41,6 +42,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 // ...
             }
             LoadIniFile();
+            LoadGameIniFile();
         }
         public void LoadConfig(ServerConfig serverConfig)
         {
@@ -364,6 +366,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        
         private void SaveGameUserSettings()
         {
             string serverPath = CurrentServerConfig.ServerPath;
@@ -1500,8 +1503,1918 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 OnPropertyChanged(nameof(AllowMultipleAttachedC4)); // Notify the UI of the change
             }
         }
+        private void LoadGameIniFile()
+        {
+            Console.WriteLine("Game INI file load has been initiated.");
+            if (CurrentServerConfig == null)
+            {
+                Console.WriteLine("CurrentServerConfig is null.");
+                return;
+            }
 
-       
+            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            string iniFilePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            Console.WriteLine($"INI File Path: {iniFilePath}");
+
+            if (!File.Exists(iniFilePath))
+            {
+                Console.WriteLine("Game INI file does not exist.");
+                return;
+            }
+
+            var lines = File.ReadAllLines(iniFilePath);
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith(";") && line.Contains("="))
+                {
+                    var keyValue = line.Split(new[] { '=' }, 2);
+                    var key = keyValue[0].Trim();
+                    var value = keyValue.Length > 1 ? keyValue[1].Trim() : string.Empty;
+
+                    // Example for setting a property
+                    switch (key)
+                    {
+                        case "BabyImprintingStatScaleMultiplier":
+                            BabyImprintingStatScaleMultiplier = value;
+                            break;
+                        case "BabyCuddleIntervalMultiplier":
+                            BabyCuddleIntervalMultiplier = value;
+                            break;
+                        case "BabyCuddleGracePeriodMultiplier":
+                            BabyCuddleGracePeriodMultiplier = value;
+                            break;
+                        case "BabyCuddleLoseImprintQualitySpeedMultiplier":
+                            BabyCuddleLoseImprintQualitySpeedMultiplier = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[0]":
+                            PerLevelStatsMultiplier_DinoTamed_0 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[1]":
+                            PerLevelStatsMultiplier_DinoTamed_1 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[2]":
+                            PerLevelStatsMultiplier_DinoTamed_2 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[3]":
+                            PerLevelStatsMultiplier_DinoTamed_3 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[4]":
+                            PerLevelStatsMultiplier_DinoTamed_4 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[7]":
+                            PerLevelStatsMultiplier_DinoTamed_7 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[8]":
+                            PerLevelStatsMultiplier_DinoTamed_8 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[9]":
+                            PerLevelStatsMultiplier_DinoTamed_9 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed[10]":
+                            PerLevelStatsMultiplier_DinoTamed_10 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[0]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_0 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[1]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_1 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[2]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_2 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[3]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_3 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[4]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_4 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[5]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_5 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[6]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_6 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[7]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_7 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[8]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_8 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[9]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_9 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Add[10]":
+                            PerLevelStatsMultiplier_DinoTamed_Add_10 = value;
+                            break;
+                        // ... Similar cases for PerLevelStatsMultiplier_DinoTamed_Add[1] to [10]
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[0]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_0 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[1]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_1 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[2]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_2 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[3]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_3 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[4]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_4 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[5]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_5 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[6]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_6 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[7]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_7 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[8]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_8 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[9]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_9 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[10]":
+                            PerLevelStatsMultiplier_DinoTamed_Affinity_10 = value;
+                            break;
+                        // ... Similar cases for PerLevelStatsMultiplier_DinoTamed_Affinity[1] to [10]
+                        case "PerLevelStatsMultiplier_DinoWild[0]":
+                            PerLevelStatsMultiplier_DinoWild_0 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[1]":
+                            PerLevelStatsMultiplier_DinoWild_1 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[2]":
+                            PerLevelStatsMultiplier_DinoWild_2 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[3]":
+                            PerLevelStatsMultiplier_DinoWild_3 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[4]":
+                            PerLevelStatsMultiplier_DinoWild_4 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[5]":
+                            PerLevelStatsMultiplier_DinoWild_5 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[6]":
+                            PerLevelStatsMultiplier_DinoWild_6 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[7]":
+                            PerLevelStatsMultiplier_DinoWild_7 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[8]":
+                            PerLevelStatsMultiplier_DinoWild_8 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[9]":
+                            PerLevelStatsMultiplier_DinoWild_9 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_DinoWild[10]":
+                            PerLevelStatsMultiplier_DinoWild_10 = value;
+                            break;
+                        // ... Similar cases for PerLevelStatsMultiplier_DinoWild[1] to [10]
+                        case "PerLevelStatsMultiplier_Player[0]":
+                            PerLevelStatsMultiplier_Player_0 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[1]":
+                            PerLevelStatsMultiplier_Player_1 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[2]":
+                            PerLevelStatsMultiplier_Player_2 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[3]":
+                            PerLevelStatsMultiplier_Player_3 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[4]":
+                            PerLevelStatsMultiplier_Player_4 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[5]":
+                            PerLevelStatsMultiplier_Player_5 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[6]":
+                            PerLevelStatsMultiplier_Player_6 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[7]":
+                            PerLevelStatsMultiplier_Player_7 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[8]":
+                            PerLevelStatsMultiplier_Player_8 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[9]":
+                            PerLevelStatsMultiplier_Player_9 = value;
+                            break;
+                        case "PerLevelStatsMultiplier_Player[10]":
+                            PerLevelStatsMultiplier_Player_10 = value;
+                            break;
+                        // ... Similar cases for PerLevelStatsMultiplier_Player[1] to [10]
+                        case "GlobalSpoilingTimeMultiplier":
+                            GlobalSpoilingTimeMultiplier = value;
+                            break;
+                        case "GlobalItemDecompositionTimeMultiplier":
+                            GlobalItemDecompositionTimeMultiplier = value;
+                            break;
+                        case "GlobalCorpseDecompositionTimeMultiplier":
+                            GlobalCorpseDecompositionTimeMultiplier = value;
+                            break;
+                        case "PvPZoneStructureDamageMultiplier":
+                            PvPZoneStructureDamageMultiplier = value;
+                            break;
+                        case "StructureDamageRepairCooldown":
+                            StructureDamageRepairCooldown = value;
+                            break;
+                        case "IncreasePvPRespawnIntervalCheckPeriod":
+                            IncreasePvPRespawnIntervalCheckPeriod = value;
+                            break;
+                        case "IncreasePvPRespawnIntervalMultiplier":
+                            IncreasePvPRespawnIntervalMultiplier = value;
+                            break;
+                        case "IncreasePvPRespawnIntervalBaseAmount":
+                            IncreasePvPRespawnIntervalBaseAmount = value;
+                            break;
+                        case "ResourceNoReplenishRadiusPlayers":
+                            ResourceNoReplenishRadiusPlayers = value;
+                            break;
+                        case "CropGrowthSpeedMultiplier":
+                            CropGrowthSpeedMultiplier = value;
+                            break;
+                        case "LayEggIntervalMultiplier":
+                            LayEggIntervalMultiplier = value;
+                            break;
+                        case "PoopIntervalMultiplier":
+                            PoopIntervalMultiplier = value;
+                            break;
+                        case "CropDecaySpeedMultiplier":
+                            CropDecaySpeedMultiplier = value;
+                            break;
+                        case "MatingIntervalMultiplier":
+                            MatingIntervalMultiplier = value;
+                            break;
+                        case "EggHatchSpeedMultiplier":
+                            EggHatchSpeedMultiplier = value;
+                            break;
+                        case "BabyMatureSpeedMultiplier":
+                            BabyMatureSpeedMultiplier = value;
+                            break;
+                        case "BabyFoodConsumptionSpeedMultiplier":
+                            BabyFoodConsumptionSpeedMultiplier = value;
+                            break;
+                        case "DinoTurretDamageMultiplier":
+                            DinoTurretDamageMultiplier = value;
+                            break;
+                        case "DinoHarvestingDamageMultiplier":
+                            DinoHarvestingDamageMultiplier = value;
+                            break;
+                        case "PlayerHarvestingDamageMultiplier":
+                            PlayerHarvestingDamageMultiplier = value;
+                            break;
+                        case "CustomRecipeEffectivenessMultiplier":
+                            CustomRecipeEffectivenessMultiplier = value;
+                            break;
+                        case "CustomRecipeSkillMultiplier":
+                            CustomRecipeSkillMultiplier = value;
+                            break;
+                        case "AutoPvEStartTimeSeconds":
+                            AutoPvEStartTimeSeconds = value;
+                            break;
+                        case "AutoPvEStopTimeSeconds":
+                            AutoPvEStopTimeSeconds = value;
+                            break;
+                        case "KillXPMultiplier":
+                            KillXPMultiplier = value;
+                            break;
+                        case "HarvestXPMultiplier":
+                            HarvestXPMultiplier = value;
+                            break;
+                        case "CraftXPMultiplier":
+                            CraftXPMultiplier = value;
+                            break;
+                        case "GenericXPMultiplier":
+                            GenericXPMultiplier = value;
+                            break;
+                        case "SpecialXPMultiplier":
+                            SpecialXPMultiplier = value;
+                            break;
+                        case "FuelConsumptionIntervalMultiplier":
+                            FuelConsumptionIntervalMultiplier = value;
+                            break;
+                        case "PhotoModeRangeLimit":
+                            PhotoModeRangeLimit = value;
+                            break;
+                        case "DisablePhotoMode":
+                            DisablePhotoMode = Convert.ToBoolean(value);
+                            break;
+                        case "IncreasePvPRespawnInterval":
+                            IncreasePvPRespawnInterval = Convert.ToBoolean(value);
+                            break;
+                        case "AutoPvETimer":
+                            AutoPvETimer = Convert.ToBoolean(value);
+                            break;
+                        case "AutoPvEUseSystemTime":
+                            AutoPvEUseSystemTime = Convert.ToBoolean(value);
+                            break;
+                        case "DisableFriendlyFire":
+                            DisableFriendlyFire = Convert.ToBoolean(value);
+                            break;
+                        case "FlyerPlatformAllowUnalignedDinoBasing":
+                            FlyerPlatformAllowUnalignedDinoBasing = Convert.ToBoolean(value);
+                            break;
+                        case "DisableLootCrates":
+                            DisableLootCrates = Convert.ToBoolean(value);
+                            break;
+                        case "AllowCustomRecipes":
+                            AllowCustomRecipes = Convert.ToBoolean(value);
+                            break;
+                        case "PassiveDefensesDamageRiderlessDinos":
+                            PassiveDefensesDamageRiderlessDinos = Convert.ToBoolean(value);
+                            break;
+                        case "PvEAllowTribeWar":
+                            PvEAllowTribeWar = Convert.ToBoolean(value);
+                            break;
+                        case "PvEAllowTribeWarCancel":
+                            PvEAllowTribeWarCancel = Convert.ToBoolean(value);
+                            break;
+                        case "MaxDifficulty":
+                            MaxDifficulty = Convert.ToBoolean(value);
+                            break;
+                        case "UseSingleplayerSettings":
+                            UseSingleplayerSettings = Convert.ToBoolean(value);
+                            break;
+                        case "UseCorpseLocator":
+                            UseCorpseLocator = Convert.ToBoolean(value);
+                            break;
+                        case "ShowCreativeMode":
+                            ShowCreativeMode = Convert.ToBoolean(value);
+                            break;
+                        case "HardLimitTurretsInRange":
+                            HardLimitTurretsInRange = Convert.ToBoolean(value);
+                            break;
+                        case "DisableStructurePlacementCollision":
+                            DisableStructurePlacementCollision = Convert.ToBoolean(value);
+                            break;
+                        case "AllowPlatformSaddleMultiFloors":
+                            AllowPlatformSaddleMultiFloors = Convert.ToBoolean(value);
+                            break;
+                        case "AllowUnlimitedRespec":
+                            AllowUnlimitedRespec = Convert.ToBoolean(value);
+                            break;
+                        case "DisableDinoTaming":
+                            DisableDinoTaming = Convert.ToBoolean(value);
+                            break;
+                        case "OverrideMaxExperiencePointsDino":
+                            if (double.TryParse(value, out double parsedOverrideMaxExperiencePointsDino))
+                            {
+                                OverrideMaxExperiencePointsDino = parsedOverrideMaxExperiencePointsDino;
+                            }
+                            break;
+                        case "MaxNumberOfPlayersInTribe":
+                            if (int.TryParse(value, out int parsedMaxNumberOfPlayersInTribe))
+                            {
+                                MaxNumberOfPlayersInTribe = parsedMaxNumberOfPlayersInTribe;
+                            }
+                            break;
+                        case "ExplorerNoteXPMultiplier":
+                            if (double.TryParse(value, out double parsedExplorerNoteXPMultiplier))
+                            {
+                                ExplorerNoteXPMultiplier = parsedExplorerNoteXPMultiplier;
+                            }
+                            break;
+                        case "BossKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedBossKillXPMultiplier))
+                            {
+                                BossKillXPMultiplier = parsedBossKillXPMultiplier;
+                            }
+                            break;
+                        case "AlphaKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedAlphaKillXPMultiplier))
+                            {
+                                AlphaKillXPMultiplier = parsedAlphaKillXPMultiplier;
+                            }
+                            break;
+                        case "WildKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedWildKillXPMultiplier))
+                            {
+                                WildKillXPMultiplier = parsedWildKillXPMultiplier;
+                            }
+                            break;
+                        case "CaveKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedCaveKillXPMultiplier))
+                            {
+                                CaveKillXPMultiplier = parsedCaveKillXPMultiplier;
+                            }
+                            break;
+                        case "TamedKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedTamedKillXPMultiplier))
+                            {
+                                TamedKillXPMultiplier = parsedTamedKillXPMultiplier;
+                            }
+                            break;
+                        case "UnclaimedKillXPMultiplier":
+                            if (double.TryParse(value, out double parsedUnclaimedKillXPMultiplier))
+                            {
+                                UnclaimedKillXPMultiplier = parsedUnclaimedKillXPMultiplier;
+                            }
+                            break;
+                        case "SupplyCrateLootQualityMultiplier":
+                            if (double.TryParse(value, out double parsedSupplyCrateLootQualityMultiplier))
+                            {
+                                SupplyCrateLootQualityMultiplier = parsedSupplyCrateLootQualityMultiplier;
+                            }
+                            break;
+                        case "FishingLootQualityMultiplier":
+                            if (double.TryParse(value, out double parsedFishingLootQualityMultiplier))
+                            {
+                                FishingLootQualityMultiplier = parsedFishingLootQualityMultiplier;
+                            }
+                            break;
+                        case "CraftingSkillBonusMultiplier":
+                            if (double.TryParse(value, out double parsedCraftingSkillBonusMultiplier))
+                            {
+                                CraftingSkillBonusMultiplier = parsedCraftingSkillBonusMultiplier;
+                            }
+                            break;
+                        case "AllowSpeedLeveling":
+                            AllowSpeedLeveling = Convert.ToBoolean(value);
+                            break;
+                        case "AllowFlyerSpeedLeveling":
+                            AllowFlyerSpeedLeveling = Convert.ToBoolean(value);
+                            break;
+                            // Add cases for all other settings
+                            // ...
+                    }
+                }
+            }
+        }
+        private void SaveGameIniSettings()
+        {
+            string serverPath = CurrentServerConfig.ServerPath;
+            string iniFilePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+
+            // Read all lines
+            var lines = File.ReadAllLines(iniFilePath).ToList();
+
+            // Update specific lines
+            UpdateLine(ref lines, "BabyImprintingStatScaleMultiplier", BabyImprintingStatScaleMultiplier);
+            UpdateLine(ref lines, "BabyCuddleIntervalMultiplier", BabyCuddleIntervalMultiplier);
+            UpdateLine(ref lines, "BabyCuddleGracePeriodMultiplier", BabyCuddleGracePeriodMultiplier);
+            UpdateLine(ref lines, "BabyCuddleLoseImprintQualitySpeedMultiplier", BabyCuddleLoseImprintQualitySpeedMultiplier);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[0]", PerLevelStatsMultiplier_DinoTamed_0);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[1]", PerLevelStatsMultiplier_DinoTamed_1);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[2]", PerLevelStatsMultiplier_DinoTamed_2);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[3]", PerLevelStatsMultiplier_DinoTamed_3);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[4]", PerLevelStatsMultiplier_DinoTamed_4);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[4]", PerLevelStatsMultiplier_Player_4);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[5]", PerLevelStatsMultiplier_Player_5);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[6]", PerLevelStatsMultiplier_Player_6);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[7]", PerLevelStatsMultiplier_Player_7);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
+            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
+            UpdateLine(ref lines, "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
+            UpdateLine(ref lines, "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
+            UpdateLine(ref lines, "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
+            UpdateLine(ref lines, "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
+            UpdateLine(ref lines, "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
+            UpdateLine(ref lines, "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod.ToString());
+            UpdateLine(ref lines, "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
+            UpdateLine(ref lines, "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
+            UpdateLine(ref lines, "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
+            UpdateLine(ref lines, "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
+            UpdateLine(ref lines, "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
+            UpdateLine(ref lines, "PoopIntervalMultiplier", PoopIntervalMultiplier);
+            UpdateLine(ref lines, "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
+            UpdateLine(ref lines, "MatingIntervalMultiplier", MatingIntervalMultiplier);
+            UpdateLine(ref lines, "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
+            UpdateLine(ref lines, "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
+            UpdateLine(ref lines, "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
+            UpdateLine(ref lines, "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
+            UpdateLine(ref lines, "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
+            UpdateLine(ref lines, "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
+            UpdateLine(ref lines, "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
+            UpdateLine(ref lines, "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
+            UpdateLine(ref lines, "AutoPvEStartTimeSeconds", AutoPvEStartTimeSeconds);
+            UpdateLine(ref lines, "AutoPvEStopTimeSeconds", AutoPvEStopTimeSeconds);
+            UpdateLine(ref lines, "KillXPMultiplier", KillXPMultiplier);
+            UpdateLine(ref lines, "HarvestXPMultiplier", HarvestXPMultiplier);
+            UpdateLine(ref lines, "CraftXPMultiplier", CraftXPMultiplier);
+            UpdateLine(ref lines, "GenericXPMultiplier", GenericXPMultiplier);
+            UpdateLine(ref lines, "SpecialXPMultiplier", SpecialXPMultiplier);
+            UpdateLine(ref lines, "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
+            UpdateLine(ref lines, "PhotoModeRangeLimit", PhotoModeRangeLimit);
+            UpdateLine(ref lines, "DisablePhotoMode", DisablePhotoMode.ToString());
+            UpdateLine(ref lines, "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "AutoPvETimer", AutoPvETimer.ToString());
+            UpdateLine(ref lines, "AutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
+            UpdateLine(ref lines, "DisableFriendlyFire", DisableFriendlyFire.ToString());
+            UpdateLine(ref lines, "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
+            UpdateLine(ref lines, "DisableLootCrates", DisableLootCrates.ToString());
+            UpdateLine(ref lines, "AllowCustomRecipes", AllowCustomRecipes.ToString());
+            UpdateLine(ref lines, "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
+            UpdateLine(ref lines, "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
+            UpdateLine(ref lines, "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
+            UpdateLine(ref lines, "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
+            UpdateLine(ref lines, "UseCorpseLocator", UseCorpseLocator.ToString());
+            UpdateLine(ref lines, "ShowCreativeMode", ShowCreativeMode.ToString());
+            UpdateLine(ref lines, "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
+            UpdateLine(ref lines, "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
+            UpdateLine(ref lines, "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
+            UpdateLine(ref lines, "DisableDinoTaming", DisableDinoTaming.ToString());
+            UpdateLine(ref lines, "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "BossKillXPMultiplier", BossKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "AlphaKillXPMultiplier", AlphaKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "WildKillXPMultiplier", WildKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "CaveKillXPMultiplier", CaveKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "TamedKillXPMultiplier", TamedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "FishingLootQualityMultiplier", FishingLootQualityMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
+            UpdateLine(ref lines, "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
+
+            // ... Continue for all other properties
+
+            // Write the updated lines back to the file
+            File.WriteAllLines(iniFilePath, lines);
+        }
+        private string _babyImprintingStatScaleMultiplier;
+        public string BabyImprintingStatScaleMultiplier
+        {
+            get { return _babyImprintingStatScaleMultiplier; }
+            set
+            {
+                _babyImprintingStatScaleMultiplier = value;
+                OnPropertyChanged(nameof(BabyImprintingStatScaleMultiplier));
+            }
+        }
+
+        private string _babyCuddleIntervalMultiplier;
+        public string BabyCuddleIntervalMultiplier
+        {
+            get { return _babyCuddleIntervalMultiplier; }
+            set
+            {
+                _babyCuddleIntervalMultiplier = value;
+                OnPropertyChanged(nameof(BabyCuddleIntervalMultiplier));
+            }
+        }
+
+ private string _babyCuddleGracePeriodMultiplier;
+        public string BabyCuddleGracePeriodMultiplier
+        {
+            get { return _babyCuddleGracePeriodMultiplier; }
+            set
+            {
+                _babyCuddleGracePeriodMultiplier = value;
+                OnPropertyChanged(nameof(BabyCuddleGracePeriodMultiplier));
+            }
+        }
+
+ private string _babyCuddleLoseImprintQualitySpeedMultiplier;
+        public string BabyCuddleLoseImprintQualitySpeedMultiplier
+        {
+            get { return _babyCuddleLoseImprintQualitySpeedMultiplier; }
+            set
+            {
+                _babyCuddleLoseImprintQualitySpeedMultiplier = value;
+                OnPropertyChanged(nameof(BabyCuddleLoseImprintQualitySpeedMultiplier));
+            }
+        }
+
+ private string _perLevelStatsMultiplier_DinoTamed_0;
+        public string PerLevelStatsMultiplier_DinoTamed_0
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_0; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_0 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_0));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_1;
+        public string PerLevelStatsMultiplier_DinoTamed_1
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_1; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_1 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_1));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_2;
+        public string PerLevelStatsMultiplier_DinoTamed_2
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_2; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_2 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_2));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_3;
+        public string PerLevelStatsMultiplier_DinoTamed_3
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_3; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_3 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_3));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_4;
+        public string PerLevelStatsMultiplier_DinoTamed_4
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_4; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_4 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_4));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_7;
+        public string PerLevelStatsMultiplier_DinoTamed_7
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_7; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_7 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_7));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_8;
+        public string PerLevelStatsMultiplier_DinoTamed_8
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_8; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_8 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_8));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_9;
+        public string PerLevelStatsMultiplier_DinoTamed_9
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_9; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_9 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_9));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_10;
+        public string PerLevelStatsMultiplier_DinoTamed_10
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_10; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_10 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_10));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoTamed_Add_0;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_0
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_0; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_0 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_0));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoTamed_Add_1;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_1
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_1; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_1 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_1));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_2;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_2
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_2; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_2 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_2));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_3;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_3
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_3; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_3 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_3));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_4;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_4
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_4; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_4 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_4));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_5;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_5
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_5; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_5 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_5));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_6;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_6
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_6; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_6 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_6));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_7;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_7
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_7; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_7 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_7));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_8;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_8
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_8; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_8 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_8));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_9;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_9
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_9; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_9 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_9));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Add_10;
+        public string PerLevelStatsMultiplier_DinoTamed_Add_10
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Add_10; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Add_10 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_10));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_0;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_0
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_0; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_0 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_0));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_1;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_1
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_1; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_1 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_1));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_2;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_2
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_2; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_2 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_2));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_3;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_3
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_3; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_3 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_3));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_4;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_4
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_4; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_4 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_4));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_5;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_5
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_5; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_5 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_5));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_6;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_6
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_6; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_6 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_6));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_7;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_7
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_7; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_7 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_7));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_8;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_8
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_8; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_8 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_8));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_9;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_9
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_9; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_9 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_9));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoTamed_Affinity_10;
+        public string PerLevelStatsMultiplier_DinoTamed_Affinity_10
+        {
+            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_10; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoTamed_Affinity_10 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_10));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoWild_0;
+        public string PerLevelStatsMultiplier_DinoWild_0
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_0; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_0 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_0));
+            }
+        }
+        private string _perLevelStatsMultiplier_DinoWild_1;
+        public string PerLevelStatsMultiplier_DinoWild_1
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_1; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_1 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_1));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_2;
+        public string PerLevelStatsMultiplier_DinoWild_2
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_2; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_2 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_2));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_3;
+        public string PerLevelStatsMultiplier_DinoWild_3
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_3; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_3 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_3));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_4;
+        public string PerLevelStatsMultiplier_DinoWild_4
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_4; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_4 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_4));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_5;
+        public string PerLevelStatsMultiplier_DinoWild_5
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_5; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_5 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_5));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_6;
+        public string PerLevelStatsMultiplier_DinoWild_6
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_6; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_6 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_6));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_7;
+        public string PerLevelStatsMultiplier_DinoWild_7
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_7; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_7 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_7));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_8;
+        public string PerLevelStatsMultiplier_DinoWild_8
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_8; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_8 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_8));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_9;
+        public string PerLevelStatsMultiplier_DinoWild_9
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_9; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_9 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_9));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_DinoWild_10;
+        public string PerLevelStatsMultiplier_DinoWild_10
+        {
+            get { return _perLevelStatsMultiplier_DinoWild_10; }
+            set
+            {
+                _perLevelStatsMultiplier_DinoWild_10 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_10));
+            }
+        }
+        private string _perLevelStatsMultiplier_Player_0;
+        public string PerLevelStatsMultiplier_Player_0
+        {
+            get { return _perLevelStatsMultiplier_Player_0; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_0 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_0));
+            }
+        }
+        private string _perLevelStatsMultiplier_Player_1;
+        public string PerLevelStatsMultiplier_Player_1
+        {
+            get { return _perLevelStatsMultiplier_Player_1; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_1 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_1));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_2;
+        public string PerLevelStatsMultiplier_Player_2
+        {
+            get { return _perLevelStatsMultiplier_Player_2; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_2 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_2));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_3;
+        public string PerLevelStatsMultiplier_Player_3
+        {
+            get { return _perLevelStatsMultiplier_Player_3; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_3 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_3));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_4;
+        public string PerLevelStatsMultiplier_Player_4
+        {
+            get { return _perLevelStatsMultiplier_Player_4; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_4 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_4));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_5;
+        public string PerLevelStatsMultiplier_Player_5
+        {
+            get { return _perLevelStatsMultiplier_Player_5; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_5 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_5));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_6;
+        public string PerLevelStatsMultiplier_Player_6
+        {
+            get { return _perLevelStatsMultiplier_Player_6; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_6 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_6));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_7;
+        public string PerLevelStatsMultiplier_Player_7
+        {
+            get { return _perLevelStatsMultiplier_Player_7; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_7 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_7));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_8;
+        public string PerLevelStatsMultiplier_Player_8
+        {
+            get { return _perLevelStatsMultiplier_Player_8; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_8 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_8));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_9;
+        public string PerLevelStatsMultiplier_Player_9
+        {
+            get { return _perLevelStatsMultiplier_Player_9; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_9 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_9));
+            }
+        }
+
+        private string _perLevelStatsMultiplier_Player_10;
+        public string PerLevelStatsMultiplier_Player_10
+        {
+            get { return _perLevelStatsMultiplier_Player_10; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_10 = value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_10));
+            }
+        }
+        private string _globalSpoilingTimeMultiplier;
+        public string GlobalSpoilingTimeMultiplier
+        {
+            get { return _globalSpoilingTimeMultiplier; }
+            set
+            {
+                _globalSpoilingTimeMultiplier = value;
+                OnPropertyChanged(nameof(GlobalSpoilingTimeMultiplier));
+            }
+        }
+
+        private string _globalItemDecompositionTimeMultiplier;
+        public string GlobalItemDecompositionTimeMultiplier
+        {
+            get { return _globalItemDecompositionTimeMultiplier; }
+            set
+            {
+                _globalItemDecompositionTimeMultiplier = value;
+                OnPropertyChanged(nameof(GlobalItemDecompositionTimeMultiplier));
+            }
+        }
+
+        private string _globalCorpseDecompositionTimeMultiplier;
+        public string GlobalCorpseDecompositionTimeMultiplier
+        {
+            get { return _globalCorpseDecompositionTimeMultiplier; }
+            set
+            {
+                _globalCorpseDecompositionTimeMultiplier = value;
+                OnPropertyChanged(nameof(GlobalCorpseDecompositionTimeMultiplier));
+            }
+        }
+
+        private string _pvpZoneStructureDamageMultiplier;
+        public string PvPZoneStructureDamageMultiplier
+        {
+            get { return _pvpZoneStructureDamageMultiplier; }
+            set
+            {
+                _pvpZoneStructureDamageMultiplier = value;
+                OnPropertyChanged(nameof(PvPZoneStructureDamageMultiplier));
+            }
+        }
+
+        private string _structureDamageRepairCooldown;
+        public string StructureDamageRepairCooldown
+        {
+            get { return _structureDamageRepairCooldown; }
+            set
+            {
+                _structureDamageRepairCooldown = value;
+                OnPropertyChanged(nameof(StructureDamageRepairCooldown));
+            }
+        }
+
+        private string _increasePvPRespawnIntervalCheckPeriod;
+        public string IncreasePvPRespawnIntervalCheckPeriod
+        {
+            get { return _increasePvPRespawnIntervalCheckPeriod; }
+            set
+            {
+                _increasePvPRespawnIntervalCheckPeriod = value;
+                OnPropertyChanged(nameof(IncreasePvPRespawnIntervalCheckPeriod));
+            }
+        }
+
+        private string _increasePvPRespawnIntervalMultiplier;
+        public string IncreasePvPRespawnIntervalMultiplier
+        {
+            get { return _increasePvPRespawnIntervalMultiplier; }
+            set
+            {
+                _increasePvPRespawnIntervalMultiplier = value;
+                OnPropertyChanged(nameof(IncreasePvPRespawnIntervalMultiplier));
+            }
+        }
+
+        private string _increasePvPRespawnIntervalBaseAmount;
+        public string IncreasePvPRespawnIntervalBaseAmount
+        {
+            get { return _increasePvPRespawnIntervalBaseAmount; }
+            set
+            {
+                _increasePvPRespawnIntervalBaseAmount = value;
+                OnPropertyChanged(nameof(IncreasePvPRespawnIntervalBaseAmount));
+            }
+        }
+
+        private string _resourceNoReplenishRadiusPlayers;
+        public string ResourceNoReplenishRadiusPlayers
+        {
+            get { return _resourceNoReplenishRadiusPlayers; }
+            set
+            {
+                _resourceNoReplenishRadiusPlayers = value;
+                OnPropertyChanged(nameof(ResourceNoReplenishRadiusPlayers));
+            }
+        }
+
+        private string _cropGrowthSpeedMultiplier;
+        public string CropGrowthSpeedMultiplier
+        {
+            get { return _cropGrowthSpeedMultiplier; }
+            set
+            {
+                _cropGrowthSpeedMultiplier = value;
+                OnPropertyChanged(nameof(CropGrowthSpeedMultiplier));
+            }
+        }
+
+        private string _layEggIntervalMultiplier;
+        public string LayEggIntervalMultiplier
+        {
+            get { return _layEggIntervalMultiplier; }
+            set
+            {
+                _layEggIntervalMultiplier = value;
+                OnPropertyChanged(nameof(LayEggIntervalMultiplier));
+            }
+        }
+
+        private string _poopIntervalMultiplier;
+        public string PoopIntervalMultiplier
+        {
+            get { return _poopIntervalMultiplier; }
+            set
+            {
+                _poopIntervalMultiplier = value;
+                OnPropertyChanged(nameof(PoopIntervalMultiplier));
+            }
+        }
+
+        private string _cropDecaySpeedMultiplier;
+        public string CropDecaySpeedMultiplier
+        {
+            get { return _cropDecaySpeedMultiplier; }
+            set
+            {
+                _cropDecaySpeedMultiplier = value;
+                OnPropertyChanged(nameof(CropDecaySpeedMultiplier));
+            }
+        }
+
+        private string _matingIntervalMultiplier;
+        public string MatingIntervalMultiplier
+        {
+            get { return _matingIntervalMultiplier; }
+            set
+            {
+                _matingIntervalMultiplier = value;
+                OnPropertyChanged(nameof(MatingIntervalMultiplier));
+            }
+        }
+
+        private string _eggHatchSpeedMultiplier;
+        public string EggHatchSpeedMultiplier
+        {
+            get { return _eggHatchSpeedMultiplier; }
+            set
+            {
+                _eggHatchSpeedMultiplier = value;
+                OnPropertyChanged(nameof(EggHatchSpeedMultiplier));
+            }
+        }
+
+        private string _babyMatureSpeedMultiplier;
+        public string BabyMatureSpeedMultiplier
+        {
+            get { return _babyMatureSpeedMultiplier; }
+            set
+            {
+                _babyMatureSpeedMultiplier = value;
+                OnPropertyChanged(nameof(BabyMatureSpeedMultiplier));
+            }
+        }
+
+        private string _babyFoodConsumptionSpeedMultiplier;
+        public string BabyFoodConsumptionSpeedMultiplier
+        {
+            get { return _babyFoodConsumptionSpeedMultiplier; }
+            set
+            {
+                _babyFoodConsumptionSpeedMultiplier = value;
+                OnPropertyChanged(nameof(BabyFoodConsumptionSpeedMultiplier));
+            }
+        }
+        private string _dinoTurretDamageMultiplier;
+        public string DinoTurretDamageMultiplier
+        {
+            get { return _dinoTurretDamageMultiplier; }
+            set
+            {
+                _dinoTurretDamageMultiplier = value;
+                OnPropertyChanged(nameof(DinoTurretDamageMultiplier));
+            }
+        }
+
+        private string _dinoHarvestingDamageMultiplier;
+        public string DinoHarvestingDamageMultiplier
+        {
+            get { return _dinoHarvestingDamageMultiplier; }
+            set
+            {
+                _dinoHarvestingDamageMultiplier = value;
+                OnPropertyChanged(nameof(DinoHarvestingDamageMultiplier));
+            }
+        }
+
+        private string _playerHarvestingDamageMultiplier;
+        public string PlayerHarvestingDamageMultiplier
+        {
+            get { return _playerHarvestingDamageMultiplier; }
+            set
+            {
+                _playerHarvestingDamageMultiplier = value;
+                OnPropertyChanged(nameof(PlayerHarvestingDamageMultiplier));
+            }
+        }
+
+        private string _customRecipeEffectivenessMultiplier;
+        public string CustomRecipeEffectivenessMultiplier
+        {
+            get { return _customRecipeEffectivenessMultiplier; }
+            set
+            {
+                _customRecipeEffectivenessMultiplier = value;
+                OnPropertyChanged(nameof(CustomRecipeEffectivenessMultiplier));
+            }
+        }
+
+        private string _customRecipeSkillMultiplier;
+        public string CustomRecipeSkillMultiplier
+        {
+            get { return _customRecipeSkillMultiplier; }
+            set
+            {
+                _customRecipeSkillMultiplier = value;
+                OnPropertyChanged(nameof(CustomRecipeSkillMultiplier));
+            }
+        }
+
+        private string _autoPvEStartTimeSeconds;
+        public string AutoPvEStartTimeSeconds
+        {
+            get { return _autoPvEStartTimeSeconds; }
+            set
+            {
+                _autoPvEStartTimeSeconds = value;
+                OnPropertyChanged(nameof(AutoPvEStartTimeSeconds));
+            }
+        }
+
+        private string _autoPvEStopTimeSeconds;
+        public string AutoPvEStopTimeSeconds
+        {
+            get { return _autoPvEStopTimeSeconds; }
+            set
+            {
+                _autoPvEStopTimeSeconds = value;
+                OnPropertyChanged(nameof(AutoPvEStopTimeSeconds));
+            }
+        }
+
+        private string _killXPMultiplier;
+        public string KillXPMultiplier
+        {
+            get { return _killXPMultiplier; }
+            set
+            {
+                _killXPMultiplier = value;
+                OnPropertyChanged(nameof(KillXPMultiplier));
+            }
+        }
+
+        private string _harvestXPMultiplier;
+        public string HarvestXPMultiplier
+        {
+            get { return _harvestXPMultiplier; }
+            set
+            {
+                _harvestXPMultiplier = value;
+                OnPropertyChanged(nameof(HarvestXPMultiplier));
+            }
+        }
+
+        private string _craftXPMultiplier;
+        public string CraftXPMultiplier
+        {
+            get { return _craftXPMultiplier; }
+            set
+            {
+                _craftXPMultiplier = value;
+                OnPropertyChanged(nameof(CraftXPMultiplier));
+            }
+        }
+
+        private string _genericXPMultiplier;
+        public string GenericXPMultiplier
+        {
+            get { return _genericXPMultiplier; }
+            set
+            {
+                _genericXPMultiplier = value;
+                OnPropertyChanged(nameof(GenericXPMultiplier));
+            }
+        }
+
+        private string _specialXPMultiplier;
+        public string SpecialXPMultiplier
+        {
+            get { return _specialXPMultiplier; }
+            set
+            {
+                _specialXPMultiplier = value;
+                OnPropertyChanged(nameof(SpecialXPMultiplier));
+            }
+        }
+
+        private string _fuelConsumptionIntervalMultiplier;
+        public string FuelConsumptionIntervalMultiplier
+        {
+            get { return _fuelConsumptionIntervalMultiplier; }
+            set
+            {
+                _fuelConsumptionIntervalMultiplier = value;
+                OnPropertyChanged(nameof(FuelConsumptionIntervalMultiplier));
+            }
+        }
+
+        private string _photoModeRangeLimit;
+        public string PhotoModeRangeLimit
+        {
+            get { return _photoModeRangeLimit; }
+            set
+            {
+                _photoModeRangeLimit = value;
+                OnPropertyChanged(nameof(PhotoModeRangeLimit));
+            }
+        }
+
+        private bool _disablePhotoMode;
+        public bool DisablePhotoMode
+        {
+            get { return _disablePhotoMode; }
+            set
+            {
+                _disablePhotoMode = value;
+                OnPropertyChanged(nameof(DisablePhotoMode));
+            }
+        }
+
+        private bool _increasePvPRespawnInterval;
+        public bool IncreasePvPRespawnInterval
+        {
+            get { return _increasePvPRespawnInterval; }
+            set
+            {
+                _increasePvPRespawnInterval = value;
+                OnPropertyChanged(nameof(IncreasePvPRespawnInterval));
+            }
+        }
+
+        private bool _autoPvETimer;
+        public bool AutoPvETimer
+        {
+            get { return _autoPvETimer; }
+            set
+            {
+                _autoPvETimer = value;
+                OnPropertyChanged(nameof(AutoPvETimer));
+            }
+        }
+
+        private bool _autoPvEUseSystemTime;
+        public bool AutoPvEUseSystemTime
+        {
+            get { return _autoPvEUseSystemTime; }
+            set
+            {
+                _autoPvEUseSystemTime = value;
+                OnPropertyChanged(nameof(AutoPvEUseSystemTime));
+            }
+        }
+
+        private bool _disableFriendlyFire;
+        public bool DisableFriendlyFire
+        {
+            get { return _disableFriendlyFire; }
+            set
+            {
+                _disableFriendlyFire = value;
+                OnPropertyChanged(nameof(DisableFriendlyFire));
+            }
+        }
+        private bool _flyerPlatformAllowUnalignedDinoBasing;
+        public bool FlyerPlatformAllowUnalignedDinoBasing
+        {
+            get { return _flyerPlatformAllowUnalignedDinoBasing; }
+            set
+            {
+                _flyerPlatformAllowUnalignedDinoBasing = value;
+                OnPropertyChanged(nameof(FlyerPlatformAllowUnalignedDinoBasing));
+            }
+        }
+
+        private bool _disableLootCrates;
+        public bool DisableLootCrates
+        {
+            get { return _disableLootCrates; }
+            set
+            {
+                _disableLootCrates = value;
+                OnPropertyChanged(nameof(DisableLootCrates));
+            }
+        }
+
+        private bool _allowCustomRecipes;
+        public bool AllowCustomRecipes
+        {
+            get { return _allowCustomRecipes; }
+            set
+            {
+                _allowCustomRecipes = value;
+                OnPropertyChanged(nameof(AllowCustomRecipes));
+            }
+        }
+
+
+        private bool _pveAllowTribeWar;
+        public bool PvEAllowTribeWar
+        {
+            get { return _pveAllowTribeWar; }
+            set
+            {
+                _pveAllowTribeWar = value;
+                OnPropertyChanged(nameof(PvEAllowTribeWar));
+            }
+        }
+
+        private bool _pveAllowTribeWarCancel;
+        public bool PvEAllowTribeWarCancel
+        {
+            get { return _pveAllowTribeWarCancel; }
+            set
+            {
+                _pveAllowTribeWarCancel = value;
+                OnPropertyChanged(nameof(PvEAllowTribeWarCancel));
+            }
+        }
+
+        private bool _maxDifficulty;
+        public bool MaxDifficulty
+        {
+            get { return _maxDifficulty; }
+            set
+            {
+                _maxDifficulty = value;
+                OnPropertyChanged(nameof(MaxDifficulty));
+            }
+        }
+
+        private bool _useSingleplayerSettings;
+        public bool UseSingleplayerSettings
+        {
+            get { return _useSingleplayerSettings; }
+            set
+            {
+                _useSingleplayerSettings = value;
+                OnPropertyChanged(nameof(UseSingleplayerSettings));
+            }
+        }
+
+        private bool _useCorpseLocator;
+        public bool UseCorpseLocator
+        {
+            get { return _useCorpseLocator; }
+            set
+            {
+                _useCorpseLocator = value;
+                OnPropertyChanged(nameof(UseCorpseLocator));
+            }
+        }
+
+        private bool _showCreativeMode;
+        public bool ShowCreativeMode
+        {
+            get { return _showCreativeMode; }
+            set
+            {
+                _showCreativeMode = value;
+                OnPropertyChanged(nameof(ShowCreativeMode));
+            }
+        }
+
+        private bool _hardLimitTurretsInRange;
+        public bool HardLimitTurretsInRange
+        {
+            get { return _hardLimitTurretsInRange; }
+            set
+            {
+                _hardLimitTurretsInRange = value;
+                OnPropertyChanged(nameof(HardLimitTurretsInRange));
+            }
+        }
+
+        private bool _disableStructurePlacementCollision;
+        public bool DisableStructurePlacementCollision
+        {
+            get { return _disableStructurePlacementCollision; }
+            set
+            {
+                _disableStructurePlacementCollision = value;
+                OnPropertyChanged(nameof(DisableStructurePlacementCollision));
+            }
+        }
+
+        private bool _allowPlatformSaddleMultiFloors;
+        public bool AllowPlatformSaddleMultiFloors
+        {
+            get { return _allowPlatformSaddleMultiFloors; }
+            set
+            {
+                _allowPlatformSaddleMultiFloors = value;
+                OnPropertyChanged(nameof(AllowPlatformSaddleMultiFloors));
+            }
+        }
+
+        private bool _allowUnlimitedRespec;
+        public bool AllowUnlimitedRespec
+        {
+            get { return _allowUnlimitedRespec; }
+            set
+            {
+                _allowUnlimitedRespec = value;
+                OnPropertyChanged(nameof(AllowUnlimitedRespec));
+            }
+        }
+
+        private bool _disableDinoTaming;
+        public bool DisableDinoTaming
+        {
+            get { return _disableDinoTaming; }
+            set
+            {
+                _disableDinoTaming = value;
+                OnPropertyChanged(nameof(DisableDinoTaming));
+            }
+        }
+        private double _overrideMaxExperiencePointsDino;
+        public double OverrideMaxExperiencePointsDino
+        {
+            get { return _overrideMaxExperiencePointsDino; }
+            set
+            {
+                _overrideMaxExperiencePointsDino = value;
+                OnPropertyChanged(nameof(OverrideMaxExperiencePointsDino));
+            }
+        }
+
+        private int _maxNumberOfPlayersInTribe;
+        public int MaxNumberOfPlayersInTribe
+        {
+            get { return _maxNumberOfPlayersInTribe; }
+            set
+            {
+                _maxNumberOfPlayersInTribe = value;
+                OnPropertyChanged(nameof(MaxNumberOfPlayersInTribe));
+            }
+        }
+
+        private double _explorerNoteXPMultiplier;
+        public double ExplorerNoteXPMultiplier
+        {
+            get { return _explorerNoteXPMultiplier; }
+            set
+            {
+                _explorerNoteXPMultiplier = value;
+                OnPropertyChanged(nameof(ExplorerNoteXPMultiplier));
+            }
+        }
+
+        private double _bossKillXPMultiplier;
+        public double BossKillXPMultiplier
+        {
+            get { return _bossKillXPMultiplier; }
+            set
+            {
+                _bossKillXPMultiplier = value;
+                OnPropertyChanged(nameof(BossKillXPMultiplier));
+            }
+        }
+
+        private double _alphaKillXPMultiplier;
+        public double AlphaKillXPMultiplier
+        {
+            get { return _alphaKillXPMultiplier; }
+            set
+            {
+                _alphaKillXPMultiplier = value;
+                OnPropertyChanged(nameof(AlphaKillXPMultiplier));
+            }
+        }
+
+        private double _wildKillXPMultiplier;
+        public double WildKillXPMultiplier
+        {
+            get { return _wildKillXPMultiplier; }
+            set
+            {
+                _wildKillXPMultiplier = value;
+                OnPropertyChanged(nameof(WildKillXPMultiplier));
+            }
+        }
+
+        private double _caveKillXPMultiplier;
+        public double CaveKillXPMultiplier
+        {
+            get { return _caveKillXPMultiplier; }
+            set
+            {
+                _caveKillXPMultiplier = value;
+                OnPropertyChanged(nameof(CaveKillXPMultiplier));
+            }
+        }
+
+        private double _tamedKillXPMultiplier;
+        public double TamedKillXPMultiplier
+        {
+            get { return _tamedKillXPMultiplier; }
+            set
+            {
+                _tamedKillXPMultiplier = value;
+                OnPropertyChanged(nameof(TamedKillXPMultiplier));
+            }
+        }
+
+        private double _unclaimedKillXPMultiplier;
+        public double UnclaimedKillXPMultiplier
+        {
+            get { return _unclaimedKillXPMultiplier; }
+            set
+            {
+                _unclaimedKillXPMultiplier = value;
+                OnPropertyChanged(nameof(UnclaimedKillXPMultiplier));
+            }
+        }
+
+        private double _supplyCrateLootQualityMultiplier;
+        public double SupplyCrateLootQualityMultiplier
+        {
+            get { return _supplyCrateLootQualityMultiplier; }
+            set
+            {
+                _supplyCrateLootQualityMultiplier = value;
+                OnPropertyChanged(nameof(SupplyCrateLootQualityMultiplier));
+            }
+        }
+
+        private double _fishingLootQualityMultiplier;
+        public double FishingLootQualityMultiplier
+        {
+            get { return _fishingLootQualityMultiplier; }
+            set
+            {
+                _fishingLootQualityMultiplier = value;
+                OnPropertyChanged(nameof(FishingLootQualityMultiplier));
+            }
+        }
+
+        private double _craftingSkillBonusMultiplier;
+        public double CraftingSkillBonusMultiplier
+        {
+            get { return _craftingSkillBonusMultiplier; }
+            set
+            {
+                _craftingSkillBonusMultiplier = value;
+                OnPropertyChanged(nameof(CraftingSkillBonusMultiplier));
+            }
+        }
+
+        private bool _allowSpeedLeveling;
+        public bool AllowSpeedLeveling
+        {
+            get { return _allowSpeedLeveling; }
+            set
+            {
+                _allowSpeedLeveling = value;
+                OnPropertyChanged(nameof(AllowSpeedLeveling));
+            }
+        }
+
+        private bool _allowFlyerSpeedLeveling;
+        public bool AllowFlyerSpeedLeveling
+        {
+            get { return _allowFlyerSpeedLeveling; }
+            set
+            {
+                _allowFlyerSpeedLeveling = value;
+                OnPropertyChanged(nameof(AllowFlyerSpeedLeveling));
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
