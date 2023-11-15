@@ -54,6 +54,26 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             // Optionally, handle the scenario where no match is found
         }
+        
+
+        private void SearchButtonGameini_Click(object sender, RoutedEventArgs e)
+        {
+            string searchText = SearchBoxGameIni.Text.ToLower();
+
+            // Assuming 'YourStackPanel' is the name of your StackPanel inside the ScrollViewer
+            foreach (var child in Gameini.Children)
+            {
+                // Check if the child is a Label and if its content matches the search text
+                if (child is Label label && label.Content.ToString().ToLower().Contains(searchText))
+                {
+                    // If a match is found, bring that Label into view
+                    label.BringIntoView();
+                    return;
+                }
+            }
+
+            // Optionally, handle the scenario where no match is found
+        }
 
 
 

@@ -71,12 +71,22 @@
                         <RowDefinition Height="*"/>
                         <!-- Row for the ScrollViewer -->
                     </Grid.RowDefinitions>
-
+                    <!-- Save Button -->
+                    <Button Content="Save GameIniSettings" 
+Command="{Binding SaveGameIniSettingsCommand}" 
+HorizontalAlignment="Right" 
+VerticalAlignment="Top"
+Margin="10"
+Grid.Row="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <TextBox x:Name="SearchBoxGameIni" Width="200" Margin="5"/>
+                        <Button Content="Search" Margin="5" Click="SearchButtonGameini_Click"/>
+                    </StackPanel>
                     <!-- Save Button -->
 
                     <!-- ScrollViewer for the rest of the content -->
                     <ScrollViewer Grid.Row="1" Margin="10">
-                        <StackPanel>
+                        <StackPanel x:Name="Gameini">
                             <Label Content="Baby Imprinting Stat Scale Multiplier:"/>
                             <TextBox Text="{Binding BabyImprintingStatScaleMultiplier, Mode=TwoWay}"/>
 
@@ -90,160 +100,160 @@
                             <TextBox Text="{Binding BabyCuddleLoseImprintQualitySpeedMultiplier, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[0]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[0], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_0, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[1]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[1], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_1, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[2]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[2], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_2, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[3]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[3], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_3, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[4]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[4], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_4, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[7]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[7], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_7, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[8]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[8], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_8, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed[9]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed[9], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_9, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[0]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[0], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_0, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[1]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[1], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_1, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[2]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[2], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_2, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[3]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[3], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_3, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[4]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[4], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_4, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[5]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[5], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_5, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[6]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[6], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_6, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[7]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[7], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_7, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[8]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[8], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_8, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[9]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[9], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_9, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Add[10]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add[10], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_10, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[0]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[0], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_0, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[1]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[1], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_1, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[2]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[2], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_2, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[3]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[3], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_3, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[4]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[4], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_4, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[5]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[5], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_5, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[6]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[6], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_6, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[7]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[7], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_7, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[8]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[8], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_8, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[9]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[9], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_9, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoTamed_Affinity[10]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity[10], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_10, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[0]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[0], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_0, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[1]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[1], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_1, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[2]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[2], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_2, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[3]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[3], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_3, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[4]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[4], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_4, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[5]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[5], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_5, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[6]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[6], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_6, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[7]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[7], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_7, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[8]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[8], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_8, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[9]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[9], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_9, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_DinoWild[10]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild[10], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_10, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[0]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[0], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_0, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[1]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[1], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_1, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[2]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[2], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_2, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[3]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[3], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_3, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[4]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[4], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_4, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[5]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[5], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_5, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[6]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[6], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_6, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[7]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[7], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_7, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[8]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[8], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_8, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[9]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[9], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_9, Mode=TwoWay}"/>
 
                             <Label Content="PerLevelStatsMultiplier_Player[10]:"/>
-                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player[10], Mode=TwoWay}"/>
+                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_10, Mode=TwoWay}"/>
 
                             <Label Content="Global Spoiling Time Multiplier:"/>
                             <TextBox Text="{Binding GlobalSpoilingTimeMultiplier, Mode=TwoWay}"/>
@@ -529,9 +539,6 @@
                             <Label Content="Server Hardcore:"/>
                             <CheckBox IsChecked="{Binding ServerHardcore, Mode=TwoWay}"/>
 
-                            <Label Content="Server Password:"/>
-                            <TextBox Text="{Binding ServerPassword, Mode=TwoWay}"/>
-
                             <Label Content="Server PvE:"/>
                             <CheckBox IsChecked="{Binding ServerPvE, Mode=TwoWay}"/>
 
@@ -619,8 +626,6 @@
                             <Label Content="Passive Defenses Damage Riderless Dinos:"/>
                             <CheckBox IsChecked="{Binding PassiveDefensesDamageRiderlessDinos, Mode=TwoWay}"/>
 
-                            <Label Content="RCONPort:"/>
-                            <TextBox Text="{Binding RCONPort, Mode=TwoWay}"/>
 
                             <Label Content="Auto Save Period Minutes:"/>
                             <TextBox Text="{Binding AutoSavePeriodMinutes, Mode=TwoWay}"/>
@@ -800,6 +805,47 @@
             <TabItem Header="Launch Parameters">
                 <!-- Content for Launch Parameters -->
                 <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="20">
+
+
+                            
+
+                            <Label Content="Server Name"/>
+                            <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+
+                            <Label Content="Listen Port"/>
+                            <TextBox Text="{Binding ListenPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Rcon Port"/>
+                            <TextBox Text="{Binding RconPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Mods (comma-separated)"/>
+                            <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Admin Password"/>
+                            <TextBox Text="{Binding AdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Server Password"/>
+                            <TextBox Text="{Binding ServerPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Max Player Count"/>
+                            <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Use Battleye"/>
+                            <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Force Respawn Dinos"/>
+                            <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Prevent Spawn Animation"/>
+                            <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Button Content="Update Launch Parameters"  Command="{Binding LoadLaunchServerSettingsCommand}" />
+
+                        </StackPanel>
+                    </ScrollViewer>
                     <!-- Put the controls related to Launch Parameters here -->
                 </Grid>
             </TabItem>

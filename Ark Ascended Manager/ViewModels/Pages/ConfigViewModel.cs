@@ -6,6 +6,9 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Globalization;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -13,11 +16,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
     {
         public ServerConfig CurrentServerConfig { get; private set; }
         public ICommand SaveGameUserSettingsCommand { get; private set; }
+        public ICommand SaveGameIniSettingsCommand { get; private set; }
+        public ICommand LoadLaunchServerSettingsCommand { get; private set; }
 
         public ConfigPageViewModel()
         {
             LoadServerProfile();
             SaveGameUserSettingsCommand = new RelayCommand(SaveGameUserSettings);
+            SaveGameIniSettingsCommand = new RelayCommand(SaveGameIniSettings);
+            LoadLaunchServerSettingsCommand = new RelayCommand(UpdateLaunchParameters);
 
         }
 
@@ -43,6 +50,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             LoadIniFile();
             LoadGameIniFile();
+            LoadLaunchServerSettings();
         }
         public void LoadConfig(ServerConfig serverConfig)
         {
@@ -51,6 +59,253 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             
             // ... Set other properties as needed
         }
+        private void LoadLaunchServerSettings()
+        {
+            // Assuming CurrentServerConfig.ServerPath is the path to the server's main directory
+            string serverPath = CurrentServerConfig.ServerPath;
+            string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
+
+            if (File.Exists(batFilePath))
+            {
+                // Read all lines from the batch file
+                string[] batFileLines = File.ReadAllLines(batFilePath);
+                ParseBatFileLines(batFileLines);
+            }
+            else
+            {
+                Console.WriteLine("LaunchServer.bat file does not exist.");
+            }
+        }
+        private void ParseBatFileLines(string[] lines)
+        {
+            foreach (string line in lines)
+            {
+                // Skip empty lines or lines that do not set variables
+                if (string.IsNullOrWhiteSpace(line) || !line.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Extract the key and value. This assumes the format is "set KEY=VALUE"
+                var splitLine = line.Substring(4).Split(new[] { '=' }, 2);
+                if (splitLine.Length != 2)
+                    continue; // Skip lines that do not have a key and value
+
+                var key = splitLine[0].Trim();
+                var value = splitLine[1].Trim();
+
+                // Assign values to properties based on the key
+                switch (key)
+                {
+                    case "ServerName":
+                        ServerName = value;
+                        break;
+                    case "Port":
+                        ListenPort = value;
+                        break;
+                    case "RconPort":
+                        RconPort = value;
+                        break;
+                    case "AdminPassword":
+                        AdminPassword = value;
+                        break;
+                    case "ServerPassword":
+                        ServerPassword = value;
+                        break;
+                    case "MaxPlayers":
+                        MaxPlayerCount = value;
+                        break;
+                    case "AdditionalSettings":
+                        // Check for the presence of each flag
+                        UseBattleye = value.IndexOf("-UseBattleye", StringComparison.OrdinalIgnoreCase) >= 0;
+                        ForceRespawnDinos = value.IndexOf("-ForceRespawnDinos", StringComparison.OrdinalIgnoreCase) >= 0;
+                        PreventSpawnAnimation = value.IndexOf("-PreventSpawnAnimation", StringComparison.OrdinalIgnoreCase) >= 0;
+                        // If mods are also set here, you'd extract them similarly
+                        Mods = ExtractModsValue(value);
+                        break;
+                        // ... add other settings as needed
+                }
+            }
+        }
+        private string ExtractModsValue(string settingsLine)
+        {
+            // Use a regular expression or string manipulation to extract the value after "-mods="
+            // Example using Regex:
+            Match match = Regex.Match(settingsLine, @"-mods=([^ ]+)");
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            return string.Empty; // Return empty if not found
+        }
+
+        private void UpdateLaunchParameters()
+        {
+            // Assuming CurrentServerConfig.ServerPath is the path to the server's main directory
+            string serverPath = CurrentServerConfig.ServerPath;
+            string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
+
+            // Read the existing batch file lines if it exists, otherwise create a new list
+            List<string> batFileLines = File.Exists(batFilePath) ? File.ReadAllLines(batFilePath).ToList() : new List<string>();
+
+            // Find the index of the line containing "set AdditionalSettings"
+            int additionalSettingsIndex = batFileLines.FindIndex(line => line.StartsWith("set AdditionalSettings"));
+
+            // Construct the mods setting based on whether Mods is empty
+            string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
+
+            // Construct boolean settings to append
+            string booleanSettings = "";
+            if (UseBattleye)
+                booleanSettings += " -UseBattleye";
+            if (ForceRespawnDinos)
+                booleanSettings += " -ForceRespawnDinos";
+            if (PreventSpawnAnimation)
+                booleanSettings += " -PreventSpawnAnimation";
+
+            // If the line exists, update or append the mods and boolean settings
+            if (additionalSettingsIndex != -1)
+            {
+                string additionalSettingsLine = batFileLines[additionalSettingsIndex];
+
+                // Append or update the mods setting
+                additionalSettingsLine = Regex.Replace(additionalSettingsLine, @"-mods=\S+", modsSetting, RegexOptions.IgnoreCase);
+                if (!additionalSettingsLine.Contains("-mods=") && modsSetting != "")
+                    additionalSettingsLine += " " + modsSetting;
+
+                // Append boolean settings
+                additionalSettingsLine += booleanSettings;
+
+                // Update the line in the batch file lines
+                batFileLines[additionalSettingsIndex] = additionalSettingsLine;
+            }
+            else if (modsSetting != "" || booleanSettings != "")
+            {
+                // If the line doesn't exist and there is something to add, add the line
+                batFileLines.Add($"set AdditionalSettings{modsSetting}{booleanSettings}");
+            }
+
+            // Handle other settings that are not part of AdditionalSettings
+            // Assuming these are separate lines that start with "set"
+            UpdateOrAddSetting(ref batFileLines, "ServerName", ServerName);
+            UpdateOrAddSetting(ref batFileLines, "Port", ListenPort);
+            UpdateOrAddSetting(ref batFileLines, "RconPort", RconPort);
+            UpdateOrAddSetting(ref batFileLines, "AdminPassword", AdminPassword);
+            UpdateOrAddSetting(ref batFileLines, "ServerPassword", ServerPassword);
+            UpdateOrAddSetting(ref batFileLines, "MaxPlayers", MaxPlayerCount);
+
+            // Write the updated lines to the batch file
+            File.WriteAllLines(batFilePath, batFileLines);
+
+            // Inform the user that the operation has completed
+            Console.WriteLine("Launch parameters have been updated.");
+        }
+
+        private void UpdateOrAddSetting(ref List<string> lines, string key, string value)
+        {
+            // Find the index of the line containing the key
+            int settingIndex = lines.FindIndex(line => line.StartsWith($"set {key}"));
+
+            // Update or add the setting
+            if (settingIndex != -1)
+            {
+                lines[settingIndex] = $"set {key}={value}";
+            }
+            else
+            {
+                lines.Add($"set {key}={value}");
+            }
+        }
+
+        private string _serverName;
+        public string ServerName
+        {
+            get => _serverName;
+            set => SetProperty(ref _serverName, value);
+        }
+
+        private string _listenPort;
+        public string ListenPort
+        {
+            get => _listenPort;
+            set => SetProperty(ref _listenPort, value);
+        }
+
+        private string _rconPort;
+        public string RconPort
+        {
+            get => _rconPort;
+            set => SetProperty(ref _rconPort, value);
+        }
+
+        private string _mods;
+        public string Mods
+        {
+            get => _mods;
+            set => SetProperty(ref _mods, value);
+        }
+
+        private string _adminPassword;
+        public string AdminPassword
+        {
+            get => _adminPassword;
+            set => SetProperty(ref _adminPassword, value);
+        }
+
+        private string _serverPassword;
+        public string ServerPassword
+        {
+            get => _serverPassword;
+            set => SetProperty(ref _serverPassword, value);
+        }
+
+        private string _maxPlayerCount;
+        public string MaxPlayerCount
+        {
+            get => _maxPlayerCount;
+            set => SetProperty(ref _maxPlayerCount, value);
+        }
+
+        private bool _useBattleye;
+        public bool UseBattleye
+        {
+            get => _useBattleye;
+            set => SetProperty(ref _useBattleye, value);
+        }
+
+        private bool _forceRespawnDinos;
+        public bool ForceRespawnDinos
+        {
+            get => _forceRespawnDinos;
+            set => SetProperty(ref _forceRespawnDinos, value);
+        }
+
+        private bool _preventSpawnAnimation;
+        public bool PreventSpawnAnimation
+        {
+            get => _preventSpawnAnimation;
+            set => SetProperty(ref _preventSpawnAnimation, value);
+        }
+
+        // INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(storage, value))
+            {
+                return false;
+            }
+
+            storage = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+
         private void LoadIniFile()
         {
             Console.WriteLine("INI file load has been initiated.");
@@ -138,9 +393,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         case "ServerHardcore":
                             ServerHardcore = Convert.ToBoolean(value);
                             break;
-                        case "ServerPassword":
-                            ServerPassword = value;
-                            break;
                         case "ServerPvE":
                             ServerPvE = Convert.ToBoolean(value);
                             break;
@@ -224,9 +476,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                             break;
                         case "PassiveDefensesDamageRiderlessDinos":
                             PassiveDefensesDamageRiderlessDinos = Convert.ToBoolean(value);
-                            break;
-                        case "RCONPort":
-                            RCONPort = value;
                             break;
                         case "AutoSavePeriodMinutes":
                             AutoSavePeriodMinutes = value;
@@ -395,7 +644,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "ServerCrosshair", ServerCrosshair.ToString());
             UpdateLine(ref lines, "ServerForceNoHud", ServerForceNoHud.ToString());
             UpdateLine(ref lines, "ServerHardcore", ServerHardcore.ToString());
-            UpdateLine(ref lines, "ServerPassword", ServerPassword);
             UpdateLine(ref lines, "ServerPvE", ServerPvE.ToString());
             UpdateLine(ref lines, "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
             UpdateLine(ref lines, "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
@@ -426,7 +674,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "UseVSync", UseVSync.ToString());
             UpdateLine(ref lines, "MaxPlatformSaddleStructureLimit", MaxPlatformSaddleStructureLimit);
             UpdateLine(ref lines, "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
-            UpdateLine(ref lines, "RCONPort", RCONPort);
             UpdateLine(ref lines, "bPvEDisableFriendlyFire", BPvEDisableFriendlyFire.ToString());
             UpdateLine(ref lines, "AutoSavePeriodMinutes", AutoSavePeriodMinutes);
             UpdateLine(ref lines, "RCONServerGameLogBuffer", RCONServerGameLogBuffer);
@@ -699,16 +946,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private string _serverPassword;
-        public string ServerPassword
-        {
-            get { return _serverPassword; }
-            set
-            {
-                _serverPassword = value;
-                OnPropertyChanged(nameof(ServerPassword)); // Notify the UI of the change
-            }
-        }
 
         private bool _serverPvE;
         public bool ServerPvE
@@ -1016,17 +1253,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 _passiveDefensesDamageRiderlessDinos = value;
                 OnPropertyChanged(nameof(PassiveDefensesDamageRiderlessDinos)); // Notify the UI of the change
-            }
-        }
-
-        private string _rconPort;
-        public string RCONPort
-        {
-            get { return _rconPort; }
-            set
-            {
-                _rconPort = value;
-                OnPropertyChanged(nameof(RCONPort)); // Notify the UI of the change
             }
         }
 
@@ -1863,76 +2089,40 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                             DisableDinoTaming = Convert.ToBoolean(value);
                             break;
                         case "OverrideMaxExperiencePointsDino":
-                            if (double.TryParse(value, out double parsedOverrideMaxExperiencePointsDino))
-                            {
-                                OverrideMaxExperiencePointsDino = parsedOverrideMaxExperiencePointsDino;
-                            }
+                            OverrideMaxExperiencePointsDino = value;
                             break;
                         case "MaxNumberOfPlayersInTribe":
-                            if (int.TryParse(value, out int parsedMaxNumberOfPlayersInTribe))
-                            {
-                                MaxNumberOfPlayersInTribe = parsedMaxNumberOfPlayersInTribe;
-                            }
+                            MaxNumberOfPlayersInTribe = value;
                             break;
                         case "ExplorerNoteXPMultiplier":
-                            if (double.TryParse(value, out double parsedExplorerNoteXPMultiplier))
-                            {
-                                ExplorerNoteXPMultiplier = parsedExplorerNoteXPMultiplier;
-                            }
+                            ExplorerNoteXPMultiplier = value;
                             break;
                         case "BossKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedBossKillXPMultiplier))
-                            {
-                                BossKillXPMultiplier = parsedBossKillXPMultiplier;
-                            }
+                            BossKillXPMultiplier = value;
                             break;
                         case "AlphaKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedAlphaKillXPMultiplier))
-                            {
-                                AlphaKillXPMultiplier = parsedAlphaKillXPMultiplier;
-                            }
+                            AlphaKillXPMultiplier = value;
                             break;
                         case "WildKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedWildKillXPMultiplier))
-                            {
-                                WildKillXPMultiplier = parsedWildKillXPMultiplier;
-                            }
+                            WildKillXPMultiplier = value;
                             break;
                         case "CaveKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedCaveKillXPMultiplier))
-                            {
-                                CaveKillXPMultiplier = parsedCaveKillXPMultiplier;
-                            }
+                            CaveKillXPMultiplier = value;
                             break;
                         case "TamedKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedTamedKillXPMultiplier))
-                            {
-                                TamedKillXPMultiplier = parsedTamedKillXPMultiplier;
-                            }
+                            TamedKillXPMultiplier = value;
                             break;
                         case "UnclaimedKillXPMultiplier":
-                            if (double.TryParse(value, out double parsedUnclaimedKillXPMultiplier))
-                            {
-                                UnclaimedKillXPMultiplier = parsedUnclaimedKillXPMultiplier;
-                            }
+                            UnclaimedKillXPMultiplier = value;
                             break;
                         case "SupplyCrateLootQualityMultiplier":
-                            if (double.TryParse(value, out double parsedSupplyCrateLootQualityMultiplier))
-                            {
-                                SupplyCrateLootQualityMultiplier = parsedSupplyCrateLootQualityMultiplier;
-                            }
+                            SupplyCrateLootQualityMultiplier = value;
                             break;
                         case "FishingLootQualityMultiplier":
-                            if (double.TryParse(value, out double parsedFishingLootQualityMultiplier))
-                            {
-                                FishingLootQualityMultiplier = parsedFishingLootQualityMultiplier;
-                            }
+                            FishingLootQualityMultiplier = value;
                             break;
                         case "CraftingSkillBonusMultiplier":
-                            if (double.TryParse(value, out double parsedCraftingSkillBonusMultiplier))
-                            {
-                                CraftingSkillBonusMultiplier = parsedCraftingSkillBonusMultiplier;
-                            }
+                            CraftingSkillBonusMultiplier = value;
                             break;
                         case "AllowSpeedLeveling":
                             AllowSpeedLeveling = Convert.ToBoolean(value);
@@ -2043,8 +2233,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "PhotoModeRangeLimit", PhotoModeRangeLimit);
             UpdateLine(ref lines, "DisablePhotoMode", DisablePhotoMode.ToString());
             UpdateLine(ref lines, "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "AutoPvETimer", AutoPvETimer.ToString());
-            UpdateLine(ref lines, "AutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
+            UpdateLine(ref lines, "bAutoPvETimer", AutoPvETimer.ToString());
+            UpdateLine(ref lines, "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
             UpdateLine(ref lines, "DisableFriendlyFire", DisableFriendlyFire.ToString());
             UpdateLine(ref lines, "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
             UpdateLine(ref lines, "DisableLootCrates", DisableLootCrates.ToString());
@@ -2061,8 +2251,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
             UpdateLine(ref lines, "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
             UpdateLine(ref lines, "DisableDinoTaming", DisableDinoTaming.ToString());
-            UpdateLine(ref lines, "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
+            UpdateLine(ref lines, "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
             UpdateLine(ref lines, "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "BossKillXPMultiplier", BossKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "AlphaKillXPMultiplier", AlphaKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
@@ -2070,9 +2260,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "CaveKillXPMultiplier", CaveKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "TamedKillXPMultiplier", TamedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "FishingLootQualityMultiplier", FishingLootQualityMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
+            UpdateLine(ref lines, "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
+            UpdateLine(ref lines, "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);
             UpdateLine(ref lines, "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
             UpdateLine(ref lines, "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
 
@@ -3247,8 +3437,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 OnPropertyChanged(nameof(DisableDinoTaming));
             }
         }
-        private double _overrideMaxExperiencePointsDino;
-        public double OverrideMaxExperiencePointsDino
+        private string _overrideMaxExperiencePointsDino;
+        public string OverrideMaxExperiencePointsDino
         {
             get { return _overrideMaxExperiencePointsDino; }
             set
@@ -3258,8 +3448,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private int _maxNumberOfPlayersInTribe;
-        public int MaxNumberOfPlayersInTribe
+        private string _maxNumberOfPlayersInTribe;
+        public string MaxNumberOfPlayersInTribe
         {
             get { return _maxNumberOfPlayersInTribe; }
             set
@@ -3269,8 +3459,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _explorerNoteXPMultiplier;
-        public double ExplorerNoteXPMultiplier
+        private string _explorerNoteXPMultiplier;
+        public string ExplorerNoteXPMultiplier
         {
             get { return _explorerNoteXPMultiplier; }
             set
@@ -3280,8 +3470,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _bossKillXPMultiplier;
-        public double BossKillXPMultiplier
+        private string _bossKillXPMultiplier;
+        public string BossKillXPMultiplier
         {
             get { return _bossKillXPMultiplier; }
             set
@@ -3291,8 +3481,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _alphaKillXPMultiplier;
-        public double AlphaKillXPMultiplier
+        private string _alphaKillXPMultiplier;
+        public string AlphaKillXPMultiplier
         {
             get { return _alphaKillXPMultiplier; }
             set
@@ -3302,8 +3492,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _wildKillXPMultiplier;
-        public double WildKillXPMultiplier
+        private string _wildKillXPMultiplier;
+        public string WildKillXPMultiplier
         {
             get { return _wildKillXPMultiplier; }
             set
@@ -3313,8 +3503,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _caveKillXPMultiplier;
-        public double CaveKillXPMultiplier
+        private string _caveKillXPMultiplier;
+        public string CaveKillXPMultiplier
         {
             get { return _caveKillXPMultiplier; }
             set
@@ -3324,8 +3514,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _tamedKillXPMultiplier;
-        public double TamedKillXPMultiplier
+        private string _tamedKillXPMultiplier;
+        public string TamedKillXPMultiplier
         {
             get { return _tamedKillXPMultiplier; }
             set
@@ -3335,8 +3525,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _unclaimedKillXPMultiplier;
-        public double UnclaimedKillXPMultiplier
+        private string _unclaimedKillXPMultiplier;
+        public string UnclaimedKillXPMultiplier
         {
             get { return _unclaimedKillXPMultiplier; }
             set
@@ -3346,8 +3536,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _supplyCrateLootQualityMultiplier;
-        public double SupplyCrateLootQualityMultiplier
+        private string _supplyCrateLootQualityMultiplier;
+        public string SupplyCrateLootQualityMultiplier
         {
             get { return _supplyCrateLootQualityMultiplier; }
             set
@@ -3357,8 +3547,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _fishingLootQualityMultiplier;
-        public double FishingLootQualityMultiplier
+        private string _fishingLootQualityMultiplier;
+        public string FishingLootQualityMultiplier
         {
             get { return _fishingLootQualityMultiplier; }
             set
@@ -3368,8 +3558,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private double _craftingSkillBonusMultiplier;
-        public double CraftingSkillBonusMultiplier
+        private string _craftingSkillBonusMultiplier;
+        public string CraftingSkillBonusMultiplier
         {
             get { return _craftingSkillBonusMultiplier; }
             set
@@ -3390,13 +3580,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private bool _allowFlyerSpeedLeveling;
+        private bool _ballowFlyerSpeedLeveling;
         public bool AllowFlyerSpeedLeveling
         {
-            get { return _allowFlyerSpeedLeveling; }
+            get { return _ballowFlyerSpeedLeveling; }
             set
             {
-                _allowFlyerSpeedLeveling = value;
+                _ballowFlyerSpeedLeveling = value;
                 OnPropertyChanged(nameof(AllowFlyerSpeedLeveling));
             }
         }
