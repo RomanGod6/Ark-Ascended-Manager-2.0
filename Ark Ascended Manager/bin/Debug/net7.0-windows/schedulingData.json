@@ -1,0 +1,18 @@
+{
+  "RestartShutdown": [
+    {
+      "Days": [
+        "Monday"
+      ],
+      "Time": "02:00"
+    }
+  ],
+  "SaveWorld": [
+    {
+      "Days": [
+        "Monday"
+      ],
+      "Time": "02:00"
+    }
+  ]
+}

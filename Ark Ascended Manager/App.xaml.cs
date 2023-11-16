@@ -41,9 +41,10 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
                 services.AddTransient<CreateServersPage>();
                 services.AddTransient<ConfigPage>();
+         
 
 
-               services.AddSingleton<DashboardPage>();
+                services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
                 services.AddSingleton<ServersPage>();
                 services.AddSingleton<ServersViewModel>();
@@ -70,7 +71,12 @@ namespace Ark_Ascended_Manager
         private void OnStartup(object sender, StartupEventArgs e)
         {
             _host.Start();
+
+            // Retrieve the ServerManager instance and start it
+            // If ServerManager has a start method, call it here
+            // serverManager.Start();
         }
+
 
         /// <summary>
         /// Occurs when the application is closing.

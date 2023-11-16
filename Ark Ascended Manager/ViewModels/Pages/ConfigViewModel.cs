@@ -56,9 +56,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             // Implementation to set up the ViewModel's properties based on serverConfig
             CurrentServerConfig = serverConfig;
-            
+
             // ... Set other properties as needed
         }
+
         private void LoadLaunchServerSettings()
         {
             // Assuming CurrentServerConfig.ServerPath is the path to the server's main directory
@@ -76,6 +77,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Console.WriteLine("LaunchServer.bat file does not exist.");
             }
         }
+
         private void ParseBatFileLines(string[] lines)
         {
             foreach (string line in lines)

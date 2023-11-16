@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "CyzayH94tmRfeAnpLrx1Il5Q+sfQwo5IwAcJv9OenLXY7GZhI07lKv7JL/KlueBMh5eXSUVZHCcHZxs0bnsKbQ==",
+  "dgSpecHash": "2pfPqKCmMMVsixjy7C8jeZ2sjqfD9OQPUwtNuN87IGp18AQRalGdiNgPLGG8xXjLTqLKglxpJ4yN+PGZ4TqneQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Dillon Griffey\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
@@ -31,6 +31,7 @@
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\7.0.0\\microsoft.extensions.options.configurationextensions.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\Dillon Griffey\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\ookii.dialogs.wpf\\5.0.1\\ookii.dialogs.wpf.5.0.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.diagnostics.diagnosticsource\\7.0.1\\system.diagnostics.diagnosticsource.7.0.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0\\system.diagnostics.eventlog.7.0.0.nupkg.sha512",
