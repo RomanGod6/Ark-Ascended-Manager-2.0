@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
+using Ark_Ascended_Manager.Services;
 
 namespace Ark_Ascended_Manager
 {
@@ -22,6 +23,7 @@ namespace Ark_Ascended_Manager
     /// </summary>
     public partial class App
     {
+        
         // The.NET Generic Host provides dependency injection, configuration, logging, and other services.
         // https://docs.microsoft.com/dotnet/core/extensions/generic-host
         // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
@@ -41,7 +43,8 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
                 services.AddTransient<CreateServersPage>();
                 services.AddTransient<ConfigPage>();
-         
+                services.AddSingleton<SchedulerService>();
+
 
 
                 services.AddSingleton<DashboardPage>();
@@ -71,6 +74,7 @@ namespace Ark_Ascended_Manager
         private void OnStartup(object sender, StartupEventArgs e)
         {
             _host.Start();
+            var schedulerService = GetService<SchedulerService>();
 
             // Retrieve the ServerManager instance and start it
             // If ServerManager has a start method, call it here

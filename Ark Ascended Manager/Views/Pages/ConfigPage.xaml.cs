@@ -103,6 +103,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             public Dictionary<string, List<Schedule>> RestartShutdown { get; set; } = new Dictionary<string, List<Schedule>>();
             public Dictionary<string, List<Schedule>> SaveWorld { get; set; } = new Dictionary<string, List<Schedule>>();
+ 
         }
         private void SaveScheduleButton_Click(object sender, RoutedEventArgs e)
         {
@@ -307,6 +308,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             public string Time { get; set; }
             public string Action { get; set; } // If you have an action field
             public bool IsSelected { get; set; }
+
         }
 
 
@@ -364,5 +366,31 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         // The ViewModel property is publicly accessible and set in the constructor.
         public ConfigPageViewModel ViewModel { get; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
+
 }

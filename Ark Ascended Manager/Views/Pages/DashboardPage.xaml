@@ -1,36 +1,44 @@
-﻿<Page
-    x:Class="Ark_Ascended_Manager.Views.Pages.DashboardPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="DashboardPage"
-    d:DataContext="{d:DesignInstance local:DashboardPage,
-                                     IsDesignTimeCreatable=False}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
-    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    mc:Ignorable="d">
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="DashboardPage">
 
-    <Grid VerticalAlignment="Top">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <!-- Server Information -->
+        <ListView ItemsSource="{Binding ServerProfiles}" Margin="10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Profile Name" DisplayMemberBinding="{Binding ProfileName}" Width="120" />
+                    <GridViewColumn Header="Server Name" DisplayMemberBinding="{Binding ServerName}" Width="120" />
+                    <!-- Add other columns as needed -->
+                </GridView>
+            </ListView.View>
+        </ListView>
 
-        <ui:Button
-            Grid.Column="0"
-            Command="{Binding ViewModel.CounterIncrementCommand, Mode=OneWay}"
-            Content="Click me!"
-            Icon="Fluent24" />
-        <TextBlock
-            Grid.Column="1"
-            Margin="12,0,0,0"
-            VerticalAlignment="Center"
-            Text="{Binding ViewModel.Counter, Mode=OneWay}" />
+        <!-- Scheduling Data -->
+        <!-- Assuming each ServerProfile has a SchedulingData property -->
+        <ListView ItemsSource="{Binding ServerProfiles}" Margin="10">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Expander Header="{Binding ProfileName}">
+                        <ListView ItemsSource="{Binding SchedulingData}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Time}" Margin="5" />
+                                        <!-- Assuming you have a property to convert Days list to string -->
+                                        <TextBlock Text="{Binding DaysAsString}" Margin="5" />
+                                        <!-- Add other details as needed -->
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Expander>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>
