@@ -74,6 +74,7 @@ namespace Ark_Ascended_Manager.Models
     {
         public List<string> Days { get; set; }
         public string Time { get; set; }
+        public string Countdown { get; set; }
         // Add other relevant properties as needed
     }
 }

@@ -11,16 +11,22 @@ namespace Ark_Ascended_Manager.Services
 {
     internal class SchedulerService
     {
-        private const string JsonFilePath = @"C:\Users\Dillon Griffey\AppData\Roaming\Ark Ascended Manager\allServersSchedulingData.json";
+        private string JsonFilePath;
         private Dictionary<string, List<ScheduleItem>> _restartShutdownSchedule;
         private Dictionary<string, List<ScheduleItem>> _saveWorldSchedule;
         private List<Timer> _timers = new List<Timer>();
         private List<ServerProfile> _serverProfiles;
         public SchedulerService()
         {
+            SetJsonFilePath();
             LoadSchedules();
             InitializeSchedulers();
             LoadServerProfiles();
+        }
+        private void SetJsonFilePath()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            JsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "allServersSchedulingData.json");
         }
 
         private void LoadSchedules()
@@ -104,16 +110,23 @@ namespace Ark_Ascended_Manager.Services
             var now = DateTime.Now;
             var nextOccurrence = DateTime.MaxValue;
 
+            // Calculate the next occurrence of the scheduled action
             foreach (var day in days)
             {
                 if (Enum.TryParse(day, true, out DayOfWeek dayOfWeek))
                 {
                     var daysUntilNextOccurrence = ((int)dayOfWeek - (int)now.DayOfWeek + 7) % 7;
+
+                    // If the scheduled time is today but has already passed, set the next occurrence to the next week
                     if (daysUntilNextOccurrence == 0 && now.TimeOfDay > scheduledTime)
                     {
                         daysUntilNextOccurrence = 7;
                     }
+
+                    // Calculate the datetime for the next occurrence of the action
                     var nextDay = now.AddDays(daysUntilNextOccurrence).Date.Add(scheduledTime);
+
+                    // If this occurrence is sooner than the previously calculated one, use this one instead
                     if (nextDay < nextOccurrence)
                     {
                         nextOccurrence = nextDay;
@@ -121,8 +134,15 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
 
-            return nextOccurrence - now;
+            // Calculate the TimeSpan until the next occurrence
+            TimeSpan timeToAction = nextOccurrence - now;
+
+            // Output the debug information with the countdown
+            Debug.WriteLine($"Next action for time '{time}' on days [{string.Join(", ", days)}] is in {timeToAction.TotalHours} hours ({timeToAction}).");
+
+            return timeToAction;
         }
+
 
         private async Task ExecuteScheduledAction(string serverName, ScheduleItem item, string actionType)
         {
