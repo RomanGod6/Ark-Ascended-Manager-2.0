@@ -52,7 +52,12 @@
             <!-- For the tab control -->
         </Grid.RowDefinitions>
 
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Start Server" Command="{Binding StartServerCommand}" Margin="5"/>
+            <Button Content="Stop Server" Margin="5" Command="{Binding StopServerCommand}"/>
+            <Button Content="Update Server" Command="{Binding UpdateServerCommand}" Margin="5"/>
 
+        </StackPanel>
 
         <!-- TabControl for Server Settings -->
         <TabControl Grid.Row="1" Margin="10">

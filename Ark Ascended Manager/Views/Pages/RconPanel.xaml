@@ -1,0 +1,56 @@
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.RconPanelPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="Rcon Panel">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- RCON Connection Status -->
+        <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10">
+            <TextBlock Text="RCON Status" FontWeight="Bold"/>
+            <TextBlock Text="{Binding RconConnectionStatus}" Foreground="{Binding RconStatusColor}"/>
+        </StackPanel>
+
+        <!-- Command History and Server Chat -->
+        <Grid Grid.Column="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox Grid.Row="0" ItemsSource="{Binding ServerNames}"
+                      SelectedItem="{Binding SelectedServerName}"
+                      Height="40" Margin="0,0,0,10">
+                <!-- Server dropdown selection -->
+            </ComboBox>
+
+            <ListBox Grid.Row="1" ItemsSource="{Binding CombinedChatAndCommandHistory}"
+         Margin="0,0,0,10" MinWidth="100" MinHeight="100">
+                <!-- Bind combined chat and command items here -->
+            </ListBox>
+
+
+            <DockPanel Grid.Row="2" Margin="10" VerticalAlignment="Bottom">
+                <TextBox DockPanel.Dock="Top" Margin="0,0,0,10" Height="35" Text="{Binding CommandInput}" />
+                <Button Content="Send" Height="35" Width="75" Command="{Binding SendCommand}" DockPanel.Dock="Top" />
+            </DockPanel>
+        </Grid>
+
+        <!-- Player List -->
+        <StackPanel Grid.Column="2" Margin="10">
+            <TextBlock Text="Connected Players:" FontWeight="Bold" Margin="0,0,0,10"/>
+            <ListBox ItemsSource="{Binding ConnectedPlayers}"
+                     Background="Black" Foreground="WhiteSmoke">
+                <!-- Bind player list items here -->
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</Page>

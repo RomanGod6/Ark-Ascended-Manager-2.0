@@ -52,7 +52,7 @@
         <TextBox Text="{Binding ListenPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         
         <Label Content="Rcon Port"/>
-        <TextBox Text="{Binding RconPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding RCONPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         
         <Label Content="Mods (comma-separated)"/>
         <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

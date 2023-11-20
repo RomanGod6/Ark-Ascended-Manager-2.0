@@ -16,17 +16,41 @@ namespace Ark_Ascended_Manager.Services
         private Dictionary<string, List<ScheduleItem>> _saveWorldSchedule;
         private List<Timer> _timers = new List<Timer>();
         private List<ServerProfile> _serverProfiles;
+        private Timer _countdownTimer;
         public SchedulerService()
         {
             SetJsonFilePath();
             LoadSchedules();
             InitializeSchedulers();
             LoadServerProfiles();
+            _countdownTimer = new Timer(LogNextScheduledAction, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
         }
         private void SetJsonFilePath()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             JsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "allServersSchedulingData.json");
+        }
+        private void LogNextScheduledAction(object state)
+        {
+            var nextAction = GetNextScheduledAction();
+            if (nextAction != null)
+            {
+                TimeSpan timeRemaining = nextAction.NextRunTime - DateTime.Now;
+                Debug.WriteLine($"Next scheduled action: {nextAction.Action} for server {nextAction.ServerName} in {timeRemaining}");
+            }
+            else
+            {
+                Debug.WriteLine("No upcoming actions scheduled.");
+            }
+        }
+
+        private ScheduledTaskInfo GetNextScheduledAction()
+        {
+            // Assuming GetScheduledTasks() returns a list of all scheduled tasks
+            var allTasks = GetScheduledTasks();
+            var upcomingTasks = allTasks.OrderBy(t => t.NextRunTime).FirstOrDefault();
+
+            return upcomingTasks;
         }
 
         private void LoadSchedules()
@@ -146,21 +170,100 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task ExecuteScheduledAction(string serverName, ScheduleItem item, string actionType)
         {
-            if (item.IsSelected)
+            // Assuming if it's in the schedule, it should be executed
+            ServerProfile profile = GetServerProfile(serverName);
+            Debug.WriteLine("Intiating Execute Schedules");
+
+            // Send server chat command for all actions
+            await SendServerChatCommandAsync(profile, $"Action {actionType} will start shortly. Please be prepared.");
+
+            if (actionType == "Shutdown" || actionType == "Restart/Shutdown")
             {
-                string command = DetermineRconCommand(item, actionType);
-                ServerProfile profile = GetServerProfile(serverName);
-                await SendRconCommandAsync(profile, command);
+                // Send server chat command every minute for 9 minutes
+                for (int i = 1; i <= 9; i++)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(1));
+                    await SendServerChatCommandAsync(profile, $"{actionType} in {10 - i} minutes.");
+                }
+
+                // Perform save world before shutdown or restart
+                await SendRconCommandAsync(profile, "saveworld");
+                await Task.Delay(TimeSpan.FromMinutes(1));
+            }
+
+            // Execute the main action
+            string command = DetermineRconCommand(item, actionType);
+            await SendRconCommandAsync(profile, command);
+
+            // If it's a restart, start the batch file after shutdown
+            if (actionType == "Restart/Shutdown")
+            {
+                StartBatchFileForRestart(serverName);
             }
         }
 
 
+
+
+        private async Task SendServerChatCommandAsync(ServerProfile profile, string message)
+        {
+            // Implement the logic to send a server chat command
+            string chatCommand = $"ServerChat {message}";
+            await SendRconCommandAsync(profile, chatCommand);
+        }
+
+        private void StartBatchFileForRestart(string serverName)
+        {
+            // Retrieve the server profile
+            ServerProfile profile = GetServerProfile(serverName);
+            if (profile == null)
+            {
+                Debug.WriteLine($"Server profile for '{serverName}' not found. Cannot start batch file.");
+                return;
+            }
+
+            // Construct the path to the batch file
+            string batchFilePath = Path.Combine(profile.ServerPath, "LaunchServer.bat");
+
+            // Check if the batch file exists
+            if (!File.Exists(batchFilePath))
+            {
+                Debug.WriteLine($"Batch file '{batchFilePath}' not found.");
+                return;
+            }
+
+            try
+            {
+                // Start the batch file
+                Process.Start(batchFilePath);
+                Debug.WriteLine($"Started batch file: {batchFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error starting batch file: {ex.Message}");
+            }
+        }
+
+
+
+
         private string DetermineRconCommand(ScheduleItem item, string actionType)
         {
-            // Determine the appropriate RCON command based on the schedule item and action type
-            // Placeholder logic
-            return "command"; // Example
+            switch (actionType)
+            {
+                case "Save World":
+                    return "saveworld";
+                case "Shutdown":
+                                    return "doexit";
+                case "Restart":
+                case "Restart/Shutdown":
+                    return "doexit"; // For restart, we'll handle the batch file execution separately
+                default:
+                    throw new InvalidOperationException($"Action type '{actionType}' is not recognized.");
+            }
         }
+
+
         private void LoadServerProfiles()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -201,25 +304,23 @@ namespace Ark_Ascended_Manager.Services
                 }
             };
 
-            Debug.WriteLine($"Sending RCON command to server: {profile.Name}, Command: {command}");
-            Debug.WriteLine($"Full Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
-
             try
             {
-                await Task.Run(() =>
-                {
-                    process.Start();
-                    string output = process.StandardOutput.ReadToEnd();
-                    process.WaitForExit();
+                Debug.WriteLine($"Attempting to send RCON command to server: {profile.Name}, Command: {command}");
+                Debug.WriteLine($"Full Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
 
-                    Debug.WriteLine($"RCON Output: {output}");
-                });
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                Debug.WriteLine($"RCON command sent. Output: {output}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error sending RCON command: {ex.Message}");
+                Debug.WriteLine($"Exception sending RCON command: {ex}");
             }
         }
+
 
         // Method to get the scheduled tasks
         public List<ScheduledTaskInfo> GetScheduledTasks()

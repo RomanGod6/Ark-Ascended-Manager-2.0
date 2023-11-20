@@ -28,6 +28,12 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 Content = "Servers",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
                 TargetPageType = typeof(Views.Pages.ServersPage)
+            },
+             new NavigationViewItem()
+            {
+                Content = "RCON",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
+                TargetPageType = typeof(Views.Pages.RconPanelPage)
             }
         };
 

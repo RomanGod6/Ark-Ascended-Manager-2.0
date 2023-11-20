@@ -9,6 +9,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -18,6 +19,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand SaveGameUserSettingsCommand { get; private set; }
         public ICommand SaveGameIniSettingsCommand { get; private set; }
         public ICommand LoadLaunchServerSettingsCommand { get; private set; }
+        public ICommand StartServerCommand { get; private set; }
+        public ICommand UpdateServerCommand { get; private set; }
+        public ICommand StopServerCommand { get; private set; }
 
         public ConfigPageViewModel()
         {
@@ -25,6 +29,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGameUserSettingsCommand = new RelayCommand(SaveGameUserSettings);
             SaveGameIniSettingsCommand = new RelayCommand(SaveGameIniSettings);
             LoadLaunchServerSettingsCommand = new RelayCommand(UpdateLaunchParameters);
+            StartServerCommand = new RelayCommand(StartServer);
+            UpdateServerCommand = new RelayCommand(UpdateServerBasedOnJson);
+            StopServerCommand = new RelayCommand(async () => await InitiateServerShutdownAsync(10));
 
         }
 
@@ -40,7 +47,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 string json = File.ReadAllText(filePath);
 
                 // Deserialize the JSON to a ServerConfig object
-                CurrentServerConfig = JsonSerializer.Deserialize<ServerConfig>(json);
+                CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
 
                 // Now you can use CurrentServerConfig to get the profile name and find it in the server master list
                 // For example:
@@ -52,12 +59,210 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadGameIniFile();
             LoadLaunchServerSettings();
         }
+        public async Task InitiateServerShutdownAsync(int countdownMinutes)
+        {
+            Debug.WriteLine("Shutdown Clicked");
+            if (CurrentServerConfig == null)
+            {
+                Debug.WriteLine("Current server configuration is not loaded.");
+                return;
+            }
+
+            // Countdown logic
+            for (int minute = countdownMinutes; minute > 0; minute--)
+            {
+                // Send a warning message to server
+                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes.");
+                // Wait for 1 minute
+                await Task.Delay(TimeSpan.FromMinutes(1));
+            }
+
+            // Save world before shutdown
+            await SendRconCommandAsync("saveworld");
+            // Shutdown command
+            await SendRconCommandAsync("doexit");
+        }
+
+        private async Task SendRconCommandAsync(string command)
+        {
+            if (CurrentServerConfig == null)
+            {
+                Debug.WriteLine("Current server configuration is not loaded.");
+                return;
+            }
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = "cmd.exe",
+                    Arguments = $"/C echo {command} | mcrcon 127.0.0.1 --password {CurrentServerConfig.AdminPassword} -p {CurrentServerConfig.RCONPort}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            try
+            {
+                process.Start();
+                string output = await process.StandardOutput.ReadToEndAsync();
+                string error = await process.StandardError.ReadToEndAsync();
+                process.WaitForExit();
+
+                if (!string.IsNullOrEmpty(output))
+                {
+                    Debug.WriteLine($"RCON command output: {output}");
+                }
+                if (!string.IsNullOrEmpty(error))
+                {
+                    Debug.WriteLine($"RCON command error: {error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+            }
+        }
+
+
+
+
+
+        // Call this method when user clicks the stop button and enters the countdown time
+        public async Task OnStopServerClicked()
+        {
+            const int defaultShutdownTimer = 10;
+            await InitiateServerShutdownAsync(defaultShutdownTimer);
+        }
+
+
+
+
+        private string GetAppIdForMapFromJson(string mapName)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+
+                foreach (var serverConfig in serverConfigs)
+                {
+                    if (serverConfig.MapName == mapName)
+                    {
+                        Debug.WriteLine($"App ID for {mapName} is {serverConfig.AppId}");
+                        return serverConfig.AppId;
+                    }
+                }
+            }
+
+            Debug.WriteLine($"Map name {mapName} not found in servers.json");
+            return null; // Or your default app ID
+        }
+
+
+        public void UpdateServerBasedOnJson()
+        {
+            LoadServerProfile(); // Ensure that CurrentServerConfig is loaded
+
+            ServerConfig currentServerConfig = CurrentServerConfig; // Assuming CurrentServerConfig is a property or field
+
+            if (currentServerConfig != null && !string.IsNullOrEmpty(currentServerConfig.AppId))
+            {
+                string scriptPath = Path.Combine(Path.GetTempPath(), "steamcmd_update_script.txt");
+                File.WriteAllLines(scriptPath, new string[]
+                {
+            $"force_install_dir \"{currentServerConfig.ServerPath}\"",
+            "login anonymous",
+            $"app_update {currentServerConfig.AppId} validate",
+            "quit"
+                });
+                RunSteamCMD(scriptPath);
+            }
+            else
+            {
+                Debug.WriteLine("Could not update the server, App ID not found or Server Config is null");
+            }
+        }
+
+
+        private void RunSteamCMD(string scriptPath)
+        {
+            string steamCmdPath = FindSteamCmdPath();
+            if (string.IsNullOrEmpty(steamCmdPath))
+            {
+                // Handle the error: steamcmd.exe not found
+                return;
+            }
+
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                FileName = steamCmdPath,
+                Arguments = $"+runscript \"{scriptPath}\"",
+                UseShellExecute = true,
+                CreateNoWindow = false
+            };
+
+            using (Process process = new Process { StartInfo = processStartInfo })
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+        }
+
+        private string FindSteamCmdPath()
+        {
+            // Your implementation to find steamcmd.exe
+            // Example:
+            string defaultPath = @"C:\SteamCMD\steamcmd.exe";
+            if (File.Exists(defaultPath))
+            {
+                return defaultPath;
+            }
+            // Additional logic to find steamcmd.exe if not in the default location
+            return null;
+        }
+
+        private Dictionary<string, string> _mapToAppId = new Dictionary<string, string>()
+        {
+            { "TheIsland_WP", "2430930" }
+            // Add more mappings here
+        };
+
+        public Dictionary<string, string> MapToAppId
+        {
+            get { return _mapToAppId; }
+            // Read-only if you do not plan to change it dynamically
+        }
+        
+
+
         public void LoadConfig(ServerConfig serverConfig)
         {
             // Implementation to set up the ViewModel's properties based on serverConfig
             CurrentServerConfig = serverConfig;
 
             // ... Set other properties as needed
+        }
+        private void StartServer()
+        {
+            string serverDirectory = CurrentServerConfig.ServerPath;
+            string batchFilePath = Path.Combine(serverDirectory, "LaunchServer.bat");
+
+            if (File.Exists(batchFilePath))
+            {
+                Process.Start(batchFilePath);
+            }
+            else
+            {
+                // Handle the case where the batch file is not found
+                // You can use a messaging system or a dialog service to display errors
+            }
         }
 
         private void LoadLaunchServerSettings()

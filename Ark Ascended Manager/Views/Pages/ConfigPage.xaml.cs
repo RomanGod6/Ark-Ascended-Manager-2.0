@@ -105,6 +105,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             public Dictionary<string, List<Schedule>> SaveWorld { get; set; } = new Dictionary<string, List<Schedule>>();
  
         }
+
         private void SaveScheduleButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedDays = GetSelectedDays();
