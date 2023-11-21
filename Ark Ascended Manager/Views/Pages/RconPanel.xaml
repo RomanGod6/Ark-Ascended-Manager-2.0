@@ -15,8 +15,22 @@
         <!-- RCON Connection Status -->
         <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10">
             <TextBlock Text="RCON Status" FontWeight="Bold"/>
-            <TextBlock Text="{Binding RconConnectionStatus}" Foreground="{Binding RconStatusColor}"/>
+            <TextBlock Text="{Binding RconStatus}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RconStatus}" Value="Disconnected">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding RconStatus}" Value="Connected">
+                                <Setter Property="Foreground" Value="Green"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </StackPanel>
+
 
         <!-- Command History and Server Chat -->
         <Grid Grid.Column="1" Margin="10">
@@ -26,13 +40,16 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Grid.Row="0" ItemsSource="{Binding ServerNames}"
-                      SelectedItem="{Binding SelectedServerName}"
-                      Height="40" Margin="0,0,0,10">
-                <!-- Server dropdown selection -->
+            <ComboBox Grid.Row="0" ItemsSource="{Binding ServerProfiles}"
+          DisplayMemberPath="ServerName" 
+          SelectedValuePath="ServerName"
+          SelectedItem="{Binding SelectedServerProfile}"
+          Height="40" Margin="0,0,0,10">
+            <!-- Server dropdown selection -->
             </ComboBox>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding CombinedChatAndCommandHistory}"
+
+            <ListBox Grid.Row="1" ItemsSource="{Binding ServerChat}"
          Margin="0,0,0,10" MinWidth="100" MinHeight="100">
                 <!-- Bind combined chat and command items here -->
             </ListBox>
@@ -47,10 +64,25 @@
         <!-- Player List -->
         <StackPanel Grid.Column="2" Margin="10">
             <TextBlock Text="Connected Players:" FontWeight="Bold" Margin="0,0,0,10"/>
-            <ListBox ItemsSource="{Binding ConnectedPlayers}"
-                     Background="Black" Foreground="WhiteSmoke">
-                <!-- Bind player list items here -->
+            <ListBox x:Name="PlayersListBox" ItemsSource="{Binding ConnectedPlayers}" SelectedItem="{Binding SelectedPlayerInfo}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}">
+                                    <MenuItem Header="Copy ID" Command="{Binding Path=DataContext.CopyIdCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding SelectedItem, ElementName=PlayersListBox}" />
+
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
+            
+
+
+
         </StackPanel>
+
     </Grid>
 </Page>

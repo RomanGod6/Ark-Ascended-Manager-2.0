@@ -45,6 +45,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<ConfigPage>();
                 services.AddSingleton<SchedulerService>();
                 services.AddSingleton<RconPanelPage>();
+                services.AddSingleton<SyncConfigPage>();
 
 
 
@@ -57,6 +58,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<CreateServersPageViewModel>();
                 services.AddTransient<ConfigPageViewModel>();
                 services.AddSingleton<RconPanelViewModel>();
+                services.AddSingleton<SyncConfigViewModel>();
             }).Build();
 
         /// <summary>

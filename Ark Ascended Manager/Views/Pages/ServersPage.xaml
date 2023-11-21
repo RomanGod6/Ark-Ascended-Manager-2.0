@@ -19,15 +19,23 @@
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
-	<Grid>
-		<!-- Create Server Button -->
-		<Button Content="Create Server"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="10"
-                Click="CreateServer_Click" />
-        <!-- In ServersPage.xaml -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto"  Padding="2" Margin="10,56,0,0">
+    <Grid>
+        <!-- Create Server Button -->
+        <Button Content="Create Server"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="10,10,150,0"
+            Click="CreateServer_Click" />
+
+        <!-- Sync Servers Button -->
+        <Button Content="Sync Servers"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="10"
+            Click="SyncServers_Click" />
+
+        <!-- Servers list -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="2" Margin="10,56,0,0">
             <ItemsControl ItemsSource="{Binding ServerConfigs}" Height="352">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -37,16 +45,13 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Margin="10"
-                    Command="{Binding DataContext.SaveServerProfileCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}">
+                            Command="{Binding DataContext.SaveServerProfileCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                            CommandParameter="{Binding}">
                             <controls:ServerCard Margin="5"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-
+            </ItemsControl>
         </ScrollViewer>
-
     </Grid>
 </Page>

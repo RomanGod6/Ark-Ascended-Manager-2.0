@@ -126,6 +126,7 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.g.cs
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.g.cs
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.g.cs
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.g.cs
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.g.cs
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_Content.g.cs
@@ -136,6 +137,7 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.g.resources
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.GeneratedMSBuildEditorConfig.editorconfig

@@ -33,6 +33,13 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             ViewModel.OnNavigatedTo(); // This should call LoadServerConfigs internally
         }
+        private void SyncServers_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate to the SyncServersPage
+            var syncServersPage = new SyncConfigPage();
+            this.NavigationService.Navigate(syncServersPage);
+        }
+
 
         // ViewModel property
         public ServersViewModel ViewModel { get; }

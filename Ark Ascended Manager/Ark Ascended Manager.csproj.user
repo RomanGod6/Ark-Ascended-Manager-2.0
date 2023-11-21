@@ -24,6 +24,9 @@
     <Page Update="Views\Pages\DashboardPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Pages\SyncConfigPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
