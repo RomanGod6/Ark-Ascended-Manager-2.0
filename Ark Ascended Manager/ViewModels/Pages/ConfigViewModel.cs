@@ -22,6 +22,38 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand StartServerCommand { get; private set; }
         public ICommand UpdateServerCommand { get; private set; }
         public ICommand StopServerCommand { get; private set; }
+        public ICommand SaveGameIniCommand { get; }
+        public ICommand SaveGAMEIniFileCommand { get; private set; }
+        private string _iniContent;
+        public string IniContent
+        {
+            get => _iniContent;
+            set
+            {
+                if (_iniContent != value)
+                {
+                    _iniContent = value;
+                    OnPropertyChanged(nameof(IniContent));
+                }
+            }
+        }
+        private string _gameiniContent;
+        public string GameIniContent
+        {
+            get => _gameiniContent;
+            set
+            {
+                if (_gameiniContent != value)
+                {
+                    _gameiniContent = value;
+                    OnPropertyChanged(nameof(GameIniContent));
+                }
+            }
+        }
+
+        public ICommand SaveIniFileCommand { get; private set; }
+        
+
 
         public ConfigPageViewModel()
         {
@@ -32,8 +64,54 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             StartServerCommand = new RelayCommand(StartServer);
             UpdateServerCommand = new RelayCommand(UpdateServerBasedOnJson);
             StopServerCommand = new RelayCommand(async () => await InitiateServerShutdownAsync(10));
+            LoadCustomGUSIniFile();
+            SaveIniFileCommand = new RelayCommand(SaveCustomGUSIniFile);
+            LoadCustomGAMEIniFile();
+            SaveGAMEIniFileCommand = new RelayCommand(SaveCustomGAMEIniFile);
 
         }
+        private void LoadCustomGAMEIniFile()
+        {
+            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            if (File.Exists(filePath))
+            {
+                GameIniContent = File.ReadAllText(filePath);
+            }
+        }
+
+        private void SaveCustomGAMEIniFile()
+        {
+            // Save the IniContent back to the file
+            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            File.WriteAllText(filePath, GameIniContent);
+            MessageBox.Show("GAME INI file saved successfully.");
+
+        }
+        private void LoadCustomGUSIniFile()
+        {
+            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "GameUserSettings.ini");
+            if (File.Exists(filePath))
+            {
+                IniContent = File.ReadAllText(filePath);
+            }
+        }
+        private void SaveCustomGUSIniFile()
+        {
+            // Save the IniContent back to the file
+            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "GameUserSettings.ini");
+            File.WriteAllText(filePath, IniContent);
+            MessageBox.Show("GUS file saved successfully.");
+
+        }
+
+
+
+
+        
 
         private void LoadServerProfile()
         {
@@ -49,11 +127,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 // Deserialize the JSON to a ServerConfig object
                 CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
 
-                // Now you can use CurrentServerConfig to get the profile name and find it in the server master list
-                // For example:
-                // string profileName = CurrentServerConfig.ProfileName;
-                // ServerDetails details = FindInMasterList(profileName);
-                // ...
+               
             }
             LoadIniFile();
             LoadGameIniFile();
