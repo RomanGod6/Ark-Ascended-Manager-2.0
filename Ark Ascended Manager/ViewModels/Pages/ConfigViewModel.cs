@@ -585,11 +585,11 @@ set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
 
-start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?ServerPassword=%ServerPassword%?Port=%Port%?RCONPort=%RconPort%?ServerAdminPassword=%AdminPassword%?{booleanSettings}{modsSetting}{multihomeArgument}{serverIPArgument} -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -forcerespawndinos -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -UseBattlEye -NotifyAdminCommandsInChat
+start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?ServerPassword=%ServerPassword%?Port=%Port%?RCONPort=%RconPort%?ServerAdminPassword=%AdminPassword% {booleanSettings}{modsSetting}{multihomeArgument}{serverIPArgument} -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -forcerespawndinos -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -UseBattlEye -NotifyAdminCommandsInChat
 ".Trim();
 
             // Remove spaces before dashes
-            batchFileContent = Regex.Replace(batchFileContent, @"\s+-", "-");
+            
 
             return batchFileContent;
         }
