@@ -511,6 +511,7 @@ start {serverExecutablePath} {config.MapName}?listen?SessionName=%ServerName%?RC
             public string ServerPath { get; set; }
             public string MapName { get; set; }
             public string AppId { get; set; }
+            public bool IsRunning { get; set; }
 
             public string ServerName { get; set; }
             public int ListenPort { get; set; } // Ports are typically integers

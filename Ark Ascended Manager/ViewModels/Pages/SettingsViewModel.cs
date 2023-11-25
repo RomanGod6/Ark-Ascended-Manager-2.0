@@ -1,15 +1,22 @@
-﻿// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
-// Copyright (C) Leszek Pomianowski and WPF UI Contributors.
-// All Rights Reserved.
+﻿
 
+using Ark_Ascended_Manager.Views.Pages;
+using System.Windows.Input;
 using Wpf.Ui.Controls;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
+
 {
     public partial class SettingsViewModel : ObservableObject, INavigationAware
     {
+        public ICommand OpenIssueReportFormCommand { get; private set; }
         private bool _isInitialized = false;
+        private readonly INavigationService _navigationService;
+        public SettingsViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
+            
+        }
 
         [ObservableProperty]
         private string _appVersion = String.Empty;
@@ -22,13 +29,14 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (!_isInitialized)
                 InitializeViewModel();
         }
+       
 
         public void OnNavigatedFrom() { }
 
         private void InitializeViewModel()
         {
             CurrentTheme = Wpf.Ui.Appearance.Theme.GetAppTheme();
-            AppVersion = $"Ark_Ascended_Manager - {GetAssemblyVersion()}";
+            AppVersion = $"Ark Ascended Manager - {GetAssemblyVersion()}";
 
             _isInitialized = true;
         }

@@ -7,6 +7,10 @@
       Title="DashboardPage">
 
     <Grid>
+        <TextBlock Text="Coming Soon"
+           FontSize="24" 
+           FontWeight="Bold" />
+
         <!-- Server Information -->
         <ListView ItemsSource="{Binding ServerProfiles}" Margin="10">
             <ListView.View>

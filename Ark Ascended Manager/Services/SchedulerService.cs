@@ -93,35 +93,42 @@ namespace Ark_Ascended_Manager.Services
         private void InitializeSchedulers()
         {
             // Initialize schedulers for RestartShutdown
-            foreach (var schedule in _restartShutdownSchedule)
+            if (_restartShutdownSchedule != null)
             {
-                foreach (var item in schedule.Value)
+                foreach (var schedule in _restartShutdownSchedule)
                 {
-                    TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                    var timer = new Timer(async _ =>
+                    foreach (var item in schedule.Value)
                     {
-                        await ExecuteScheduledAction(schedule.Key, item, "Restart/Shutdown");
-                    }, null, timeToAction, Timeout.InfiniteTimeSpan);
+                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
+                        var timer = new Timer(async _ =>
+                        {
+                            await ExecuteScheduledAction(schedule.Key, item, "Restart/Shutdown");
+                        }, null, timeToAction, Timeout.InfiniteTimeSpan);
 
-                    _timers.Add(timer);
+                        _timers.Add(timer);
+                    }
                 }
             }
 
             // Initialize schedulers for SaveWorld
-            foreach (var schedule in _saveWorldSchedule)
+            if (_saveWorldSchedule != null)
             {
-                foreach (var item in schedule.Value)
+                foreach (var schedule in _saveWorldSchedule)
                 {
-                    TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                    var timer = new Timer(async _ =>
+                    foreach (var item in schedule.Value)
                     {
-                        await ExecuteScheduledAction(schedule.Key, item, "Save World");
-                    }, null, timeToAction, Timeout.InfiniteTimeSpan);
+                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
+                        var timer = new Timer(async _ =>
+                        {
+                            await ExecuteScheduledAction(schedule.Key, item, "Save World");
+                        }, null, timeToAction, Timeout.InfiniteTimeSpan);
 
-                    _timers.Add(timer);
+                        _timers.Add(timer);
+                    }
                 }
             }
         }
+
 
 
         private TimeSpan ConvertToTimeSpan(string time, List<string> days)
@@ -328,37 +335,44 @@ namespace Ark_Ascended_Manager.Services
             var tasks = new List<ScheduledTaskInfo>();
 
             // Process RestartShutdown Schedules
-            foreach (var schedule in _restartShutdownSchedule)
+            if (_restartShutdownSchedule != null)
             {
-                foreach (var item in schedule.Value)
+                foreach (var schedule in _restartShutdownSchedule)
                 {
-                    TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                    tasks.Add(new ScheduledTaskInfo
+                    foreach (var item in schedule.Value)
                     {
-                        ServerName = schedule.Key,
-                        Action = "Restart/Shutdown",
-                        NextRunTime = DateTime.Now + timeToAction
-                    });
+                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
+                        tasks.Add(new ScheduledTaskInfo
+                        {
+                            ServerName = schedule.Key,
+                            Action = "Restart/Shutdown",
+                            NextRunTime = DateTime.Now + timeToAction
+                        });
+                    }
                 }
             }
 
             // Process SaveWorld Schedules
-            foreach (var schedule in _saveWorldSchedule)
+            if (_saveWorldSchedule != null)
             {
-                foreach (var item in schedule.Value)
+                foreach (var schedule in _saveWorldSchedule)
                 {
-                    TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                    tasks.Add(new ScheduledTaskInfo
+                    foreach (var item in schedule.Value)
                     {
-                        ServerName = schedule.Key,
-                        Action = "Save World",
-                        NextRunTime = DateTime.Now + timeToAction
-                    });
+                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
+                        tasks.Add(new ScheduledTaskInfo
+                        {
+                            ServerName = schedule.Key,
+                            Action = "Save World",
+                            NextRunTime = DateTime.Now + timeToAction
+                        });
+                    }
                 }
             }
 
             return tasks;
         }
+
 
     }
 

@@ -39,6 +39,11 @@ namespace Ark_Ascended_Manager.Views.Pages
             var syncServersPage = new SyncConfigPage();
             this.NavigationService.Navigate(syncServersPage);
         }
+        private void ImportServers_Click(object sender, RoutedEventArgs e)
+        {
+          
+            _navigationService.Navigate(typeof(ImportServersPage));
+        }
 
 
         // ViewModel property

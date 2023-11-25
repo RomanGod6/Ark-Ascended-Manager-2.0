@@ -10,12 +10,24 @@
     <Compile Update="ServerCard.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\IssueReportForm.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="ServerCard.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\ConfigPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\Integrations.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\ImportServersPage .xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\IssueReportForm.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\RconPanel.xaml">

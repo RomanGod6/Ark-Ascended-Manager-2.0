@@ -10,11 +10,14 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Microsoft.VisualBasic;
+using Ark_Ascended_Manager.Views.Pages;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
     public class ConfigPageViewModel : ObservableObject
     {
+        private readonly INavigationService _navigationService;
         public ServerConfig CurrentServerConfig { get; private set; }
         public ICommand SaveGameUserSettingsCommand { get; private set; }
         public ICommand SaveGameIniSettingsCommand { get; private set; }
@@ -24,6 +27,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand StopServerCommand { get; private set; }
         public ICommand SaveGameIniCommand { get; }
         public ICommand SaveGAMEIniFileCommand { get; private set; }
+        public ICommand DeleteServerCommand { get; }
+        public ICommand WipeServerCommand { get; }
         private string _iniContent;
         public string IniContent
         {
@@ -50,13 +55,17 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+     
 
         public ICommand SaveIniFileCommand { get; private set; }
         
 
 
-        public ConfigPageViewModel()
+        public ConfigPageViewModel(INavigationService navigationService)
         {
+            {
+                _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            }
             LoadServerProfile();
             SaveGameUserSettingsCommand = new RelayCommand(SaveGameUserSettings);
             SaveGameIniSettingsCommand = new RelayCommand(SaveGameIniSettings);
@@ -68,6 +77,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveIniFileCommand = new RelayCommand(SaveCustomGUSIniFile);
             LoadCustomGAMEIniFile();
             SaveGAMEIniFileCommand = new RelayCommand(SaveCustomGAMEIniFile);
+            DeleteServerCommand = new RelayCommand(DeleteServer);
+            WipeServerCommand = new RelayCommand(WipeServer);
 
         }
         private void LoadCustomGAMEIniFile()
@@ -77,6 +88,30 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (File.Exists(filePath))
             {
                 GameIniContent = File.ReadAllText(filePath);
+            }
+        }
+        private void WipeServer()
+        {
+            if (MessageBox.Show("Are you sure you want to wipe the server? This action cannot be undone.", "Confirm Wipe", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    string savedArksPath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "SavedArks");
+                    if (Directory.Exists(savedArksPath))
+                    {
+                        Directory.Delete(savedArksPath, true);
+                        MessageBox.Show("The server has been wiped successfully.", "Wipe Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Navigate away or refresh the view as needed
+                    }
+                    else
+                    {
+                        MessageBox.Show("The server save directory does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while wiping the server: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -107,11 +142,81 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             MessageBox.Show("GUS file saved successfully.");
 
         }
+        private void DeleteServer()
+        {
+            // Show confirmation dialog and get the user input
+            string userInput = ShowConfirmationDialog("Please type the server name to confirm deletion:");
+
+            if (userInput.Equals(ServerName, StringComparison.OrdinalIgnoreCase))
+            {
+                // Logic to remove server from servers.json and delete the folder
+                _navigationService.Navigate(typeof(DashboardPage));
+                RemoveServerAndFolder(ServerName);
+
+
+            }
+            else
+            {
+                // Notify the user that the names didn't match
+                MessageBox.Show("Server name does not match. Deletion cancelled.");
+            }
+        }
+
+        // This method combines the deletion of the server folder and the removal from servers.json
+        private void RemoveServerAndFolder(string serverName)
+        {
+            // Path to servers.json
+            string jsonFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ark Ascended Manager",
+                "servers.json"
+            );
+
+            // Load servers from JSON
+            string json = File.ReadAllText(jsonFilePath);
+            List<ServerConfig> servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+
+            // Find the server
+            ServerConfig serverConfig = servers.FirstOrDefault(s => s.ServerName.Equals(serverName, StringComparison.OrdinalIgnoreCase));
+            if (serverConfig != null)
+            {
+                // Delete the server folder
+                string serverFolderPath = serverConfig.ServerPath;
+                if (Directory.Exists(serverFolderPath))
+                {
+                    Directory.Delete(serverFolderPath, recursive: true);
+                }
+
+                // Remove the server from the list
+                servers.Remove(serverConfig);
+
+                // Save the updated server list to JSON
+                json = JsonConvert.SerializeObject(servers, Formatting.Indented);
+                File.WriteAllText(jsonFilePath, json);
+
+                
+            }
+            else
+            {
+                // Server was not found in the configuration
+                MessageBox.Show("Server not found in the configuration. No action taken.");
+            }
+        }
+
+        // Implement the ShowConfirmationDialog method
+        private string ShowConfirmationDialog(string message)
+        {
+            // Prompt the user to enter the server name to confirm deletion.
+            // The InputBox method is a simple way to get user input.
+            string userInput = Interaction.InputBox(message, "Confirm Deletion", "", -1, -1);
+            return userInput;
+        }
 
 
 
 
-        
+
+
 
         private void LoadServerProfile()
         {
@@ -318,7 +423,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void LoadConfig(ServerConfig serverConfig)
         {
-            // Implementation to set up the ViewModel's properties based on serverConfig
+            
             CurrentServerConfig = serverConfig;
 
             // ... Set other properties as needed
@@ -335,150 +440,163 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 // Handle the case where the batch file is not found
-                // You can use a messaging system or a dialog service to display errors
+          
             }
         }
 
         private void LoadLaunchServerSettings()
         {
-            // Assuming CurrentServerConfig.ServerPath is the path to the server's main directory
             string serverPath = CurrentServerConfig.ServerPath;
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
 
             if (File.Exists(batFilePath))
             {
-                // Read all lines from the batch file
                 string[] batFileLines = File.ReadAllLines(batFilePath);
-                ParseBatFileLines(batFileLines);
-            }
-            else
-            {
-                Console.WriteLine("LaunchServer.bat file does not exist.");
-            }
-        }
-
-        private void ParseBatFileLines(string[] lines)
-        {
-            foreach (string line in lines)
-            {
-                // Skip empty lines or lines that do not set variables
-                if (string.IsNullOrWhiteSpace(line) || !line.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                // Extract the key and value. This assumes the format is "set KEY=VALUE"
-                var splitLine = line.Substring(4).Split(new[] { '=' }, 2);
-                if (splitLine.Length != 2)
-                    continue; // Skip lines that do not have a key and value
-
-                var key = splitLine[0].Trim();
-                var value = splitLine[1].Trim();
-
-                // Assign values to properties based on the key
-                switch (key)
+                foreach (var line in batFileLines)
                 {
-                    case "ServerName":
-                        ServerName = value;
-                        break;
-                    case "Port":
-                        ListenPort = value;
-                        break;
-                    case "RconPort":
-                        RconPort = value;
-                        break;
-                    case "AdminPassword":
-                        AdminPassword = value;
-                        break;
-                    case "ServerPassword":
-                        ServerPassword = value;
-                        break;
-                    case "MaxPlayers":
-                        MaxPlayerCount = value;
-                        break;
-                    case "AdditionalSettings":
-                        // Check for the presence of each flag
-                        UseBattleye = value.IndexOf("-UseBattleye", StringComparison.OrdinalIgnoreCase) >= 0;
-                        ForceRespawnDinos = value.IndexOf("-ForceRespawnDinos", StringComparison.OrdinalIgnoreCase) >= 0;
-                        PreventSpawnAnimation = value.IndexOf("-PreventSpawnAnimation", StringComparison.OrdinalIgnoreCase) >= 0;
-                        // If mods are also set here, you'd extract them similarly
-                        Mods = ExtractModsValue(value);
-                        break;
-                        // ... add other settings as needed
+                    if (line.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var splitLine = line.Substring(4).Split(new[] { '=' }, 2);
+                        if (splitLine.Length == 2)
+                        {
+                            var key = splitLine[0].Trim();
+                            var value = splitLine[1].Trim();
+
+                            switch (key)
+                            {
+                                case "ServerName":
+                                    ServerName = value;
+                                    break;
+                                case "Port":
+                                    ListenPort = value;
+                                    break;
+                                case "RconPort":
+                                    RconPort = value;
+                                    break;
+                                case "AdminPassword":
+                                    AdminPassword = value;
+                                    break;
+                                case "ServerPassword":
+                                    ServerPassword = value;
+                                    break;
+                                case "MaxPlayers":
+                                    MaxPlayerCount = value;
+                                    break;
+                                    // Add cases for any other 'set' values you need to parse
+                            }
+                        }
+                    }
+                    else if (line.Trim().StartsWith("start ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        UseBattleye = line.Contains("-UseBattleye");
+                        ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
+                        PreventSpawnAnimation = line.Contains("-PreventSpawnAnimation");
+                        DisableCrossPlatform = line.Contains("-ServerPlatform=PC-pconlymods");
+                        Mods = ExtractModsValue(line); // Assuming you have a method to extract mods
+
+                        // Extract Multihome and ServerIP values
+                        MultihomeIP = ExtractParameterValue(line, "-multihome");
+                        ServerIP = ExtractParameterValue(line, "-ServerIP");
+                        PluginsEnabled = line.Contains(@"\AsaApiLoader.exe""");
+                    }
                 }
             }
+
+            // Trigger UI updates if using data binding
+            OnPropertyChanged(nameof(ServerName));
+            OnPropertyChanged(nameof(ListenPort));
+            OnPropertyChanged(nameof(RconPort));
+            OnPropertyChanged(nameof(AdminPassword));
+            OnPropertyChanged(nameof(ServerPassword));
+            OnPropertyChanged(nameof(MaxPlayerCount));
+            OnPropertyChanged(nameof(UseBattleye));
+            OnPropertyChanged(nameof(ForceRespawnDinos));
+            OnPropertyChanged(nameof(PreventSpawnAnimation));
+            OnPropertyChanged(nameof(DisableCrossPlatform));
+            OnPropertyChanged(nameof(Mods));
+            OnPropertyChanged(nameof(MultihomeIP));
+            OnPropertyChanged(nameof(ServerIP));
+            OnPropertyChanged(nameof(PluginsEnabled));
         }
-        private string ExtractModsValue(string settingsLine)
+
+        private string ExtractParameterValue(string line, string parameterName)
+        {
+            var match = Regex.Match(line, $@"{parameterName}=(\S+)");
+            return match.Success ? match.Groups[1].Value : string.Empty;
+        }
+
+        private string ExtractModsValue(string startCommand)
         {
             // Use a regular expression or string manipulation to extract the value after "-mods="
-            // Example using Regex:
-            Match match = Regex.Match(settingsLine, @"-mods=([^ ]+)");
+         
+            Match match = Regex.Match(startCommand, @"-mods=([\w,]+)");
             if (match.Success)
             {
-                return match.Groups[1].Value;
+                // Replace the commas with newline characters or however you wish to separate the mods
+                return match.Groups[1].Value.Replace(",", Environment.NewLine);
             }
             return string.Empty; // Return empty if not found
         }
 
+
+
         private void UpdateLaunchParameters()
         {
-            // Assuming CurrentServerConfig.ServerPath is the path to the server's main directory
             string serverPath = CurrentServerConfig.ServerPath;
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
-
-            // Read the existing batch file lines if it exists, otherwise create a new list
-            List<string> batFileLines = File.Exists(batFilePath) ? File.ReadAllLines(batFilePath).ToList() : new List<string>();
-
-            // Find the index of the line containing "set AdditionalSettings"
-            int additionalSettingsIndex = batFileLines.FindIndex(line => line.StartsWith("set AdditionalSettings"));
-
-            // Construct the mods setting based on whether Mods is empty
             string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
+            string booleanSettings = ConstructBooleanSettings();
 
-            // Construct boolean settings to append
-            string booleanSettings = "";
-            if (UseBattleye)
-                booleanSettings += " -UseBattleye";
-            if (ForceRespawnDinos)
-                booleanSettings += " -ForceRespawnDinos";
-            if (PreventSpawnAnimation)
-                booleanSettings += " -PreventSpawnAnimation";
+            // Determine the executable based on whether plugins are enabled
+            string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
 
-            // If the line exists, update or append the mods and boolean settings
-            if (additionalSettingsIndex != -1)
-            {
-                string additionalSettingsLine = batFileLines[additionalSettingsIndex];
+            // Construct the batch file content
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, MultihomeIP, ServerIP);
 
-                // Append or update the mods setting
-                additionalSettingsLine = Regex.Replace(additionalSettingsLine, @"-mods=\S+", modsSetting, RegexOptions.IgnoreCase);
-                if (!additionalSettingsLine.Contains("-mods=") && modsSetting != "")
-                    additionalSettingsLine += " " + modsSetting;
+            // Write the updated content to the batch file
+            File.WriteAllText(batFilePath, newBatchFileContent);
 
-                // Append boolean settings
-                additionalSettingsLine += booleanSettings;
-
-                // Update the line in the batch file lines
-                batFileLines[additionalSettingsIndex] = additionalSettingsLine;
-            }
-            else if (modsSetting != "" || booleanSettings != "")
-            {
-                // If the line doesn't exist and there is something to add, add the line
-                batFileLines.Add($"set AdditionalSettings{modsSetting}{booleanSettings}");
-            }
-
-            // Handle other settings that are not part of AdditionalSettings
-            // Assuming these are separate lines that start with "set"
-            UpdateOrAddSetting(ref batFileLines, "ServerName", ServerName);
-            UpdateOrAddSetting(ref batFileLines, "Port", ListenPort);
-            UpdateOrAddSetting(ref batFileLines, "RconPort", RconPort);
-            UpdateOrAddSetting(ref batFileLines, "AdminPassword", AdminPassword);
-            UpdateOrAddSetting(ref batFileLines, "ServerPassword", ServerPassword);
-            UpdateOrAddSetting(ref batFileLines, "MaxPlayers", MaxPlayerCount);
-
-            // Write the updated lines to the batch file
-            File.WriteAllLines(batFilePath, batFileLines);
-
-            // Inform the user that the operation has completed
             Console.WriteLine("Launch parameters have been updated.");
         }
+
+        private string ConstructBooleanSettings()
+        {
+            // Combine all boolean settings into a single string
+            string booleanSettings = "";
+            if (UseBattleye) booleanSettings += "-UseBattleye";
+            if (ForceRespawnDinos) booleanSettings += "-ForceRespawnDinos";
+            if (PreventSpawnAnimation) booleanSettings += "-PreventSpawnAnimation";
+            if (DisableCrossPlatform) booleanSettings += "-ServerPlatform=PC-pconlymods";
+            return booleanSettings;
+        }
+
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string multihomeIP, string serverIP)
+        {
+            string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
+            string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
+
+            // Always change the directory to the server's executable directory
+            string batchFileContent = $@"
+cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
+set ServerName={ServerName}
+set ServerPassword={ServerPassword}
+set AdminPassword={AdminPassword}
+set Port={ListenPort}
+set RconPort={RconPort}
+set MaxPlayers={MaxPlayerCount}
+
+start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?ServerPassword=%ServerPassword%?Port=%Port%?RCONPort=%RconPort%?ServerAdminPassword=%AdminPassword%?{booleanSettings}{modsSetting}{multihomeArgument}{serverIPArgument} -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -forcerespawndinos -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -UseBattlEye -NotifyAdminCommandsInChat
+".Trim();
+
+            // Remove spaces before dashes
+            batchFileContent = Regex.Replace(batchFileContent, @"\s+-", "-");
+
+            return batchFileContent;
+        }
+
+
+
+
 
         private void UpdateOrAddSetting(ref List<string> lines, string key, string value)
         {
@@ -495,6 +613,21 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 lines.Add($"set {key}={value}");
             }
         }
+        public string MultihomeIP { get; set; } // Bound to the Multihome IP TextBox in XAML
+        public string ServerIP { get; set; } // Bound to the Server IP TextBox in XAML
+
+        private bool _pluginsEnabled;
+        public bool PluginsEnabled
+        {
+            get => _pluginsEnabled;
+            set
+            {
+                _pluginsEnabled = value;
+                OnPropertyChanged(nameof(PluginsEnabled));
+                // Call UpdateLaunchParameters or another method if needed to immediately reflect changes
+            }
+        }
+
 
         private string _serverName;
         public string ServerName
@@ -562,8 +695,14 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private bool _preventSpawnAnimation;
         public bool PreventSpawnAnimation
         {
-            get => _preventSpawnAnimation;
-            set => SetProperty(ref _preventSpawnAnimation, value);
+            get => _disableCrossPlatform;
+            set => SetProperty(ref _disableCrossPlatform, value);
+        }
+        private bool _disableCrossPlatform;
+        public bool DisableCrossPlatform
+        {
+            get => _disableCrossPlatform;
+            set => SetProperty(ref _disableCrossPlatform, value);
         }
 
         // INotifyPropertyChanged implementation
@@ -2486,7 +2625,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             UpdateLine(ref lines, "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
             UpdateLine(ref lines, "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
             UpdateLine(ref lines, "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
-            UpdateLine(ref lines, "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod.ToString());
+            UpdateLine(ref lines, "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
             UpdateLine(ref lines, "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
             UpdateLine(ref lines, "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
             UpdateLine(ref lines, "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);

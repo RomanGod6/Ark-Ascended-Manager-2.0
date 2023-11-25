@@ -19,5 +19,12 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             InitializeComponent();
         }
+        private void OpenIssueReportForm_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate to IssueReportForm
+            this.NavigationService.Navigate(new IssueReportForm());
+        }
+
+
     }
 }

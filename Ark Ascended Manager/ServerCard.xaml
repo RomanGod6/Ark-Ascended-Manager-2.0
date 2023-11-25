@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Ark_Ascended_Manager.Helpers"
              mc:Ignorable="d">
+    
     <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="5" Padding="10" Width="Auto">
         <Border.Effect>
             <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="10" Direction="320" ShadowDepth="5"/>
         </Border.Effect>
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -22,12 +25,17 @@
                        FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
 
             <!-- Max Players -->
-            <TextBlock Grid.Row="1" Text="{Binding MaxPlayerCount}" 
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Max Players: " 
+           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+           FontWeight="SemiBold"/>
+            <TextBlock  Grid.Row="1" Text="{Binding MaxPlayerCount}" 
                        Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
                        FontWeight="SemiBold" Margin="0,0,0,10"/>
+            </StackPanel>
 
             <!-- Listen Port -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,20">
                 <TextBlock Text="Listen Port: " 
                            Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
                            FontWeight="SemiBold"/>
@@ -43,6 +51,7 @@
                 <TextBlock Text="{Binding RCONPort}"
                            Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             </StackPanel>
+       
         </Grid>
     </Border>
 </UserControl>
