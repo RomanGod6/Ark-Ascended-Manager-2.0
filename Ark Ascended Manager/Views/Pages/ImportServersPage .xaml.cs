@@ -35,14 +35,30 @@ namespace Ark_Ascended_Manager.Views.Pages
             if (dialog.ShowDialog() == true)
             {
                 string folderPath = dialog.SelectedPath;
-                // Use the ProfileName from the ViewModel instead of "ServerProfile"
-                string desiredPath = Path.Combine(folderPath, ViewModel.ProfileName);
-                ViewModel.ServerPath = desiredPath; // Set the property on ViewModel
+
+                // Check if a ProfileName is set in the ViewModel
+                if (string.IsNullOrEmpty(ViewModel.ProfileName))
+                {
+                    MessageBox.Show("Please enter a Profile Name before selecting a folder. Please note the Profile name MUST match the folder name for the import to be sucessful.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Exit the method if ProfileName is not set
+                }
+
+                // Check if the folder path already contains the ProfileName
+                if (folderPath.EndsWith(ViewModel.ProfileName))
+                {
+                    // Remove the ProfileName from the end of the folder path
+                    folderPath = folderPath.Substring(0, folderPath.Length - ViewModel.ProfileName.Length);
+                }
+
+                // Use the modified folder path to set ViewModel.ServerPath
+                ViewModel.ServerPath = folderPath;
             }
         }
 
 
-        
+
+
+
         private void ResetViewModel()
         {
             // Reset all properties in ViewModel to their default values
@@ -111,6 +127,13 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             try
             {
+                // Validation to ensure the ServerPath ends with the ProfileName
+                if (!ViewModel.ServerPath.EndsWith(ViewModel.ProfileName))
+                {
+                    MessageBox.Show($"The Server Path must end with the Profile Name '{ViewModel.ProfileName}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Exit the method if validation fails
+                }
+
                 // Create a new ServerConfig object from the ViewModel properties
                 ServerConfig newServerConfig = new ServerConfig
                 {
@@ -121,15 +144,13 @@ namespace Ark_Ascended_Manager.Views.Pages
                     ServerName = ViewModel.ServerName,
                     ListenPort = Convert.ToInt32(ViewModel.ListenPort),
                     RCONPort = Convert.ToInt32(ViewModel.RCONPort),
-
-                    Mods = ViewModel.Mods?.Split(',').ToList(),        
+                    Mods = ViewModel.Mods?.Split(',').ToList(),
                     AdminPassword = ViewModel.AdminPassword,
                     ServerPassword = ViewModel.ServerPassword,
                     UseBattlEye = ViewModel.UseBattlEye,
                     MaxPlayerCount = Convert.ToInt32(ViewModel.MaxPlayerCount),
                     ForceRespawnDinos = ViewModel.ForceRespawnDinos,
                     PreventSpawnAnimation = ViewModel.PreventSpawnAnimation
-                   
                 };
 
                 // Call the SaveServerConfig method to save the new server
@@ -144,6 +165,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 MessageBox.Show($"An error occurred while saving the server configuration: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void ImportServer_Click(object sender, RoutedEventArgs e)
         {
             SaveImportedServer();

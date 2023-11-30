@@ -12,11 +12,15 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Microsoft.VisualBasic;
 using Ark_Ascended_Manager.Views.Pages;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
+
     public class ConfigPageViewModel : ObservableObject
     {
+        public ObservableCollection<string> PluginNames { get; set; }
         private readonly INavigationService _navigationService;
         public ServerConfig CurrentServerConfig { get; private set; }
         public ICommand SaveGameUserSettingsCommand { get; private set; }
@@ -29,6 +33,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand SaveGAMEIniFileCommand { get; private set; }
         public ICommand DeleteServerCommand { get; }
         public ICommand WipeServerCommand { get; }
+        public ICommand LoadJsonCommand { get; private set; }
         private string _iniContent;
         public string IniContent
         {
@@ -79,6 +84,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGAMEIniFileCommand = new RelayCommand(SaveCustomGAMEIniFile);
             DeleteServerCommand = new RelayCommand(DeleteServer);
             WipeServerCommand = new RelayCommand(WipeServer);
+            
 
         }
         private void LoadCustomGAMEIniFile()
@@ -90,6 +96,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 GameIniContent = File.ReadAllText(filePath);
             }
         }
+        
+
+
         private void WipeServer()
         {
             if (MessageBox.Show("Are you sure you want to wipe the server? This action cannot be undone.", "Confirm Wipe", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -114,6 +123,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+
 
         private void SaveCustomGAMEIniFile()
         {
@@ -345,6 +355,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
 
 
+
         public void UpdateServerBasedOnJson()
         {
             LoadServerProfile(); // Ensure that CurrentServerConfig is loaded
@@ -528,15 +539,16 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private string ExtractModsValue(string startCommand)
         {
             // Use a regular expression or string manipulation to extract the value after "-mods="
-         
+
             Match match = Regex.Match(startCommand, @"-mods=([\w,]+)");
             if (match.Success)
             {
-                // Replace the commas with newline characters or however you wish to separate the mods
-                return match.Groups[1].Value.Replace(",", Environment.NewLine);
+                // Return the extracted mods value as is (comma-separated)
+                return match.Groups[1].Value;
             }
             return string.Empty; // Return empty if not found
         }
+
 
 
 
@@ -555,9 +567,108 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             // Write the updated content to the batch file
             File.WriteAllText(batFilePath, newBatchFileContent);
+            UpdateServerConfigFromBatch(serverPath);
+            SaveServerConfigToJson();
 
             Console.WriteLine("Launch parameters have been updated.");
         }
+        private void SaveServerConfigToJson()
+        {
+            // Define the path to the servers.json file
+            string jsonFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+
+            // Load the existing server configurations
+            List<ServerConfig> serverConfigs = new List<ServerConfig>();
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
+            }
+
+            // Find the existing server config by ProfileName or create a new one if it doesn't exist
+            var serverConfig = serverConfigs.FirstOrDefault(sc => sc.ProfileName == CurrentServerConfig.ProfileName);
+            if (serverConfig == null)
+            {
+                serverConfig = new ServerConfig();
+                serverConfigs.Add(serverConfig);
+            }
+
+            // Update the properties of the server config
+            serverConfig.ProfileName = CurrentServerConfig.ProfileName;
+            serverConfig.ServerPath = CurrentServerConfig.ServerPath;
+            serverConfig.MapName = CurrentServerConfig.MapName; // If you have this value
+            serverConfig.AppId = CurrentServerConfig.AppId; // If you have this value
+            serverConfig.IsRunning = CurrentServerConfig.IsRunning; // If you have this value
+            serverConfig.ServerName = CurrentServerConfig.ServerName;
+            serverConfig.ListenPort = CurrentServerConfig.ListenPort;
+            serverConfig.RCONPort = CurrentServerConfig.RCONPort;
+            serverConfig.Mods = CurrentServerConfig.Mods; // If you have this value
+            serverConfig.MaxPlayerCount = CurrentServerConfig.MaxPlayerCount;
+            serverConfig.AdminPassword = CurrentServerConfig.AdminPassword;
+            serverConfig.ServerPassword = CurrentServerConfig.ServerPassword;
+            serverConfig.UseBattlEye = CurrentServerConfig.UseBattlEye; // If you have this value
+            serverConfig.ForceRespawnDinos = CurrentServerConfig.ForceRespawnDinos; // If you have this value
+            serverConfig.PreventSpawnAnimation = CurrentServerConfig.PreventSpawnAnimation; // If you have this value
+                                                                                            // ... Add any other properties you need to update ...
+
+            // Serialize the updated list of server configs to JSON
+            string updatedJson = JsonConvert.SerializeObject(serverConfigs, Formatting.Indented);
+
+            // Write the updated JSON to the servers.json file
+            File.WriteAllText(jsonFilePath, updatedJson);
+
+            Debug.WriteLine("servers.json has been updated with the latest server configuration.");
+        }
+
+        private void UpdateServerConfigFromBatch(string serverPath)
+        {
+            string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
+
+            if (File.Exists(batFilePath))
+            {
+                string[] batFileLines = File.ReadAllLines(batFilePath);
+                foreach (var line in batFileLines)
+                {
+                    if (line.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var splitLine = line.Substring(4).Split(new[] { '=' }, 2);
+                        if (splitLine.Length == 2)
+                        {
+                            var key = splitLine[0].Trim();
+                            var value = splitLine[1].Trim();
+
+                            switch (key)
+                            {
+                                case "ServerName":
+                                    CurrentServerConfig.ServerName = value;
+                                    break;
+                                case "Port":
+                                    CurrentServerConfig.ListenPort = int.Parse(value);
+                                    break;
+                                case "RconPort":
+                                    CurrentServerConfig.RCONPort = int.Parse(value);
+                                    break;
+                                case "AdminPassword":
+                                    CurrentServerConfig.AdminPassword = value;
+                                    break;
+                                case "ServerPassword":
+                                    CurrentServerConfig.ServerPassword = value;
+                                    break;
+                                case "MaxPlayers":
+                                    CurrentServerConfig.MaxPlayerCount = int.Parse(value);
+                                    break;
+                                    // Add cases for any other 'set' values you need to parse
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Then you call SaveServerConfigToJson to save the updated ServerConfig to servers.json
+        
+
+
 
         private string ConstructBooleanSettings()
         {

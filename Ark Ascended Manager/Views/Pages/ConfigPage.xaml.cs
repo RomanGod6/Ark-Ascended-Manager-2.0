@@ -13,6 +13,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class ConfigPage : INavigableView<ConfigPageViewModel> // Make sure the base class is Page
     {
+
         // Constructor injects the ViewModel and sets it to the DataContext.
         private string fullPathToJson;
         public ConfigPage(ConfigPageViewModel viewModel, INavigationService navigationService)
@@ -24,8 +25,12 @@ namespace Ark_Ascended_Manager.Views.Pages
             LoadSchedulesFromFile();
             
 
+
+
             // It's important to set the DataContext after initializing the components.
             DataContext = ViewModel;
+            LoadPluginsToListBox();
+
             Console.WriteLine("Made it to the config page under the DataContext of Config Page");
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appNameFolder = Path.Combine(appDataFolderPath, "Ark Ascended Manager");
@@ -33,6 +38,9 @@ namespace Ark_Ascended_Manager.Views.Pages
             fullPathToJson = Path.Combine(appNameFolder, jsonFileName);
 
         }
+       
+
+
 
 
         // Implement the interface member of INavigableView to handle navigation with a parameter.
@@ -67,6 +75,42 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             // Optionally, handle the scenario where no match is found
         }
+        private void LoadPluginsToListBox()
+        {
+            // Retrieve the path from the ViewModel
+            string pluginsDirectoryPath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins");
+
+            if (Directory.Exists(pluginsDirectoryPath))
+            {
+                // Fetch all directories which represent plugins
+                var pluginDirectories = Directory.GetDirectories(pluginsDirectoryPath);
+
+                // This will hold the names of the plugins
+                var pluginNames = pluginDirectories.Select(Path.GetFileName).ToList();
+
+                // Bind the ListBox's ItemsSource to the plugin names
+                lstPlugins.ItemsSource = pluginNames;
+            }
+        }
+
+        private void LstPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Assuming the ListBox's SelectionMode is Single
+            var selectedPlugin = lstPlugins.SelectedItem as string;
+            if (!string.IsNullOrWhiteSpace(selectedPlugin))
+            {
+                // Construct the path to the selected plugin's config.json
+                string configFilePath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+                if (File.Exists(configFilePath))
+                {
+                    // Read the JSON file and set the text editor's content
+                    jsonEditor.Text = File.ReadAllText(configFilePath);
+                }
+            }
+        }
+
+
 
 
 
@@ -98,6 +142,13 @@ namespace Ark_Ascended_Manager.Views.Pages
 
 
         }
+        // Ensure this method is part of the ConfigPage partial class
+        
+
+
+
+
+
 
         public class AllSchedulingData
         {

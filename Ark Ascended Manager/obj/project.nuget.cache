@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "fofQzgzZNRfGSWR0no4EmqJFwsxE4LdMRZbI0VSCN1XztrmHW0yKbwaaUNYs5/b4D9xvsTdPKlFJBSlP0vyMcg==",
+  "dgSpecHash": "QG7vhCzWgGqngA/pnORX3dPeOZvUUYKkBwLsRmFWZypZ5+3I02LH4CzkL2zECisCmPerTNp9YPocbhRQhs8+qw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Dillon Griffey\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Dillon Griffey\\.nuget\\packages\\avalonedit\\6.3.0.90\\avalonedit.6.3.0.90.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.1\\communitytoolkit.mvvm.8.2.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.data.sqlite\\8.0.0\\microsoft.data.sqlite.8.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.0\\microsoft.data.sqlite.core.8.0.0.nupkg.sha512",

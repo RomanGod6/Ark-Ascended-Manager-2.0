@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
@@ -24,11 +25,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\bars-solid.png" />
+    <None Remove="Assets\circle-update-solid.png" />
+    <None Remove="Assets\folder-open-solid.png" />
+    <None Remove="Assets\play-solid.png" />
+    <None Remove="Assets\stop-solid.png" />
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\bars-solid.png" />
+    <Resource Include="Assets\circle-update-solid.png" />
+    <Resource Include="Assets\folder-open-solid.png" />
+    <Resource Include="Assets\play-solid.png" />
+    <Resource Include="Assets\stop-solid.png" />
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
   </ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using Ark_Ascended_Manager.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using System;
-
-// Ensure you have the correct using directives for your namespaces
+using System.Windows;
+using System.Windows.Forms; // Add the WinForms namespace for FolderBrowserDialog
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -18,7 +18,6 @@ namespace Ark_Ascended_Manager.Views.Pages
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             DataContext = ViewModel;
 
-
             // Assuming LoadServerConfigs is properly implemented in ServersViewModel
             ViewModel.LoadServerConfigs();
         }
@@ -29,22 +28,25 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Use the navigation service to navigate to CreateServersPage
             _navigationService.Navigate(typeof(CreateServersPage));
         }
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.OnNavigatedTo(); // This should call LoadServerConfigs internally
         }
+
         private void SyncServers_Click(object sender, RoutedEventArgs e)
         {
             // Navigate to the SyncServersPage
             var syncServersPage = new SyncConfigPage();
             this.NavigationService.Navigate(syncServersPage);
         }
+
+        
+
         private void ImportServers_Click(object sender, RoutedEventArgs e)
         {
-          
             _navigationService.Navigate(typeof(ImportServersPage));
         }
-
 
         // ViewModel property
         public ServersViewModel ViewModel { get; }

@@ -5,53 +5,118 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:Ark_Ascended_Manager.Helpers"
              mc:Ignorable="d">
-    
-    <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="5" Padding="10" Width="Auto">
+    <UserControl.Resources >
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FF2D2D30"/>
+        <!-- Dark gray for the card background -->
+        <SolidColorBrush x:Key="ButtonBackgroundColor" Color="#FF3D3D40"/>
+        <!-- Slightly lighter gray for button background -->
+        <SolidColorBrush x:Key="ButtonHoverColor" Color="#FF555555"/>
+        <!-- Even lighter gray for button hover effect -->
+        <SolidColorBrush x:Key="IconColor" Color="White"/>
+        <!-- White color for icons -->
+        <SolidColorBrush x:Key="TextColor" Color="White"/>
+        <!-- White color for text -->
+        <Style TargetType="Button" x:Key="CircleButtonStyle">
+            <Setter Property="Width" Value="55"/>
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundColor}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ButtonHoverColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Border Background="{StaticResource CardBackgroundColor}" CornerRadius="5" Padding="10" Width="Auto">
         <Border.Effect>
-            <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="10" Direction="320" ShadowDepth="5"/>
+            <DropShadowEffect Color="White" Opacity="0.5" BlurRadius="10" Direction="320" ShadowDepth="5"/>
         </Border.Effect>
-        
+
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <!-- Added row for buttons -->
             </Grid.RowDefinitions>
+
 
             <!-- Server Name -->
             <TextBlock Grid.Row="0" Text="{Binding ServerName}" 
-                       Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                        Foreground="{StaticResource TextColor}"
                        FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
 
             <!-- Max Players -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Max Players: " 
-           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-           FontWeight="SemiBold"/>
-            <TextBlock  Grid.Row="1" Text="{Binding MaxPlayerCount}" 
-                       Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                       FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <TextBlock Text="Max Players: " 
+                            Foreground="{StaticResource TextColor}"
+                           FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="1" Text="{Binding MaxPlayerCount}" 
+                           Foreground="{StaticResource TextColor}"
+                           FontWeight="SemiBold" Margin="0,0,0,10"/>
             </StackPanel>
 
             <!-- Listen Port -->
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,20">
                 <TextBlock Text="Listen Port: " 
-                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                            Foreground="{StaticResource TextColor}"
                            FontWeight="SemiBold"/>
                 <TextBlock Text="{Binding ListenPort}"
-                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                            Foreground="{StaticResource TextColor}"/>
             </StackPanel>
 
             <!-- RCON Port -->
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <TextBlock Text="RCON Port: " 
-                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                           Foreground="{StaticResource TextColor}"
                            FontWeight="SemiBold"/>
                 <TextBlock Text="{Binding RCONPort}"
-                           Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                            Foreground="{StaticResource TextColor}"/>
             </StackPanel>
-       
+
+            <!-- Buttons -->
+            <Grid Grid.Row="4" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+               
+                <!-- Button Style -->
+
+
+                <!-- Play button -->
+                <!-- Play button -->
+
+
+                <!-- Folder button -->
+
+
+
+
+            </Grid>
+            
         </Grid>
+        
     </Border>
 </UserControl>
