@@ -109,6 +109,91 @@ namespace Ark_Ascended_Manager.Views.Pages
                 }
             }
         }
+        private void SaveJsonButton_Click(object sender, RoutedEventArgs e)
+        {
+            string selectedPlugin = lstPlugins.SelectedItem as string;
+            if (string.IsNullOrEmpty(selectedPlugin))
+            {
+                System.Windows.MessageBox.Show("Please select a plugin to save.");
+                return;
+            }
+
+            var result = System.Windows.MessageBox.Show("Do you want to save the configuration to all servers?", "Save Configuration", System.Windows.MessageBoxButton.YesNoCancel);
+
+            if (result == System.Windows.MessageBoxResult.Cancel)
+            {
+                return;
+            }
+
+            string jsonContent = jsonEditor.Text;
+            List<string> skippedServers = new List<string>(); // List to keep track of skipped servers
+
+            if (result == System.Windows.MessageBoxResult.Yes)
+            {
+                // User chose to save to all servers
+                var serverPaths = GetAllServerPaths();
+                foreach (var serverPath in serverPaths)
+                {
+                    if (!SaveJsonToServerPlugin(serverPath, selectedPlugin, jsonContent))
+                    {
+                        // If the return value is false, it means the save was skipped
+                        skippedServers.Add(serverPath);
+                    }
+                }
+            }
+            else
+            {
+                // User chose to save only to the current server
+                SaveJsonToServerPlugin(ViewModel.CurrentServerConfig.ServerPath, selectedPlugin, jsonContent);
+            }
+
+            // Notify the user of skipped servers
+            if (skippedServers.Any())
+            {
+                string skippedMessage = "The following servers were skipped because the plugin folder was not found:\n" + string.Join("\n", skippedServers);
+                System.Windows.MessageBox.Show(skippedMessage, "Skipped Servers", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        
+
+        private List<string> GetAllServerPaths()
+        {
+            string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string serversFilePath = Path.Combine(appDataFolderPath, "Ark Ascended Manager", "servers.json");
+            if (File.Exists(serversFilePath))
+            {
+                string json = File.ReadAllText(serversFilePath);
+                var servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+                return servers.Select(s => s.ServerPath).ToList();
+            }
+            return new List<string>();
+        }
+
+        private bool SaveJsonToServerPlugin(string serverPath, string pluginName, string jsonContent)
+        {
+            string pluginConfigPath = Path.Combine(serverPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", pluginName, "config.json");
+
+            // Check if the plugin directory exists
+            if (Directory.Exists(Path.GetDirectoryName(pluginConfigPath)))
+            {
+                try
+                {
+                    File.WriteAllText(pluginConfigPath, jsonContent);
+                    return true; // Operation was successful
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions (e.g., log them)
+                    return false; // Operation failed
+                }
+            }
+            else
+            {
+                return false; // Directory does not exist, operation skipped
+            }
+        }
+
+
 
 
 

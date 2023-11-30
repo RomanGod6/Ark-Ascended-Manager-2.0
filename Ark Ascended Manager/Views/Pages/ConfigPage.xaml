@@ -1179,13 +1179,23 @@
                  Width="200" SelectionChanged="LstPlugins_SelectionChanged">
                         <!-- ItemTemplate can be customized as needed -->
                     </ListBox>
+                    <Button Content="Save" 
+        Click="SaveJsonButton_Click" 
+        HorizontalAlignment="Center" 
+        VerticalAlignment="Center" 
+        Padding="5" />
+
+
 
                     <!-- AvalonEdit control for JSON editing -->
                     <avalonEdit:TextEditor x:Name="jsonEditor" Grid.Column="1" 
                                SyntaxHighlighting="JavaScript"
                                HorizontalScrollBarVisibility="Auto" 
                                VerticalScrollBarVisibility="Auto"
-                               FontFamily="Consolas" FontSize="12" />
+                               FontFamily="Consolas" FontSize="30"
+                                           Background="#FF3D3D40"
+                                           Foreground="White"
+                       ShowLineNumbers="True"/>
                 </Grid>
             </TabItem>
 
