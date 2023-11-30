@@ -61,6 +61,7 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.runtimeconfig.json
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.pdb
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ICSharpCode.AvalonEdit.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\CommunityToolkit.Mvvm.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Data.Sqlite.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Microsoft.Extensions.Configuration.dll
@@ -156,4 +157,3 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.pdb
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.genruntimeconfig.cache
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ref\Ark Ascended Manager.dll
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ICSharpCode.AvalonEdit.dll

@@ -1169,35 +1169,45 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" />
                         <!-- Width for the ListBox -->
+                        <ColumnDefinition Width="Auto" />
+                        <!-- Width for the Save Button -->
                         <ColumnDefinition Width="*" />
                         <!-- Remaining width for the AvalonEdit control -->
                     </Grid.ColumnDefinitions>
 
                     <!-- ListBox to display list of JSON files -->
                     <ListBox x:Name="lstPlugins" Grid.Column="0" 
-                 HorizontalAlignment="Left" VerticalAlignment="Top" 
-                 Width="200" SelectionChanged="LstPlugins_SelectionChanged">
+                 VerticalAlignment="Top" 
+                 Height="Auto" SelectionChanged="LstPlugins_SelectionChanged">
                         <!-- ItemTemplate can be customized as needed -->
                     </ListBox>
-                    <Button Content="Save" 
-        Click="SaveJsonButton_Click" 
-        HorizontalAlignment="Center" 
-        VerticalAlignment="Center" 
-        Padding="5" />
 
-
+                    <!-- Save Button -->
+                    <Button Content="Save" Grid.Column="1"
+                Click="SaveJsonButton_Click" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Top" 
+                Padding="5" Margin="10" />
 
                     <!-- AvalonEdit control for JSON editing -->
-                    <avalonEdit:TextEditor x:Name="jsonEditor" Grid.Column="1" 
+                    <avalonEdit:TextEditor x:Name="jsonEditor" Grid.Column="2" 
                                SyntaxHighlighting="JavaScript"
                                HorizontalScrollBarVisibility="Auto" 
                                VerticalScrollBarVisibility="Auto"
-                               FontFamily="Consolas" FontSize="30"
-                                           Background="#FF3D3D40"
-                                           Foreground="White"
-                       ShowLineNumbers="True"/>
+                               FontFamily="Consolas" FontSize="22" 
+                               Background="#FF3D3D40"
+                               Foreground="White"
+                               ShowLineNumbers="True" />
+
+                    <!-- ListView for servers (if you want to show servers list) -->
+                    <ListView x:Name="serversListView" Grid.Column="0" Grid.Row="1" SelectionMode="Extended"
+                  HorizontalAlignment="Left" VerticalAlignment="Top"
+                  Height="Auto" Margin="0,5,0,0">
+               
+                    </ListView>
                 </Grid>
             </TabItem>
+
 
 
 

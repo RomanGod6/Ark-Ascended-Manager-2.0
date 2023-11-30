@@ -93,6 +93,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
+
         private void LstPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Assuming the ListBox's SelectionMode is Single

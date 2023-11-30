@@ -84,7 +84,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGAMEIniFileCommand = new RelayCommand(SaveCustomGAMEIniFile);
             DeleteServerCommand = new RelayCommand(DeleteServer);
             WipeServerCommand = new RelayCommand(WipeServer);
-            
+            LoadPlugins();
+            LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
 
         }
         private void LoadCustomGAMEIniFile()
@@ -96,7 +97,142 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 GameIniContent = File.ReadAllText(filePath);
             }
         }
+
+        public void LoadJsonForSelectedPlugin(string selectedPlugin)
+        {
+            string jsonFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+            if (File.Exists(jsonFilePath))
+            {
+                SelectedPluginConfig = File.ReadAllText(jsonFilePath);
+            }
+            else
+            {
+                SelectedPluginConfig = "File not found.";
+            }
+        }
         
+
+
+        public void LoadPlugins()
+        {
+            var pluginsPath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins");
+
+            PluginNames = new ObservableCollection<string>();
+
+            // Check if the directory exists
+            if (Directory.Exists(pluginsPath))
+            {
+                foreach (var dir in Directory.GetDirectories(pluginsPath))
+                {
+                    var dirName = Path.GetFileName(dir);
+                    PluginNames.Add(dirName);
+                }
+            }
+            else
+            {
+                // Handle the case where the directory doesn't exist
+            }
+
+            // Notify UI to update the plugin list
+            OnPropertyChanged(nameof(PluginNames));
+        }
+        private string _selectedPlugin;
+        public string SelectedPlugin
+        {
+            get => _selectedPlugin;
+            set
+            {
+                if (_selectedPlugin != value)
+                {
+                    _selectedPlugin = value;
+                    OnPropertyChanged(nameof(SelectedPlugin));
+                    LoadSelectedPluginConfig(value);
+                    // This should trigger the breakpoint
+                }
+            }
+        }
+        private string _selectedPluginConfig;
+        public string SelectedPluginConfig
+        {
+            get => _selectedPluginConfig;
+            set
+            {
+                if (_selectedPluginConfig != value)
+                {
+                    _selectedPluginConfig = value;
+                    OnPropertyChanged(nameof(SelectedPluginConfig));
+                }
+            }
+        }
+
+
+
+        public void UpdateSelectedPluginConfig(string jsonContent)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine("Entering UpdateSelectedPluginConfig method.");
+                try
+                {
+                    Debug.WriteLine("Original JSON content: " + jsonContent);
+                    // Format the JSON to be indented
+                    dynamic parsedJson = JsonConvert.DeserializeObject(jsonContent);
+                    string formattedJson = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                    Debug.WriteLine("Formatted JSON content: " + formattedJson);
+                    SelectedPluginConfig = formattedJson;
+
+                }
+                catch (Newtonsoft.Json.JsonException ex)
+                {
+                    // Handle JSON formatting error or set raw text
+                    Debug.WriteLine("JSON formatting error: " + ex.ToString());
+                    SelectedPluginConfig = jsonContent;
+                }
+
+                OnPropertyChanged(nameof(SelectedPluginConfig)); // Explicitly notify UI to update
+                Debug.WriteLine("SelectedPluginConfig property updated.");
+            });
+        }
+
+
+        public void LoadSelectedPluginConfig(string selectedPlugin)
+        {
+            var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+            if (File.Exists(configFilePath))
+            {
+                var json = File.ReadAllText(configFilePath);
+                Debug.WriteLine("JSON Content: " + json); // This will print the content to the Output window
+                UpdateSelectedPluginConfig(json);
+            }
+            else
+            {
+                // Handle the case where the config file doesn't exist
+                Debug.WriteLine("Config file does not exist.");
+            }
+        }
+
+        private void ExecuteLoadJson()
+        {
+            
+            LoadSelectedPluginConfig(SelectedPlugin);
+        }
+
+        public void SaveSelectedPluginConfig(string selectedPlugin, string configContent)
+        {
+            var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+            try
+            {
+                File.WriteAllText(configFilePath, configContent);
+                // Handle post-save operations (e.g., notify user of success)
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., write access issues)
+            }
+        }
 
 
         private void WipeServer()
@@ -353,7 +489,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             Debug.WriteLine($"Map name {mapName} not found in servers.json");
             return null; // Or your default app ID
         }
-
 
 
         public void UpdateServerBasedOnJson()
