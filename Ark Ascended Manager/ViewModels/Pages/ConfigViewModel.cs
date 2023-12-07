@@ -14,6 +14,7 @@ using Microsoft.VisualBasic;
 using Ark_Ascended_Manager.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -542,15 +543,51 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string FindSteamCmdPath()
         {
-            // Your implementation to find steamcmd.exe
-            // Example:
-            string defaultPath = @"C:\SteamCMD\steamcmd.exe";
-            if (File.Exists(defaultPath))
+            // Define the JSON file path in the app data folder
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
+            string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
+
+            // Check if the app data directory exists, if not, create it
+            if (!Directory.Exists(appDataPath))
             {
-                return defaultPath;
+                Directory.CreateDirectory(appDataPath);
             }
-            // Additional logic to find steamcmd.exe if not in the default location
-            return null;
+
+            // Try to read the path from the JSON file
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                dynamic pathData = JsonConvert.DeserializeObject<dynamic>(json);
+                string savedPath = pathData?.SteamCmdPath;
+                if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                {
+                    return savedPath;
+                }
+            }
+
+            // If the path is not found in the JSON file, prompt the user with OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Executable files (*.exe)|*.exe",
+                Title = "Locate steamcmd.exe"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Save the selected path to the JSON file
+                SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
+                return openFileDialog.FileName;
+            }
+
+            return null; // or handle this case appropriately
+        }
+
+        private void SaveSteamCmdPath(string path, string jsonFilePath)
+        {
+            var pathData = new { SteamCmdPath = path };
+            string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, json);
         }
 
         private Dictionary<string, string> _mapToAppId = new Dictionary<string, string>()
@@ -589,6 +626,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
           
             }
         }
+        public string ServerPlatform { get; set; }
 
         private void LoadLaunchServerSettings()
         {
@@ -628,6 +666,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "MaxPlayers":
                                     MaxPlayerCount = value;
                                     break;
+                                case "mods":
+                                    Mods = value;
+                                    break;
+
+
+
                                     // Add cases for any other 'set' values you need to parse
                             }
                         }
@@ -637,13 +681,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         UseBattleye = line.Contains("-UseBattleye");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
                         PreventSpawnAnimation = line.Contains("-PreventSpawnAnimation");
-                        DisableCrossPlatform = line.Contains("-ServerPlatform=PC-pconlymods");
-                        Mods = ExtractModsValue(line); // Assuming you have a method to extract mods
+                        ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
+                        /*Mods = ExtractModsValue(line); // Assuming you have a method to extract mods*/
 
                         // Extract Multihome and ServerIP values
                         MultihomeIP = ExtractParameterValue(line, "-multihome");
                         ServerIP = ExtractParameterValue(line, "-ServerIP");
-                        PluginsEnabled = line.Contains(@"\AsaApiLoader.exe""");
+                        PluginsEnabled = line.Contains("AsaApiLoader.exe");
                     }
                 }
             }
@@ -658,7 +702,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(UseBattleye));
             OnPropertyChanged(nameof(ForceRespawnDinos));
             OnPropertyChanged(nameof(PreventSpawnAnimation));
-            OnPropertyChanged(nameof(DisableCrossPlatform));
+            OnPropertyChanged(nameof(ServerPlatformSetting));
             OnPropertyChanged(nameof(Mods));
             OnPropertyChanged(nameof(MultihomeIP));
             OnPropertyChanged(nameof(ServerIP));
@@ -667,22 +711,30 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string ExtractParameterValue(string line, string parameterName)
         {
-            var match = Regex.Match(line, $@"{parameterName}=(\S+)");
-            return match.Success ? match.Groups[1].Value : string.Empty;
+            // Updated regex pattern to capture between "=" and the first space or end of line
+            var match = Regex.Match(line, $@"{parameterName}=([^\s-]+)");
+            return match.Success ? match.Groups[1].Value.Trim() : string.Empty;
         }
 
-        private string ExtractModsValue(string startCommand)
+
+
+
+
+        private string _serverPlatformSetting;
+        public string ServerPlatformSetting
         {
-            // Use a regular expression or string manipulation to extract the value after "-mods="
-
-            Match match = Regex.Match(startCommand, @"-mods=([\w,]+)");
-            if (match.Success)
+            get { return _serverPlatformSetting; }
+            set
             {
-                // Return the extracted mods value as is (comma-separated)
-                return match.Groups[1].Value;
+                if (_serverPlatformSetting != value)
+                {
+                    _serverPlatformSetting = value;
+                    OnPropertyChanged(nameof(ServerPlatformSetting));
+                    // You can also include any validation or transformation logic here
+                }
             }
-            return string.Empty; // Return empty if not found
         }
+
 
 
 
@@ -693,12 +745,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
             string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
             string booleanSettings = ConstructBooleanSettings();
-
+            Debug.WriteLine("Server Platform Setting before save: " + ServerPlatformSetting);
+            string serverPlatformSetting = ServerPlatformSetting;
+            Debug.WriteLine("Server Platform Setting after save: " + ServerPlatformSetting);
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, MultihomeIP, ServerIP);
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP);
+
 
             // Write the updated content to the batch file
             File.WriteAllText(batFilePath, newBatchFileContent);
@@ -792,6 +847,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "MaxPlayers":
                                     CurrentServerConfig.MaxPlayerCount = int.Parse(value);
                                     break;
+                                case "mods":
+                                    CurrentServerConfig.Mods = value.Split(',').ToList();
+                                    break;
+
+
                                     // Add cases for any other 'set' values you need to parse
                             }
                         }
@@ -809,17 +869,19 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             // Combine all boolean settings into a single string
             string booleanSettings = "";
-            if (UseBattleye) booleanSettings += "-UseBattleye";
-            if (ForceRespawnDinos) booleanSettings += "-ForceRespawnDinos";
-            if (PreventSpawnAnimation) booleanSettings += "-PreventSpawnAnimation";
-            if (DisableCrossPlatform) booleanSettings += "-ServerPlatform=PC-pconlymods";
+            if (UseBattleye) booleanSettings += " -UseBattleye";
+            if (ForceRespawnDinos) booleanSettings += " -ForceRespawnDinos";
+            if (PreventSpawnAnimation) booleanSettings += " -PreventSpawnAnimation";
+            
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string multihomeIP, string serverIP)
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP)
         {
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
+            string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
+            Debug.WriteLine("Server Platform Argument: " + serverPlatformSetting);
 
             // Always change the directory to the server's executable directory
             string batchFileContent = $@"
@@ -830,15 +892,19 @@ set AdminPassword={AdminPassword}
 set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
+set mods={Mods}
+set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
 
-start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?ServerPassword=%ServerPassword%?Port=%Port%?RCONPort=%RconPort%?ServerAdminPassword=%AdminPassword% {booleanSettings}{modsSetting}{multihomeArgument}{serverIPArgument} -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -forcerespawndinos -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -UseBattlEye -NotifyAdminCommandsInChat
+
+start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?ServerPassword=%ServerPassword%?PreventSpawnAnimation=True?ServerAdminPassword=%AdminPassword%?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
-            
+            /*batchFileContent = Regex.Replace(batchFileContent, @"\s+-", "-");*/
 
             return batchFileContent;
         }
+
 
 
 
@@ -1006,43 +1072,43 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             HarvestAmountMultiplier = value;
                             break;
                         case "AllowThirdPersonPlayer":
-                            AllowThirdPersonPlayer = Convert.ToBoolean(value);
+                            AllowThirdPersonPlayer = ConvertToBoolean(value);
                             break;
                         case "AllowCaveBuildingPvE":
-                            AllowCaveBuildingPvE = Convert.ToBoolean(value);
+                            AllowCaveBuildingPvE = ConvertToBoolean(value);
                             break;
                         case "AlwaysNotifyPlayerJoined":
-                            AlwaysNotifyPlayerJoined = Convert.ToBoolean(value);
+                            AlwaysNotifyPlayerJoined = ConvertToBoolean(value);
                             break;
                         case "AlwaysNotifyPlayerLeft":
-                            AlwaysNotifyPlayerLeft = Convert.ToBoolean(value);
+                            AlwaysNotifyPlayerLeft = ConvertToBoolean(value);
                             break;
                         case "AllowFlyerCarryPvE":
-                            AllowFlyerCarryPvE = Convert.ToBoolean(value);
+                            AllowFlyerCarryPvE = ConvertToBoolean(value);
                             break;
                         case "DisableStructureDecayPvE":
-                            DisableStructureDecayPvE = Convert.ToBoolean(value);
+                            DisableStructureDecayPvE = ConvertToBoolean(value);
                             break;
                         case "GlobalVoiceChat":
-                            GlobalVoiceChat = Convert.ToBoolean(value);
+                            GlobalVoiceChat = ConvertToBoolean(value);
                             break;
                         case "MaxStructuresInRange":
                             MaxStructuresInRange = value;
                             break;
                         case "NoTributeDownloads":
-                            NoTributeDownloads = Convert.ToBoolean(value);
+                            NoTributeDownloads = ConvertToBoolean(value);
                             break;
                         case "PreventDownloadSurvivors":
-                            PreventDownloadSurvivors = Convert.ToBoolean(value);
+                            PreventDownloadSurvivors = ConvertToBoolean(value);
                             break;
                         case "PreventDownloadItems":
-                            PreventDownloadItems = Convert.ToBoolean(value);
+                            PreventDownloadItems = ConvertToBoolean(value);
                             break;
                         case "PreventDownloadDinos":
-                            PreventDownloadDinos = Convert.ToBoolean(value);
+                            PreventDownloadDinos = ConvertToBoolean(value);
                             break;
                         case "ProximityChat":
-                            ProximityChat = Convert.ToBoolean(value);
+                            ProximityChat = ConvertToBoolean(value);
                             break;
                         case "ResourceNoReplenishRadiusStructures":
                             ResourceNoReplenishRadiusStructures = value;
@@ -1051,19 +1117,19 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             ServerAdminPassword = value;
                             break;
                         case "ServerCrosshair":
-                            ServerCrosshair = Convert.ToBoolean(value);
+                            ServerCrosshair = ConvertToBoolean(value);
                             break;
                         case "ServerForceNoHud":
-                            ServerForceNoHud = Convert.ToBoolean(value);
+                            ServerForceNoHud = ConvertToBoolean(value);
                             break;
                         case "ServerHardcore":
-                            ServerHardcore = Convert.ToBoolean(value);
+                            ServerHardcore = ConvertToBoolean(value);
                             break;
                         case "ServerPvE":
-                            ServerPvE = Convert.ToBoolean(value);
+                            ServerPvE = ConvertToBoolean(value);
                             break;
                         case "ShowMapPlayerLocation":
-                            ShowMapPlayerLocation = Convert.ToBoolean(value);
+                            ShowMapPlayerLocation = ConvertToBoolean(value);
                             break;
                         case "TamedDinoDamageMultiplier":
                             TamedDinoDamageMultiplier = value;
@@ -1078,10 +1144,10 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             XPMultiplier = value;
                             break;
                         case "EnablePVPGamma":
-                            EnablePVPGamma = Convert.ToBoolean(value);
+                            EnablePVPGamma = ConvertToBoolean(value);
                             break;
                         case "EnablePVEGamma":
-                            EnablePVEGamma = Convert.ToBoolean(value);
+                            EnablePVEGamma = ConvertToBoolean(value);
                             break;
                         case "SpectatorPassword":
                             SpectatorPassword = value;
@@ -1096,13 +1162,13 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             Banlist = value;
                             break;
                         case "DisableDinoDecayPvE":
-                            DisableDinoDecayPvE = Convert.ToBoolean(value);
+                            DisableDinoDecayPvE = ConvertToBoolean(value);
                             break;
                         case "PvEDinoDecayPeriodMultiplier":
                             PvEDinoDecayPeriodMultiplier = value;
                             break;
                         case "AdminLogging":
-                            AdminLogging = Convert.ToBoolean(value);
+                            AdminLogging = ConvertToBoolean(value);
                             break;
                         case "MaxTamedDinos":
                             MaxTamedDinos = value;
@@ -1129,19 +1195,19 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             PerPlatformMaxStructuresMultiplier = value;
                             break;
                         case "ForceAllStructureLocking":
-                            ForceAllStructureLocking = Convert.ToBoolean(value);
+                            ForceAllStructureLocking = ConvertToBoolean(value);
                             break;
                         case "AutoDestroyOldStructuresMultiplier":
                             AutoDestroyOldStructuresMultiplier = value;
                             break;
                         case "UseVSync":
-                            UseVSync = Convert.ToBoolean(value);
+                            UseVSync = ConvertToBoolean(value);
                             break;
                         case "MaxPlatformSaddleStructureLimit":
                             MaxPlatformSaddleStructureLimit = value;
                             break;
                         case "PassiveDefensesDamageRiderlessDinos":
-                            PassiveDefensesDamageRiderlessDinos = Convert.ToBoolean(value);
+                            PassiveDefensesDamageRiderlessDinos = ConvertToBoolean(value);
                             break;
                         case "AutoSavePeriodMinutes":
                             AutoSavePeriodMinutes = value;
@@ -1150,31 +1216,31 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             RCONServerGameLogBuffer = value;
                             break;
                         case "OverrideStructurePlatformPrevention":
-                            OverrideStructurePlatformPrevention = Convert.ToBoolean(value);
+                            OverrideStructurePlatformPrevention = ConvertToBoolean(value);
                             break;
                         case "PreventOfflinePvPInterval":
                             PreventOfflinePvPInterval = value;
                             break;
                         case "bPvPDinoDecay":
-                            BPvPDinoDecay = Convert.ToBoolean(value);
+                            BPvPDinoDecay = ConvertToBoolean(value);
                             break;
                         case "bPvPStructureDecay":
-                            BPvPStructureDecay = Convert.ToBoolean(value);
+                            BPvPStructureDecay = ConvertToBoolean(value);
                             break;
                         case "DisableImprintDinoBuff":
-                            DisableImprintDinoBuff = Convert.ToBoolean(value);
+                            DisableImprintDinoBuff = ConvertToBoolean(value);
                             break;
                         case "AllowAnyoneBabyImprintCuddle":
-                            AllowAnyoneBabyImprintCuddle = Convert.ToBoolean(value);
+                            AllowAnyoneBabyImprintCuddle = ConvertToBoolean(value);
                             break;
                         case "EnableExtraStructurePreventionVolumes":
-                            EnableExtraStructurePreventionVolumes = Convert.ToBoolean(value);
+                            EnableExtraStructurePreventionVolumes = ConvertToBoolean(value);
                             break;
                         case "ShowFloatingDamageText":
-                            ShowFloatingDamageText = Convert.ToBoolean(value);
+                            ShowFloatingDamageText = ConvertToBoolean(value);
                             break;
                         case "DestroyUnconnectedWaterPipes":
-                            DestroyUnconnectedWaterPipes = Convert.ToBoolean(value);
+                            DestroyUnconnectedWaterPipes = ConvertToBoolean(value);
                             break;
                         case "OverrideOfficialDifficulty":
                             OverrideOfficialDifficulty = value;
@@ -1183,10 +1249,10 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             TheMaxStructuresInRange = value;
                             break;
                         case "MinimumDinoReuploadInterval":
-                            MinimumDinoReuploadInterval = Convert.ToBoolean(value);
+                            MinimumDinoReuploadInterval = value;
                             break;
                         case "PvEAllowStructuresAtSupplyDrops":
-                            PvEAllowStructuresAtSupplyDrops = Convert.ToBoolean(value);
+                            PvEAllowStructuresAtSupplyDrops = ConvertToBoolean(value);
                             break;
                         case "NPCNetworkStasisRangeScalePlayerCountStart":
                             NPCNetworkStasisRangeScalePlayerCountStart = value;
@@ -1201,40 +1267,40 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             MaxPersonalTamedDinos = value;
                             break;
                         case "AutoDestroyDecayedDinos":
-                            AutoDestroyDecayedDinos = Convert.ToBoolean(value);
+                            AutoDestroyDecayedDinos = ConvertToBoolean(value);
                             break;
                         case "ClampItemSpoilingTimes":
-                            ClampItemSpoilingTimes = Convert.ToBoolean(value);
+                            ClampItemSpoilingTimes = ConvertToBoolean(value);
                             break;
                         case "UseOptimizedHarvestingHealth":
-                            UseOptimizedHarvestingHealth = Convert.ToBoolean(value);
+                            UseOptimizedHarvestingHealth = ConvertToBoolean(value);
                             break;
                         case "AllowCrateSpawnsOnTopOfStructures":
-                            AllowCrateSpawnsOnTopOfStructures = Convert.ToBoolean(value);
+                            AllowCrateSpawnsOnTopOfStructures = ConvertToBoolean(value);
                             break;
                         case "ForceFlyerExplosives":
-                            ForceFlyerExplosives = Convert.ToBoolean(value);
+                            ForceFlyerExplosives = ConvertToBoolean(value);
                             break;
                         case "AllowFlyingStaminaRecovery":
-                            AllowFlyingStaminaRecovery = Convert.ToBoolean(value);
+                            AllowFlyingStaminaRecovery = ConvertToBoolean(value);
                             break;
                         case "OxygenSwimSpeedStatMultiplier":
                             OxygenSwimSpeedStatMultiplier = value;
                             break;
                         case "bPvEDisableFriendlyFire":
-                            BPvEDisableFriendlyFire = Convert.ToBoolean(value);
+                            BPvEDisableFriendlyFire = ConvertToBoolean(value);
                             break;
                         case "ServerAutoForceRespawnWildDinosInterval":
                             ServerAutoForceRespawnWildDinosInterval = value;
                             break;
                         case "DisableWeatherFog":
-                            DisableWeatherFog = Convert.ToBoolean(value);
+                            DisableWeatherFog = ConvertToBoolean(value);
                             break;
                         case "RandomSupplyCratePoints":
-                            RandomSupplyCratePoints = Convert.ToBoolean(value);
+                            RandomSupplyCratePoints = ConvertToBoolean(value);
                             break;
                         case "CrossARKAllowForeignDinoDownloads":
-                            CrossARKAllowForeignDinoDownloads = Convert.ToBoolean(value);
+                            CrossARKAllowForeignDinoDownloads = ConvertToBoolean(value);
                             break;
                         case "PersonalTamedDinosSaddleStructureCost":
                             PersonalTamedDinosSaddleStructureCost = value;
@@ -1249,7 +1315,7 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             PlatformSaddleBuildAreaBoundsMultiplier = value;
                             break;
                         case "AlwaysAllowStructurePickup":
-                            AlwaysAllowStructurePickup = Convert.ToBoolean(value);
+                            AlwaysAllowStructurePickup = ConvertToBoolean(value);
                             break;
                         case "StructurePickupTimeAfterPlacement":
                             StructurePickupTimeAfterPlacement = value;
@@ -1258,7 +1324,7 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             StructurePickupHoldDuration = value;
                             break;
                         case "AllowHideDamageSourceFromLogs":
-                            AllowHideDamageSourceFromLogs = Convert.ToBoolean(value);
+                            AllowHideDamageSourceFromLogs = ConvertToBoolean(value);
                             break;
                         case "RaidDinoCharacterFoodDrainMultiplier":
                             RaidDinoCharacterFoodDrainMultiplier = value;
@@ -1267,10 +1333,10 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             ItemStackSizeMultiplier = value;
                             break;
                         case "AllowHitMarkers":
-                            AllowHitMarkers = Convert.ToBoolean(value);
+                            AllowHitMarkers = ConvertToBoolean(value);
                             break;
                         case "AllowMultipleAttachedC4":
-                            AllowMultipleAttachedC4 = Convert.ToBoolean(value);
+                            AllowMultipleAttachedC4 = ConvertToBoolean(value);
                             break;
 
 
@@ -1281,7 +1347,36 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                 }
             }
         }
-        
+        bool ConvertToBoolean(string value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            value = value.Trim();
+
+            // Handle "True" and "False" values
+            if (bool.TryParse(value, out bool result))
+            {
+                return result;
+            }
+
+            // Handle "0" as false, "1" as true
+            if (value == "0")
+            {
+                return false;
+            }
+            else if (value == "1")
+            {
+                return true;
+            }
+
+            // If none of the above conditions are met, the input is invalid
+            throw new FormatException($"String '{value}' was not recognized as a valid Boolean.");
+        }
+
+
         private void SaveGameUserSettings()
         {
             string serverPath = CurrentServerConfig.ServerPath;
@@ -2065,8 +2160,8 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
             }
         }
 
-        private bool _minimumDinoReuploadInterval;
-        public bool MinimumDinoReuploadInterval
+        private string _minimumDinoReuploadInterval;
+        public string MinimumDinoReuploadInterval
         {
             get { return _minimumDinoReuploadInterval; }
             set
@@ -2695,64 +2790,64 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             PhotoModeRangeLimit = value;
                             break;
                         case "DisablePhotoMode":
-                            DisablePhotoMode = Convert.ToBoolean(value);
+                            DisablePhotoMode = ConvertToBoolean(value);
                             break;
                         case "IncreasePvPRespawnInterval":
-                            IncreasePvPRespawnInterval = Convert.ToBoolean(value);
+                            IncreasePvPRespawnInterval = ConvertToBoolean(value);
                             break;
                         case "AutoPvETimer":
-                            AutoPvETimer = Convert.ToBoolean(value);
+                            AutoPvETimer = ConvertToBoolean(value);
                             break;
                         case "AutoPvEUseSystemTime":
                             AutoPvEUseSystemTime = Convert.ToBoolean(value);
                             break;
                         case "DisableFriendlyFire":
-                            DisableFriendlyFire = Convert.ToBoolean(value);
+                            DisableFriendlyFire = ConvertToBoolean(value);
                             break;
                         case "FlyerPlatformAllowUnalignedDinoBasing":
-                            FlyerPlatformAllowUnalignedDinoBasing = Convert.ToBoolean(value);
+                            FlyerPlatformAllowUnalignedDinoBasing = ConvertToBoolean(value);
                             break;
                         case "DisableLootCrates":
-                            DisableLootCrates = Convert.ToBoolean(value);
+                            DisableLootCrates = ConvertToBoolean(value);
                             break;
                         case "AllowCustomRecipes":
-                            AllowCustomRecipes = Convert.ToBoolean(value);
+                            AllowCustomRecipes = ConvertToBoolean(value);
                             break;
                         case "PassiveDefensesDamageRiderlessDinos":
-                            PassiveDefensesDamageRiderlessDinos = Convert.ToBoolean(value);
+                            PassiveDefensesDamageRiderlessDinos = ConvertToBoolean(value);
                             break;
                         case "PvEAllowTribeWar":
-                            PvEAllowTribeWar = Convert.ToBoolean(value);
+                            PvEAllowTribeWar = ConvertToBoolean(value);
                             break;
                         case "PvEAllowTribeWarCancel":
-                            PvEAllowTribeWarCancel = Convert.ToBoolean(value);
+                            PvEAllowTribeWarCancel = ConvertToBoolean(value);
                             break;
                         case "MaxDifficulty":
-                            MaxDifficulty = Convert.ToBoolean(value);
+                            MaxDifficulty = ConvertToBoolean(value);
                             break;
                         case "UseSingleplayerSettings":
-                            UseSingleplayerSettings = Convert.ToBoolean(value);
+                            UseSingleplayerSettings = ConvertToBoolean(value);
                             break;
                         case "UseCorpseLocator":
-                            UseCorpseLocator = Convert.ToBoolean(value);
+                            UseCorpseLocator = ConvertToBoolean(value);
                             break;
                         case "ShowCreativeMode":
-                            ShowCreativeMode = Convert.ToBoolean(value);
+                            ShowCreativeMode = ConvertToBoolean(value);
                             break;
                         case "HardLimitTurretsInRange":
-                            HardLimitTurretsInRange = Convert.ToBoolean(value);
+                            HardLimitTurretsInRange = ConvertToBoolean(value);
                             break;
                         case "DisableStructurePlacementCollision":
-                            DisableStructurePlacementCollision = Convert.ToBoolean(value);
+                            DisableStructurePlacementCollision = ConvertToBoolean(value);
                             break;
                         case "AllowPlatformSaddleMultiFloors":
-                            AllowPlatformSaddleMultiFloors = Convert.ToBoolean(value);
+                            AllowPlatformSaddleMultiFloors = ConvertToBoolean(value);
                             break;
                         case "AllowUnlimitedRespec":
-                            AllowUnlimitedRespec = Convert.ToBoolean(value);
+                            AllowUnlimitedRespec = ConvertToBoolean(value);
                             break;
                         case "DisableDinoTaming":
-                            DisableDinoTaming = Convert.ToBoolean(value);
+                            DisableDinoTaming = ConvertToBoolean(value);
                             break;
                         case "OverrideMaxExperiencePointsDino":
                             OverrideMaxExperiencePointsDino = value;
@@ -2791,10 +2886,10 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                             CraftingSkillBonusMultiplier = value;
                             break;
                         case "AllowSpeedLeveling":
-                            AllowSpeedLeveling = Convert.ToBoolean(value);
+                            AllowSpeedLeveling = ConvertToBoolean(value);
                             break;
                         case "AllowFlyerSpeedLeveling":
-                            AllowFlyerSpeedLeveling = Convert.ToBoolean(value);
+                            AllowFlyerSpeedLeveling = ConvertToBoolean(value);
                             break;
                             // Add cases for all other settings
                             // ...

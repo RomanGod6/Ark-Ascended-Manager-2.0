@@ -12,6 +12,8 @@ using System.Diagnostics;
 using System.Text.Json;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
+using Newtonsoft.Json;
+
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -36,7 +38,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             {
                 string folderPath = dialog.SelectedPath;
                 // Use the ProfileName from the ViewModel instead of "ServerProfile"
-                string desiredPath = Path.Combine(folderPath, "AAM", ViewModel.ProfileName);
+                string desiredPath = Path.Combine(folderPath, ViewModel.ProfileName);
                 ViewModel.ServerPath = desiredPath; // Set the property on ViewModel
             }
         }
@@ -61,27 +63,47 @@ namespace Ark_Ascended_Manager.Views.Pages
             {
                 // Read existing list from file
                 string json = File.ReadAllText(filePath);
-                servers = JsonSerializer.Deserialize<List<ServerConfig>>(json) ?? new List<ServerConfig>();
+                servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
             }
             else
             {
                 servers = new List<ServerConfig>();
             }
 
+        
             // Add the new server config
             servers.Add(config);
 
             // Write updated list to file
-            string updatedJson = JsonSerializer.Serialize(servers, new JsonSerializerOptions { WriteIndented = true });
+            string updatedJson = JsonConvert.SerializeObject(servers, Formatting.Indented);
+
             File.WriteAllText(filePath, updatedJson);
             System.Windows.MessageBox.Show($"Server config saved to: {filePath}", "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
+
         private string FindSteamCmdPath()
         {
+            // Define the JSON file path
+            string jsonFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "SteamCmdPath.json");
+
+            // Try to read the path from the JSON file
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                dynamic pathData = JsonConvert.DeserializeObject(json);
+                string savedPath = pathData?.SteamCmdPath;
+                if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                {
+                    return savedPath;
+                }
+            }
+
             // Check in the default location
             string defaultPath = @"C:\SteamCMD\steamcmd.exe";
             if (File.Exists(defaultPath))
             {
+                // Optionally, save the default path to the JSON file
+                SaveSteamCmdPath(defaultPath, jsonFilePath);
                 return defaultPath;
             }
 
@@ -94,11 +116,30 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             if (openFileDialog.ShowDialog() == true)
             {
+                // Save the selected path to the JSON file
+                SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
                 return openFileDialog.FileName;
             }
 
             return null; // or handle this case appropriately
         }
+
+        private void SaveSteamCmdPath(string path, string jsonFilePath)
+        {
+            // Ensure the directory exists
+            string directoryPath = Path.GetDirectoryName(jsonFilePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var pathData = new { SteamCmdPath = path };
+            string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
+
+            // Now it's safe to write the file as the directory exists
+            File.WriteAllText(jsonFilePath, json);
+        }
+
         private void RunSteamCMD(string scriptPath)
         {
             string steamCmdPath = FindSteamCmdPath();
@@ -157,7 +198,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 string selectedMap = ViewModel.SelectedOption; // Assuming this is the selected map name
 
                 // Construct the final server path
-                string aamDirectory = Path.Combine(baseServerPath, "AAM");
+                string aamDirectory = Path.Combine(baseServerPath);
                 if (!Directory.Exists(aamDirectory))
                 {
                     Directory.CreateDirectory(aamDirectory);
@@ -188,7 +229,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"BabyCuddleGracePeriodMultiplier", "1"},
         {"BabyCuddleLoseImprintQualitySpeedMultiplier", "1"},
         {"PerLevelStatsMultiplier_DinoTamed[0]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed[1]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed[1]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed[2]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed[3]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed[4]", "1"},
@@ -196,26 +237,26 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"PerLevelStatsMultiplier_DinoTamed[8]", "1 "},
         {"PerLevelStatsMultiplier_DinoTamed[9]", "1 "},
         {"PerLevelStatsMultiplier_DinoTamed_Add[0]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Add[1]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Add[1]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Add[2]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Add[3]", "3"},
-        {"PerLevelStatsMultiplier_DinoTamed_Add[4]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Add[3]", "1"},
+        {"PerLevelStatsMultiplier_DinoTamed_Add[4]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Add[5]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Add[6]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Add[7]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Add[7]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Add[8]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Add[9]", "2"},
+        {"PerLevelStatsMultiplier_DinoTamed_Add[9]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Add[10]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[0]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Affinity[1]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Affinity[1]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[2]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Affinity[3]", "3"},
-        {"PerLevelStatsMultiplier_DinoTamed_Affinity[4]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Affinity[3]", "1"},
+        {"PerLevelStatsMultiplier_DinoTamed_Affinity[4]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[5]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[6]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Affinity[7]", "3"},
+        {"PerLevelStatsMultiplier_DinoTamed_Affinity[7]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[8]", "1"},
-        {"PerLevelStatsMultiplier_DinoTamed_Affinity[9]", "2"},
+        {"PerLevelStatsMultiplier_DinoTamed_Affinity[9]", "1"},
         {"PerLevelStatsMultiplier_DinoTamed_Affinity[10]", "1"},
         {"PerLevelStatsMultiplier_DinoWild[0]", "1"},
         {"PerLevelStatsMultiplier_DinoWild[1]", "1"},
@@ -228,7 +269,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"PerLevelStatsMultiplier_DinoWild[8]", "1"},
         {"PerLevelStatsMultiplier_DinoWild[9]", "1"},
         {"PerLevelStatsMultiplier_DinoWild[10]", "1"},
-        {"PerLevelStatsMultiplier_Player[0]", "2"},
+        {"PerLevelStatsMultiplier_Player[0]", "1"},
         {"PerLevelStatsMultiplier_Player[1]", "1"},
         {"PerLevelStatsMultiplier_Player[2]", "1"},
         {"PerLevelStatsMultiplier_Player[3]", "1"},
@@ -238,7 +279,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"PerLevelStatsMultiplier_Player[7]", "1"},
         {"PerLevelStatsMultiplier_Player[8]", "1"},
         {"PerLevelStatsMultiplier_Player[9]", "1"},
-        {"PerLevelStatsMultiplier_Player[10]", "3"},
+        {"PerLevelStatsMultiplier_Player[10]", "1"},
         {"GlobalSpoilingTimeMultiplier", "0"},
         {"GlobalItemDecompositionTimeMultiplier", "0"},
         {"GlobalCorpseDecompositionTimeMultiplier", "1"},
@@ -248,26 +289,26 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"IncreasePvPRespawnIntervalMultiplier", "2"},
         {"IncreasePvPRespawnIntervalBaseAmount", "5"},
         {"ResourceNoReplenishRadiusPlayers", "1"},
-        {"CropGrowthSpeedMultiplier", "3"},
-        {"LayEggIntervalMultiplier", "3"},
+        {"CropGrowthSpeedMultiplier", "1"},
+        {"LayEggIntervalMultiplier", "1"},
         {"PoopIntervalMultiplie", "1"},
         {"CropDecaySpeedMultiplier", "1"},
         {"MatingIntervalMultiplier", "1"},
-        {"EggHatchSpeedMultiplier", "2"},
-        {"BabyMatureSpeedMultiplier", "4"},
+        {"EggHatchSpeedMultiplier", "1"},
+        {"BabyMatureSpeedMultiplier", "1"},
         {"BabyFoodConsumptionSpeedMultiplier", "1"},
         {"DinoTurretDamageMultiplier", "1"},
         {"DinoHarvestingDamageMultiplier", "1"},
         { "PlayerHarvestingDamageMultiplier", "1"},
-        {"CustomRecipeEffectivenessMultiplier", "3"},
-        {"CustomRecipeSkillMultiplier", "3"},
+        {"CustomRecipeEffectivenessMultiplier", "1"},
+        {"CustomRecipeSkillMultiplier", "1"},
         {"AutoPvEStartTimeSeconds", "0"},
         {"AutoPvEStopTimeSecond", "0"},
-        {"KillXPMuliplier", "3"},
-        {"HarvestXPMultipier", "3"},
-        {"CraftXPMultplier", "3"},
-        {"GenericXPMultipier", "3"},
-        {"SpecialXPMultipier", "3"},
+        {"KillXPMuliplier", "1"},
+        {"HarvestXPMultipier", "1"},
+        {"CraftXPMultplier", "1"},
+        {"GenericXPMultipier", "1"},
+        {"SpecialXPMultipier", "1"},
         {"FuelConsumptionIntervalMultiplier", "0.25"},
         {"PhotoModeRangeLmit", "3000"},
         {"bDisablePhooMode", "False"},
@@ -299,9 +340,9 @@ namespace Ark_Ascended_Manager.Views.Pages
         {"CaveKillXPMultipler", "0.999989986"},
         {"TamedKillXPMultiplir", "0.999989986"},
         {"UnclaimedKillXPMultiplier", "0.999989986"},
-        {"SupplyCrateLootQualityMultiplier", "2"},
-        {"FishingLootQualityMultiplierT", "2"},
-        {"CraftingSkillBonusMultiplier", "3"},
+        {"SupplyCrateLootQualityMultiplier", "1"},
+        {"FishingLootQualityMultiplierT", "1"},
+        {"CraftingSkillBonusMultiplier", "1"},
         {"bAllowSpeedLeveling", "False"},
         {"bAllowFlyerSpeedLeveling", "False"},
         // Add more key-value pairs as needed
@@ -347,11 +388,11 @@ namespace Ark_Ascended_Manager.Views.Pages
                             {"ShowMapPlayerLocation", "False" },
                             {"TamedDinoDamageMultiplier", "1" },
                             {"TamedDinoResistanceMultiplier", "1" },
-                            {"TamingSpeedMultiplier", "25" },
-                            {"XPMultiplier", "20" },
+                            {"TamingSpeedMultiplier", "1" },
+                            {"XPMultiplier", "1" },
                             {"EnablePVPGamma", "False" },
                             {"EnablePVEGamma", "False" },
-                            {"SpectatorPassword", "Bailee06" },
+                            {"SpectatorPassword", "Password" },
                             {"DifficultyOffset", "1" },
                             {"PvEStructureDecayDestructionPeriod", "1" },
                             {"Banlist", "http" },
@@ -360,7 +401,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                             {"PvEDinoDecayPeriodMultiplier", "1" },
                             {"AdminLogging", "False" },
                             {"MaxTamedDinos", "8000" },
-                            {"MaxNumbersofPlayersInTribe", "3" },
+                            {"MaxNumbersofPlayersInTribe", "60" },
                             {"BattleNumOfTribestoStartGame", "2" },
                             {"TimeToCollapseROD", "100" },
                             {"BattleAutoStartGameInterval", "100" },
@@ -399,7 +440,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                             {"ForceFlyerExplosives", "False" },
                             {"PreventOfflinePvP", "False" },
                             {"AllowFlyingStaminaRecovery", "False" },
-                            {"OxygenSwimSpeedStatMultiplier", "4" },
+                            {"OxygenSwimSpeedStatMultiplier", "1" },
                             {"bPvEDisableFriendlyFire", "False" },
                             {"ServerAutoForceRespawnWildDinosInterval", "3600" },
                             {"DisableWeatherFog", "False" },
@@ -414,7 +455,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                             {"StructurePickupHoldDuration", "0" },
                             {"AllowHideDamageSourceFromLogs", "False" },
                             {"RaidDinoCharacterFoodDrainMultiplier", "1" },
-                            {"ItemStackSizeMultiplier", "100" },
+                            {"ItemStackSizeMultiplier", "1" },
                             {"AllowHitMarkers", "False" }
             // Add more key-value pairs under ServerSettings
         }},

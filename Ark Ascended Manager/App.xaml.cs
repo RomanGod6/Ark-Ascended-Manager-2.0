@@ -48,6 +48,9 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<SyncConfigPage>();
                 services.AddSingleton<ImportServersPage>();
                 services.AddSingleton<IssueReportForm>();
+                services.AddSingleton<IntegrationsPage>();
+                services.AddTransient<PluginsPage>();
+                services.AddTransient<PluginInstallPage>();
 
 
 
@@ -62,6 +65,9 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<RconPanelViewModel>();
                 services.AddSingleton<SyncConfigViewModel>();
                 services.AddSingleton<ImportServersPageViewModel>();
+                services.AddSingleton<IntegrationsViewModel>();
+                services.AddTransient<PluginsPageViewModel>();
+                services.AddTransient<PluginInstallPageViewModel>();
             }).Build();
 
         /// <summary>

@@ -22,13 +22,14 @@
 
     <StackPanel>
         <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
+        
 
 
         <TextBlock
             FontSize="20"
             FontWeight="Medium"
-            Text="Personalization" />
-        <TextBlock Margin="0,12,0,0" Text="Theme" />
+            Text="Personalization" Width="772" />
+        <TextBlock Margin="0,12,0,0" Text="Theme" Width="773" />
         <RadioButton
             Margin="0,12,0,0"
             Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
@@ -42,13 +43,11 @@
             CommandParameter="theme_dark"
             Content="Dark"
             GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
-
+            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" Width="89" />
+        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
         <TextBlock
-            Margin="0,24,0,0"
             FontSize="20"
             FontWeight="Medium"
-            Text="About Ark Ascended Manager" />
-        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+            Text="About Ark Ascended Manager" Width="769" />
     </StackPanel>
 </Page>

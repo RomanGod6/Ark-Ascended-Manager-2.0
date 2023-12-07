@@ -7,6 +7,18 @@
       Title="IntegrationsPage">
 
     <Grid>
- 
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+            <Label Content="Discord Bot Token:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="BotTokenTextBox" Width="200" Margin="0,5"/>
+
+            <!-- Add a TextBox for Guild ID -->
+            <Label Content="Guild ID:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="GuildIdTextBox" Width="200" Margin="0,5"/>
+
+            <Button x:Name="SaveTokenButton" Content="Save Token Discord Information" Margin="0,10" Width="150" Click="SaveTokenButton_Click"/>
+            <Button x:Name="StartBotButton" Content="Start Bot" Margin="0,5" Width="100" Click="StartBotButton_Click"/>
+            <Button x:Name="StopBotButton" Content="Stop Bot" Margin="0,5" Width="100" Click="StopBotButton_Click"/>
+            <TextBlock x:Name="BotStatusTextBlock" Text="Bot Status: Disconnected" Margin="0,10"/>
+        </StackPanel>
     </Grid>
 </Page>

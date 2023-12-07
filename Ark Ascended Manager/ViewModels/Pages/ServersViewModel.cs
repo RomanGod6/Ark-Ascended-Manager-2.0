@@ -7,6 +7,8 @@ using System.Windows.Input;
 using Ark_Ascended_Manager.Views.Pages;
 using static Ark_Ascended_Manager.Views.Pages.CreateServersPage;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using Microsoft.Win32;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -163,6 +165,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             return false;
         }
+
         private void UpdateServer(ServerConfig serverConfig)
         {
             if (serverConfig == null)
@@ -227,15 +230,54 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string FindSteamCmdPath()
         {
-            // Your implementation to find steamcmd.exe
-            // Example:
-            string defaultPath = @"C:\SteamCMD\steamcmd.exe";
-            if (File.Exists(defaultPath))
+            // Define the JSON file path in the app data directory
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
+            string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
+
+            // Try to read the path from the JSON file
+            if (File.Exists(jsonFilePath))
             {
-                return defaultPath;
+                try
+                {
+                    string json = File.ReadAllText(jsonFilePath);
+                    dynamic pathData = JsonConvert.DeserializeObject<dynamic>(json);
+                    string savedPath = pathData?.SteamCmdPath;
+                    if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                    {
+                        return savedPath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions that occur during reading and deserializing the JSON file
+                    // For example, log the exception and proceed to prompt the user
+                }
             }
-            // Additional logic to find steamcmd.exe if not in the default location
+
+            // Prompt the user to locate steamcmd.exe if the path is not found or not valid
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Executable files (*.exe)|*.exe",
+                Title = "Locate steamcmd.exe"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Save the selected path to the JSON file for future use
+                SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
+                return openFileDialog.FileName;
+            }
+
+            // Return null if the path could not be found or the user cancelled the dialog
             return null;
+        }
+
+        private void SaveSteamCmdPath(string path, string jsonFilePath)
+        {
+            var pathData = new { SteamCmdPath = path };
+            string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, json);
         }
 
 
@@ -345,7 +387,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "currentServerConfig.json");
 
             // Serialize the ServerConfig object to JSON
-            string json = JsonSerializer.Serialize(serverConfig);
+            string json = System.Text.Json.JsonSerializer.Serialize(serverConfig);
 
             // Write the JSON to a file
             File.WriteAllText(filePath, json);
@@ -362,7 +404,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
-                var servers = JsonSerializer.Deserialize<List<ServerConfig>>(json);
+                var servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json);
 
                 if (servers != null)
                 {

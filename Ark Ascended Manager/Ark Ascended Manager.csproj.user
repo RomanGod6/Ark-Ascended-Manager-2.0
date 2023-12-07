@@ -21,6 +21,12 @@
     <Page Update="Views\Pages\ConfigPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Pages\PluginInstallPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\PluginsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\Integrations.xaml">
       <SubType>Designer</SubType>
     </Page>

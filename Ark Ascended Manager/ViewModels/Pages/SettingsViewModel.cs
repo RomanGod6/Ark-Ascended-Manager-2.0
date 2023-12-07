@@ -12,9 +12,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand OpenIssueReportFormCommand { get; private set; }
         private bool _isInitialized = false;
         private readonly INavigationService _navigationService;
+        
         public SettingsViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
+
             
         }
 
@@ -46,6 +48,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 ?? String.Empty;
         }
+        private bool _groupConsoles;
+        public bool GroupConsoles
+        {
+            get => _groupConsoles;
+            set => SetProperty(ref _groupConsoles, value);
+        }
+
 
         [RelayCommand]
         private void OnChangeTheme(string parameter)

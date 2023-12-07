@@ -654,7 +654,7 @@
                                     <TextBox Text="{Binding TheMaxStructuresInRange, Mode=TwoWay}"/>
 
                                     <Label Content="Minimum Dino Reupload Interval:"/>
-                                    <CheckBox IsChecked="{Binding MinimumDinoReuploadInterval, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding MinimumDinoReuploadInterval, Mode=TwoWay}"/>
 
                                     <Label Content="PvEAllowStructuresAtSupplyDrops:"/>
                                     <CheckBox IsChecked="{Binding PvEAllowStructuresAtSupplyDrops, Mode=TwoWay}"/>
@@ -1058,7 +1058,11 @@
 
                             <Label Content="Server Name"/>
                             <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                          
+                            <Label Content="Server Platform Setting"/>
+                            <TextBox 
+                            Text="{Binding ServerPlatformSetting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ToolTip="Enter the server platform(s) separated by commas. Options: PC, XSX, WINGDK, PS5, All." />
+
 
 
                             <Label Content="Listen Port"/>
@@ -1088,8 +1092,7 @@
                             <Label Content="Prevent Spawn Animation"/>
                             <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <Label Content="Disable Cross-Platform"/>
-                            <CheckBox IsChecked="{Binding DisableCrossPlatform, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                          
 
                             <Label Content="Enable Plugins"/>
                             <CheckBox Content="Enable Plugins" IsChecked="{Binding PluginsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1199,12 +1202,6 @@
                                Foreground="White"
                                ShowLineNumbers="True" />
 
-                    <!-- ListView for servers (if you want to show servers list) -->
-                    <ListView x:Name="serversListView" Grid.Column="0" Grid.Row="1" SelectionMode="Extended"
-                  HorizontalAlignment="Left" VerticalAlignment="Top"
-                  Height="Auto" Margin="0,5,0,0">
-               
-                    </ListView>
                 </Grid>
             </TabItem>
 

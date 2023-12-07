@@ -35,11 +35,11 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 Content = "Integrations",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Power20 },
-                TargetPageType = typeof(Views.Pages.DashboardPage)
+                TargetPageType = typeof(Views.Pages.IntegrationsPage)
             },
                  new NavigationViewItem()
             {
-                Content = "The Forge",
+                Content = "Plugins",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Database20 },
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             }

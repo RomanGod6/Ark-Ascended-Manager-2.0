@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET7_0;NETCOREAPP
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
-12-1870029191
+14-1986407429
 1282391436
-372022272885
-2411439522031
-ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\RconPanel.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
+421803754662
+250453463163
+ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\PluginInstallPage.xaml;Views\Pages\PluginsPage.xaml;Views\Pages\RconPanel.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
 
-False
+True
 
