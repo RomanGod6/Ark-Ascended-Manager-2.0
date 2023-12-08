@@ -166,8 +166,7 @@
 
                                     <Label Content="AutoPvE StopTime Seconds:"/>
                                     <TextBox Text="{Binding AutoPvEStopTimeSeconds, Mode=TwoWay}"/>
-                                    <Label Content="Max Player Count"/>
-                                    <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    
                                     <Label Content="Max Number Of Players In Tribe:"/>
                                     <TextBox Text="{Binding MaxNumberOfPlayersInTribe, Mode=TwoWay}"/>
                                     <Label Content="TribeNameChangeCooldown:"/>
@@ -294,9 +293,6 @@
 
                                                     <Label Content="Player[Fortitude]:"/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_Player_10, Mode=TwoWay}"/>
-
-
-
                                                 </StackPanel>
                                             </Expander>
 
@@ -306,7 +302,22 @@
                                     </Expander>
                                     <Expander Header="Dino Settings">
                                         <StackPanel>
-                                        
+                                            <Label Content="MaxTamedDinos:"/>
+                                            <TextBox Text="{Binding MaxTamedDinos, Mode=TwoWay}"/>
+                                            <Label Content="Tamed Dino Damage Multiplier:"/>
+                                            <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}"/>
+
+                                            <Label Content="Tamed Dino Resistance Multiplier:"/>
+                                            <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="PersonalTamedDinosSaddleStructureCost:"/>
+                                            <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost, Mode=TwoWay}"/>
+                                            <Label Content="Dino Harvesting Damage Multiplier:"/>
+                                            <TextBox Text="{Binding DinoHarvestingDamageMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Dino Turret Damage Multiplier:"/>
+                                            <TextBox Text="{Binding DinoTurretDamageMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Raid Dino Character Food Drain Multiplier:"/>
+                                            <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+
 
 
                                         </StackPanel>
@@ -345,11 +356,9 @@
 
                                     <Label Content="Crop Decay Speed Multiplier:"/>
                                     <TextBox Text="{Binding CropDecaySpeedMultiplier, Mode=TwoWay}"/>
-                                    <Label Content="Dino Turret Damage Multiplier:"/>
-                                    <TextBox Text="{Binding DinoTurretDamageMultiplier, Mode=TwoWay}"/>
+                                    
 
-                                    <Label Content="Dino Harvesting Damage Multiplier:"/>
-                                    <TextBox Text="{Binding DinoHarvestingDamageMultiplier, Mode=TwoWay}"/>
+                                    
 
                                     
 
@@ -693,11 +702,7 @@
 
 
 
-                                    <Label Content="Tamed Dino Damage Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}"/>
-
-                                            <Label Content="Tamed Dino Resistance Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}"/>
+                                    
 
                                             <Label Content="Taming Speed Multiplier:"/>
                                             <TextBox Text="{Binding TamingSpeedMultiplier, Mode=TwoWay}"/>
@@ -723,8 +728,7 @@
                                             <Label Content="AdminLogging:"/>
                                             <CheckBox IsChecked="{Binding AdminLogging, Mode=TwoWay}"/>
 
-                                            <Label Content="MaxTamedDinos:"/>
-                                            <TextBox Text="{Binding MaxTamedDinos, Mode=TwoWay}"/>
+
 
 
                                             <Label Content="PerPlatformMaxStructuresMultiplier:"/>
@@ -869,8 +873,7 @@
                                             <Label Content="CrossARKAllowForeignDinoDownloads:"/>
                                             <CheckBox IsChecked="{Binding CrossARKAllowForeignDinoDownloads, Mode=TwoWay}"/>
 
-                                            <Label Content="PersonalTamedDinosSaddleStructureCost:"/>
-                                            <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost, Mode=TwoWay}"/>
+                                            
 
                                             <Label Content="StructurePreventResourceRadiusMultiplier:"/>
                                             <TextBox Text="{Binding StructurePreventResourceRadiusMultiplier, Mode=TwoWay}"/>
@@ -892,8 +895,7 @@
                                             <Label Content="AllowHideDamageSourceFromLogs:"/>
                                             <CheckBox IsChecked="{Binding AllowHideDamageSourceFromLogs, Mode=TwoWay}"/>
 
-                                            <Label Content="RaidDinoCharacterFoodDrainMultiplier:"/>
-                                            <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+                                            
 
                                             <Label Content="ItemStackSizeMultiplier:"/>
                                             <TextBox Text="{Binding ItemStackSizeMultiplier, Mode=TwoWay}"/>
@@ -1146,8 +1148,10 @@
 
                             <Label Content="Server Password"/>
                             <TextBox Text="{Binding ServerPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label Content="Max Player Count"/>
+                            <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            
+
 
                             <Label Content="Use Battleye"/>
                             <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
