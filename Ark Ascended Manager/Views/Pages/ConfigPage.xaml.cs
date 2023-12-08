@@ -57,24 +57,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 Console.WriteLine("Parameter is not ServerConfig.");
             }
         }
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            string searchText = SearchBox.Text.ToLower();
-
-            // Assuming 'YourStackPanel' is the name of your StackPanel inside the ScrollViewer
-            foreach (var child in GUSSearch.Children)
-            {
-                // Check if the child is a Label and if its content matches the search text
-                if (child is Label label && label.Content.ToString().ToLower().Contains(searchText))
-                {
-                    // If a match is found, bring that Label into view
-                    label.BringIntoView();
-                    return;
-                }
-            }
-
-            // Optionally, handle the scenario where no match is found
-        }
+        
         private void LoadPluginsToListBox()
         {
             // Retrieve the path from the ViewModel
@@ -204,21 +187,21 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void SearchButtonGameini_Click(object sender, RoutedEventArgs e)
         {
             string searchText = SearchBoxGameIni.Text.ToLower();
+            SearchAndBringIntoView(Gameini, searchText);
+        }
 
-            // Assuming 'YourStackPanel' is the name of your StackPanel inside the ScrollViewer
-            foreach (var child in Gameini.Children)
+        private void SearchAndBringIntoView(StackPanel stackPanel, string searchText)
+        {
+            foreach (var child in stackPanel.Children)
             {
-                // Check if the child is a Label and if its content matches the search text
                 if (child is Label label && label.Content.ToString().ToLower().Contains(searchText))
                 {
-                    // If a match is found, bring that Label into view
                     label.BringIntoView();
-                    return;
+                    break; // Exit the loop after the first match is found
                 }
             }
-
-            // Optionally, handle the scenario where no match is found
         }
+
         public class Schedule
         {
             public List<string> Days { get; set; }

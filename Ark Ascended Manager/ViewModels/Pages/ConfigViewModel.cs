@@ -24,7 +24,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ObservableCollection<string> PluginNames { get; set; }
         private readonly INavigationService _navigationService;
         public ServerConfig CurrentServerConfig { get; private set; }
-        public ICommand SaveGameUserSettingsCommand { get; private set; }
+       
         public ICommand SaveGameIniSettingsCommand { get; private set; }
         public ICommand LoadLaunchServerSettingsCommand { get; private set; }
         public ICommand StartServerCommand { get; private set; }
@@ -73,8 +73,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             }
             LoadServerProfile();
-            SaveGameUserSettingsCommand = new RelayCommand(SaveGameUserSettings);
-            SaveGameIniSettingsCommand = new RelayCommand(SaveGameIniSettings);
+            
+            SaveGameIniSettingsCommand = new RelayCommand(SaveAllSettings);
             LoadLaunchServerSettingsCommand = new RelayCommand(UpdateLaunchParameters);
             StartServerCommand = new RelayCommand(StartServer);
             UpdateServerCommand = new RelayCommand(UpdateServerBasedOnJson);
@@ -112,7 +112,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 SelectedPluginConfig = "File not found.";
             }
         }
-        
+        private void SaveAllSettings()
+        {
+            SaveGameIniSettings();
+            SaveGameUserSettings();
+        }
+
 
 
         public void LoadPlugins()
@@ -2996,7 +3001,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "bAutoPvETimer", AutoPvETimer.ToString());
             UpdateLine(ref lines, "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
-            UpdateLine(ref lines, "DisableFriendlyFire", DisableFriendlyFire.ToString());
+            UpdateLine(ref lines, "bPvPDisableFriendlyFire", DisableFriendlyFire.ToString());
             UpdateLine(ref lines, "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
             UpdateLine(ref lines, "DisableLootCrates", DisableLootCrates.ToString());
             UpdateLine(ref lines, "AllowCustomRecipes", AllowCustomRecipes.ToString());
