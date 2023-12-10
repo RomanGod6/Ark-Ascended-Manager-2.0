@@ -1076,11 +1076,29 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "HarvestAmountMultiplier":
                             HarvestAmountMultiplier = value;
                             break;
+                        case "ResourcesRespawnPeriodMultiplier":
+                            ResourcesRespawnPeriodMultiplier = value;
+                            break;
+                        case "DinoCountMultiplier":
+                            DinoCountMultiplier = value;
+                            break;
+                        case "HairGrowthSpeedMultiplier":
+                            HairGrowthSpeedMultiplier = value;
+                            break;
+                        case "BaseTemperatureMultiplier":
+                            BaseTemperatureMultiplier = value;
+                            break;
+                        case "HarvestHealthMultiplier":
+                            HarvestHealthMultiplier = value;
+                            break;
                         case "AllowThirdPersonPlayer":
                             AllowThirdPersonPlayer = ConvertToBoolean(value);
                             break;
                         case "AllowCaveBuildingPvE":
                             AllowCaveBuildingPvE = ConvertToBoolean(value);
+                            break;
+                        case "AllowCaveBuildingPvP":
+                            AllowCaveBuildingPvP = ConvertToBoolean(value);
                             break;
                         case "AlwaysNotifyPlayerJoined":
                             AlwaysNotifyPlayerJoined = ConvertToBoolean(value);
@@ -1138,6 +1156,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "TamedDinoDamageMultiplier":
                             TamedDinoDamageMultiplier = value;
+                            break;
+                        case "DinoResistanceMultiplier":
+                            DinoResistanceMultiplier = value;
+                            break;
+                        case "DinoDamageMultiplier":
+                            DinoDamageMultiplier = value;
                             break;
                         case "TamedDinoResistanceMultiplier":
                             TamedDinoResistanceMultiplier = value;
@@ -1205,6 +1229,21 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "AutoDestroyOldStructuresMultiplier":
                             AutoDestroyOldStructuresMultiplier = value;
                             break;
+                        case "StructureDamageMultiplier":
+                            StructureDamageMultiplier = value;
+                            break;
+                        case "StructureResistanceMultiplier":
+                            StructureResistanceMultiplier = value;
+                            break;
+                        case "LimitTurretsNum":
+                            LimitTurretsNum = value;
+                            break;
+                        case "LimitTurretsRange":
+                            LimitTurretsRange = value;
+                            break;
+                        case "AutoDestroyStructures":
+                            AutoDestroyStructures = ConvertToBoolean(value);
+                            break;
                         case "UseVSync":
                             UseVSync = ConvertToBoolean(value);
                             break;
@@ -1228,6 +1267,9 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "bPvPDinoDecay":
                             BPvPDinoDecay = ConvertToBoolean(value);
+                            break;
+                        case "PreventOfflinePvP":
+                            PreventOfflinePvP = ConvertToBoolean(value);
                             break;
                         case "bPvPStructureDecay":
                             BPvPStructureDecay = ConvertToBoolean(value);
@@ -1271,6 +1313,15 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "MaxPersonalTamedDinos":
                             MaxPersonalTamedDinos = value;
                             break;
+                        case "DayCycleSpeedScale":
+                            DayCycleSpeedScale = value;
+                            break;
+                        case "DayTimeSpeedScale":
+                            DayTimeSpeedScale = value;
+                            break;
+                        case "NightTimeSpeedScale":
+                            NightTimeSpeedScale = value;
+                            break;
                         case "AutoDestroyDecayedDinos":
                             AutoDestroyDecayedDinos = ConvertToBoolean(value);
                             break;
@@ -1280,6 +1331,9 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "UseOptimizedHarvestingHealth":
                             UseOptimizedHarvestingHealth = ConvertToBoolean(value);
                             break;
+                        case "ClampResourceHarvestDamage":
+                            ClampResourceHarvestDamage = ConvertToBoolean(value);
+                            break;
                         case "AllowCrateSpawnsOnTopOfStructures":
                             AllowCrateSpawnsOnTopOfStructures = ConvertToBoolean(value);
                             break;
@@ -1288,6 +1342,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "AllowFlyingStaminaRecovery":
                             AllowFlyingStaminaRecovery = ConvertToBoolean(value);
+                            break;
+                        case "DinoCharacterStaminaDrainMultiplier":
+                            DinoCharacterStaminaDrainMultiplier = value;
+                            break;
+                        case "DinoCharacterHealthRecoveryMultiplier":
+                            DinoCharacterHealthRecoveryMultiplier = value;
                             break;
                         case "OxygenSwimSpeedStatMultiplier":
                             OxygenSwimSpeedStatMultiplier = value;
@@ -1315,6 +1375,9 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "TribeNameChangeCooldown":
                             TribeNameChangeCooldown = value;
+                            break;
+                        case "TribeSlotReuseCooldown":
+                            TribeSlotReuseCooldown = value;
                             break;
                         case "PlatformSaddleBuildAreaBoundsMultiplier":
                             PlatformSaddleBuildAreaBoundsMultiplier = value;
@@ -1392,8 +1455,17 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
 
             // Update specific lines
             UpdateLine(ref lines, "HarvestAmountMultiplier", HarvestAmountMultiplier);
+            UpdateLine(ref lines, "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier);
+            UpdateLine(ref lines, "DayTimeSpeedScale", DayTimeSpeedScale);
+            UpdateLine(ref lines, "DayCycleSpeedScale", DayCycleSpeedScale);
+            UpdateLine(ref lines, "NightTimeSpeedScale", NightTimeSpeedScale);
+            UpdateLine(ref lines, "DinoCountMultiplier", DinoCountMultiplier);
+            UpdateLine(ref lines, "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier);
+            UpdateLine(ref lines, "BaseTemperatureMultiplier", BaseTemperatureMultiplier);
+            UpdateLine(ref lines, "HarvestHealthMultiplier", HarvestHealthMultiplier);
             UpdateLine(ref lines, "AllowThirdPersonPlayer", AllowThirdPersonPlayer.ToString());
             UpdateLine(ref lines, "AllowCaveBuildingPvE", AllowCaveBuildingPvE.ToString());
+            UpdateLine(ref lines, "AllowCaveBuildingPvP", AllowCaveBuildingPvP.ToString());
             UpdateLine(ref lines, "AlwaysNotifyPlayerJoined", AlwaysNotifyPlayerJoined.ToString());
             UpdateLine(ref lines, "AlwaysNotifyPlayerLeft", AlwaysNotifyPlayerLeft.ToString());
             UpdateLine(ref lines, "AllowFlyerCarryPvE", AllowFlyerCarryPvE.ToString());
@@ -1413,9 +1485,13 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "ServerPvE", ServerPvE.ToString());
             UpdateLine(ref lines, "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
             UpdateLine(ref lines, "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
+            UpdateLine(ref lines, "DinoResistanceMultiplier", DinoResistanceMultiplier);
+            UpdateLine(ref lines, "DinoDamageMultiplier", DinoDamageMultiplier);
             UpdateLine(ref lines, "TamedDinoResistanceMultiplier", TamedDinoResistanceMultiplier);
             UpdateLine(ref lines, "TamingSpeedMultiplier", TamingSpeedMultiplier);
+            UpdateLine(ref lines, "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier);
             UpdateLine(ref lines, "XPMultiplier", XPMultiplier);
+            UpdateLine(ref lines, "DinoCharacterHealthRecoveryMultiplier", DinoCharacterHealthRecoveryMultiplier);
             UpdateLine(ref lines, "EnablePVPGamma", EnablePVPGamma.ToString());
             UpdateLine(ref lines, "EnablePVEGamma", EnablePVEGamma.ToString());
             UpdateLine(ref lines, "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
@@ -1437,6 +1513,11 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "PerPlatformMaxStructuresMultiplier", PerPlatformMaxStructuresMultiplier);
             UpdateLine(ref lines, "ForceAllStructureLocking", ForceAllStructureLocking.ToString());
             UpdateLine(ref lines, "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
+            UpdateLine(ref lines, "StructureDamageMultiplier", StructureDamageMultiplier);
+            UpdateLine(ref lines, "StructureResistanceMultiplier", StructureResistanceMultiplier);
+            UpdateLine(ref lines, "LimitTurretsNum", LimitTurretsNum);
+            UpdateLine(ref lines, "LimitTurretsRange", LimitTurretsRange);
+            UpdateLine(ref lines, "AutoDestroyStructures", AutoDestroyStructures.ToString());
             UpdateLine(ref lines, "UseVSync", UseVSync.ToString());
             UpdateLine(ref lines, "MaxPlatformSaddleStructureLimit", MaxPlatformSaddleStructureLimit);
             UpdateLine(ref lines, "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
@@ -1460,9 +1541,11 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "NPCNetworkStasisRangeScalePercentEnd", NPCNetworkStasisRangeScalePercentEnd);
             UpdateLine(ref lines, "MaxPersonalTamedDinos", MaxPersonalTamedDinos);
             UpdateLine(ref lines, "PreventOfflinePvPInterval", PreventOfflinePvPInterval);
+            UpdateLine(ref lines, "PreventOfflinePvP", PreventOfflinePvP.ToString());
             UpdateLine(ref lines, "AutoDestroyDecayedDinos", AutoDestroyDecayedDinos.ToString());
             UpdateLine(ref lines, "ClampItemSpoilingTimes", ClampItemSpoilingTimes.ToString());
             UpdateLine(ref lines, "UseOptimizedHarvestingHealth", UseOptimizedHarvestingHealth.ToString());
+            UpdateLine(ref lines, "ClampResourceHarvestDamage", ClampResourceHarvestDamage.ToString());
             UpdateLine(ref lines, "AllowCrateSpawnsOnTopOfStructures", AllowCrateSpawnsOnTopOfStructures.ToString());
             UpdateLine(ref lines, "ForceFlyerExplosives", ForceFlyerExplosives.ToString());
             UpdateLine(ref lines, "AllowMultipleAttachedC4", AllowMultipleAttachedC4.ToString());
@@ -1476,6 +1559,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "PersonalTamedDinosSaddleStructureCost", PersonalTamedDinosSaddleStructureCost);
             UpdateLine(ref lines, "StructurePreventResourceRadiusMultiplier", StructurePreventResourceRadiusMultiplier);
             UpdateLine(ref lines, "TribeNameChangeCooldown", TribeNameChangeCooldown);
+            UpdateLine(ref lines, "TribeSlotReuseCooldown", TribeSlotReuseCooldown);
             UpdateLine(ref lines, "PlatformSaddleBuildAreaBoundsMultiplier", PlatformSaddleBuildAreaBoundsMultiplier);
             UpdateLine(ref lines, "StructurePickupHoldDuration", StructurePickupHoldDuration);
             UpdateLine(ref lines, "StructurePickupTimeAfterPlacement", StructurePickupTimeAfterPlacement);
@@ -1504,6 +1588,76 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
 
 
 
+        private string _harvestHealthMultiplier;
+        public string HarvestHealthMultiplier
+        {
+            get { return _harvestHealthMultiplier; }
+            set
+            {
+                _harvestHealthMultiplier = value;
+                OnPropertyChanged(nameof(HarvestHealthMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _dinoCountMultiplier;
+        public string DinoCountMultiplier
+        {
+            get { return _dinoCountMultiplier; }
+            set
+            {
+                _dinoCountMultiplier = value;
+                OnPropertyChanged(nameof(DinoCountMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _dayTimeSpeedScale;
+        public string DayTimeSpeedScale
+        {
+            get { return _dayTimeSpeedScale; }
+            set
+            {
+                _dayTimeSpeedScale = value;
+                OnPropertyChanged(nameof(DayTimeSpeedScale)); // Notify the UI of the change
+            }
+        }
+        private string _dayCycleSpeedScale;
+        public string DayCycleSpeedScale
+        {
+            get { return _dayCycleSpeedScale; }
+            set
+            {
+                _dayCycleSpeedScale = value;
+                OnPropertyChanged(nameof(DayCycleSpeedScale)); // Notify the UI of the change
+            }
+        }
+        private string _nightTimeSpeedScale;
+        public string NightTimeSpeedScale
+        {
+            get { return _nightTimeSpeedScale; }
+            set
+            {
+                _nightTimeSpeedScale = value;
+                OnPropertyChanged(nameof(NightTimeSpeedScale)); // Notify the UI of the change
+            }
+        }
+        private string _hairGrowthSpeedMultiplier;
+        public string HairGrowthSpeedMultiplier
+        {
+            get { return _hairGrowthSpeedMultiplier; }
+            set
+            {
+                _hairGrowthSpeedMultiplier = value;
+                OnPropertyChanged(nameof(HairGrowthSpeedMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _baseTemperatureMultiplier;
+        public string BaseTemperatureMultiplier
+        {
+            get { return _baseTemperatureMultiplier; }
+            set
+            {
+                _baseTemperatureMultiplier = value;
+                OnPropertyChanged(nameof(BaseTemperatureMultiplier)); // Notify the UI of the change
+            }
+        }
         private string _harvestAmountMultiplier;
         public string HarvestAmountMultiplier
         {
@@ -1512,6 +1666,16 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _harvestAmountMultiplier = value;
                 OnPropertyChanged(nameof(HarvestAmountMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _resourcesRespawnPeriodMultiplier;
+        public string ResourcesRespawnPeriodMultiplier
+        {
+            get { return _resourcesRespawnPeriodMultiplier; }
+            set
+            {
+                _resourcesRespawnPeriodMultiplier = value;
+                OnPropertyChanged(nameof(ResourcesRespawnPeriodMultiplier)); // Notify the UI of the change
             }
         }
         private bool _allowThirdPersonPlayer;
@@ -1533,6 +1697,16 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _allowCaveBuildingPvE = value;
                 OnPropertyChanged(nameof(AllowCaveBuildingPvE)); // Notify the UI of the change
+            }
+        }
+        private bool _allowCaveBuildingPvP;
+        public bool AllowCaveBuildingPvP
+        {
+            get { return _allowCaveBuildingPvP; }
+            set
+            {
+                _allowCaveBuildingPvP = value;
+                OnPropertyChanged(nameof(AllowCaveBuildingPvP)); // Notify the UI of the change
             }
         }
 
@@ -1645,6 +1819,16 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(PreventDownloadDinos)); // Notify the UI of the change
             }
         }
+        private bool _clampResourceHarvestDamage;
+        public bool ClampResourceHarvestDamage
+        {
+            get { return _clampResourceHarvestDamage; }
+            set
+            {
+                _clampResourceHarvestDamage = value;
+                OnPropertyChanged(nameof(ClampResourceHarvestDamage)); // Notify the UI of the change
+            }
+        }
 
         private bool _proximityChat;
         public bool ProximityChat
@@ -1743,6 +1927,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _tamedDinoDamageMultiplier = value;
                 OnPropertyChanged(nameof(TamedDinoDamageMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _dinoResistanceMultiplier;
+        public string DinoResistanceMultiplier
+        {
+            get { return _dinoResistanceMultiplier; }
+            set
+            {
+                _dinoResistanceMultiplier = value;
+                OnPropertyChanged(nameof(DinoResistanceMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _dinoDamageMultiplier;
+        public string DinoDamageMultiplier
+        {
+            get { return _dinoDamageMultiplier; }
+            set
+            {
+                _dinoDamageMultiplier = value;
+                OnPropertyChanged(nameof(DinoDamageMultiplier)); // Notify the UI of the change
             }
         }
 
@@ -1988,6 +2192,56 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(AutoDestroyOldStructuresMultiplier)); // Notify the UI of the change
             }
         }
+        private string _structureDamageMultiplier;
+        public string StructureDamageMultiplier
+        {
+            get { return _structureDamageMultiplier; }
+            set
+            {
+                _structureDamageMultiplier = value;
+                OnPropertyChanged(nameof(StructureDamageMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _structureResistanceMultiplier;
+        public string StructureResistanceMultiplier
+        {
+            get { return _structureResistanceMultiplier; }
+            set
+            {
+                _structureResistanceMultiplier = value;
+                OnPropertyChanged(nameof(StructureResistanceMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _limitTurretsNum;
+        public string LimitTurretsNum
+        {
+            get { return _limitTurretsNum; }
+            set
+            {
+                _limitTurretsNum = value;
+                OnPropertyChanged(nameof(LimitTurretsNum)); // Notify the UI of the change
+            }
+        }
+        private string _limitTurretsRange;
+        public string LimitTurretsRange
+        {
+            get { return _limitTurretsRange; }
+            set
+            {
+                _limitTurretsRange = value;
+                OnPropertyChanged(nameof(LimitTurretsRange)); // Notify the UI of the change
+            }
+        }
+        private bool _autoDestroyStructures;
+        public bool AutoDestroyStructures
+        {
+            get { return _autoDestroyStructures; }
+            set
+            {
+                _autoDestroyStructures = value;
+                OnPropertyChanged(nameof(AutoDestroyStructures)); // Notify the UI of the change
+            }
+        }
 
         private bool _useVSync;
         public bool UseVSync
@@ -2063,6 +2317,16 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _preventOfflinePvPInterval = value;
                 OnPropertyChanged(nameof(PreventOfflinePvPInterval)); // Notify the UI of the change
+            }
+        }
+        private bool _preventOfflinePvP;
+        public bool PreventOfflinePvP
+        {
+            get { return _preventOfflinePvP; }
+            set
+            {
+                _preventOfflinePvP = value;
+                OnPropertyChanged(nameof(PreventOfflinePvP)); // Notify the UI of the change
             }
         }
 
@@ -2396,6 +2660,16 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(TribeNameChangeCooldown)); // Notify the UI of the change
             }
         }
+        private string _tribeSlotReuseCooldown;
+        public string TribeSlotReuseCooldown
+        {
+            get { return _tribeSlotReuseCooldown; }
+            set
+            {
+                _tribeSlotReuseCooldown = value;
+                OnPropertyChanged(nameof(TribeSlotReuseCooldown)); // Notify the UI of the change
+            }
+        }
 
         private string _platformSaddleBuildAreaBoundsMultiplier;
         public string PlatformSaddleBuildAreaBoundsMultiplier
@@ -2700,6 +2974,39 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "PerLevelStatsMultiplier_Player[10]":
                             PerLevelStatsMultiplier_Player_10 = value;
                             break;
+                        case "PlayerBaseStatMultipliers[0]":
+                            PlayerBaseStatMultipliers_0 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[1]":
+                            PlayerBaseStatMultipliers_1 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[2]":
+                            PlayerBaseStatMultipliers_2 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[3]":
+                            PlayerBaseStatMultipliers_3 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[4]":
+                            PlayerBaseStatMultipliers_4 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[5]":
+                            PlayerBaseStatMultipliers_5 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[6]":
+                            PlayerBaseStatMultipliers_6 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[7]":
+                            PlayerBaseStatMultipliers_7 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[8]":
+                            PlayerBaseStatMultipliers_8 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[9]":
+                            PlayerBaseStatMultipliers_9 = value;
+                            break;
+                        case "PlayerBaseStatMultipliers[10]":
+                            PlayerBaseStatMultipliers_10 = value;
+                            break;
                         // ... Similar cases for PerLevelStatsMultiplier_Player[1] to [10]
                         case "GlobalSpoilingTimeMultiplier":
                             GlobalSpoilingTimeMultiplier = value;
@@ -2722,9 +3029,13 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "IncreasePvPRespawnIntervalMultiplier":
                             IncreasePvPRespawnIntervalMultiplier = value;
                             break;
-                        case "IncreasePvPRespawnIntervalBaseAmount":
-                            IncreasePvPRespawnIntervalBaseAmount = value;
+                        case "MaxAlliancesPerTribe":
+                            MaxAlliancesPerTribe = value;
                             break;
+                        case "MaxTribesPerAlliance":
+                            MaxTribesPerAlliance = value;
+                            break;
+
                         case "ResourceNoReplenishRadiusPlayers":
                             ResourceNoReplenishRadiusPlayers = value;
                             break;
@@ -2742,6 +3053,9 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "MatingIntervalMultiplier":
                             MatingIntervalMultiplier = value;
+                            break;
+                        case "BabyImprintAmountMultiplier":
+                            BabyImprintAmountMultiplier = value;
                             break;
                         case "EggHatchSpeedMultiplier":
                             EggHatchSpeedMultiplier = value;
@@ -2785,6 +3099,42 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "GenericXPMultiplier":
                             GenericXPMultiplier = value;
                             break;
+                        case "PlayerDamageMultiplier":
+                            PlayerDamageMultiplier = value;
+                            break;
+                        case "PlayerCharacterWaterDrainMultiplier":
+                            PlayerCharacterWaterDrainMultiplier = value;
+                            break;
+                        case "MaxFallSpeedMultiplier":
+                            MaxFallSpeedMultiplier = value;
+                            break;
+                        case "PlayerCharacterHealthRecoveryMultiplier":
+                            PlayerCharacterHealthRecoveryMultiplier = value;
+                            break;
+                        case "PlayerCharacterStaminaDrainMultiplier":
+                            PlayerCharacterStaminaDrainMultiplier = value;
+                            break;
+                        case "PassiveTameIntervalMultiplier":
+                            PassiveTameIntervalMultiplier = value;
+                            break;
+                        case "WildDinoTorporDrainMultiplier":
+                            WildDinoTorporDrainMultiplier = value;
+                            break;
+                        case "TamedDinoTorporDrainMultiplier":
+                            TamedDinoTorporDrainMultiplier = value;
+                            break;
+                        case "TamedDinoCharacterFoodDrainMultiplier":
+                            TamedDinoCharacterFoodDrainMultiplier = value;
+                            break;
+                        case "WildDinoCharacterFoodDrainMultiplier":
+                            WildDinoCharacterFoodDrainMultiplier = value;
+                            break;
+                        case "PlayerResistanceMultiplier":
+                            PlayerResistanceMultiplier = value;
+                            break;
+                        case "PlayerCharacterFoodDrainMultiplier":
+                            PlayerCharacterFoodDrainMultiplier = value;
+                            break;
                         case "SpecialXPMultiplier":
                             SpecialXPMultiplier = value;
                             break;
@@ -2806,8 +3156,8 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "AutoPvEUseSystemTime":
                             AutoPvEUseSystemTime = Convert.ToBoolean(value);
                             break;
-                        case "DisableFriendlyFire":
-                            DisableFriendlyFire = ConvertToBoolean(value);
+                        case "bPvPDisableFriendlyFire":
+                            BPvPDisableFriendlyFire = ConvertToBoolean(value);
                             break;
                         case "FlyerPlatformAllowUnalignedDinoBasing":
                             FlyerPlatformAllowUnalignedDinoBasing = ConvertToBoolean(value);
@@ -2839,6 +3189,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "ShowCreativeMode":
                             ShowCreativeMode = ConvertToBoolean(value);
                             break;
+                        case "PreventDiseases":
+                            PreventDiseases = ConvertToBoolean(value);
+                            break;
+                        case "NonPermanentDiseases":
+                            NonPermanentDiseases = ConvertToBoolean(value);
+                            break;
                         case "HardLimitTurretsInRange":
                             HardLimitTurretsInRange = ConvertToBoolean(value);
                             break;
@@ -2853,6 +3209,21 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "DisableDinoTaming":
                             DisableDinoTaming = ConvertToBoolean(value);
+                            break;
+                        case "bDisableDinoBreeding":
+                            DisableDinoBreeding = ConvertToBoolean(value);
+                            break;
+                        case "bDisableDinoRiding":
+                            DisableDinoRiding = ConvertToBoolean(value);
+                            break;
+                        case "bAllowUnclaimDinos":
+                            AllowUnclaimDinos = ConvertToBoolean(value);
+                            break;
+                        case "PreventMateBoost":
+                            PreventMateBoost = ConvertToBoolean(value);
+                            break;
+                        case "ForceAllowCaveFlyers":
+                            ForceAllowCaveFlyers = ConvertToBoolean(value);
                             break;
                         case "OverrideMaxExperiencePointsDino":
                             OverrideMaxExperiencePointsDino = value;
@@ -2883,6 +3254,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "SupplyCrateLootQualityMultiplier":
                             SupplyCrateLootQualityMultiplier = value;
+                            break;
+                        case "MatingSpeedMultiplier":
+                            MatingSpeedMultiplier = value;
+                            break;
+                        case "IncreasePvPRespawnIntervalBaseAmount":
+                            IncreasePvPRespawnIntervalBaseAmount = value;
                             break;
                         case "FishingLootQualityMultiplier":
                             FishingLootQualityMultiplier = value;
@@ -2966,6 +3343,17 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
             UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
             UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[3]", PlayerBaseStatMultipliers_3);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[4]", PlayerBaseStatMultipliers_4);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
+            UpdateLine(ref lines, "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
             UpdateLine(ref lines, "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
             UpdateLine(ref lines, "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
             UpdateLine(ref lines, "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
@@ -2974,13 +3362,17 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
             UpdateLine(ref lines, "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
             UpdateLine(ref lines, "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
+            UpdateLine(ref lines, "MaxAlliancesPerTribe", MaxAlliancesPerTribe);
+            UpdateLine(ref lines, "MaxTribesPerAlliance", MaxTribesPerAlliance);
             UpdateLine(ref lines, "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
             UpdateLine(ref lines, "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
             UpdateLine(ref lines, "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
             UpdateLine(ref lines, "PoopIntervalMultiplier", PoopIntervalMultiplier);
             UpdateLine(ref lines, "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
             UpdateLine(ref lines, "MatingIntervalMultiplier", MatingIntervalMultiplier);
+            UpdateLine(ref lines, "BabyImprintAmountMultiplier", BabyImprintAmountMultiplier);
             UpdateLine(ref lines, "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
+            UpdateLine(ref lines, "MatingSpeedMultiplier", MatingSpeedMultiplier);
             UpdateLine(ref lines, "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
             UpdateLine(ref lines, "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
             UpdateLine(ref lines, "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
@@ -2994,6 +3386,18 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "HarvestXPMultiplier", HarvestXPMultiplier);
             UpdateLine(ref lines, "CraftXPMultiplier", CraftXPMultiplier);
             UpdateLine(ref lines, "GenericXPMultiplier", GenericXPMultiplier);
+            UpdateLine(ref lines, "PlayerDamageMultiplier", PlayerDamageMultiplier);
+            UpdateLine(ref lines, "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
+            UpdateLine(ref lines, "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
+            UpdateLine(ref lines, "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
+            UpdateLine(ref lines, "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
+            UpdateLine(ref lines, "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
+            UpdateLine(ref lines, "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
+            UpdateLine(ref lines, "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
+            UpdateLine(ref lines, "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
             UpdateLine(ref lines, "SpecialXPMultiplier", SpecialXPMultiplier);
             UpdateLine(ref lines, "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
             UpdateLine(ref lines, "PhotoModeRangeLimit", PhotoModeRangeLimit);
@@ -3001,7 +3405,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "bAutoPvETimer", AutoPvETimer.ToString());
             UpdateLine(ref lines, "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
-            UpdateLine(ref lines, "bPvPDisableFriendlyFire", DisableFriendlyFire.ToString());
+            UpdateLine(ref lines, "bPvPDisableFriendlyFire", BPvPDisableFriendlyFire.ToString());
             UpdateLine(ref lines, "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
             UpdateLine(ref lines, "DisableLootCrates", DisableLootCrates.ToString());
             UpdateLine(ref lines, "AllowCustomRecipes", AllowCustomRecipes.ToString());
@@ -3012,11 +3416,18 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
             UpdateLine(ref lines, "UseCorpseLocator", UseCorpseLocator.ToString());
             UpdateLine(ref lines, "ShowCreativeMode", ShowCreativeMode.ToString());
+            UpdateLine(ref lines, "NonPermanentDiseases", NonPermanentDiseases.ToString());
+            UpdateLine(ref lines, "PreventDiseases", PreventDiseases.ToString());
             UpdateLine(ref lines, "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
             UpdateLine(ref lines, "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
             UpdateLine(ref lines, "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
             UpdateLine(ref lines, "DisableDinoTaming", DisableDinoTaming.ToString());
+            UpdateLine(ref lines, "bAllowUnclaimDinos", AllowUnclaimDinos.ToString());
+            UpdateLine(ref lines, "bDisableDinoBreeding", DisableDinoBreeding.ToString());
+            UpdateLine(ref lines, "bDisableDinoRiding", DisableDinoRiding.ToString());
+            UpdateLine(ref lines, "ForceAllowCaveFlyers", ForceAllowCaveFlyers.ToString());
+            UpdateLine(ref lines, "PreventMateBoost", PreventMateBoost.ToString());
             UpdateLine(ref lines, "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
             UpdateLine(ref lines, "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
             UpdateLine(ref lines, "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier.ToString(CultureInfo.InvariantCulture));
@@ -3655,6 +4066,116 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_10));
             }
         }
+        private string _PlayerBaseStatMultipliers_0;
+        public string PlayerBaseStatMultipliers_0
+        {
+            get { return _PlayerBaseStatMultipliers_0; }
+            set
+            {
+                _PlayerBaseStatMultipliers_0 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_0));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_1;
+        public string PlayerBaseStatMultipliers_1
+        {
+            get { return _PlayerBaseStatMultipliers_1; }
+            set
+            {
+                _PlayerBaseStatMultipliers_1 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_1));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_2;
+        public string PlayerBaseStatMultipliers_2
+        {
+            get { return _PlayerBaseStatMultipliers_2; }
+            set
+            {
+                _PlayerBaseStatMultipliers_2 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_2));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_3;
+        public string PlayerBaseStatMultipliers_3
+        {
+            get { return _PlayerBaseStatMultipliers_3; }
+            set
+            {
+                _PlayerBaseStatMultipliers_3 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_3));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_4;
+        public string PlayerBaseStatMultipliers_4
+        {
+            get { return _PlayerBaseStatMultipliers_4; }
+            set
+            {
+                _PlayerBaseStatMultipliers_4 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_4));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_5;
+        public string PlayerBaseStatMultipliers_5
+        {
+            get { return _PlayerBaseStatMultipliers_5; }
+            set
+            {
+                _PlayerBaseStatMultipliers_5 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_5));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_6;
+        public string PlayerBaseStatMultipliers_6
+        {
+            get { return _PlayerBaseStatMultipliers_6; }
+            set
+            {
+                _PlayerBaseStatMultipliers_6 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_6));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_7;
+        public string PlayerBaseStatMultipliers_7
+        {
+            get { return _PlayerBaseStatMultipliers_7; }
+            set
+            {
+                _PlayerBaseStatMultipliers_7 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_7));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_8;
+        public string PlayerBaseStatMultipliers_8
+        {
+            get { return _PlayerBaseStatMultipliers_8; }
+            set
+            {
+                _PlayerBaseStatMultipliers_8 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_8));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_9;
+        public string PlayerBaseStatMultipliers_9
+        {
+            get { return _PlayerBaseStatMultipliers_9; }
+            set
+            {
+                _PlayerBaseStatMultipliers_9 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_9));
+            }
+        }
+        private string _PlayerBaseStatMultipliers_10;
+        public string PlayerBaseStatMultipliers_10
+        {
+            get { return _PlayerBaseStatMultipliers_10; }
+            set
+            {
+                _PlayerBaseStatMultipliers_10 = value;
+                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_10));
+            }
+        }
         private string _globalSpoilingTimeMultiplier;
         public string GlobalSpoilingTimeMultiplier
         {
@@ -3742,6 +4263,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(IncreasePvPRespawnIntervalBaseAmount));
             }
         }
+        private string _maxAlliancesPerTribe;
+        public string MaxAlliancesPerTribe
+        {
+            get { return _maxAlliancesPerTribe; }
+            set
+            {
+                _maxAlliancesPerTribe = value;
+                OnPropertyChanged(nameof(MaxAlliancesPerTribe));
+            }
+        }
+        private string _maxTribesPerAlliance;
+        public string MaxTribesPerAlliance
+        {
+            get { return _maxTribesPerAlliance; }
+            set
+            {
+                _maxTribesPerAlliance = value;
+                OnPropertyChanged(nameof(MaxTribesPerAlliance));
+            }
+        }
 
         private string _resourceNoReplenishRadiusPlayers;
         public string ResourceNoReplenishRadiusPlayers
@@ -3817,6 +4358,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _eggHatchSpeedMultiplier = value;
                 OnPropertyChanged(nameof(EggHatchSpeedMultiplier));
+            }
+        }
+        private string _matingSpeedMultiplier;
+        public string MatingSpeedMultiplier
+        {
+            get { return _matingSpeedMultiplier; }
+            set
+            {
+                _matingSpeedMultiplier = value;
+                OnPropertyChanged(nameof(MatingSpeedMultiplier));
+            }
+        }
+        private string _babyImprintAmountMultiplier;
+        public string BabyImprintAmountMultiplier
+        {
+            get { return _babyImprintAmountMultiplier; }
+            set
+            {
+                _babyImprintAmountMultiplier = value;
+                OnPropertyChanged(nameof(BabyImprintAmountMultiplier));
             }
         }
 
@@ -3961,6 +4522,146 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(GenericXPMultiplier));
             }
         }
+        private string _playerCharacterFoodDrainMultiplier;
+        public string PlayerCharacterFoodDrainMultiplier
+        {
+            get { return _playerCharacterFoodDrainMultiplier; }
+            set
+            {
+                _playerCharacterFoodDrainMultiplier = value;
+                OnPropertyChanged(nameof(PlayerCharacterFoodDrainMultiplier));
+            }
+        }
+        private string _playerCharacterWaterDrainMultiplier;
+        public string PlayerCharacterWaterDrainMultiplier
+        {
+            get { return _playerCharacterWaterDrainMultiplier; }
+            set
+            {
+                _playerCharacterWaterDrainMultiplier = value;
+                OnPropertyChanged(nameof(PlayerCharacterWaterDrainMultiplier));
+            }
+        }
+        private string _maxFallSpeedMultiplier;
+        public string MaxFallSpeedMultiplier
+        {
+            get { return _maxFallSpeedMultiplier; }
+            set
+            {
+                _maxFallSpeedMultiplier = value;
+                OnPropertyChanged(nameof(MaxFallSpeedMultiplier));
+            }
+        }
+        private string _playerCharacterHealthRecoveryMultiplier;
+        public string PlayerCharacterHealthRecoveryMultiplier
+        {
+            get { return _playerCharacterHealthRecoveryMultiplier; }
+            set
+            {
+                _playerCharacterHealthRecoveryMultiplier = value;
+                OnPropertyChanged(nameof(PlayerCharacterHealthRecoveryMultiplier));
+            }
+        }
+        private string _tamedDinoCharacterFoodDrainMultiplier;
+        public string TamedDinoCharacterFoodDrainMultiplier
+        {
+            get { return _tamedDinoCharacterFoodDrainMultiplier; }
+            set
+            {
+                _tamedDinoCharacterFoodDrainMultiplier = value;
+                OnPropertyChanged(nameof(TamedDinoCharacterFoodDrainMultiplier));
+            }
+        }
+        private string _wildDinoCharacterFoodDrainMultiplier;
+        public string WildDinoCharacterFoodDrainMultiplier
+        {
+            get { return _wildDinoCharacterFoodDrainMultiplier; }
+            set
+            {
+                _wildDinoCharacterFoodDrainMultiplier = value;
+                OnPropertyChanged(nameof(WildDinoCharacterFoodDrainMultiplier));
+            }
+        }
+        private string _playerCharacterStaminaDrainMultiplier;
+        public string PlayerCharacterStaminaDrainMultiplier
+        {
+            get { return _playerCharacterStaminaDrainMultiplier; }
+            set
+            {
+                _playerCharacterStaminaDrainMultiplier = value;
+                OnPropertyChanged(nameof(PlayerCharacterStaminaDrainMultiplier));
+            }
+        }
+        private string _dinoCharacterStaminaDrainMultiplier;
+        public string DinoCharacterStaminaDrainMultiplier
+        {
+            get { return _dinoCharacterStaminaDrainMultiplier; }
+            set
+            {
+                _dinoCharacterStaminaDrainMultiplier = value;
+                OnPropertyChanged(nameof(DinoCharacterStaminaDrainMultiplier));
+            }
+        }
+        private string _dinoCharacterHealthRecoveryMultiplier;
+        public string DinoCharacterHealthRecoveryMultiplier
+        {
+            get { return _dinoCharacterHealthRecoveryMultiplier; }
+            set
+            {
+                _dinoCharacterHealthRecoveryMultiplier = value;
+                OnPropertyChanged(nameof(DinoCharacterHealthRecoveryMultiplier));
+            }
+        }
+        private string _passiveTameIntervalMultiplier;
+        public string PassiveTameIntervalMultiplier
+        {
+            get { return _passiveTameIntervalMultiplier; }
+            set
+            {
+                _passiveTameIntervalMultiplier = value;
+                OnPropertyChanged(nameof(PassiveTameIntervalMultiplier));
+            }
+        }
+        private string _wildDinoTorporDrainMultiplier;
+        public string WildDinoTorporDrainMultiplier
+        {
+            get { return _wildDinoTorporDrainMultiplier; }
+            set
+            {
+                _wildDinoTorporDrainMultiplier = value;
+                OnPropertyChanged(nameof(WildDinoTorporDrainMultiplier));
+            }
+        }
+        private string _tamedDinoTorporDrainMultiplier;
+        public string TamedDinoTorporDrainMultiplier
+        {
+            get { return _tamedDinoTorporDrainMultiplier; }
+            set
+            {
+                _tamedDinoTorporDrainMultiplier = value;
+                OnPropertyChanged(nameof(TamedDinoTorporDrainMultiplier));
+            }
+        }
+        private string _playerDamageMultiplier;
+        public string PlayerDamageMultiplier
+        {
+            get { return _playerDamageMultiplier; }
+            set
+            {
+                _playerDamageMultiplier = value;
+                OnPropertyChanged(nameof(PlayerDamageMultiplier));
+            }
+        }
+        private string _playerResistanceMultiplier;
+        public string PlayerResistanceMultiplier
+        {
+            get { return _playerResistanceMultiplier; }
+            set
+            {
+                _playerResistanceMultiplier = value;
+                OnPropertyChanged(nameof(PlayerResistanceMultiplier));
+            }
+        }
 
         private string _specialXPMultiplier;
         public string SpecialXPMultiplier
@@ -4039,14 +4740,14 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             }
         }
 
-        private bool _disableFriendlyFire;
-        public bool DisableFriendlyFire
+        private bool _bPvPdisableFriendlyFire;
+        public bool BPvPDisableFriendlyFire
         {
-            get { return _disableFriendlyFire; }
+            get { return _bPvPdisableFriendlyFire; }
             set
             {
-                _disableFriendlyFire = value;
-                OnPropertyChanged(nameof(DisableFriendlyFire));
+                _bPvPdisableFriendlyFire = value;
+                OnPropertyChanged(nameof(BPvPDisableFriendlyFire));
             }
         }
         private bool _flyerPlatformAllowUnalignedDinoBasing;
@@ -4138,6 +4839,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             }
         }
 
+        private bool _preventDiseases;
+        public bool PreventDiseases
+        {
+            get { return _preventDiseases; }
+            set
+            {
+                _preventDiseases = value;
+                OnPropertyChanged(nameof(PreventDiseases));
+            }
+        }
+        private bool _nonPermanentDiseases;
+        public bool NonPermanentDiseases
+        {
+            get { return _nonPermanentDiseases; }
+            set
+            {
+                _nonPermanentDiseases = value;
+                OnPropertyChanged(nameof(NonPermanentDiseases));
+            }
+        }
         private bool _showCreativeMode;
         public bool ShowCreativeMode
         {
@@ -4193,6 +4914,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             }
         }
 
+        private bool _forceAllowCaveFlyers;
+        public bool ForceAllowCaveFlyers
+        {
+            get { return _forceAllowCaveFlyers; }
+            set
+            {
+                _forceAllowCaveFlyers = value;
+                OnPropertyChanged(nameof(ForceAllowCaveFlyers));
+            }
+        }
+        private bool _allowUnclaimDinos;
+        public bool AllowUnclaimDinos
+        {
+            get { return _allowUnclaimDinos; }
+            set
+            {
+                _allowUnclaimDinos = value;
+                OnPropertyChanged(nameof(AllowUnclaimDinos));
+            }
+        }
         private bool _disableDinoTaming;
         public bool DisableDinoTaming
         {
@@ -4201,6 +4942,36 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             {
                 _disableDinoTaming = value;
                 OnPropertyChanged(nameof(DisableDinoTaming));
+            }
+        }
+        private bool _disableDinoBreeding;
+        public bool DisableDinoBreeding
+        {
+            get { return _disableDinoBreeding; }
+            set
+            {
+                _disableDinoBreeding = value;
+                OnPropertyChanged(nameof(DisableDinoBreeding));
+            }
+        }
+        private bool _disableDinoRiding;
+        public bool DisableDinoRiding
+        {
+            get { return _disableDinoRiding; }
+            set
+            {
+                _disableDinoRiding = value;
+                OnPropertyChanged(nameof(DisableDinoRiding));
+            }
+        }
+        private bool _preventMateBoost;
+        public bool PreventMateBoost
+        {
+            get { return _preventMateBoost; }
+            set
+            {
+                _preventMateBoost = value;
+                OnPropertyChanged(nameof(PreventMateBoost));
             }
         }
         private string _overrideMaxExperiencePointsDino;
