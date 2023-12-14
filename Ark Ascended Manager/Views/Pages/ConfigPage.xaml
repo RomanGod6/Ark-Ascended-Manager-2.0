@@ -11,7 +11,7 @@
       Title="ConfigPage"
       d:DataContext="{d:DesignInstance Type=vm:ConfigPageViewModel, IsDesignTimeCreatable=True}"
 
-      d:DesignHeight="450"
+      d:DesignHeight="1281.333"
       d:DesignWidth="800"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -89,7 +89,7 @@
                     <!-- Save Button -->
 
                     <!-- ScrollViewer for the rest of the content -->
-                    <ScrollViewer Grid.Row="1" Margin="10">
+                    <ScrollViewer Grid.Row="1" Margin="10,5,10,15">
                         <StackPanel x:Name="Gameini">
                             <Expander Header="Administration">
                                 <StackPanel>
@@ -278,55 +278,55 @@
                                 </StackPanel>
                             </Expander>
                             <Expander Header="HUD and Visuals">
-                                        <StackPanel>
-                                            <Label Content="Server Crosshair:"/>
-                                            <CheckBox IsChecked="{Binding ServerCrosshair, Mode=TwoWay}"/>
-                                            <Label Content="Server Force No Hud:"/>
-                                            <CheckBox IsChecked="{Binding ServerForceNoHud, Mode=TwoWay}"/>
-                                            <Label Content="Show Map Player Location:"/>
-                                            <CheckBox IsChecked="{Binding ShowMapPlayerLocation, Mode=TwoWay}"/>
-                                            <Label Content="Allow Third Person Player:"/>
-                                            <CheckBox IsChecked="{Binding AllowThirdPersonPlayer, Mode=TwoWay}"/>
-                                            <Label Content="Show Floating Damage Text:"/>
-                                            <CheckBox IsChecked="{Binding ShowFloatingDamageText, Mode=TwoWay}"/>
-                                            <Label Content="Allow Hit Markers:" />
-                                            <CheckBox IsChecked="{Binding AllowHitMarkers,Mode=TwoWay}"/>
-                                            <Label Content="EnablePVPGamma:"/>
-                                            <CheckBox IsChecked="{Binding EnablePVPGamma, Mode=TwoWay}"/>
-                                            <Label Content="EnablePVEGamma:"/>
-                                            <CheckBox IsChecked="{Binding EnablePVEGamma, Mode=TwoWay}"/>
+                                <StackPanel>
+                                    <Label Content="Server Crosshair:"/>
+                                    <CheckBox IsChecked="{Binding ServerCrosshair, Mode=TwoWay}"/>
+                                    <Label Content="Server Force No Hud:"/>
+                                    <CheckBox IsChecked="{Binding ServerForceNoHud, Mode=TwoWay}"/>
+                                    <Label Content="Show Map Player Location:"/>
+                                    <CheckBox IsChecked="{Binding ShowMapPlayerLocation, Mode=TwoWay}"/>
+                                    <Label Content="Allow Third Person Player:"/>
+                                    <CheckBox IsChecked="{Binding AllowThirdPersonPlayer, Mode=TwoWay}"/>
+                                    <Label Content="Show Floating Damage Text:"/>
+                                    <CheckBox IsChecked="{Binding ShowFloatingDamageText, Mode=TwoWay}"/>
+                                    <Label Content="Allow Hit Markers:" />
+                                    <CheckBox IsChecked="{Binding AllowHitMarkers,Mode=TwoWay}"/>
+                                    <Label Content="EnablePVPGamma:"/>
+                                    <CheckBox IsChecked="{Binding EnablePVPGamma, Mode=TwoWay}"/>
+                                    <Label Content="EnablePVEGamma:"/>
+                                    <CheckBox IsChecked="{Binding EnablePVEGamma, Mode=TwoWay}"/>
 
 
 
-                                        </StackPanel>
-                                    </Expander>
+                                </StackPanel>
+                            </Expander>
                             <Expander Header="Player Settings">
+                                <StackPanel>
+                                    <Label Content="Generic XP Multiplier:"/>
+                                    <TextBox Text="{Binding GenericXPMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Damage Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Resistance Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerResistanceMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Character Food Drain Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Character Water Drain Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerCharacterWaterDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Character Stamina Drain Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerCharacterStaminaDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Max Fall Speed Multiplier:"/>
+                                    <TextBox Text="{Binding MaxFallSpeedMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Player Character Health Recovery Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerCharacterHealthRecoveryMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Allow Flyer Carry PvE:"/>
+                                    <CheckBox IsChecked="{Binding AllowFlyerCarryPvE, Mode=TwoWay}"/>
+                                    <Label Content="Player Harvesting Damage Multiplier:"/>
+                                    <TextBox Text="{Binding PlayerHarvestingDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Crafting Skill Bonus Multiplier:"/>
+                                    <TextBox Text="{Binding CraftingSkillBonusMultiplier, Mode=TwoWay}"/>
+                                    <Expander Header="Player Stat Muiltiplier">
                                         <StackPanel>
-                                            <Label Content="Generic XP Multiplier:"/>
-                                            <TextBox Text="{Binding GenericXPMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Damage Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Resistance Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerResistanceMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Character Food Drain Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Character Water Drain Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerCharacterWaterDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Character Stamina Drain Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerCharacterStaminaDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Max Fall Speed Multiplier:"/>
-                                            <TextBox Text="{Binding MaxFallSpeedMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Player Character Health Recovery Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerCharacterHealthRecoveryMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Allow Flyer Carry PvE:"/>
-                                            <CheckBox IsChecked="{Binding AllowFlyerCarryPvE, Mode=TwoWay}"/>
-                                            <Label Content="Player Harvesting Damage Multiplier:"/>
-                                            <TextBox Text="{Binding PlayerHarvestingDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Crafting Skill Bonus Multiplier:"/>
-                                            <TextBox Text="{Binding CraftingSkillBonusMultiplier, Mode=TwoWay}"/>
-                                            <Expander Header="Player Stat Muiltiplier">
-                                                <StackPanel>
-                                                    <Label Content="Base Stat Multiplier" FontWeight="Bold"/>
+                                            <Label Content="Base Stat Multiplier" FontWeight="Bold"/>
                                             <Label Content="Player Base[Health]:"/>
                                             <TextBox Text="{Binding PlayerBaseStatMultipliers_0, Mode=TwoWay}"/>
 
@@ -363,288 +363,136 @@
 
                                             <Label Content="Per-Level Stat Multiplier" FontWeight="Bold"/>
 
-                                                    <Label Content="Player[Health]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_0, Mode=TwoWay}"/>
+                                            <Label Content="Player[Health]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_0, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Stamina]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_1, Mode=TwoWay}"/>
+                                            <Label Content="Player[Stamina]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_1, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Torpor]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_2, Mode=TwoWay}"/>
+                                            <Label Content="Player[Torpor]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_2, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Oxygen]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_3, Mode=TwoWay}"/>
+                                            <Label Content="Player[Oxygen]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_3, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Food]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_4, Mode=TwoWay}"/>
+                                            <Label Content="Player[Food]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_4, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Water]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_5, Mode=TwoWay}"/>
+                                            <Label Content="Player[Water]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_5, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Temperature]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_6, Mode=TwoWay}"/>
+                                            <Label Content="Player[Temperature]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_6, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Weight]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_7, Mode=TwoWay}"/>
+                                            <Label Content="Player[Weight]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_7, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Melee Damage]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_8, Mode=TwoWay}"/>
+                                            <Label Content="Player[Melee Damage]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_8, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Movement Speed]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_9, Mode=TwoWay}"/>
+                                            <Label Content="Player[Movement Speed]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_9, Mode=TwoWay}"/>
 
-                                                    <Label Content="Player[Fortitude]:"/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_10, Mode=TwoWay}"/>
-                                                </StackPanel>
-                                            </Expander>
-
-
-
+                                            <Label Content="Player[Fortitude]:"/>
+                                            <TextBox Text="{Binding PerLevelStatsMultiplier_Player_10, Mode=TwoWay}"/>
                                         </StackPanel>
                                     </Expander>
+
+
+
+                                </StackPanel>
+                            </Expander>
                             <Expander Header="Dino Settings">
-                                        <StackPanel>
-                                            <Label Content="Max Tamed Dinos (Server):"/>
-                                            <TextBox Text="{Binding MaxTamedDinos, Mode=TwoWay}"/>
-                                            <Label Content="Max Personal Tamed Dinos (Tribe):"/>
-                                            <TextBox Text="{Binding MaxPersonalTamedDinos, Mode=TwoWay}"/>
-                                            <Label Content="Tamed Dino Damage Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Wild Dino Damage Multiplier:"/>
-                                            <TextBox Text="{Binding DinoDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Tamed Dino Resistance Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Dino Resistance Multiplier:"/>
-                                            <TextBox Text="{Binding DinoResistanceMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Personal Tamed Dinos Saddle Structure Cost:"/>
-                                            <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost, Mode=TwoWay}"/>
-                                            <Label Content="Dino Harvesting Damage Multiplier:"/>
-                                            <TextBox Text="{Binding DinoHarvestingDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Dino Turret Damage Multiplier:"/>
-                                            <TextBox Text="{Binding DinoTurretDamageMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Raid Dino Character Food Drain Multiplier:"/>
-                                            <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Disable Dino Decay PvE:"/>
-                                            <CheckBox IsChecked="{Binding DisableDinoDecayPvE, Mode=TwoWay}"/>
-                                            <Label Content="Allow Flying Stamina Recovery:"/>
-                                            <CheckBox IsChecked="{Binding AllowFlyingStaminaRecovery, Mode=TwoWay}"/>
-                                            <Label Content="Allow Multiple Attached C4:"/>
-                                            <CheckBox IsChecked="{Binding AllowMultipleAttachedC4, Mode=TwoWay}"/>
-                                            <Label Content="PvP Dino Decay:"/>
-                                            <CheckBox IsChecked="{Binding BPvPDinoDecay, Mode=TwoWay}"/>
-                                            <Label Content="PvE Dino Decay Period Multiplier:"/>
-                                            <TextBox Text="{Binding PvEDinoDecayPeriodMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Allow Flyer Speed Leveling:"/>
-                                            <CheckBox IsChecked="{Binding AllowFlyerSpeedLeveling, Mode=TwoWay}"/>
-                                            <Label Content="Auto Destroy Decayed Dinos:"/>
-                                            <CheckBox IsChecked="{Binding AutoDestroyDecayedDinos, Mode=TwoWay}"/>
-                                            <Label Content="Disable Dino Taming:"/>
-                                            <CheckBox IsChecked="{Binding DisableDinoTaming, Mode=TwoWay}"/>
-                                            <Label Content="Tamed Dino Food Drain Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Wild Dino Food Drain Multiplier:"/>
-                                            <TextBox Text="{Binding WildDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Wild Dino Torpor Drain Multiplier:"/>
-                                            <TextBox Text="{Binding WildDinoTorporDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Tamed Dino Torpor Drain Multiplier:"/>
-                                            <TextBox Text="{Binding TamedDinoTorporDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Passive Tame Interval Multiplier:"/>
-                                            <TextBox Text="{Binding PassiveTameIntervalMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Dino Character Health Recovery Multiplier:"/>
-                                            <TextBox Text="{Binding DinoCharacterHealthRecoveryMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Dino Character Stamina Drain Multiplier:"/>
-                                            <TextBox Text="{Binding DinoCharacterStaminaDrainMultiplier, Mode=TwoWay}"/>
-                                            <Label Content="Force Allow Cave Flyers:"/>
-                                            <CheckBox IsChecked="{Binding ForceAllowCaveFlyers, Mode=TwoWay}"/>
-                                            <Label Content="Prevent Mate Boost:"/>
-                                            <CheckBox IsChecked="{Binding PreventMateBoost, Mode=TwoWay}"/>
-                                            <Label Content="Allow Unclaim Dinos:"/>
-                                            <CheckBox IsChecked="{Binding AllowUnclaimDinos, Mode=TwoWay}"/>
-                                            <Label Content="Disable Dino Breeding:"/>
-                                            <CheckBox IsChecked="{Binding DisableDinoBreeding, Mode=TwoWay}"/>
-                                            <Label Content="Disable Dino Riding:"/>
-                                            <CheckBox IsChecked="{Binding DisableDinoRiding, Mode=TwoWay}"/>
+                                <StackPanel>
+                                    <Label Content="Max Tamed Dinos (Server):"/>
+                                    <TextBox Text="{Binding MaxTamedDinos, Mode=TwoWay}"/>
+                                    <Label Content="Max Personal Tamed Dinos (Tribe):"/>
+                                    <TextBox Text="{Binding MaxPersonalTamedDinos, Mode=TwoWay}"/>
+                                    <Label Content="Tamed Dino Damage Multiplier:"/>
+                                    <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Wild Dino Damage Multiplier:"/>
+                                    <TextBox Text="{Binding DinoDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Tamed Dino Resistance Multiplier:"/>
+                                    <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Dino Resistance Multiplier:"/>
+                                    <TextBox Text="{Binding DinoResistanceMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Personal Tamed Dinos Saddle Structure Cost:"/>
+                                    <TextBox Text="{Binding PersonalTamedDinosSaddleStructureCost, Mode=TwoWay}"/>
+                                    <Label Content="Dino Harvesting Damage Multiplier:"/>
+                                    <TextBox Text="{Binding DinoHarvestingDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Dino Turret Damage Multiplier:"/>
+                                    <TextBox Text="{Binding DinoTurretDamageMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Raid Dino Character Food Drain Multiplier:"/>
+                                    <TextBox Text="{Binding RaidDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Disable Dino Decay PvE:"/>
+                                    <CheckBox IsChecked="{Binding DisableDinoDecayPvE, Mode=TwoWay}"/>
+                                    <Label Content="Allow Flying Stamina Recovery:"/>
+                                    <CheckBox IsChecked="{Binding AllowFlyingStaminaRecovery, Mode=TwoWay}"/>
+                                    <Label Content="Allow Multiple Attached C4:"/>
+                                    <CheckBox IsChecked="{Binding AllowMultipleAttachedC4, Mode=TwoWay}"/>
+                                    <Label Content="PvP Dino Decay:"/>
+                                    <CheckBox IsChecked="{Binding BPvPDinoDecay, Mode=TwoWay}"/>
+                                    <Label Content="PvE Dino Decay Period Multiplier:"/>
+                                    <TextBox Text="{Binding PvEDinoDecayPeriodMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Allow Flyer Speed Leveling:"/>
+                                    <CheckBox IsChecked="{Binding AllowFlyerSpeedLeveling, Mode=TwoWay}"/>
+                                    <Label Content="Auto Destroy Decayed Dinos:"/>
+                                    <CheckBox IsChecked="{Binding AutoDestroyDecayedDinos, Mode=TwoWay}"/>
+                                    <Label Content="Disable Dino Taming:"/>
+                                    <CheckBox IsChecked="{Binding DisableDinoTaming, Mode=TwoWay}"/>
+                                    <Label Content="Tamed Dino Food Drain Multiplier:"/>
+                                    <TextBox Text="{Binding TamedDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Wild Dino Food Drain Multiplier:"/>
+                                    <TextBox Text="{Binding WildDinoCharacterFoodDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Wild Dino Torpor Drain Multiplier:"/>
+                                    <TextBox Text="{Binding WildDinoTorporDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Tamed Dino Torpor Drain Multiplier:"/>
+                                    <TextBox Text="{Binding TamedDinoTorporDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Passive Tame Interval Multiplier:"/>
+                                    <TextBox Text="{Binding PassiveTameIntervalMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Dino Character Health Recovery Multiplier:"/>
+                                    <TextBox Text="{Binding DinoCharacterHealthRecoveryMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Dino Character Stamina Drain Multiplier:"/>
+                                    <TextBox Text="{Binding DinoCharacterStaminaDrainMultiplier, Mode=TwoWay}"/>
+                                    <Label Content="Force Allow Cave Flyers:"/>
+                                    <CheckBox IsChecked="{Binding ForceAllowCaveFlyers, Mode=TwoWay}"/>
+                                    <Label Content="Prevent Mate Boost:"/>
+                                    <CheckBox IsChecked="{Binding PreventMateBoost, Mode=TwoWay}"/>
+                                    <Label Content="Allow Unclaim Dinos:"/>
+                                    <CheckBox IsChecked="{Binding AllowUnclaimDinos, Mode=TwoWay}"/>
+                                    <Label Content="Disable Dino Breeding:"/>
+                                    <CheckBox IsChecked="{Binding DisableDinoBreeding, Mode=TwoWay}"/>
+                                    <Label Content="Disable Dino Riding:"/>
+                                    <CheckBox IsChecked="{Binding DisableDinoRiding, Mode=TwoWay}"/>
 
 
                                     <Expander Header="Dino Stat Multipliers">
+                                        <StackPanel>
+                                            <Expander Header="Dino Tamed Stat Multipliers">
                                                 <StackPanel>
-                                                    <Expander Header="Dino Tamed Stat Multipliers">
-                                                        <StackPanel>
-                                                            <Label Content="DinoTamed[Health]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_0, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Health]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_0, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Stamina]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_1, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Stamina]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_1, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Torpor]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_2, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Torpor]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_2, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Oxygen]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_3, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Oxygen]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_3, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Food]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_4, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Food]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_4, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Water]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_7, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Water]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_7, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Melee Damage]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_8, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed[Melee Damage]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_8, Mode=TwoWay}"/>
 
-                                                            <Label Content="DinoTamed[Movement Speed]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_9, Mode=TwoWay}"/>
-
-
-
-
-
-
-
-
-
-
-                                                        </StackPanel>
-                                                    </Expander>
-                                                    <Expander Header="Dino Tamed_Add Stat Multipliers">
-                                                        <StackPanel>
-                                                            <Label Content="DinoTamed_Add[Health]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_0, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Stamina]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_1, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Torpor]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_2, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Oxygen]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_3, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Food]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_4, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Water]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_5, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Temperature]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_6, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Weight]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_7, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Melee Damage]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_8, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Movement Speed]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_9, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Add[Fortitude]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_10, Mode=TwoWay}"/>
-
-
-
-
-
-
-
-
-
-                                                        </StackPanel>
-                                                    </Expander>
-                                                    <Expander Header="Dino Affinity Stat Multipliers">
-                                                        <StackPanel>
-                                                            <Label Content="DinoTamed_Affinity[Health]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_0, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Stamina]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_1, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Torpor]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_2, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Oxygen]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_3, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Food]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_4, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Water]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_5, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Temperature]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_6, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Weight]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_7, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Melee Damage]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_8, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Movement Speed]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_9, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoTamed_Affinity[Fortitude]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_10, Mode=TwoWay}"/>
-
-
-
-
-
-
-
-
-
-                                                        </StackPanel>
-                                                    </Expander>
-                                                    <Expander Header="Dino Wild Stat Multipliers">
-                                                        <StackPanel>
-
-                                                            <Label Content="DinoWild[Health]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_0, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Stamina]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_1, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Torpor]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_2, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Oxygen]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_3, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Food]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_4, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Water]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_5, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Temperature]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_6, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Weight]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_7, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Melee Damage]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_8, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Movement Speed]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_9, Mode=TwoWay}"/>
-
-                                                            <Label Content="DinoWild[Fortitude]:"/>
-                                                            <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_10, Mode=TwoWay}"/>
-
-
-
-
-
-
-
-
-
-
-                                                        </StackPanel>
-                                                    </Expander>
-
-
-
+                                                    <Label Content="DinoTamed[Movement Speed]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_9, Mode=TwoWay}"/>
 
 
 
@@ -657,36 +505,40 @@
 
                                                 </StackPanel>
                                             </Expander>
-                                            <Expander Header="Dino Breeding Settings">
+                                            <Expander Header="Dino Tamed_Add Stat Multipliers">
                                                 <StackPanel>
-                                                    <Label Content="Mating Interval Multiplier:"/>
-                                                    <TextBox Text="{Binding MatingIntervalMultiplier, Mode=TwoWay}"/>
-                                                    <Label Content="Egg Hatch Speed Multiplier:"/>
-                                                    <TextBox Text="{Binding EggHatchSpeedMultiplier, Mode=TwoWay}"/>
-                                                    <Label Content="Mating Speed Multiplier:"/>
-                                                    <TextBox Text="{Binding MatingSpeedMultiplier, Mode=TwoWay}"/>
-                                                    <Label Content="Baby Imprint Amount Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyImprintAmountMultiplier, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed_Add[Health]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_0, Mode=TwoWay}"/>
 
-                                                    <Label Content="Baby Mature Speed Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyMatureSpeedMultiplier, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed_Add[Stamina]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_1, Mode=TwoWay}"/>
 
-                                                    <Label Content="Baby Food Consumption Speed Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyFoodConsumptionSpeedMultiplier, Mode=TwoWay}"/>
-                                                    <Label Content="Disable Baby Dino Imprint Buff:"/>
-                                                    <CheckBox IsChecked="{Binding DisableImprintDinoBuff, Mode=TwoWay}"/>
-                                                    <Label Content="Allow Anyone Baby Imprint Cuddle:"/>
-                                                    <CheckBox IsChecked="{Binding AllowAnyoneBabyImprintCuddle, Mode=TwoWay}"/>
-                                                    <Label Content="Baby Imprinting Stat Scale Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyImprintingStatScaleMultiplier, Mode=TwoWay}"/>
-                                                    <Label Content="Baby Cuddle Interval Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyCuddleIntervalMultiplier, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed_Add[Torpor]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_2, Mode=TwoWay}"/>
 
-                                                    <Label Content="Baby Cuddle Grace Period Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyCuddleGracePeriodMultiplier, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed_Add[Oxygen]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_3, Mode=TwoWay}"/>
 
-                                                    <Label Content="Baby Cuddle Lose Imprint Quality Speed Multiplier:"/>
-                                                    <TextBox Text="{Binding BabyCuddleLoseImprintQualitySpeedMultiplier, Mode=TwoWay}"/>
+                                                    <Label Content="DinoTamed_Add[Food]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_4, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Water]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_5, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Temperature]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_6, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Weight]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_7, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Melee Damage]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_8, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Movement Speed]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_9, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Add[Fortitude]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_10, Mode=TwoWay}"/>
 
 
 
@@ -698,7 +550,103 @@
 
                                                 </StackPanel>
                                             </Expander>
-                                                    
+                                            <Expander Header="Dino Affinity Stat Multipliers">
+                                                <StackPanel>
+                                                    <Label Content="DinoTamed_Affinity[Health]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_0, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Stamina]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_1, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Torpor]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_2, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Oxygen]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_3, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Food]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_4, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Water]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_5, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Temperature]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_6, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Weight]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_7, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Melee Damage]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_8, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Movement Speed]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_9, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoTamed_Affinity[Fortitude]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_10, Mode=TwoWay}"/>
+
+
+
+
+
+
+
+
+
+                                                </StackPanel>
+                                            </Expander>
+                                            <Expander Header="Dino Wild Stat Multipliers">
+                                                <StackPanel>
+
+                                                    <Label Content="DinoWild[Health]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_0, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Stamina]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_1, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Torpor]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_2, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Oxygen]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_3, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Food]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_4, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Water]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_5, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Temperature]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_6, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Weight]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_7, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Melee Damage]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_8, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Movement Speed]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_9, Mode=TwoWay}"/>
+
+                                                    <Label Content="DinoWild[Fortitude]:"/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_10, Mode=TwoWay}"/>
+
+
+
+
+
+
+
+
+
+
+                                                </StackPanel>
+                                            </Expander>
+
+
+
+
+
 
 
 
@@ -709,6 +657,58 @@
 
                                         </StackPanel>
                                     </Expander>
+                                    <Expander Header="Dino Breeding Settings">
+                                        <StackPanel>
+                                            <Label Content="Mating Interval Multiplier:"/>
+                                            <TextBox Text="{Binding MatingIntervalMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Egg Hatch Speed Multiplier:"/>
+                                            <TextBox Text="{Binding EggHatchSpeedMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Mating Speed Multiplier:"/>
+                                            <TextBox Text="{Binding MatingSpeedMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Baby Imprint Amount Multiplier:"/>
+                                            <TextBox Text="{Binding BabyImprintAmountMultiplier, Mode=TwoWay}"/>
+
+                                            <Label Content="Baby Mature Speed Multiplier:"/>
+                                            <TextBox Text="{Binding BabyMatureSpeedMultiplier, Mode=TwoWay}"/>
+
+                                            <Label Content="Baby Food Consumption Speed Multiplier:"/>
+                                            <TextBox Text="{Binding BabyFoodConsumptionSpeedMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Disable Baby Dino Imprint Buff:"/>
+                                            <CheckBox IsChecked="{Binding DisableImprintDinoBuff, Mode=TwoWay}"/>
+                                            <Label Content="Allow Anyone Baby Imprint Cuddle:"/>
+                                            <CheckBox IsChecked="{Binding AllowAnyoneBabyImprintCuddle, Mode=TwoWay}"/>
+                                            <Label Content="Baby Imprinting Stat Scale Multiplier:"/>
+                                            <TextBox Text="{Binding BabyImprintingStatScaleMultiplier, Mode=TwoWay}"/>
+                                            <Label Content="Baby Cuddle Interval Multiplier:"/>
+                                            <TextBox Text="{Binding BabyCuddleIntervalMultiplier, Mode=TwoWay}"/>
+
+                                            <Label Content="Baby Cuddle Grace Period Multiplier:"/>
+                                            <TextBox Text="{Binding BabyCuddleGracePeriodMultiplier, Mode=TwoWay}"/>
+
+                                            <Label Content="Baby Cuddle Lose Imprint Quality Speed Multiplier:"/>
+                                            <TextBox Text="{Binding BabyCuddleLoseImprintQualitySpeedMultiplier, Mode=TwoWay}"/>
+
+
+
+
+
+
+
+
+
+                                        </StackPanel>
+                                    </Expander>
+
+
+
+
+
+
+
+
+
+                                </StackPanel>
+                            </Expander>
                             <Expander Header="Enviroment">
                                 <StackPanel>
                                     <Label Content="Taming Speed Multiplier:"/>
@@ -845,7 +845,7 @@
                                     <TextBox Text="{Binding StructurePickupTimeAfterPlacement, Mode=TwoWay}"/>
                                     <Label Content="StructurePickupHoldDuration:"/>
                                     <TextBox Text="{Binding StructurePickupHoldDuration, Mode=TwoWay}"/>
-                                    
+
 
 
 
@@ -853,43 +853,10 @@
                             </Expander>
                             <Expander Header="Engrams">
                                 <StackPanel>
-                                    
+
                                 </StackPanel>
                             </Expander>
                             <Expander Header="Hosted Files">
-                                <StackPanel>
-
-                                </StackPanel>
-                            </Expander>
-                            <Expander Header="Custom Game Ini Settings">
-                                <StackPanel>
-                                    <!-- Place your UI elements for INI settings here -->
-
-                                    <!-- Example: ListBox for Section Headers -->
-                                    <ListBox x:Name="lbSections" DisplayMemberPath="SectionName" />
-
-                                    <!-- Button to Add New Section -->
-                                    <Button Content="Add Section" />
-
-                                    <!-- Area for Key-Value Pairs of the Selected Section -->
-                                    <ItemsControl x:Name="icKeyValuePairs">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBox Width="100" Margin="5" Text="{Binding Key}" />
-                                                    <TextBox Width="100" Margin="5" Text="{Binding Value}" />
-                                                    <Button Content="Save" Margin="5" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                    <!-- Button to Add New Key-Value Pair -->
-                                    <Button Content="Add Key-Value Pair" />
-
-                                </StackPanel>
-                            </Expander>
-                            <Expander Header="Custom Game User Ini Settings ">
                                 <StackPanel>
 
                                 </StackPanel>
@@ -946,8 +913,8 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-  
-                <TabItem Header="Custom Game.ini">
+
+            <TabItem Header="Custom Game.ini">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -962,8 +929,7 @@
             AcceptsReturn="True" 
             VerticalScrollBarVisibility="Auto"
             TextWrapping="Wrap" 
-            Height="200" 
-            Margin="5"/>
+            Margin="5,23,5,35" Grid.RowSpan="2"/>
 
                     <!-- INI Sections List -->
                     <ListView Grid.Row="2" 
@@ -982,17 +948,17 @@
                     </ListView>
 
                     <!-- Save Button -->
-                    <Button Grid.Row="3" 
+                    <Button 
             Content="Save to Game.ini" 
             Command="{Binding SaveGAMEIniFileCommand}" 
-            Margin="5" 
-            HorizontalAlignment="Right"/>
+            Margin="0,10,24,0" 
+            HorizontalAlignment="Right" Grid.RowSpan="2" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            
-            
-            
-            
+
+
+
+
             <TabItem Header="Custom GameUserSettings.ini">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -1006,21 +972,21 @@
              VerticalScrollBarVisibility="Auto"
              HorizontalScrollBarVisibility="Auto"
              FontFamily="Consolas"
-             Padding="10" />
+             Padding="10" Margin="0,48,0,0" />
 
-                    <Button Grid.Row="1"
+                    <Button
             Content="Save"
             Command="{Binding SaveIniFileCommand}"
             HorizontalAlignment="Right"
-            Margin="10" />
+            Margin="0,10,24,0" VerticalAlignment="Top" Width="105" />
                 </Grid>
             </TabItem>
 
 
 
             <!-- Custom GameUserSettings.ini Settings Tab -->
-             
-            
+
+
 
 
 
@@ -1032,7 +998,7 @@
                         <StackPanel Margin="20">
 
 
-                            
+
 
                             <Label Content="Server Name"/>
                             <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1071,7 +1037,7 @@
                             <Label Content="Prevent Spawn Animation"/>
                             <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                          
+
 
                             <Label Content="Enable Plugins"/>
                             <CheckBox Content="Enable Plugins" IsChecked="{Binding PluginsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

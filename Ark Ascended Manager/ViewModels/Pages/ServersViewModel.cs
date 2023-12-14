@@ -9,6 +9,9 @@ using static Ark_Ascended_Manager.Views.Pages.CreateServersPage;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Microsoft.Win32;
+using System.Windows.Threading;
+using System.Threading;
+using static Ark_Ascended_Manager.Services.DiscordBotService;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -19,6 +22,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand StartServerCommand { get; private set; }
         public ICommand StopServerCommand { get; private set; }
         public ICommand UpdateServerCommand { get; private set; }
+        private DispatcherTimer _statusUpdateTimer;
+        private ServerConfig _currentServerInfo;
+
+
+
 
 
         public ServersViewModel(INavigationService navigationService)
@@ -28,18 +36,73 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             StartServerCommand = new RelayCommand<ServerConfig>(StartServer);
             StopServerCommand = new RelayCommand<ServerConfig>(StopServer);
             UpdateServerCommand = new RelayCommand<ServerConfig>(UpdateServer);
-        
+            _statusUpdateTimer = new DispatcherTimer();
+            _statusUpdateTimer.Interval = TimeSpan.FromSeconds(10); // Set the desired interval
+            _statusUpdateTimer.Tick += ServerStatusTimer_Tick;
+            _statusUpdateTimer.Start();
 
 
 
 
-    }
+
+
+
+
+
+
+
+
+        }
+        private void ServerStatusTimer_Tick(object sender, EventArgs e)
+        {
+            if (_currentServerInfo != null)
+            {
+                UpdateServerStatus(_currentServerInfo);
+            }
+        }
+
+        public void SetCurrentServerInfo(ServerConfig serverInfo)
+        {
+            _currentServerInfo = serverInfo;
+            _statusUpdateTimer.Start();
+        }
 
         public void OnNavigatedTo()
         {
             LoadServerConfigs();
+            _statusUpdateTimer.Start();
+
+
+
+
             // Initialization logic specific to the servers page
         }
+        public void OnNavigatedFrom()
+        {
+            _statusUpdateTimer.Stop();
+
+        }
+        private string _status;
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    OnPropertyChanged(nameof(Status)); // Notify the UI that the property has changed
+                }
+            }
+        }
+        private void UpdateServerStatus(CreateServersPage.ServerConfig serverConfig)
+        {
+            Status = IsServerRunning(serverConfig) ? "Online" : "Offline";
+        }
+
+
+
+
         private void StartServer(ServerConfig serverConfig)
         {
             // Check if the serverConfig is not null
@@ -135,6 +198,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
         private bool IsServerRunning(ServerConfig serverConfig)
         {
+            bool isServerRunning = false; // Initialize the flag as false
+
             // Get the name of the server executable without the extension
             string serverExeName = Path.GetFileNameWithoutExtension("ArkAscendedServer.exe");
             string asaApiLoaderExeName = Path.GetFileNameWithoutExtension("AsaApiLoader.exe");
@@ -153,7 +218,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     if ((process.ProcessName.Equals(serverExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(serverExePath, StringComparison.OrdinalIgnoreCase)) ||
                         (process.ProcessName.Equals(asaApiLoaderExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(asaApiLoaderExePath, StringComparison.OrdinalIgnoreCase)))
                     {
-                        return true;
+                        isServerRunning = true; // Set the flag to true if the server process is found
+                        break; // No need to continue checking once we found a running server
                     }
                 }
                 catch (Exception ex)
@@ -163,8 +229,28 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
 
-            return false;
+            return isServerRunning; // Return the flag indicating whether the server is running
         }
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
 
         private void UpdateServer(ServerConfig serverConfig)
         {
@@ -375,7 +461,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
 
-        public void OnNavigatedFrom() { }
+        
         public ObservableCollection<ServerConfig> ServerConfigs { get; } = new ObservableCollection<ServerConfig>();
 
         // This method would be called when a server card is clicked
@@ -397,14 +483,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
 
 
-        public void LoadServerConfigs()
+        public List<ServerConfig> LoadServerConfigs()
         {
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+            List<ServerConfig> servers = new List<ServerConfig>();
 
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
-                var servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json);
+                servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json) ?? new List<ServerConfig>();
 
                 if (servers != null)
                 {
@@ -415,7 +502,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     }
                 }
             }
+
+            return servers;
         }
+
 
         // Other methods and properties as needed
     }

@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("wpfui-icon.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/aam_icon_exe.ico")]
 
 

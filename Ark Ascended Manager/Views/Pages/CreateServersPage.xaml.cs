@@ -549,6 +549,7 @@ start {serverExecutablePath} {config.MapName}?listen?SessionName=%ServerName%?RC
         public class ServerConfig
         {
             public string ProfileName { get; set; }
+            public string ServerStatus { get; set; }
             public string ServerPath { get; set; }
             public string MapName { get; set; }
             public string AppId { get; set; }

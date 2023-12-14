@@ -6,6 +6,11 @@ using System.IO;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.Text;
+
+
+
 
 
 
@@ -13,6 +18,8 @@ namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class ConfigPage : INavigableView<ConfigPageViewModel> // Make sure the base class is Page
     {
+        private ObservableCollection<string> _headers = new ObservableCollection<string>();
+
 
         // Constructor injects the ViewModel and sets it to the DataContext.
         private string fullPathToJson;
@@ -37,8 +44,10 @@ namespace Ark_Ascended_Manager.Views.Pages
             string jsonFileName = "allServersSchedulingData.json";
             fullPathToJson = Path.Combine(appNameFolder, jsonFileName);
 
+
+
         }
-       
+
 
 
 
@@ -57,7 +66,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 Console.WriteLine("Parameter is not ServerConfig.");
             }
         }
-        
+  
         private void LoadPluginsToListBox()
         {
             // Retrieve the path from the ViewModel
@@ -75,6 +84,19 @@ namespace Ark_Ascended_Manager.Views.Pages
                 lstPlugins.ItemsSource = pluginNames;
             }
         }
+
+        
+
+
+
+
+
+
+
+
+
+
+
 
 
         private void LstPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)

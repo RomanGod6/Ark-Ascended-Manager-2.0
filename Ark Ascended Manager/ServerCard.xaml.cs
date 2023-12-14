@@ -7,10 +7,15 @@ namespace Ark_Ascended_Manager.Views.Controls
 {
     public partial class ServerCard : UserControl
     {
+        private ServerProfile _serverProfile;
         public ServerCard()
         {
             InitializeComponent();
+            
         }
+        
+        
+
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {

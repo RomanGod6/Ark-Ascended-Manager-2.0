@@ -53,7 +53,7 @@ namespace Ark_Ascended_Manager.Views.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;component/views/pages/dashboardpage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.0;component/views/pages/dashboardpage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Pages\DashboardPage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -22,6 +22,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
     public class ConfigPageViewModel : ObservableObject
     {
         public ObservableCollection<string> PluginNames { get; set; }
+        
+
         private readonly INavigationService _navigationService;
         public ServerConfig CurrentServerConfig { get; private set; }
        
@@ -35,6 +37,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand DeleteServerCommand { get; }
         public ICommand WipeServerCommand { get; }
         public ICommand LoadJsonCommand { get; private set; }
+
         private string _iniContent;
         public string IniContent
         {
@@ -1454,137 +1457,167 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             var lines = File.ReadAllLines(iniFilePath).ToList();
 
             // Update specific lines
-            UpdateLine(ref lines, "HarvestAmountMultiplier", HarvestAmountMultiplier);
-            UpdateLine(ref lines, "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier);
-            UpdateLine(ref lines, "DayTimeSpeedScale", DayTimeSpeedScale);
-            UpdateLine(ref lines, "DayCycleSpeedScale", DayCycleSpeedScale);
-            UpdateLine(ref lines, "NightTimeSpeedScale", NightTimeSpeedScale);
-            UpdateLine(ref lines, "DinoCountMultiplier", DinoCountMultiplier);
-            UpdateLine(ref lines, "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier);
-            UpdateLine(ref lines, "BaseTemperatureMultiplier", BaseTemperatureMultiplier);
-            UpdateLine(ref lines, "HarvestHealthMultiplier", HarvestHealthMultiplier);
-            UpdateLine(ref lines, "AllowThirdPersonPlayer", AllowThirdPersonPlayer.ToString());
-            UpdateLine(ref lines, "AllowCaveBuildingPvE", AllowCaveBuildingPvE.ToString());
-            UpdateLine(ref lines, "AllowCaveBuildingPvP", AllowCaveBuildingPvP.ToString());
-            UpdateLine(ref lines, "AlwaysNotifyPlayerJoined", AlwaysNotifyPlayerJoined.ToString());
-            UpdateLine(ref lines, "AlwaysNotifyPlayerLeft", AlwaysNotifyPlayerLeft.ToString());
-            UpdateLine(ref lines, "AllowFlyerCarryPvE", AllowFlyerCarryPvE.ToString());
-            UpdateLine(ref lines, "DisableStructureDecayPvE", DisableStructureDecayPvE.ToString());
-            UpdateLine(ref lines, "GlobalVoiceChat", GlobalVoiceChat.ToString());
-            UpdateLine(ref lines, "MaxStructuresInRange", MaxStructuresInRange);
-            UpdateLine(ref lines, "NoTributeDownloads", NoTributeDownloads.ToString());
-            UpdateLine(ref lines, "PreventDownloadSurvivors", PreventDownloadSurvivors.ToString());
-            UpdateLine(ref lines, "PreventDownloadItems", PreventDownloadItems.ToString());
-            UpdateLine(ref lines, "PreventDownloadDinos", PreventDownloadDinos.ToString());
-            UpdateLine(ref lines, "ProximityChat", ProximityChat.ToString());
-            UpdateLine(ref lines, "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
-            UpdateLine(ref lines, "ServerAdminPassword", ServerAdminPassword);
-            UpdateLine(ref lines, "ServerCrosshair", ServerCrosshair.ToString());
-            UpdateLine(ref lines, "ServerForceNoHud", ServerForceNoHud.ToString());
-            UpdateLine(ref lines, "ServerHardcore", ServerHardcore.ToString());
-            UpdateLine(ref lines, "ServerPvE", ServerPvE.ToString());
-            UpdateLine(ref lines, "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
-            UpdateLine(ref lines, "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
-            UpdateLine(ref lines, "DinoResistanceMultiplier", DinoResistanceMultiplier);
-            UpdateLine(ref lines, "DinoDamageMultiplier", DinoDamageMultiplier);
-            UpdateLine(ref lines, "TamedDinoResistanceMultiplier", TamedDinoResistanceMultiplier);
-            UpdateLine(ref lines, "TamingSpeedMultiplier", TamingSpeedMultiplier);
-            UpdateLine(ref lines, "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier);
-            UpdateLine(ref lines, "XPMultiplier", XPMultiplier);
-            UpdateLine(ref lines, "DinoCharacterHealthRecoveryMultiplier", DinoCharacterHealthRecoveryMultiplier);
-            UpdateLine(ref lines, "EnablePVPGamma", EnablePVPGamma.ToString());
-            UpdateLine(ref lines, "EnablePVEGamma", EnablePVEGamma.ToString());
-            UpdateLine(ref lines, "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
-            UpdateLine(ref lines, "SpectatorPassword", SpectatorPassword);
-            UpdateLine(ref lines, "DifficultyOffset", DifficultyOffset);
-            UpdateLine(ref lines, "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
-            UpdateLine(ref lines, "Banlist", Banlist);
-            UpdateLine(ref lines, "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
-            UpdateLine(ref lines, "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
-            UpdateLine(ref lines, "PvEDinoDecayPeriodMultiplier", PvEDinoDecayPeriodMultiplier);
-            UpdateLine(ref lines, "AdminLogging", AdminLogging.ToString());
-            UpdateLine(ref lines, "MaxTamedDinos", MaxTamedDinos);
-            UpdateLine(ref lines, "MaxNumbersofPlayersInTribe", MaxNumbersofPlayersInTribe);
-            UpdateLine(ref lines, "BattleNumOfTribestoStartGame", BattleNumOfTribestoStartGame);
-            UpdateLine(ref lines, "TimeToCollapseROD", TimeToCollapseROD);
-            UpdateLine(ref lines, "BattleAutoStartGameInterval", BattleAutoStartGameInterval);
-            UpdateLine(ref lines, "BattleSuddenDeathInterval", BattleSuddenDeathInterval);
-            UpdateLine(ref lines, "KickIdlePlayersPeriod", KickIdlePlayersPeriod);
-            UpdateLine(ref lines, "PerPlatformMaxStructuresMultiplier", PerPlatformMaxStructuresMultiplier);
-            UpdateLine(ref lines, "ForceAllStructureLocking", ForceAllStructureLocking.ToString());
-            UpdateLine(ref lines, "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
-            UpdateLine(ref lines, "StructureDamageMultiplier", StructureDamageMultiplier);
-            UpdateLine(ref lines, "StructureResistanceMultiplier", StructureResistanceMultiplier);
-            UpdateLine(ref lines, "LimitTurretsNum", LimitTurretsNum);
-            UpdateLine(ref lines, "LimitTurretsRange", LimitTurretsRange);
-            UpdateLine(ref lines, "AutoDestroyStructures", AutoDestroyStructures.ToString());
-            UpdateLine(ref lines, "UseVSync", UseVSync.ToString());
-            UpdateLine(ref lines, "MaxPlatformSaddleStructureLimit", MaxPlatformSaddleStructureLimit);
-            UpdateLine(ref lines, "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
-            UpdateLine(ref lines, "bPvEDisableFriendlyFire", BPvEDisableFriendlyFire.ToString());
-            UpdateLine(ref lines, "AutoSavePeriodMinutes", AutoSavePeriodMinutes);
-            UpdateLine(ref lines, "RCONServerGameLogBuffer", RCONServerGameLogBuffer);
-            UpdateLine(ref lines, "OverrideStructurePlatformPrevention", OverrideStructurePlatformPrevention.ToString());
-            UpdateLine(ref lines, "bPvPDinoDecay", BPvPDinoDecay.ToString());
-            UpdateLine(ref lines, "bPvPStructureDecay", BPvPStructureDecay.ToString());
-            UpdateLine(ref lines, "DisableImprintDinoBuff", DisableImprintDinoBuff.ToString());
-            UpdateLine(ref lines, "AllowAnyoneBabyImprintCuddle", AllowAnyoneBabyImprintCuddle.ToString());
-            UpdateLine(ref lines, "EnableExtraStructurePreventionVolumes", EnableExtraStructurePreventionVolumes.ToString());
-            UpdateLine(ref lines, "ShowFloatingDamageText", ShowFloatingDamageText.ToString());
-            UpdateLine(ref lines, "DestroyUnconnectedWaterPipes", DestroyUnconnectedWaterPipes.ToString());
-            UpdateLine(ref lines, "OverrideOfficialDifficulty", OverrideOfficialDifficulty);
-            UpdateLine(ref lines, "TheMaxStructuresInRange", TheMaxStructuresInRange);
-            UpdateLine(ref lines, "MinimumDinoReuploadInterval", MinimumDinoReuploadInterval.ToString());
-            UpdateLine(ref lines, "PvEAllowStructuresAtSupplyDrops", PvEAllowStructuresAtSupplyDrops.ToString());
-            UpdateLine(ref lines, "NPCNetworkStasisRangeScalePlayerCountStart", NPCNetworkStasisRangeScalePlayerCountStart);
-            UpdateLine(ref lines, "NPCNetworkStasisRangeScalePlayerCountEnd", NPCNetworkStasisRangeScalePlayerCountEnd);
-            UpdateLine(ref lines, "NPCNetworkStasisRangeScalePercentEnd", NPCNetworkStasisRangeScalePercentEnd);
-            UpdateLine(ref lines, "MaxPersonalTamedDinos", MaxPersonalTamedDinos);
-            UpdateLine(ref lines, "PreventOfflinePvPInterval", PreventOfflinePvPInterval);
-            UpdateLine(ref lines, "PreventOfflinePvP", PreventOfflinePvP.ToString());
-            UpdateLine(ref lines, "AutoDestroyDecayedDinos", AutoDestroyDecayedDinos.ToString());
-            UpdateLine(ref lines, "ClampItemSpoilingTimes", ClampItemSpoilingTimes.ToString());
-            UpdateLine(ref lines, "UseOptimizedHarvestingHealth", UseOptimizedHarvestingHealth.ToString());
-            UpdateLine(ref lines, "ClampResourceHarvestDamage", ClampResourceHarvestDamage.ToString());
-            UpdateLine(ref lines, "AllowCrateSpawnsOnTopOfStructures", AllowCrateSpawnsOnTopOfStructures.ToString());
-            UpdateLine(ref lines, "ForceFlyerExplosives", ForceFlyerExplosives.ToString());
-            UpdateLine(ref lines, "AllowMultipleAttachedC4", AllowMultipleAttachedC4.ToString());
-            UpdateLine(ref lines, "DisableWeatherFog", DisableWeatherFog.ToString());
-            UpdateLine(ref lines, "RandomSupplyCratePoints", RandomSupplyCratePoints.ToString());
-            UpdateLine(ref lines, "CrossARKAllowForeignDinoDownloads", CrossARKAllowForeignDinoDownloads.ToString());  
-            UpdateLine(ref lines, "AlwaysAllowStructurePickup", AlwaysAllowStructurePickup.ToString());
-            UpdateLine(ref lines, "AllowHideDamageSourceFromLogs", AllowHideDamageSourceFromLogs.ToString());
-            UpdateLine(ref lines, "AllowHitMarkers", AllowHitMarkers.ToString());
-            UpdateLine(ref lines, "OxygenSwimSpeedStatMultiplier", OxygenSwimSpeedStatMultiplier);
-            UpdateLine(ref lines, "PersonalTamedDinosSaddleStructureCost", PersonalTamedDinosSaddleStructureCost);
-            UpdateLine(ref lines, "StructurePreventResourceRadiusMultiplier", StructurePreventResourceRadiusMultiplier);
-            UpdateLine(ref lines, "TribeNameChangeCooldown", TribeNameChangeCooldown);
-            UpdateLine(ref lines, "TribeSlotReuseCooldown", TribeSlotReuseCooldown);
-            UpdateLine(ref lines, "PlatformSaddleBuildAreaBoundsMultiplier", PlatformSaddleBuildAreaBoundsMultiplier);
-            UpdateLine(ref lines, "StructurePickupHoldDuration", StructurePickupHoldDuration);
-            UpdateLine(ref lines, "StructurePickupTimeAfterPlacement", StructurePickupTimeAfterPlacement);
-            UpdateLine(ref lines, "RaidDinoCharacterFoodDrainMultiplier", RaidDinoCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "HarvestAmountMultiplier", HarvestAmountMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DayTimeSpeedScale", DayTimeSpeedScale);
+            UpdateLine(ref lines, "ServerSettings", "DayCycleSpeedScale", DayCycleSpeedScale);
+            UpdateLine(ref lines, "ServerSettings", "NightTimeSpeedScale", NightTimeSpeedScale);
+            UpdateLine(ref lines, "ServerSettings", "DinoCountMultiplier", DinoCountMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "BaseTemperatureMultiplier", BaseTemperatureMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "HarvestHealthMultiplier", HarvestHealthMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "AllowThirdPersonPlayer", AllowThirdPersonPlayer.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvE", AllowCaveBuildingPvE.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvP", AllowCaveBuildingPvP.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AlwaysNotifyPlayerJoined", AlwaysNotifyPlayerJoined.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AlwaysNotifyPlayerLeft", AlwaysNotifyPlayerLeft.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowFlyerCarryPvE", AllowFlyerCarryPvE.ToString());
+            UpdateLine(ref lines, "ServerSettings", "DisableStructureDecayPvE", DisableStructureDecayPvE.ToString());
+            UpdateLine(ref lines, "ServerSettings", "GlobalVoiceChat", GlobalVoiceChat.ToString());
+            UpdateLine(ref lines, "ServerSettings", "MaxStructuresInRange", MaxStructuresInRange);
+            UpdateLine(ref lines, "ServerSettings", "NoTributeDownloads", NoTributeDownloads.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PreventDownloadSurvivors", PreventDownloadSurvivors.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PreventDownloadItems", PreventDownloadItems.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PreventDownloadDinos", PreventDownloadDinos.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ProximityChat", ProximityChat.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
+            UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
+            UpdateLine(ref lines, "ServerSettings", "ServerCrosshair", ServerCrosshair.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ServerForceNoHud", ServerForceNoHud.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ServerHardcore", ServerHardcore.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ServerPvE", ServerPvE.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
+            UpdateLine(ref lines, "ServerSettings", "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoResistanceMultiplier", DinoResistanceMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoDamageMultiplier", DinoDamageMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "TamedDinoResistanceMultiplier", TamedDinoResistanceMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "TamingSpeedMultiplier", TamingSpeedMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "XPMultiplier", XPMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoCharacterHealthRecoveryMultiplier", DinoCharacterHealthRecoveryMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "EnablePVPGamma", EnablePVPGamma.ToString());
+            UpdateLine(ref lines, "ServerSettings", "EnablePVEGamma", EnablePVEGamma.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
+            UpdateLine(ref lines, "ServerSettings", "SpectatorPassword", SpectatorPassword);
+            UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
+            UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
+            UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
+            UpdateLine(ref lines, "ServerSettings", "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
+            UpdateLine(ref lines, "ServerSettings", "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PvEDinoDecayPeriodMultiplier", PvEDinoDecayPeriodMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "AdminLogging", AdminLogging.ToString());
+            UpdateLine(ref lines, "ServerSettings", "MaxTamedDinos", MaxTamedDinos);
+            UpdateLine(ref lines, "ServerSettings", "MaxNumbersofPlayersInTribe", MaxNumbersofPlayersInTribe);
+            UpdateLine(ref lines, "ServerSettings", "BattleNumOfTribestoStartGame", BattleNumOfTribestoStartGame);
+            UpdateLine(ref lines, "ServerSettings", "TimeToCollapseROD", TimeToCollapseROD);
+            UpdateLine(ref lines, "ServerSettings", "BattleAutoStartGameInterval", BattleAutoStartGameInterval);
+            UpdateLine(ref lines, "ServerSettings", "BattleSuddenDeathInterval", BattleSuddenDeathInterval);
+            UpdateLine(ref lines, "ServerSettings", "KickIdlePlayersPeriod", KickIdlePlayersPeriod);
+            UpdateLine(ref lines, "ServerSettings", "PerPlatformMaxStructuresMultiplier", PerPlatformMaxStructuresMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "ForceAllStructureLocking", ForceAllStructureLocking.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "LimitTurretsNum", LimitTurretsNum);
+            UpdateLine(ref lines, "ServerSettings", "LimitTurretsRange", LimitTurretsRange);
+            UpdateLine(ref lines, "ServerSettings", "AutoDestroyStructures", AutoDestroyStructures.ToString());
+            UpdateLine(ref lines, "ServerSettings", "UseVSync", UseVSync.ToString());
+            UpdateLine(ref lines, "ServerSettings", "MaxPlatformSaddleStructureLimit", MaxPlatformSaddleStructureLimit);
+            UpdateLine(ref lines, "ServerSettings", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
+            UpdateLine(ref lines, "ServerSettings", "bPvEDisableFriendlyFire", BPvEDisableFriendlyFire.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AutoSavePeriodMinutes", AutoSavePeriodMinutes);
+            UpdateLine(ref lines, "ServerSettings", "RCONServerGameLogBuffer", RCONServerGameLogBuffer);
+            UpdateLine(ref lines, "ServerSettings", "OverrideStructurePlatformPrevention", OverrideStructurePlatformPrevention.ToString());
+            UpdateLine(ref lines, "ServerSettings", "bPvPDinoDecay", BPvPDinoDecay.ToString());
+            UpdateLine(ref lines, "ServerSettings", "bPvPStructureDecay", BPvPStructureDecay.ToString());
+            UpdateLine(ref lines, "ServerSettings", "DisableImprintDinoBuff", DisableImprintDinoBuff.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowAnyoneBabyImprintCuddle", AllowAnyoneBabyImprintCuddle.ToString());
+            UpdateLine(ref lines, "ServerSettings", "EnableExtraStructurePreventionVolumes", EnableExtraStructurePreventionVolumes.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ShowFloatingDamageText", ShowFloatingDamageText.ToString());
+            UpdateLine(ref lines, "ServerSettings", "DestroyUnconnectedWaterPipes", DestroyUnconnectedWaterPipes.ToString());
+            UpdateLine(ref lines, "ServerSettings", "OverrideOfficialDifficulty", OverrideOfficialDifficulty);
+            UpdateLine(ref lines, "ServerSettings", "TheMaxStructuresInRange", TheMaxStructuresInRange);
+            UpdateLine(ref lines, "ServerSettings", "MinimumDinoReuploadInterval", MinimumDinoReuploadInterval.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PvEAllowStructuresAtSupplyDrops", PvEAllowStructuresAtSupplyDrops.ToString());
+            UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePlayerCountStart", NPCNetworkStasisRangeScalePlayerCountStart);
+            UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePlayerCountEnd", NPCNetworkStasisRangeScalePlayerCountEnd);
+            UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePercentEnd", NPCNetworkStasisRangeScalePercentEnd);
+            UpdateLine(ref lines, "ServerSettings", "MaxPersonalTamedDinos", MaxPersonalTamedDinos);
+            UpdateLine(ref lines, "ServerSettings", "PreventOfflinePvPInterval", PreventOfflinePvPInterval);
+            UpdateLine(ref lines, "ServerSettings", "PreventOfflinePvP", PreventOfflinePvP.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AutoDestroyDecayedDinos", AutoDestroyDecayedDinos.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ClampItemSpoilingTimes", ClampItemSpoilingTimes.ToString());
+            UpdateLine(ref lines, "ServerSettings", "UseOptimizedHarvestingHealth", UseOptimizedHarvestingHealth.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ClampResourceHarvestDamage", ClampResourceHarvestDamage.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowCrateSpawnsOnTopOfStructures", AllowCrateSpawnsOnTopOfStructures.ToString());
+            UpdateLine(ref lines, "ServerSettings", "ForceFlyerExplosives", ForceFlyerExplosives.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowMultipleAttachedC4", AllowMultipleAttachedC4.ToString());
+            UpdateLine(ref lines, "ServerSettings", "DisableWeatherFog", DisableWeatherFog.ToString());
+            UpdateLine(ref lines, "ServerSettings", "RandomSupplyCratePoints", RandomSupplyCratePoints.ToString());
+            UpdateLine(ref lines, "ServerSettings", "CrossARKAllowForeignDinoDownloads", CrossARKAllowForeignDinoDownloads.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AlwaysAllowStructurePickup", AlwaysAllowStructurePickup.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowHideDamageSourceFromLogs", AllowHideDamageSourceFromLogs.ToString());
+            UpdateLine(ref lines, "ServerSettings", "AllowHitMarkers", AllowHitMarkers.ToString());
+            UpdateLine(ref lines, "ServerSettings", "OxygenSwimSpeedStatMultiplier", OxygenSwimSpeedStatMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "PersonalTamedDinosSaddleStructureCost", PersonalTamedDinosSaddleStructureCost);
+            UpdateLine(ref lines, "ServerSettings", "StructurePreventResourceRadiusMultiplier", StructurePreventResourceRadiusMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "TribeNameChangeCooldown", TribeNameChangeCooldown);
+            UpdateLine(ref lines, "ServerSettings", "TribeSlotReuseCooldown", TribeSlotReuseCooldown);
+            UpdateLine(ref lines, "ServerSettings", "PlatformSaddleBuildAreaBoundsMultiplier", PlatformSaddleBuildAreaBoundsMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "StructurePickupHoldDuration", StructurePickupHoldDuration);
+            UpdateLine(ref lines, "ServerSettings", "StructurePickupTimeAfterPlacement", StructurePickupTimeAfterPlacement);
+            UpdateLine(ref lines, "ServerSettings", "RaidDinoCharacterFoodDrainMultiplier", RaidDinoCharacterFoodDrainMultiplier);
 
             // ... Repeat for other properties ...
 
-           // Write the updated lines back to the file
-           File.WriteAllLines(iniFilePath, lines);
+            // Write the updated lines back to the file
+            File.WriteAllLines(iniFilePath, lines);
         }
 
-        private void UpdateLine(ref List<string> lines, string key, string newValue)
+        private void UpdateLine(ref List<string> lines, string header, string key, string newValue)
         {
-            for (int i = 0; i < lines.Count; i++)
+            // Null checks to prevent NullReferenceException
+            if (lines == null) throw new ArgumentNullException(nameof(lines));
+            if (header == null) throw new ArgumentNullException(nameof(header));
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
+            // Ensure that the new value is not null, if it is null replace with empty string
+            newValue ??= "";
+
+            // Ensure the header is formatted correctly
+            string formattedHeader = $"[{header}]";
+
+            // Find the index of the header, if it doesn't exist, add it
+            int headerIndex = lines.FindIndex(line => line.Equals(formattedHeader, StringComparison.OrdinalIgnoreCase));
+            if (headerIndex == -1)
             {
-                if (lines[i].StartsWith(key))
-                {
-                    lines[i] = $"{key}={newValue}";
-                    return;
-                }
+                lines.Add(formattedHeader);
+                lines.Add($"{key}={newValue}");
+                return;
             }
 
-            // If the key does not exist in the file, add it
-            lines.Add($"{key}={newValue}");
+            // Calculate the range of lines under this header
+            int sectionStart = headerIndex + 1;
+            int sectionEnd = lines.FindIndex(sectionStart, line => line.StartsWith("[") && line.EndsWith("]"));
+            sectionEnd = (sectionEnd == -1) ? lines.Count : sectionEnd;
+
+            // Find the index of the key within the section
+            int keyIndex = lines.FindIndex(sectionStart, sectionEnd - sectionStart, line => line.StartsWith($"{key}=", StringComparison.OrdinalIgnoreCase));
+
+            if (keyIndex != -1)
+            {
+                // If the key exists, update it
+                lines[keyIndex] = $"{key}={newValue}";
+            }
+            else
+            {
+                // If the key doesn't exist, add it before the next section or at the end of the file
+                lines.Insert(sectionEnd, $"{key}={newValue}");
+            }
         }
+
+
+
 
 
 
@@ -3288,160 +3321,160 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             var lines = File.ReadAllLines(iniFilePath).ToList();
 
             // Update specific lines
-            UpdateLine(ref lines, "BabyImprintingStatScaleMultiplier", BabyImprintingStatScaleMultiplier);
-            UpdateLine(ref lines, "BabyCuddleIntervalMultiplier", BabyCuddleIntervalMultiplier);
-            UpdateLine(ref lines, "BabyCuddleGracePeriodMultiplier", BabyCuddleGracePeriodMultiplier);
-            UpdateLine(ref lines, "BabyCuddleLoseImprintQualitySpeedMultiplier", BabyCuddleLoseImprintQualitySpeedMultiplier);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[0]", PerLevelStatsMultiplier_DinoTamed_0);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[1]", PerLevelStatsMultiplier_DinoTamed_1);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[2]", PerLevelStatsMultiplier_DinoTamed_2);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[3]", PerLevelStatsMultiplier_DinoTamed_3);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[4]", PerLevelStatsMultiplier_DinoTamed_4);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[4]", PerLevelStatsMultiplier_Player_4);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[5]", PerLevelStatsMultiplier_Player_5);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[6]", PerLevelStatsMultiplier_Player_6);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[7]", PerLevelStatsMultiplier_Player_7);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
-            UpdateLine(ref lines, "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[3]", PlayerBaseStatMultipliers_3);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[4]", PlayerBaseStatMultipliers_4);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
-            UpdateLine(ref lines, "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
-            UpdateLine(ref lines, "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
-            UpdateLine(ref lines, "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
-            UpdateLine(ref lines, "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
-            UpdateLine(ref lines, "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
-            UpdateLine(ref lines, "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
-            UpdateLine(ref lines, "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
-            UpdateLine(ref lines, "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
-            UpdateLine(ref lines, "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
-            UpdateLine(ref lines, "MaxAlliancesPerTribe", MaxAlliancesPerTribe);
-            UpdateLine(ref lines, "MaxTribesPerAlliance", MaxTribesPerAlliance);
-            UpdateLine(ref lines, "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
-            UpdateLine(ref lines, "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
-            UpdateLine(ref lines, "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
-            UpdateLine(ref lines, "PoopIntervalMultiplier", PoopIntervalMultiplier);
-            UpdateLine(ref lines, "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
-            UpdateLine(ref lines, "MatingIntervalMultiplier", MatingIntervalMultiplier);
-            UpdateLine(ref lines, "BabyImprintAmountMultiplier", BabyImprintAmountMultiplier);
-            UpdateLine(ref lines, "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
-            UpdateLine(ref lines, "MatingSpeedMultiplier", MatingSpeedMultiplier);
-            UpdateLine(ref lines, "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
-            UpdateLine(ref lines, "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
-            UpdateLine(ref lines, "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
-            UpdateLine(ref lines, "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
-            UpdateLine(ref lines, "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
-            UpdateLine(ref lines, "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
-            UpdateLine(ref lines, "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
-            UpdateLine(ref lines, "AutoPvEStartTimeSeconds", AutoPvEStartTimeSeconds);
-            UpdateLine(ref lines, "AutoPvEStopTimeSeconds", AutoPvEStopTimeSeconds);
-            UpdateLine(ref lines, "KillXPMultiplier", KillXPMultiplier);
-            UpdateLine(ref lines, "HarvestXPMultiplier", HarvestXPMultiplier);
-            UpdateLine(ref lines, "CraftXPMultiplier", CraftXPMultiplier);
-            UpdateLine(ref lines, "GenericXPMultiplier", GenericXPMultiplier);
-            UpdateLine(ref lines, "PlayerDamageMultiplier", PlayerDamageMultiplier);
-            UpdateLine(ref lines, "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
-            UpdateLine(ref lines, "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
-            UpdateLine(ref lines, "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
-            UpdateLine(ref lines, "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
-            UpdateLine(ref lines, "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
-            UpdateLine(ref lines, "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
-            UpdateLine(ref lines, "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
-            UpdateLine(ref lines, "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
-            UpdateLine(ref lines, "SpecialXPMultiplier", SpecialXPMultiplier);
-            UpdateLine(ref lines, "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
-            UpdateLine(ref lines, "PhotoModeRangeLimit", PhotoModeRangeLimit);
-            UpdateLine(ref lines, "DisablePhotoMode", DisablePhotoMode.ToString());
-            UpdateLine(ref lines, "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "bAutoPvETimer", AutoPvETimer.ToString());
-            UpdateLine(ref lines, "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
-            UpdateLine(ref lines, "bPvPDisableFriendlyFire", BPvPDisableFriendlyFire.ToString());
-            UpdateLine(ref lines, "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
-            UpdateLine(ref lines, "DisableLootCrates", DisableLootCrates.ToString());
-            UpdateLine(ref lines, "AllowCustomRecipes", AllowCustomRecipes.ToString());
-            UpdateLine(ref lines, "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
-            UpdateLine(ref lines, "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
-            UpdateLine(ref lines, "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
-            UpdateLine(ref lines, "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
-            UpdateLine(ref lines, "UseCorpseLocator", UseCorpseLocator.ToString());
-            UpdateLine(ref lines, "ShowCreativeMode", ShowCreativeMode.ToString());
-            UpdateLine(ref lines, "NonPermanentDiseases", NonPermanentDiseases.ToString());
-            UpdateLine(ref lines, "PreventDiseases", PreventDiseases.ToString());
-            UpdateLine(ref lines, "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
-            UpdateLine(ref lines, "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
-            UpdateLine(ref lines, "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
-            UpdateLine(ref lines, "DisableDinoTaming", DisableDinoTaming.ToString());
-            UpdateLine(ref lines, "bAllowUnclaimDinos", AllowUnclaimDinos.ToString());
-            UpdateLine(ref lines, "bDisableDinoBreeding", DisableDinoBreeding.ToString());
-            UpdateLine(ref lines, "bDisableDinoRiding", DisableDinoRiding.ToString());
-            UpdateLine(ref lines, "ForceAllowCaveFlyers", ForceAllowCaveFlyers.ToString());
-            UpdateLine(ref lines, "PreventMateBoost", PreventMateBoost.ToString());
-            UpdateLine(ref lines, "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
-            UpdateLine(ref lines, "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
-            UpdateLine(ref lines, "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "BossKillXPMultiplier", BossKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "AlphaKillXPMultiplier", AlphaKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "WildKillXPMultiplier", WildKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "CaveKillXPMultiplier", CaveKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "TamedKillXPMultiplier", TamedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
-            UpdateLine(ref lines, "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
-            UpdateLine(ref lines, "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);
-            UpdateLine(ref lines, "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
-            UpdateLine(ref lines, "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintingStatScaleMultiplier", BabyImprintingStatScaleMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleIntervalMultiplier", BabyCuddleIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleGracePeriodMultiplier", BabyCuddleGracePeriodMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleLoseImprintQualitySpeedMultiplier", BabyCuddleLoseImprintQualitySpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[0]", PerLevelStatsMultiplier_DinoTamed_0);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[1]", PerLevelStatsMultiplier_DinoTamed_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[2]", PerLevelStatsMultiplier_DinoTamed_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[3]", PerLevelStatsMultiplier_DinoTamed_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[4]", PerLevelStatsMultiplier_DinoTamed_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[4]", PerLevelStatsMultiplier_Player_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[5]", PerLevelStatsMultiplier_Player_5);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[6]", PerLevelStatsMultiplier_Player_6);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[7]", PerLevelStatsMultiplier_Player_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[3]", PlayerBaseStatMultipliers_3);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[4]", PlayerBaseStatMultipliers_4);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxAlliancesPerTribe", MaxAlliancesPerTribe);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxTribesPerAlliance", MaxTribesPerAlliance);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PoopIntervalMultiplier", PoopIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingIntervalMultiplier", MatingIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintAmountMultiplier", BabyImprintAmountMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingSpeedMultiplier", MatingSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStartTimeSeconds", AutoPvEStartTimeSeconds);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStopTimeSeconds", AutoPvEStopTimeSeconds);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "KillXPMultiplier", KillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HarvestXPMultiplier", HarvestXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftXPMultiplier", CraftXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SpecialXPMultiplier", SpecialXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvETimer", AutoPvETimer.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bPvPDisableFriendlyFire", BPvPDisableFriendlyFire.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableLootCrates", DisableLootCrates.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCustomRecipes", AllowCustomRecipes.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseCorpseLocator", UseCorpseLocator.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ShowCreativeMode", ShowCreativeMode.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "NonPermanentDiseases", NonPermanentDiseases.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventDiseases", PreventDiseases.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture) ?? "");
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableDinoTaming", DisableDinoTaming.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAllowUnclaimDinos", AllowUnclaimDinos.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoBreeding", DisableDinoBreeding.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoRiding", DisableDinoRiding.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ForceAllowCaveFlyers", ForceAllowCaveFlyers.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventMateBoost", PreventMateBoost.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BossKillXPMultiplier", BossKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AlphaKillXPMultiplier", AlphaKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildKillXPMultiplier", WildKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CaveKillXPMultiplier", CaveKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedKillXPMultiplier", TamedKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
 
             // ... Continue for all other properties
 
