@@ -193,7 +193,7 @@ namespace Ark_Ascended_Manager.Services
                 var parts = customId.Split('_');
                 if (parts.Length < 3)
                 {
-                    Debug.WriteLine($"Error: Custom ID '{customId}' format is incorrect. Expected format 'action_eosid_serverName'.");
+                    Ark_Ascended_Manager.Services.Logger.Log($"Error: Custom ID '{customId}' format is incorrect. Expected format 'action_eosid_serverName'.");
                     await component.RespondAsync("Error: Custom ID format is incorrect.");
                     return;
                 }
@@ -202,40 +202,40 @@ namespace Ark_Ascended_Manager.Services
                 var eosid = parts[1];
                 var serverName = string.Join("_", parts.Skip(2));
 
-                Debug.WriteLine($"Action: {action}, EOSID: {eosid}, Server Name: {serverName}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Action: {action}, EOSID: {eosid}, Server Name: {serverName}");
 
                 var serverProfile = await GetServerProfileAsync(serverName);
                 if (serverProfile == null)
                 {
-                    Debug.WriteLine($"Server profile not found for server name: {serverName}");
+                    Ark_Ascended_Manager.Services.Logger.Log($"Server profile not found for server name: {serverName}");
                     await component.RespondAsync("Server profile not found.");
                     return;
                 }
 
-                Debug.WriteLine($"Found Server Profile - Server Name: {serverProfile.ServerName}, AdminPassword: {serverProfile.AdminPassword}, RCONPort: {serverProfile.RCONPort}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Found Server Profile - Server Name: {serverProfile.ServerName}, AdminPassword: {serverProfile.AdminPassword}, RCONPort: {serverProfile.RCONPort}");
 
                 switch (action)
                 {
                     case "kick":
-                        Debug.WriteLine($"Attempting to kick player with EOSID: {eosid}");
+                        Ark_Ascended_Manager.Services.Logger.Log($"Attempting to kick player with EOSID: {eosid}");
                         var kickResponse = await SendRconCommandAsync($"KickPlayer {eosid}", serverProfile.AdminPassword, serverProfile.RCONPort);
-                        Debug.WriteLine($"Kick Response: {kickResponse}");
+                        Ark_Ascended_Manager.Services.Logger.Log($"Kick Response: {kickResponse}");
                         await component.RespondAsync($"Player with EOSID {eosid} has been kicked from server {serverProfile.ServerName}.");
                         break;
                     case "getEOSID":
                         // Handle the case where the action is to get the EOSID
-                        Debug.WriteLine($"Retrieving EOSID: {eosid}");
+                        Ark_Ascended_Manager.Services.Logger.Log($"Retrieving EOSID: {eosid}");
                         await component.RespondAsync($"EOSID: {eosid}");
                         break;
                     default:
-                        Debug.WriteLine($"Unknown action: {action}");
+                        Ark_Ascended_Manager.Services.Logger.Log($"Unknown action: {action}");
                         await component.RespondAsync("Unknown action.");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception caught in ButtonHandler: {ex}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception caught in ButtonHandler: {ex}");
                 await component.RespondAsync("An error occurred while processing your request.");
             }
         }
@@ -268,14 +268,14 @@ namespace Ark_Ascended_Manager.Services
         // Handling the interaction when an admin selects an option.
         public async Task OnSelectMenuExecuted(SocketMessageComponent component)
         {
-            Debug.WriteLine($"CustomId: {component.Data.CustomId}");
-            Debug.WriteLine($"Selected Value(s): {string.Join(", ", component.Data.Values)}");
+            Ark_Ascended_Manager.Services.Logger.Log($"CustomId: {component.Data.CustomId}");
+            Ark_Ascended_Manager.Services.Logger.Log($"Selected Value(s): {string.Join(", ", component.Data.Values)}");
 
 
             var parts = component.Data.CustomId.Split('_');
             var action = parts[0];
             var serverName = parts.Length > 1 ? string.Join("_", parts.Skip(2)) : null; // Join the rest of the parts to form the serverName
-            Debug.WriteLine($"Server Name: {serverName}");
+            Ark_Ascended_Manager.Services.Logger.Log($"Server Name: {serverName}");
             var selectedEOSID = component.Data.Values.FirstOrDefault();
 
             if (action == "select_player" && serverName != null)
@@ -476,7 +476,7 @@ namespace Ark_Ascended_Manager.Services
             {
                 await rcon.ConnectAsync();
                 string response = await rcon.SendCommandAsync(command);
-                Debug.WriteLine($"RCON command response: {response}");
+                Ark_Ascended_Manager.Services.Logger.Log($"RCON command response: {response}");
 
                 // Assuming there's no Disconnect method, we don't call it.
                 // Instead, we'll rely on the using statement to ensure that
@@ -485,7 +485,7 @@ namespace Ark_Ascended_Manager.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
                 return (null, false);
             }
             finally
@@ -604,7 +604,7 @@ namespace Ark_Ascended_Manager.Services
                 catch (Exception ex)
                 {
                     // This catch block can handle exceptions due to accessing process.MainModule which may require administrative privileges
-                    Debug.WriteLine($"Error checking process: {ex.Message}");
+                    Ark_Ascended_Manager.Services.Logger.Log($"Error checking process: {ex.Message}");
                 }
             }
 
@@ -658,7 +658,7 @@ namespace Ark_Ascended_Manager.Services
         // Logging method
         private void Log(string message, LogSeverity severity)
         {
-            Debug.WriteLine($"[{severity}] {message}");
+            Ark_Ascended_Manager.Services.Logger.Log($"[{severity}] {message}");
             // Extend this method to log to other sources if needed
         }
 
@@ -894,11 +894,11 @@ namespace Ark_Ascended_Manager.Services
                 if (slashCommand.CommandName == "showservers")
                 {
                     _shouldUpdateEmbed = true; // Set flag to true to allow embed updates
-                    Debug.WriteLine("Slash command /showservers invoked. Updating embeds is now enabled.");
+                    Ark_Ascended_Manager.Services.Logger.Log("Slash command /showservers invoked. Updating embeds is now enabled.");
 
                     // Defer the interaction
                     await slashCommand.DeferAsync(ephemeral: false);
-                    Debug.WriteLine("Interaction deferred.");
+                    Ark_Ascended_Manager.Services.Logger.Log("Interaction deferred.");
 
                     // Send the server info as a follow-up message
                     await SendServerInfoAsync(slashCommand);

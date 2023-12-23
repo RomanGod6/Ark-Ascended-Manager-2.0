@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ark Ascended Manager")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.2.2.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.2.2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.2.2+6aa0aec669410dd82cc542d7f23d66391378fb66")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ark Ascended Manager")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ark Ascended Manager")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.2.2.0")]

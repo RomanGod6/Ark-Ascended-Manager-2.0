@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Windows.Threading;
 using System.Threading;
 using static Ark_Ascended_Manager.Services.DiscordBotService;
+using System.Net;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -268,7 +269,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 catch (Exception ex)
                 {
                     // This catch block can handle exceptions due to accessing process.MainModule which may require administrative privileges
-                    Debug.WriteLine($"Error checking process: {ex.Message}");
+                    Ark_Ascended_Manager.Services.Logger.Log($"Error checking process: {ex.Message}");
                 }
             }
 
@@ -330,7 +331,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             else
             {
-                Debug.WriteLine("Could not update the server, App ID not found or Server Config is null");
+                Ark_Ascended_Manager.Services.Logger.Log("Could not update the server, App ID not found or Server Config is null");
             }
         }
         private void RunSteamCMD(string scriptPath)
@@ -412,66 +413,48 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public async Task InitiateServerShutdownAsync(int countdownMinutes, string reason, string rconPort, string adminPassword)
         {
-            Debug.WriteLine("Shutdown initiated");
+            Ark_Ascended_Manager.Services.Logger.Log("Shutdown initiated");
 
             // Countdown logic with messages at each minute
             for (int minute = countdownMinutes; minute > 0; minute--)
             {
-                // Send a warning message to server with the reason
                 await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes due to {reason}.", rconPort, adminPassword);
-                // Wait for 1 minute
                 await Task.Delay(TimeSpan.FromMinutes(1));
             }
 
-            // Optionally send a final message
             await SendRconCommandAsync($"ServerChat Server is shutting down NOW due to {reason}.", rconPort, adminPassword);
-
-            // Save world before shutdown (if applicable)
             await SendRconCommandAsync("saveworld", rconPort, adminPassword);
-
-            // Shutdown command
             await SendRconCommandAsync("doexit", rconPort, adminPassword);
         }
 
 
+
+        private CoreRCON.RCON rcon;
+        private string lastUsedRconPort;
+        private string lastUsedAdminPassword;
+
         private async Task SendRconCommandAsync(string command, string rconPort, string adminPassword)
         {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    // Replace the placeholders with actual command, port and password values
-                    Arguments = $"/C echo {command} | mcrcon 127.0.0.1 --password {adminPassword} -p {rconPort}",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
             try
             {
-                process.Start();
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                process.WaitForExit();
+                if (rcon == null || lastUsedRconPort != rconPort || lastUsedAdminPassword != adminPassword)
+                {
+                    
+                    rcon = new CoreRCON.RCON(IPAddress.Parse("127.0.0.1"), ushort.Parse(rconPort), adminPassword);
+                    await rcon.ConnectAsync();
+                    lastUsedRconPort = rconPort;
+                    lastUsedAdminPassword = adminPassword;
+                }
 
-                if (!string.IsNullOrEmpty(output))
-                {
-                    Debug.WriteLine($"RCON command output: {output}");
-                }
-                if (!string.IsNullOrEmpty(error))
-                {
-                    Debug.WriteLine($"RCON command error: {error}");
-                }
+                string response = await rcon.SendCommandAsync(command);
+                Ark_Ascended_Manager.Services.Logger.Log($"RCON command response: {response}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
             }
         }
+
 
 
         // These methods are placeholders for extracting the details

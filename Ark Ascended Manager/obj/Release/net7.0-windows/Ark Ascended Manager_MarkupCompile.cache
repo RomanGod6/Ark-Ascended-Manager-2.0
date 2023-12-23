@@ -1,19 +1,19 @@
 ﻿Ark Ascended Manager
-2.2.1.0
+2.2.2.1
 
 winexe
 C#
 .cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\
+C:\Users\griff\Source\Repos\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\
 Ark_Ascended_Manager
 none
 false
 TRACE;RELEASE;NET;NET7_0;NETCOREAPP
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
+C:\Users\griff\Source\Repos\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
 14-1986407429
 1-1032615778
-40-100044299
-250453463163
+41257667994
+252-358666307
 ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\PluginInstallPage.xaml;Views\Pages\PluginsPage.xaml;Views\Pages\RconPanel.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
 
 False

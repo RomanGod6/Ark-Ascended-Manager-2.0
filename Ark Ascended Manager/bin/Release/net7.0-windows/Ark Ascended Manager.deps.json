@@ -6,10 +6,11 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "Ark Ascended Manager/2.2.1": {
+      "Ark Ascended Manager/2.2.2.1": {
         "dependencies": {
           "AvalonEdit": "6.3.0.90",
           "CommunityToolkit.Mvvm": "8.2.1",
+          "CoreRCON": "5.2.1",
           "Discord.Net": "3.13.0",
           "Microsoft.Data.Sqlite": "8.0.0",
           "Microsoft.Extensions.Hosting": "7.0.1",
@@ -34,6 +35,18 @@
           "lib/net6.0/CommunityToolkit.Mvvm.dll": {
             "assemblyVersion": "8.2.0.0",
             "fileVersion": "8.2.1.1"
+          }
+        }
+      },
+      "CoreRCON/5.2.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "7.0.0",
+          "System.IO.Pipelines": "7.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/CoreRCON.dll": {
+            "assemblyVersion": "5.2.1.0",
+            "fileVersion": "5.2.1.0"
           }
         }
       },
@@ -647,6 +660,14 @@
           }
         }
       },
+      "System.IO.Pipelines/7.0.0": {
+        "runtime": {
+          "lib/net7.0/System.IO.Pipelines.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.51805"
+          }
+        }
+      },
       "System.Linq.Async/5.0.0": {
         "runtime": {
           "lib/netcoreapp3.1/System.Linq.Async.dll": {
@@ -685,7 +706,7 @@
     }
   },
   "libraries": {
-    "Ark Ascended Manager/2.2.1": {
+    "Ark Ascended Manager/2.2.2.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -703,6 +724,13 @@
       "sha512": "sha512-I24ofWVEdplxYjUez9/bljv/qb8r8Ccj6cvYXHexNBegLaD3iDy3QrzAAOYVMmfGWIXxlU1ZtECQNfU07+6hXQ==",
       "path": "communitytoolkit.mvvm/8.2.1",
       "hashPath": "communitytoolkit.mvvm.8.2.1.nupkg.sha512"
+    },
+    "CoreRCON/5.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yxgO9Os29z297PYK3Q7O/aFEDBW62odiW4WWmGq3lN+veWtFttWDMTX8+/uvWEcDo+ZHTNdQtfEwvirxmiqJ5g==",
+      "path": "corercon/5.2.1",
+      "hashPath": "corercon.5.2.1.nupkg.sha512"
     },
     "Discord.Net/3.13.0": {
       "type": "package",
@@ -1025,6 +1053,13 @@
       "sha512": "sha512-QaqhQVDiULcu4vm6o89+iP329HcK44cETHOYgy/jfEjtzeFy0ZxmuM7nel9ocjnKxEM4yh1mli7hgh8Q9o+/Iw==",
       "path": "system.interactive.async/5.0.0",
       "hashPath": "system.interactive.async.5.0.0.nupkg.sha512"
+    },
+    "System.IO.Pipelines/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jRn6JYnNPW6xgQazROBLSfpdoczRw694vO5kKvMcNnpXuolEixUyw6IBuBs2Y2mlSX/LdLvyyWmfXhaI3ND1Yg==",
+      "path": "system.io.pipelines/7.0.0",
+      "hashPath": "system.io.pipelines.7.0.0.nupkg.sha512"
     },
     "System.Linq.Async/5.0.0": {
       "type": "package",
