@@ -56,32 +56,6 @@ C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\o
 C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.pdb
 C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.genruntimeconfig.cache
 C:\Users\Dillon Griffey\source\repos\Ark Ascended Manager\Ark Ascended Manager\obj\Debug\net7.0-windows\ref\Ark Ascended Manager.dll
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.AssemblyReference.cache
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\Integrations.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginInstallPage.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.baml
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ImportServersPage .g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\Integrations.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\IssueReportForm.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginInstallPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_Content.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.cache
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.lref
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.exe
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.deps.json
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.runtimeconfig.json
@@ -89,6 +63,7 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Ark Ascended Manager.pdb
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ICSharpCode.AvalonEdit.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\CoreRCON.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Discord.Net.Commands.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Discord.Net.Core.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Discord.Net.Interactions.dll
@@ -127,6 +102,7 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\SQLitePCLRaw.core.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\SQLitePCLRaw.provider.e_sqlite3.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\System.Interactive.Async.dll
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\System.IO.Pipelines.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\System.Linq.Async.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\System.Reactive.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Wpf.Ui.dll
@@ -150,11 +126,37 @@ C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Asce
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.AssemblyReference.cache
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\Integrations.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginInstallPage.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ImportServersPage .g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\Integrations.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\IssueReportForm.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginInstallPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_Content.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.cache
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.lref
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ImportServersPage .baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\IssueReportForm.baml
+C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.baml
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.baml

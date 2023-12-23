@@ -24,6 +24,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand UpdateServerCommand { get; private set; }
         private DispatcherTimer _statusUpdateTimer;
         private ServerConfig _currentServerInfo;
+        public ServerConfig CurrentServerInfo { get; private set; }
 
 
 
@@ -37,7 +38,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             StopServerCommand = new RelayCommand<ServerConfig>(StopServer);
             UpdateServerCommand = new RelayCommand<ServerConfig>(UpdateServer);
             _statusUpdateTimer = new DispatcherTimer();
-            _statusUpdateTimer.Interval = TimeSpan.FromSeconds(10); // Set the desired interval
+            _statusUpdateTimer.Interval = TimeSpan.FromSeconds(5); // Set the desired interval
             _statusUpdateTimer.Tick += ServerStatusTimer_Tick;
             _statusUpdateTimer.Start();
 
@@ -55,10 +56,48 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
         private void ServerStatusTimer_Tick(object sender, EventArgs e)
         {
-            if (_currentServerInfo != null)
+            var servers = LoadServerConfigs();
+            bool anyServerStatusChanged = false;
+
+            foreach (var serverConfig in servers)
             {
-                UpdateServerStatus(_currentServerInfo);
+                bool isRunning = IsServerRunning(serverConfig);
+                string newStatus = isRunning ? "Online" : "Offline";
+
+                // Check if the status has changed before updating
+                if (serverConfig.ServerStatus != newStatus)
+                {
+                    serverConfig.ServerStatus = newStatus;
+                    anyServerStatusChanged = true;
+                }
             }
+
+            // If any server status has changed, save the updated statuses back to the JSON file
+            if (anyServerStatusChanged)
+            {
+                SaveServerConfigs(servers);
+            }
+        }
+        private void SaveServerConfigs(List<ServerConfig> servers)
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+            string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
+            File.WriteAllText(filePath, json);
+        }
+
+
+        // Helper method to get server status from JSON for a specific server profile
+        private bool GetServerStatusFromJson(string profileName)
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                var servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json);
+                var server = servers?.FirstOrDefault(s => s.ProfileName == profileName);
+                return server != null && server.ServerStatus == "Online";
+            }
+            return false;
         }
 
         public void SetCurrentServerInfo(ServerConfig serverInfo)
@@ -71,6 +110,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             LoadServerConfigs();
             _statusUpdateTimer.Start();
+
 
 
 
@@ -99,6 +139,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             Status = IsServerRunning(serverConfig) ? "Online" : "Offline";
         }
+        
+
 
 
 
@@ -128,6 +170,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     {
                         // Start the batch file process
                         Process.Start(batchFilePath);
+
                     }
                     else
                     {
@@ -196,7 +239,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Initiate server shutdown with the user-defined countdown and reason
             await InitiateServerShutdownAsync(countdownMinutes, reason, rconPort, adminPassword);
         }
-        private bool IsServerRunning(ServerConfig serverConfig)
+        public bool IsServerRunning(ServerConfig serverConfig)
         {
             bool isServerRunning = false; // Initialize the flag as false
 

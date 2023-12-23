@@ -531,7 +531,7 @@ set Port={config.ListenPort}
 set RconPort={config.RCONPort}
 set MaxPlayers={config.MaxPlayerCount}
 
-start {serverExecutablePath} {config.MapName}?listen?SessionName=%ServerName%?RCONEnabled=True?ServerPassword=%ServerPassword%?Port=%Port%?RCONPort=%RconPort%?ServerAdminPassword=%AdminPassword% {additionalSettings}
+start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?""RCONEnabled=True?""ServerPassword=%ServerPassword%?""Port=%Port%?RCONPort=%RconPort%?""ServerAdminPassword=%AdminPassword%"" {additionalSettings}
 ".Trim();
 
             // Define the path for the batch file within the AAM directory

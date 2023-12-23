@@ -21,6 +21,8 @@
     
 
     <Grid>
+ 
+
         <!-- Create Server Button -->
         <Button Content="Create Server"
             HorizontalAlignment="Right"
@@ -81,6 +83,7 @@
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/circle-update-solid.png" Width="20" Height="20"/>
                             </Button>
+                                
                         </StackPanel>
                         </StackPanel>
                     </DataTemplate>

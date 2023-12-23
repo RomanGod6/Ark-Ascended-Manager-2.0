@@ -16,17 +16,20 @@
                 <RowDefinition Height="Auto"/>
                 <!-- For Date and Price Information -->
             </Grid.RowDefinitions>
+            <TextBlock Text="Static Title" FontSize="22" FontWeight="Bold" Margin="10,0"/>
+            <TextBlock Text="{Binding BasicResource.SelectedPlugin.Title}" 
+           FontSize="22" FontWeight="Bold"/>
 
             <!-- Title and Image -->
             <StackPanel Grid.Row="0">
-                <TextBlock Text="{Binding SelectedPlugin.Title}" 
-                           FontSize="22" FontWeight="Bold" Margin="10,0"/>
+                
+                
                 <Image Source="{Binding SelectedPlugin.ImagePath}" 
                        Height="200" Margin="10"/>
             </StackPanel>
 
             <!-- Description and Message -->
-            <StackPanel Grid.Row="1">
+            <StackPanel Margin="-21,-20,-34,3">
                 <TextBlock Text="{Binding SelectedPlugin.Description}" 
                            TextWrapping="Wrap" Margin="10"/>
                 <TextBlock Text="{Binding SelectedPlugin.Message}" 

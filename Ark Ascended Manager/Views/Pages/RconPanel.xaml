@@ -25,6 +25,12 @@
                             <DataTrigger Binding="{Binding RconStatus}" Value="Connected">
                                 <Setter Property="Foreground" Value="Green"/>
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding RconStatus}" Value="Online">
+                                <Setter Property="Foreground" Value="Green"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding RconStatus}" Value="No Players Connected">
+                                <Setter Property="Foreground" Value="Yellow"/>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
@@ -33,32 +39,38 @@
 
 
         <!-- Command History and Server Chat -->
-        <Grid Grid.Column="1" Margin="10">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <!-- For ComboBox -->
+                <RowDefinition Height="1100"/>
+                <!-- For ListBox ScrollViewer -->
                 <RowDefinition Height="Auto"/>
+                <!-- For DockPanel containing TextBox and Button -->
             </Grid.RowDefinitions>
 
             <ComboBox Grid.Row="0" ItemsSource="{Binding ServerProfiles}"
-          DisplayMemberPath="ServerName" 
-          SelectedValuePath="ServerName"
-          SelectedItem="{Binding SelectedServerProfile}"
-          Height="40" Margin="0,0,0,10">
-            <!-- Server dropdown selection -->
+      DisplayMemberPath="ServerName" 
+      SelectedValuePath="ServerName"
+      SelectedItem="{Binding SelectedServerProfile}"
+      Height="40" Margin="0,0,0,10">
+                <!-- Server dropdown selection -->
             </ComboBox>
 
+            <!-- Wrap the ListBox in a ScrollViewer for the chat messages -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
+                <ListBox ItemsSource="{Binding ServerChat}" Margin="0,0,0,10" MinWidth="100" MinHeight="100" PreviewMouseWheel="ListBox_PreviewMouseWheel">
+                    
+                    <!-- Bind combined chat and command items here -->
+                </ListBox>
+            </ScrollViewer>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding ServerChat}"
-         Margin="0,0,0,10" MinWidth="100" MinHeight="100">
-                <!-- Bind combined chat and command items here -->
-            </ListBox>
-
-
-            <DockPanel Grid.Row="2" Margin="10" VerticalAlignment="Bottom">
+            <!-- The Send button and TextBox remain outside and below the ScrollViewer -->
+            <DockPanel Grid.Row="2" VerticalAlignment="Bottom">
                 <TextBox DockPanel.Dock="Top" Margin="0,0,0,10" Height="35" Text="{Binding CommandInput}" />
                 <Button Content="Send" Height="35" Width="75" Command="{Binding SendCommand}" DockPanel.Dock="Top" />
             </DockPanel>
+
         </Grid>
 
         <!-- Player List -->

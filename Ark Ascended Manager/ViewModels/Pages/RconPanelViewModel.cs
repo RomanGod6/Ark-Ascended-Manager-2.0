@@ -1,12 +1,15 @@
-﻿using System;
+﻿using CoreRCON;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 
@@ -22,7 +25,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private System.Timers.Timer _updateTimer;
         private System.Timers.Timer _chatUpdateTimer;
         private string _commandInput;
-
+        private CoreRCON.RCON rcon;
+        private System.Timers.Timer _connectionCheckTimer;
         public string CommandInput
         {
             get => _commandInput;
@@ -41,8 +45,47 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             InitializeChatUpdateTimer();
             SendCommand = new RelayCommand(ExecuteSendCommand);
             CopyIdCommand = new RelayCommand<object>(CopySelectedPlayerIdToClipboard);
+            _connectionCheckTimer = new System.Timers.Timer(10000); // Check every 10 seconds
+            _connectionCheckTimer.Elapsed += OnConnectionCheckTimerElapsed;
+            _connectionCheckTimer.AutoReset = true;
+            _connectionCheckTimer.Enabled = true;
 
         }
+        private async void OnConnectionCheckTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            // Make sure to stop the timer while the connection check is ongoing
+            _connectionCheckTimer.Stop();
+
+            if (_selectedServerProfile != null)
+            {
+                await InitializeRconConnection(_selectedServerProfile);
+            }
+
+            // Restart the timer after the check is complete
+            _connectionCheckTimer.Start();
+        }
+        public void OnNavigatedTo()
+        {
+            
+
+
+
+
+            // Initialization logic specific to the servers page
+        }
+        public void OnNavigatedFrom()
+        {
+            if (_connectionCheckTimer != null)
+            {
+                _connectionCheckTimer.Stop();
+                _connectionCheckTimer.Elapsed -= OnConnectionCheckTimerElapsed;
+                _connectionCheckTimer.Dispose();
+                _connectionCheckTimer = null;
+            }
+
+
+        }
+
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
             var playerInfo = parameter as string;
@@ -122,7 +165,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 {
                     UpdateTimersOnProfileSelection();
                     ServerChat.Clear();
-                    Task.Run(() => UpdatePlayerList());
+                    Task.Run(async () =>
+                    {
+                        await InitializeRconConnection(value);
+                        await UpdatePlayerList();
+                    });
                     Task.Run(() => FetchChatAsync());
                 }
             }
@@ -230,14 +277,16 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 var playersList = await SendRconCommandAsync(_selectedServerProfile, "ListPlayers");
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    // Here, we assume that if the command is sent successfully, the server is online.
+                    RconStatus = "Online"; // Set the status to Online by default.
+
                     if (playersList.Count == 0)
                     {
-                        RconStatus = "No Players Connected";
+                        RconStatus = "No Players Connected"; // Now this indicates no players, but server is online.
                         ConnectedPlayers.Clear();
                     }
                     else
                     {
-                        RconStatus = "Connected";
                         ConnectedPlayers = new ObservableCollection<string>(playersList);
                     }
                 });
@@ -251,6 +300,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 });
             }
         }
+
+
 
         private async Task FetchChatAsync()
         {
@@ -349,48 +400,39 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
 
+        private async Task InitializeRconConnection(ServerProfile profile)
+        {
+            try
+            {
+                rcon = new CoreRCON.RCON(IPAddress.Parse("127.0.0.1"), (ushort)profile.RCONPort, profile.AdminPassword);
+                await rcon.ConnectAsync(); // Attempt to establish connection
+                RconStatus = "Online"; // Set status to online only after a successful connection
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to initialize RCON connection: {ex.Message}");
+                RconStatus = "Offline"; // Set status to offline if connection fails
+            }
+        }
+
+
+
         private async Task<List<string>> SendRconCommandAsync(ServerProfile profile, string command)
         {
             List<string> result = new List<string>();
 
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    Arguments = $"/C echo {command} | mcrcon 127.0.0.1 --password {profile.AdminPassword} -p {profile.RCONPort}",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
             try
             {
                 Debug.WriteLine($"Attempting to send RCON command to server: {profile.ServerName}, Command: {command}");
-                Debug.WriteLine($"Full Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
 
-                process.Start();
-                string output = await process.StandardOutput.ReadToEndAsync();
-                process.WaitForExit();
+                if (rcon == null)
+                {
+                    await InitializeRconConnection(profile);
+                }
 
+                string output = await rcon.SendCommandAsync(command);
                 Debug.WriteLine($"RCON command sent. Output: {output}");
-
-                // Use different parsing methods based on the command
-                if (command.Equals("ListPlayers", StringComparison.OrdinalIgnoreCase))
-                {
-                    result = ParsePlayersList(output);
-                }
-                else if (command.Equals("GetChat", StringComparison.OrdinalIgnoreCase))
-                {
-                    result = ParseChatMessages(output);
-                }
-                else
-                {
-                    // For all other commands, split the output into lines
-                    result.AddRange(output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
-                }
+                // Process output as before...
             }
             catch (Exception ex)
             {
@@ -400,6 +442,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             return result;
         }
+
+
+
 
 
         private List<string> ParsePlayersList(string rconOutput)

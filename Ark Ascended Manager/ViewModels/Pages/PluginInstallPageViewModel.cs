@@ -12,7 +12,20 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
     private HttpClient _httpClient = new HttpClient();
     private string _apiKey = "bpqpPHZ71cHzEP3AVSuTmLkqXvKoSBj-"; // Replace with your actual API key
 
-    public BasicResource SelectedPlugin { get; private set; }
+    private BasicResource _selectedPlugin;
+
+    public BasicResource SelectedPlugin
+    {
+        get => _selectedPlugin;
+        set
+        {
+            if (_selectedPlugin != value)
+            {
+                _selectedPlugin = value;
+                OnPropertyChanged(nameof(SelectedPlugin));
+            }
+        }
+    }
 
     public PluginInstallPageViewModel()
     {
@@ -41,12 +54,13 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
             if (response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("Fetched plugin details successfully: " + content);
+
                 SelectedPlugin = JsonConvert.DeserializeObject<BasicResource>(content);
                 OnPropertyChanged(nameof(SelectedPlugin));
 
                 await SaveCurrentPluginDataAsync(SelectedPlugin); // Save the fetched data
             }
-
             else
             {
                 Debug.WriteLine($"Error fetching plugin details: {response.StatusCode}");
@@ -58,42 +72,46 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
         }
     }
 
+
     public BasicResource LoadCurrentPluginData()
     {
         string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         string arkAscendedManagerPath = Path.Combine(appDataPath, "Ark Ascended Manager");
-        string currentPluginPath = Path.Combine(arkAscendedManagerPath, "CurrentPlugin.json");
+        string currentPluginPath = Path.Combine(arkAscendedManagerPath, "SelectedPlugin.json");
 
         if (File.Exists(currentPluginPath))
         {
             string json = File.ReadAllText(currentPluginPath);
+            Debug.WriteLine("Loaded current plugin data: " + json);
             return JsonConvert.DeserializeObject<BasicResource>(json);
         }
-
-        return null; // or handle the case where the file doesn't exist
+        else
+        {
+            Debug.WriteLine("No current plugin data found.");
+            return null; // or handle the case where the file doesn't exist
+        }
     }
+
+
 
 
 
     public void OnNavigatedTo(object parameter)
     {
+
         if (parameter is BasicResource newPlugin)
         {
-            var localData = LoadCurrentPluginData();
-            if (localData != null)
-            {
-                SelectedPlugin = localData;
-                OnPropertyChanged(nameof(SelectedPlugin));
-            }
-
-            // Then fetch the latest details
-            _ = FetchLatestPluginDetailsAsync(newPlugin.ResourceId);
+            SelectedPlugin = newPlugin;
+            OnPropertyChanged(nameof(SelectedPlugin));
+            Debug.WriteLine("SelectedPlugin assigned: " + (SelectedPlugin != null));
         }
         else
         {
-            // Handle unexpected parameter
+            Debug.WriteLine("Invalid parameter type in OnNavigatedTo.");
         }
     }
+
+
 
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -101,4 +119,5 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+    
 }

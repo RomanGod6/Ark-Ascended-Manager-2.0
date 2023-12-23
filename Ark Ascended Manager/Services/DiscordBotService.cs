@@ -5,9 +5,15 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Ark_Ascended_Manager.Services.DiscordBotService;
+using CoreRCON;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using CoreRCON.Parsers.Standard;
 
 namespace Ark_Ascended_Manager.Services
 {
@@ -23,8 +29,15 @@ namespace Ark_Ascended_Manager.Services
         private readonly IServiceProvider _services;
         private readonly ulong _guildId; // Store the Guild ID
         private Dictionary<ulong, string> userServerSelections = new Dictionary<ulong, string>();
+        private Timer _chatFetchTimer;
+        private readonly HttpClient _httpClient;
+        private readonly string _webhookUrl;
+        private readonly DiscordWebhookService _webhookService;
 
-        public DiscordBotService(IServiceProvider services, ulong guildId) // Accept Guild ID as a parameter
+
+
+
+        public DiscordBotService(IServiceProvider services, ulong guildId, string webhookUrl) // Accept Guild ID as a parameter
         {
 
             _client = new DiscordSocketClient();
@@ -34,7 +47,10 @@ namespace Ark_Ascended_Manager.Services
             _guildId = guildId; // Store the Guild ID
             _client.Log += LogAsync;
             _client.Ready += ReadyAsync;
-
+            _httpClient = new HttpClient();
+            _webhookUrl = webhookUrl ?? throw new ArgumentNullException(nameof(webhookUrl));
+            _webhookService = new DiscordWebhookService();
+            _client.SelectMenuExecuted += OnSelectMenuExecuted;
 
             RegisterCommands();
         }
@@ -51,14 +67,23 @@ namespace Ark_Ascended_Manager.Services
                 var guild = _client.GetGuild(_guildId);
                 if (guild != null)
                 {
+                    // Register showservers command
                     await guild.CreateApplicationCommandAsync(new SlashCommandBuilder()
                         .WithName("showservers")
                         .WithDescription("Show information about servers")
+                        .Build());
+
+                    // Register listplayers command
+                    await guild.CreateApplicationCommandAsync(new SlashCommandBuilder()
+                        .WithName("listplayers")
+                        .WithDescription("List all players on the server")
                         .Build());
                 }
             };
 
             _client.InteractionCreated += HandleInteractionAsync;
+            _client.SlashCommandExecuted += SlashCommandHandler;
+            _client.ButtonExecuted += ButtonHandler;
         }
         private void TimerFetchPlayerCount(object state)
         {
@@ -95,6 +120,303 @@ namespace Ark_Ascended_Manager.Services
 
             // Update the embed with the latest status
             await UpdateEmbedWithPlayerCount(server);
+            await FetchAndSendServerChat(server);
+            
+        }
+        private async Task SlashCommandHandler(SocketSlashCommand command)
+        {
+            switch (command.CommandName)
+            {
+                case "showservers":
+                    // Handle showservers command...
+                    break;
+                case "listplayers":
+                    await HandleListPlayersCommand(command);
+                    break;
+            }
+        }
+        private async Task HandleListPlayersCommand(SocketSlashCommand command)
+        {
+            await command.DeferAsync(ephemeral: true); // Acknowledge the command
+
+            var serverProfiles = await LoadServerProfilesAsync();
+
+            // Loop through server profiles to create a dropdown for each.
+            foreach (var serverProfile in serverProfiles)
+            {
+                var players = await GetPlayersFromServerProfile(serverProfile);
+
+                // Create a new SelectMenuBuilder
+                var menuBuilder = new SelectMenuBuilder()
+                    .WithCustomId($"select_player_{serverProfile.ServerName}")
+                    .WithPlaceholder("Select a player");
+
+                // Add each player as an option in the select menu
+                foreach (var player in players)
+                {
+                    menuBuilder.AddOption(player.Name, player.EOSID); // Use AddOption here
+                }
+
+                // Create the message component with the select menu
+                var componentBuilder = new ComponentBuilder()
+                    .WithSelectMenu(menuBuilder);
+
+                var embedBuilder = new EmbedBuilder()
+                    .WithTitle($"Players on {serverProfile.ServerName}")
+                    .WithDescription("Select a player from the dropdown to manage:");
+
+                await command.FollowupAsync(embed: embedBuilder.Build(), components: componentBuilder.Build());
+            }
+        }
+
+
+        private async Task<List<ServerProfile>> LoadServerProfilesAsync()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            if (File.Exists(filePath))
+            {
+                string json = await File.ReadAllTextAsync(filePath);
+                return JsonConvert.DeserializeObject<List<ServerProfile>>(json);
+            }
+            return new List<ServerProfile>();
+        }
+
+
+
+
+        private async Task ButtonHandler(SocketMessageComponent component)
+        {
+            try
+            {
+                var customId = component.Data.CustomId;
+                var parts = customId.Split('_');
+                if (parts.Length < 3)
+                {
+                    Debug.WriteLine($"Error: Custom ID '{customId}' format is incorrect. Expected format 'action_eosid_serverName'.");
+                    await component.RespondAsync("Error: Custom ID format is incorrect.");
+                    return;
+                }
+
+                var action = parts[0];
+                var eosid = parts[1];
+                var serverName = string.Join("_", parts.Skip(2));
+
+                Debug.WriteLine($"Action: {action}, EOSID: {eosid}, Server Name: {serverName}");
+
+                var serverProfile = await GetServerProfileAsync(serverName);
+                if (serverProfile == null)
+                {
+                    Debug.WriteLine($"Server profile not found for server name: {serverName}");
+                    await component.RespondAsync("Server profile not found.");
+                    return;
+                }
+
+                Debug.WriteLine($"Found Server Profile - Server Name: {serverProfile.ServerName}, AdminPassword: {serverProfile.AdminPassword}, RCONPort: {serverProfile.RCONPort}");
+
+                switch (action)
+                {
+                    case "kick":
+                        Debug.WriteLine($"Attempting to kick player with EOSID: {eosid}");
+                        var kickResponse = await SendRconCommandAsync($"KickPlayer {eosid}", serverProfile.AdminPassword, serverProfile.RCONPort);
+                        Debug.WriteLine($"Kick Response: {kickResponse}");
+                        await component.RespondAsync($"Player with EOSID {eosid} has been kicked from server {serverProfile.ServerName}.");
+                        break;
+                    case "getEOSID":
+                        // Handle the case where the action is to get the EOSID
+                        Debug.WriteLine($"Retrieving EOSID: {eosid}");
+                        await component.RespondAsync($"EOSID: {eosid}");
+                        break;
+                    default:
+                        Debug.WriteLine($"Unknown action: {action}");
+                        await component.RespondAsync("Unknown action.");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception caught in ButtonHandler: {ex}");
+                await component.RespondAsync("An error occurred while processing your request.");
+            }
+        }
+        public async Task SendPlayerDropdown(SocketSlashCommand command, List<Player> players)
+        {
+            // Create a list of SelectMenuOptionBuilder, each representing a player.
+            var options = players.Select(player => new SelectMenuOptionBuilder()
+                .WithLabel(player.Name)
+                .WithValue(player.EOSID))
+                .ToList();
+
+            // Create the SelectMenuBuilder with the options.
+            var menuBuilder = new SelectMenuBuilder()
+                .WithCustomId("player_select_menu")
+                .WithPlaceholder("Select a player")
+                .WithOptions(options) // Pass the list of SelectMenuOptionBuilder objects here directly
+                .WithMinValues(1)
+                .WithMaxValues(1);
+
+            // Create the message component, which includes our SelectMenuBuilder.
+            var componentBuilder = new ComponentBuilder()
+                .WithSelectMenu(menuBuilder);
+
+            // Send the message with the dropdown menu.
+            await command.FollowupAsync("Select a player to manage:", components: componentBuilder.Build());
+        }
+
+
+
+        // Handling the interaction when an admin selects an option.
+        public async Task OnSelectMenuExecuted(SocketMessageComponent component)
+        {
+            Debug.WriteLine($"CustomId: {component.Data.CustomId}");
+            Debug.WriteLine($"Selected Value(s): {string.Join(", ", component.Data.Values)}");
+
+
+            var parts = component.Data.CustomId.Split('_');
+            var action = parts[0];
+            var serverName = parts.Length > 1 ? string.Join("_", parts.Skip(2)) : null; // Join the rest of the parts to form the serverName
+            Debug.WriteLine($"Server Name: {serverName}");
+            var selectedEOSID = component.Data.Values.FirstOrDefault();
+
+            if (action == "select_player" && serverName != null)
+            {
+                var serverProfile = await GetServerProfileAsync(serverName);
+                if (serverProfile != null && serverProfile.Players != null)
+                {
+                    var selectedPlayer = serverProfile.Players.FirstOrDefault(p => p.EOSID == selectedEOSID);
+
+                    if (selectedPlayer != null)
+                    {
+                        var buttonComponents = new ComponentBuilder()
+                            .WithButton("Kick Player", $"kick_{selectedPlayer.EOSID}", ButtonStyle.Danger)
+                            .WithButton("Get EOSID", $"eosid_{selectedPlayer.EOSID}", ButtonStyle.Primary)
+                            .Build();
+
+                        // Use RespondAsync instead of FollowupAsync
+                        await component.RespondAsync($"Selected player: {selectedPlayer.Name}", components: buttonComponents);
+                    }
+                    else
+                    {
+                        await component.RespondAsync("Player not found.");
+                    }
+                }
+                else
+                {
+                    await component.RespondAsync("Server profile not found or players list is uninitialized.");
+                }
+            }
+            else
+            {
+                await component.RespondAsync("Action not recognized or server name missing.");
+            }
+        }
+
+
+
+
+
+
+        private async Task<ServerProfile> GetServerProfileAsync(string serverName)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+
+            if (File.Exists(filePath))
+            {
+                string json = await File.ReadAllTextAsync(filePath);
+                var serverProfiles = JsonConvert.DeserializeObject<List<ServerProfile>>(json);
+                return serverProfiles.FirstOrDefault(profile => profile.ServerName == serverName);
+            }
+
+            return null; // or throw an exception if you prefer
+        }
+        public class ServerProfile
+        {
+            public string ProfileName { get; set; }
+            public string ServerStatus { get; set; }
+            public string ServerPath { get; set; }
+            public string MapName { get; set; }
+            public string AppId { get; set; }
+            public bool IsRunning { get; set; }
+            public string ServerName { get; set; }
+            public List<Player> Players { get; set; }
+            public int ListenPort { get; set; }
+            public int RCONPort { get; set; }
+            public string Mods { get; set; }
+            public int MaxPlayerCount { get; set; }
+            public string AdminPassword { get; set; }
+            public string ServerPassword { get; set; }
+            public bool UseBattlEye { get; set; }
+            public bool ForceRespawnDinos { get; set; }
+            public bool PreventSpawnAnimation { get; set; }
+            // Add other properties as needed...
+        }
+        private async Task<List<Player>> GetPlayersFromServerProfile(ServerProfile serverProfile)
+        {
+            var (response, success) = await SendRconCommandAsync("listplayers", serverProfile.AdminPassword, serverProfile.RCONPort);
+            var players = new List<Player>();
+
+            if (success && !string.IsNullOrWhiteSpace(response))
+            {
+                var lines = response.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    // Here we need to parse the line to extract player name and EOSID
+                    // The exact parsing logic will depend on the format of the line
+                    // Assuming the format is "0. PlayerName, EOSID"
+                    var parts = line.Split(new[] { ". ", ", " }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 3) // Make sure we have at least the index, player name, and EOSID
+                    {
+                        var player = new Player
+                        {
+                            Id = parts[0], // The player index, may not be needed
+                            Name = parts[1],
+                            EOSID = parts[2] // The EOSID
+                        };
+                        players.Add(player);
+                    }
+                }
+            }
+
+            return players;
+        }
+
+        public class Player
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string EOSID { get; set; }
+        }
+
+
+
+
+        private async Task FetchAndSendServerChat(ServerInfo serverInfo)
+        {
+            if (serverInfo == null)
+                return;
+
+            var (chatMessages, _) = await SendRconCommandAsync("getchat", serverInfo.AdminPassword, serverInfo.RCONPort);
+
+            // Remove unwanted message and trim to avoid whitespace issues
+            chatMessages = RemoveUnwantedMessages(chatMessages).Trim();
+
+            // Only send the message if it's not empty after filtering and trimming
+            if (!string.IsNullOrEmpty(chatMessages))
+            {
+                // Format the message with the server name
+                string formattedMessage = $"[{serverInfo.ServerName}]: {chatMessages}";
+
+                // Use the webhook service to send the message
+                await _webhookService.SendWebhookMessageAsync(_webhookUrl, formattedMessage);
+            }
+        }
+
+        private string RemoveUnwantedMessages(string chatMessages)
+        {
+            var lines = chatMessages.Split('\n');
+            var filteredLines = lines.Where(line => !line.Contains("Server received, But no response!!")).ToArray();
+            return string.Join("\n", filteredLines);
         }
 
 
@@ -112,7 +434,32 @@ namespace Ark_Ascended_Manager.Services
                 Console.WriteLine("Player count fetching timer started.");
             }
         }
+        public class DiscordWebhookService
+        {
+            private readonly HttpClient _httpClient = new HttpClient();
 
+            public DiscordWebhookService()
+            {
+                // Initialization (if needed)
+            }
+
+            public async Task SendWebhookMessageAsync(string webhookUrl, string message)
+            {
+                var payload = new
+                {
+                    content = message
+                };
+
+                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(webhookUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Failed to send message. Status code: {response.StatusCode}");
+                }
+            }
+        }
+        
 
 
 
@@ -122,49 +469,34 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task<(string, bool)> SendRconCommandAsync(string command, string adminPassword, int rconPort)
         {
-            Debug.WriteLine($"{adminPassword}{rconPort}");
-            string fullCommand = $"/C echo {command} | mcrcon 127.0.0.1 --password {adminPassword} -p {rconPort}";
-            Debug.WriteLine("Executing RCON command: " + fullCommand);
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    Arguments = fullCommand,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
+            var serverIp = IPAddress.Parse("127.0.0.1");
+            var rcon = new CoreRCON.RCON(serverIp, (ushort)rconPort, adminPassword);
 
             try
             {
-                process.Start();
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                process.WaitForExit();
+                await rcon.ConnectAsync();
+                string response = await rcon.SendCommandAsync(command);
+                Debug.WriteLine($"RCON command response: {response}");
 
-                // Check if the specific error message is present in the output or error
-                bool isServerOffline = output.Contains("The connection could not be made") || error.Contains("The connection could not be made");
-
-                if (!string.IsNullOrEmpty(output) && !isServerOffline)
-                {
-                    Debug.WriteLine($"RCON command output: {output}");
-                    return (output, true); // Successful output, server is online
-                }
-
-                // Specific error message or empty output indicates server is offline
-                return (null, !isServerOffline);
+                // Assuming there's no Disconnect method, we don't call it.
+                // Instead, we'll rely on the using statement to ensure that
+                // the connection is closed properly.
+                return (response, true);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
-                return (null, false); // Exception occurred, server might be offline
+                return (null, false);
+            }
+            finally
+            {
+                // If the RCON class implements IDisposable, we dispose of it here.
+                // Otherwise, we might need to do something else to ensure the connection is closed.
+                (rcon as IDisposable)?.Dispose();
             }
         }
+        
+
 
 
 
@@ -581,6 +913,14 @@ namespace Ark_Ascended_Manager.Services
                     string serverPath = customId.Substring("start_server_".Length);
                     ServerInfo serverInfo = new ServerInfo { ServerPath = serverPath };
                     await StartServerAsync(serverInfo);
+
+                    // Start the player count fetching timer after the server starts
+                    if (!IsServerRunning(serverInfo))
+                    {
+                        currentServerInfo = serverInfo; // Update the current server info
+                        StartFetchingPlayerCount(); // Start the timer
+                    }
+
                     await component.RespondAsync("Server Started!");
                 }
                 else if (component.Data.CustomId.StartsWith("stop_server_"))

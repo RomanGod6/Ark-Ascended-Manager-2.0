@@ -34,6 +34,19 @@
           "buildTransitive/netstandard2.1/CommunityToolkit.Mvvm.targets": {}
         }
       },
+      "CoreRCON/5.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "7.0.0",
+          "System.IO.Pipelines": "7.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/CoreRCON.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/CoreRCON.dll": {}
+        }
+      },
       "Discord.Net/3.13.0": {
         "type": "package",
         "dependencies": {
@@ -992,6 +1005,22 @@
           }
         }
       },
+      "System.IO.Pipelines/7.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/System.IO.Pipelines.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/System.IO.Pipelines.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
+        }
+      },
       "System.Linq.Async/5.0.0": {
         "type": "package",
         "compile": {
@@ -1150,6 +1179,20 @@
         "lib/netstandard2.1/CommunityToolkit.Mvvm.dll",
         "lib/netstandard2.1/CommunityToolkit.Mvvm.pdb",
         "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
+      ]
+    },
+    "CoreRCON/5.2.1": {
+      "sha512": "yxgO9Os29z297PYK3Q7O/aFEDBW62odiW4WWmGq3lN+veWtFttWDMTX8+/uvWEcDo+ZHTNdQtfEwvirxmiqJ5g==",
+      "type": "package",
+      "path": "corercon/5.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "corercon.5.2.1.nupkg.sha512",
+        "corercon.nuspec",
+        "lib/netstandard2.0/CoreRCON.dll",
+        "logo.png"
       ]
     },
     "Discord.Net/3.13.0": {
@@ -2377,6 +2420,33 @@
         "system.interactive.async.nuspec"
       ]
     },
+    "System.IO.Pipelines/7.0.0": {
+      "sha512": "jRn6JYnNPW6xgQazROBLSfpdoczRw694vO5kKvMcNnpXuolEixUyw6IBuBs2Y2mlSX/LdLvyyWmfXhaI3ND1Yg==",
+      "type": "package",
+      "path": "system.io.pipelines/7.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.IO.Pipelines.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.IO.Pipelines.targets",
+        "lib/net462/System.IO.Pipelines.dll",
+        "lib/net462/System.IO.Pipelines.xml",
+        "lib/net6.0/System.IO.Pipelines.dll",
+        "lib/net6.0/System.IO.Pipelines.xml",
+        "lib/net7.0/System.IO.Pipelines.dll",
+        "lib/net7.0/System.IO.Pipelines.xml",
+        "lib/netstandard2.0/System.IO.Pipelines.dll",
+        "lib/netstandard2.0/System.IO.Pipelines.xml",
+        "system.io.pipelines.7.0.0.nupkg.sha512",
+        "system.io.pipelines.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    },
     "System.Linq.Async/5.0.0": {
       "sha512": "cPtIuuH8TIjVHSi2ewwReWGW1PfChPE0LxPIDlfwVcLuTM9GANFTXiMB7k3aC4sk3f0cQU25LNKzx+jZMxijqw==",
       "type": "package",
@@ -2630,6 +2700,7 @@
     "net7.0-windows7.0": [
       "AvalonEdit >= 6.3.0.90",
       "CommunityToolkit.Mvvm >= 8.2.1",
+      "CoreRCON >= 5.2.1",
       "Discord.Net >= 3.13.0",
       "Microsoft.Data.Sqlite >= 8.0.0",
       "Microsoft.Extensions.Hosting >= 7.0.1",
@@ -2684,6 +2755,10 @@
           "CommunityToolkit.Mvvm": {
             "target": "Package",
             "version": "[8.2.1, )"
+          },
+          "CoreRCON": {
+            "target": "Package",
+            "version": "[5.2.1, )"
           },
           "Discord.Net": {
             "target": "Package",

@@ -31,7 +31,9 @@ namespace Ark_Ascended_Manager.Views.Pages
             {
                 BotTokenTextBox.Text = settings.Token; 
                 GuildIdTextBox.Text = settings.GuildId;
-                _botService = new DiscordBotService(_services, guildId); // Pass both IServiceProvider and Guild ID
+                WebhookUrlTextBox.Text = settings.WebhookUrl;
+                _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl); // Pass both IServiceProvider and Guild ID
+
             }
             else
             {
@@ -44,12 +46,12 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             string token = BotTokenTextBox.Text;
             string guildId = GuildIdTextBox.Text;
-
+            string webhookUrl = WebhookUrlTextBox.Text;
             // Perform token validation here (if necessary)
             // ...
 
             // Create an instance of BotSettings
-            BotSettings settings = new BotSettings { Token = token, GuildId = guildId };
+            BotSettings settings = new BotSettings { Token = token, GuildId = guildId, WebhookUrl = webhookUrl };
 
             // Serialize the settings object to JSON
             string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
@@ -94,7 +96,8 @@ namespace Ark_Ascended_Manager.Views.Pages
         public class BotSettings
         {
             public string Token { get; set; }
-            public string GuildId { get; set; } // Add this line
+            public string GuildId { get; set; }
+            public string WebhookUrl { get; set; } // Add this line
         }
 
         public class TokenManager

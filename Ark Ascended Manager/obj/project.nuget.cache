@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "tuHKa8zZbRfk583tzc4ZgpzmuzdhWC4zS7ZU5OvFiZ7Z5FCVJjJvQxntkvG87OC5W6jmw9oZCUG2icKKwigbrw==",
+  "dgSpecHash": "BLF6ZhEMXp7xdemnM7wkljabE1Ia7C4fB/iPsuMYbUVG401pe6lJhlEKqAC6dKOnINtA4IDvyTQQM4Nagj2vWg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Dillon Griffey\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\avalonedit\\6.3.0.90\\avalonedit.6.3.0.90.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.1\\communitytoolkit.mvvm.8.2.1.nupkg.sha512",
+    "C:\\Users\\Dillon Griffey\\.nuget\\packages\\corercon\\5.2.1\\corercon.5.2.1.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\discord.net\\3.13.0\\discord.net.3.13.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\discord.net.commands\\3.13.0\\discord.net.commands.3.13.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\discord.net.core\\3.13.0\\discord.net.core.3.13.0.nupkg.sha512",
@@ -52,6 +53,7 @@
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0\\system.diagnostics.eventlog.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.interactive.async\\5.0.0\\system.interactive.async.5.0.0.nupkg.sha512",
+    "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.linq.async\\5.0.0\\system.linq.async.5.0.0.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
     "C:\\Users\\Dillon Griffey\\.nuget\\packages\\system.reactive\\5.0.0\\system.reactive.5.0.0.nupkg.sha512",

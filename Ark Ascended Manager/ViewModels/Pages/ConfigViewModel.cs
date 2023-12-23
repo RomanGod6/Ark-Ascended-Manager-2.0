@@ -15,6 +15,8 @@ using Ark_Ascended_Manager.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using CoreRCON;
+using System.Net;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -39,6 +41,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand LoadJsonCommand { get; private set; }
 
         private string _iniContent;
+        private CoreRCON.RCON rcon;
         public string IniContent
         {
             get => _iniContent;
@@ -81,7 +84,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadLaunchServerSettingsCommand = new RelayCommand(UpdateLaunchParameters);
             StartServerCommand = new RelayCommand(StartServer);
             UpdateServerCommand = new RelayCommand(UpdateServerBasedOnJson);
-            StopServerCommand = new RelayCommand(async () => await InitiateServerShutdownAsync(10));
+            StopServerCommand = new RelayCommand(async () => await InitiateServerShutdownAsync());
             LoadCustomGUSIniFile();
             SaveIniFileCommand = new RelayCommand(SaveCustomGUSIniFile);
             LoadCustomGAMEIniFile();
@@ -393,20 +396,74 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadGameIniFile();
             LoadLaunchServerSettings();
         }
-        public async Task InitiateServerShutdownAsync(int countdownMinutes)
+        // Ensure this method is in the ConfigPageViewModel if that's where it's being called
+        
+
+      
+
+        private async Task SendRconCommandAsync(string command)
         {
-            Debug.WriteLine("Shutdown Clicked");
-            if (CurrentServerConfig == null)
+            if (rcon == null || CurrentServerConfig == null)
             {
-                Debug.WriteLine("Current server configuration is not loaded.");
+                Debug.WriteLine("RCON connection is not established or server profile is not selected.");
                 return;
             }
+
+            try
+            {
+                // Send the command using the CoreRCON library's method
+                string response = await rcon.SendCommandAsync(command);
+                Debug.WriteLine($"RCON command response: {response}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+            }
+        }
+        public async Task InitiateServerShutdownAsync()
+        {
+            Debug.WriteLine("Shutdown Clicked");
+
+            if (CurrentServerConfig == null)
+            {
+                MessageBox.Show("Current server configuration is not loaded.");
+                return;
+            }
+
+            // Prompt the user for the countdown time
+            string timeInput = Interaction.InputBox(
+                "Enter the countdown time in minutes for shutdown:",
+                "Shutdown Timer",
+                "10"
+            );
+
+            if (!int.TryParse(timeInput, out int countdownMinutes) || countdownMinutes <= 0)
+            {
+                MessageBox.Show("Invalid input for countdown timer.");
+                return;
+            }
+
+            // Prompt the user for the reason for shutdown
+            string reason = Interaction.InputBox(
+                "Enter the reason for the shutdown:",
+                "Shutdown Reason",
+                "Maintenance"
+            );
+
+            if (string.IsNullOrEmpty(reason))
+            {
+                MessageBox.Show("No reason for shutdown provided.");
+                return;
+            }
+
+            // Ensure RCON is connected before initiating shutdown
+            await InitializeRconConnection(CurrentServerConfig);
 
             // Countdown logic
             for (int minute = countdownMinutes; minute > 0; minute--)
             {
                 // Send a warning message to server
-                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes.");
+                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes for {reason}.");
                 // Wait for 1 minute
                 await Task.Delay(TimeSpan.FromMinutes(1));
             }
@@ -417,49 +474,21 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             await SendRconCommandAsync("doexit");
         }
 
-        private async Task SendRconCommandAsync(string command)
+        private async Task InitializeRconConnection(ServerConfig profile)
         {
-            if (CurrentServerConfig == null)
-            {
-                Debug.WriteLine("Current server configuration is not loaded.");
-                return;
-            }
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    Arguments = $"/C echo {command} | mcrcon 127.0.0.1 --password {CurrentServerConfig.AdminPassword} -p {CurrentServerConfig.RCONPort}",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
             try
             {
-                process.Start();
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                process.WaitForExit();
-
-                if (!string.IsNullOrEmpty(output))
-                {
-                    Debug.WriteLine($"RCON command output: {output}");
-                }
-                if (!string.IsNullOrEmpty(error))
-                {
-                    Debug.WriteLine($"RCON command error: {error}");
-                }
+                rcon = new CoreRCON.RCON(IPAddress.Parse("127.0.0.1"), (ushort)profile.RCONPort, profile.AdminPassword);
+                await rcon.ConnectAsync(); // Attempt to establish connection
+                
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+                Debug.WriteLine($"Failed to initialize RCON connection: {ex.Message}");
+                
             }
         }
+
 
 
 
@@ -468,8 +497,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         // Call this method when user clicks the stop button and enters the countdown time
         public async Task OnStopServerClicked()
         {
-            const int defaultShutdownTimer = 10;
-            await InitiateServerShutdownAsync(defaultShutdownTimer);
+            
+            await InitiateServerShutdownAsync();
         }
 
 
@@ -904,7 +933,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
 
 
-start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?ServerPassword=%ServerPassword%?PreventSpawnAnimation=True?ServerAdminPassword=%AdminPassword%?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?""ServerPassword=%ServerPassword%?""PreventSpawnAnimation=True?""ServerAdminPassword=%AdminPassword%?""Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
@@ -3211,7 +3240,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             PvEAllowTribeWarCancel = ConvertToBoolean(value);
                             break;
                         case "MaxDifficulty":
-                            MaxDifficulty = ConvertToBoolean(value);
+                            MaxDifficulty = value;
                             break;
                         case "UseSingleplayerSettings":
                             UseSingleplayerSettings = ConvertToBoolean(value);
@@ -4839,8 +4868,8 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             }
         }
 
-        private bool _maxDifficulty;
-        public bool MaxDifficulty
+        private string _maxDifficulty;
+        public string MaxDifficulty
         {
             get { return _maxDifficulty; }
             set

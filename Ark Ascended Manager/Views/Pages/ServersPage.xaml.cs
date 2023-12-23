@@ -40,8 +40,22 @@ namespace Ark_Ascended_Manager.Views.Pages
             var syncServersPage = new SyncConfigPage();
             this.NavigationService.Navigate(syncServersPage);
         }
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Assuming ServersViewModel is your data context
+            var viewModel = DataContext as ServersViewModel;
+            if (viewModel != null && viewModel.CurrentServerInfo != null)
+            {
+                bool isRunning = viewModel.IsServerRunning(viewModel.CurrentServerInfo);
+                System.Windows.MessageBox.Show($"Server is running: {isRunning}");
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("CurrentServerInfo is not set.");
+            }
+        }
 
-        
+
 
         private void ImportServers_Click(object sender, RoutedEventArgs e)
         {

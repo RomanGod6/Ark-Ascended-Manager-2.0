@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Windows.Input;
+
 
 
 
@@ -66,7 +68,20 @@ namespace Ark_Ascended_Manager.Views.Pages
                 Console.WriteLine("Parameter is not ServerConfig.");
             }
         }
-  
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is ScrollViewer scrollViewer)
+            {
+                if (e.Delta > 0)
+                    scrollViewer.LineUp();
+                else
+                    scrollViewer.LineDown();
+
+                e.Handled = true;
+            }
+        }
+
+
         private void LoadPluginsToListBox()
         {
             // Retrieve the path from the ViewModel
@@ -84,19 +99,6 @@ namespace Ark_Ascended_Manager.Views.Pages
                 lstPlugins.ItemsSource = pluginNames;
             }
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
 
 
         private void LstPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)

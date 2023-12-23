@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Ark_Ascended_Manager.Models; // Include the namespace for ServerProfile
-
+using System.Windows.Media;
 namespace Ark_Ascended_Manager.Views.Controls
 {
     public partial class ServerCard : UserControl
@@ -38,7 +40,7 @@ namespace Ark_Ascended_Manager.Views.Controls
             var server = DataContext as ServerProfile;
             // Implement the logic to update the server
         }
-
+        
 
         private void FolderButton_Click(object sender, RoutedEventArgs e)
         {
@@ -63,5 +65,17 @@ namespace Ark_Ascended_Manager.Views.Controls
             }
         }
 
+    }
+    public class ServerStatusToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value?.ToString() == "Online" ? Brushes.Green : Brushes.Red;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
     }
 }
