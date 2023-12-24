@@ -85,6 +85,19 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
         }
+        private string _serverResponse;
+        public string ServerResponse
+        {
+            get => _serverResponse;
+            set
+            {
+                if (_serverResponse != value)
+                {
+                    _serverResponse = value;
+                    OnPropertyChanged(nameof(ServerResponse));
+                }
+            }
+        }
 
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
