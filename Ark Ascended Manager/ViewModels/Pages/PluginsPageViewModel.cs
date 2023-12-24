@@ -83,11 +83,11 @@ public class PluginsPageViewModel : INotifyPropertyChanged
             try
             {
                 File.WriteAllText(uncleanPath, json);
-                Debug.WriteLine($"Successfully saved unclean data to {uncleanPath}.");
+                Ark_Ascended_Manager.Services.Logger.Log($"Successfully saved unclean data to {uncleanPath}.");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to save unclean data: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Failed to save unclean data: {ex.Message}");
             }
 
             try
@@ -103,7 +103,7 @@ public class PluginsPageViewModel : INotifyPropertyChanged
                 var asaPlugins = JsonConvert.SerializeObject(groupedPlugins);
 
                 File.WriteAllText(cleanPath, asaPlugins);
-                Debug.WriteLine($"Successfully saved clean data to {cleanPath}.");
+                Ark_Ascended_Manager.Services.Logger.Log($"Successfully saved clean data to {cleanPath}.");
 
                 // Update the ObservableCollection on the UI thread
                 Application.Current.Dispatcher.Invoke(() =>
@@ -135,12 +135,12 @@ public class PluginsPageViewModel : INotifyPropertyChanged
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception occurred: {ex.ToString()}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception occurred: {ex.ToString()}");
             }
         }
         else
         {
-            Debug.WriteLine($"Error fetching data: {response.StatusCode} - {response.ReasonPhrase}");
+            Ark_Ascended_Manager.Services.Logger.Log($"Error fetching data: {response.StatusCode} - {response.ReasonPhrase}");
         }
     }
 

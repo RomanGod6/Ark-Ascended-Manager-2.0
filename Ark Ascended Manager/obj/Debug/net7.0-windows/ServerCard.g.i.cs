@@ -54,7 +54,7 @@ namespace Ark_Ascended_Manager.Views.Controls {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.0;component/servercard.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.1;component/servercard.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\ServerCard.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -85,6 +85,19 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
         }
+        private string _serverResponse;
+        public string ServerResponse
+        {
+            get => _serverResponse;
+            set
+            {
+                if (_serverResponse != value)
+                {
+                    _serverResponse = value;
+                    OnPropertyChanged(nameof(ServerResponse));
+                }
+            }
+        }
 
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
@@ -253,7 +266,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 // Handle the case where the string is not in the expected format.
-                Debug.WriteLine("Unexpected player info format: " + playerInfo);
+                Ark_Ascended_Manager.Services.Logger.Log("Unexpected player info format: " + playerInfo);
                 return string.Empty; // or return null; depending on how you want to handle this case.
             }
         }
@@ -307,7 +320,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             if (_selectedServerProfile == null)
             {
-                Debug.WriteLine("No server profile selected. Chat update halted.");
+                Ark_Ascended_Manager.Services.Logger.Log("No server profile selected. Chat update halted.");
                 Application.Current.Dispatcher.Invoke(() => ServerChat.Clear());
                 _chatUpdateTimer.Stop();
                 return;
@@ -315,7 +328,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                Debug.WriteLine($"Sending RCON command to fetch chat for server: {_selectedServerProfile.ServerName}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Sending RCON command to fetch chat for server: {_selectedServerProfile.ServerName}");
                 var chatMessages = await SendRconCommandAsync(_selectedServerProfile, "GetChat");
 
                 Application.Current.Dispatcher.Invoke(() =>
@@ -333,7 +346,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception fetching chat: {ex}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception fetching chat: {ex}");
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     ServerChat.Clear();
@@ -410,7 +423,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to initialize RCON connection: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection: {ex.Message}");
                 RconStatus = "Offline"; // Set status to offline if connection fails
             }
         }
@@ -423,7 +436,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                Debug.WriteLine($"Attempting to send RCON command to server: {profile.ServerName}, Command: {command}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Attempting to send RCON command to server: {profile.ServerName}, Command: {command}");
 
                 if (rcon == null)
                 {
@@ -431,12 +444,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
 
                 string output = await rcon.SendCommandAsync(command);
-                Debug.WriteLine($"RCON command sent. Output: {output}");
+                Ark_Ascended_Manager.Services.Logger.Log($"RCON command sent. Output: {output}");
                 // Process output as before...
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex}");
                 result.Add("Error sending command: " + ex.Message);
             }
 

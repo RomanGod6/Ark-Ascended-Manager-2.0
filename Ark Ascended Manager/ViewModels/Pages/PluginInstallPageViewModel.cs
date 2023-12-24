@@ -54,7 +54,7 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
             if (response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine("Fetched plugin details successfully: " + content);
+                Ark_Ascended_Manager.Services.Logger.Log("Fetched plugin details successfully: " + content);
 
                 SelectedPlugin = JsonConvert.DeserializeObject<BasicResource>(content);
                 OnPropertyChanged(nameof(SelectedPlugin));
@@ -63,12 +63,12 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
             }
             else
             {
-                Debug.WriteLine($"Error fetching plugin details: {response.StatusCode}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Error fetching plugin details: {response.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Exception occurred while fetching plugin details: {ex.Message}");
+            Ark_Ascended_Manager.Services.Logger.Log($"Exception occurred while fetching plugin details: {ex.Message}");
         }
     }
 
@@ -82,12 +82,12 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
         if (File.Exists(currentPluginPath))
         {
             string json = File.ReadAllText(currentPluginPath);
-            Debug.WriteLine("Loaded current plugin data: " + json);
+            Ark_Ascended_Manager.Services.Logger.Log("Loaded current plugin data: " + json);
             return JsonConvert.DeserializeObject<BasicResource>(json);
         }
         else
         {
-            Debug.WriteLine("No current plugin data found.");
+            Ark_Ascended_Manager.Services.Logger.Log("No current plugin data found.");
             return null; // or handle the case where the file doesn't exist
         }
     }
@@ -103,11 +103,11 @@ public class PluginInstallPageViewModel : INotifyPropertyChanged
         {
             SelectedPlugin = newPlugin;
             OnPropertyChanged(nameof(SelectedPlugin));
-            Debug.WriteLine("SelectedPlugin assigned: " + (SelectedPlugin != null));
+            Ark_Ascended_Manager.Services.Logger.Log("SelectedPlugin assigned: " + (SelectedPlugin != null));
         }
         else
         {
-            Debug.WriteLine("Invalid parameter type in OnNavigatedTo.");
+            Ark_Ascended_Manager.Services.Logger.Log("Invalid parameter type in OnNavigatedTo.");
         }
     }
 

@@ -184,26 +184,26 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine("Entering UpdateSelectedPluginConfig method.");
+                Ark_Ascended_Manager.Services.Logger.Log("Entering UpdateSelectedPluginConfig method.");
                 try
                 {
-                    Debug.WriteLine("Original JSON content: " + jsonContent);
+                    Ark_Ascended_Manager.Services.Logger.Log("Original JSON content: " + jsonContent);
                     // Format the JSON to be indented
                     dynamic parsedJson = JsonConvert.DeserializeObject(jsonContent);
                     string formattedJson = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-                    Debug.WriteLine("Formatted JSON content: " + formattedJson);
+                    Ark_Ascended_Manager.Services.Logger.Log("Formatted JSON content: " + formattedJson);
                     SelectedPluginConfig = formattedJson;
 
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
                     // Handle JSON formatting error or set raw text
-                    Debug.WriteLine("JSON formatting error: " + ex.ToString());
+                    Ark_Ascended_Manager.Services.Logger.Log("JSON formatting error: " + ex.ToString());
                     SelectedPluginConfig = jsonContent;
                 }
 
                 OnPropertyChanged(nameof(SelectedPluginConfig)); // Explicitly notify UI to update
-                Debug.WriteLine("SelectedPluginConfig property updated.");
+                Ark_Ascended_Manager.Services.Logger.Log("SelectedPluginConfig property updated.");
             });
         }
 
@@ -215,13 +215,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (File.Exists(configFilePath))
             {
                 var json = File.ReadAllText(configFilePath);
-                Debug.WriteLine("JSON Content: " + json); // This will print the content to the Output window
+                Ark_Ascended_Manager.Services.Logger.Log("JSON Content: " + json); // This will print the content to the Output window
                 UpdateSelectedPluginConfig(json);
             }
             else
             {
                 // Handle the case where the config file doesn't exist
-                Debug.WriteLine("Config file does not exist.");
+                Ark_Ascended_Manager.Services.Logger.Log("Config file does not exist.");
             }
         }
 
@@ -405,7 +405,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             if (rcon == null || CurrentServerConfig == null)
             {
-                Debug.WriteLine("RCON connection is not established or server profile is not selected.");
+                Ark_Ascended_Manager.Services.Logger.Log("RCON connection is not established or server profile is not selected.");
                 return;
             }
 
@@ -413,16 +413,16 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 // Send the command using the CoreRCON library's method
                 string response = await rcon.SendCommandAsync(command);
-                Debug.WriteLine($"RCON command response: {response}");
+                Ark_Ascended_Manager.Services.Logger.Log($"RCON command response: {response}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
             }
         }
         public async Task InitiateServerShutdownAsync()
         {
-            Debug.WriteLine("Shutdown Clicked");
+            Ark_Ascended_Manager.Services.Logger.Log("Shutdown Clicked");
 
             if (CurrentServerConfig == null)
             {
@@ -484,7 +484,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to initialize RCON connection: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection: {ex.Message}");
                 
             }
         }
@@ -518,13 +518,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 {
                     if (serverConfig.MapName == mapName)
                     {
-                        Debug.WriteLine($"App ID for {mapName} is {serverConfig.AppId}");
+                        Ark_Ascended_Manager.Services.Logger.Log($"App ID for {mapName} is {serverConfig.AppId}");
                         return serverConfig.AppId;
                     }
                 }
             }
 
-            Debug.WriteLine($"Map name {mapName} not found in servers.json");
+            Ark_Ascended_Manager.Services.Logger.Log($"Map name {mapName} not found in servers.json");
             return null; // Or your default app ID
         }
 
@@ -549,7 +549,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             else
             {
-                Debug.WriteLine("Could not update the server, App ID not found or Server Config is null");
+                Ark_Ascended_Manager.Services.Logger.Log("Could not update the server, App ID not found or Server Config is null");
             }
         }
 
@@ -782,9 +782,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
             string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
             string booleanSettings = ConstructBooleanSettings();
-            Debug.WriteLine("Server Platform Setting before save: " + ServerPlatformSetting);
+            Ark_Ascended_Manager.Services.Logger.Log("Server Platform Setting before save: " + ServerPlatformSetting);
             string serverPlatformSetting = ServerPlatformSetting;
-            Debug.WriteLine("Server Platform Setting after save: " + ServerPlatformSetting);
+            Ark_Ascended_Manager.Services.Logger.Log("Server Platform Setting after save: " + ServerPlatformSetting);
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
 
@@ -844,7 +844,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Write the updated JSON to the servers.json file
             File.WriteAllText(jsonFilePath, updatedJson);
 
-            Debug.WriteLine("servers.json has been updated with the latest server configuration.");
+            Ark_Ascended_Manager.Services.Logger.Log("servers.json has been updated with the latest server configuration.");
         }
 
         private void UpdateServerConfigFromBatch(string serverPath)
@@ -918,7 +918,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
             string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
-            Debug.WriteLine("Server Platform Argument: " + serverPlatformSetting);
+            Ark_Ascended_Manager.Services.Logger.Log("Server Platform Argument: " + serverPlatformSetting);
 
             // Always change the directory to the server's executable directory
             string batchFileContent = $@"
