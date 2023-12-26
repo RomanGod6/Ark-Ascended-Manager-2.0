@@ -140,6 +140,18 @@
                                     <CheckBox IsChecked="{Binding ServerPvE, Mode=TwoWay}" ToolTip="Toggle to set the server mode to PvE."/>
                                     <Label Content="Disable Photo Mode:" ToolTip="Toggle to enable or disable photo mode in the game."/>
                                     <CheckBox IsChecked="{Binding DisablePhotoMode, Mode=TwoWay}" ToolTip="Toggle to enable or disable photo mode."/>
+                                    <Expander Header="Chat and Notifications" ToolTip="Settings for chat and player notifications.">
+                                        <StackPanel>
+                                            <Label Content="Disable Cryopod Enemy Check:" ToolTip="Will ignore the enemy player/structure/dino checks."/>
+                                            <CheckBox IsChecked="{Binding DisableCryopodEnemyCheck, Mode=TwoWay}" ToolTip="Will ignore the enemy player/structure/dino checks."/>
+                                            <Label Content="Disable Cryopod Fridge Requirement" ToolTip="will disable the Cryofridge requirement for releasing cryopodded dinos"/>
+                                            <CheckBox IsChecked="{Binding DisableCryopodFridgeRequirement, Mode=TwoWay}" ToolTip="will disable the Cryofridge requirement for releasing cryopodded dinos"/>
+                                            <Label Content="Allow Cryofridge to be placed on rafts/saddles." ToolTip="Will allow Cryofridge to be placed on rafts/saddles "/>
+                                            <CheckBox IsChecked="{Binding AllowCryoFridgeOnSaddle, Mode=TwoWay}" ToolTip="Will allow Cryofridge to be placed on rafts/saddles "/>
+                                            <Label Content="Destroy Tames Over The Soft Tame Limit" ToolTip="Enables destroying tames over the limit"/>
+                                            <CheckBox IsChecked="{Binding DestroyTamesOverTheSoftTameLimit, Mode=TwoWay}" ToolTip="Enables destroying tames over the limit"/>
+                                        </StackPanel>
+                                    </Expander>
 
                                 </StackPanel>
                             </Expander>

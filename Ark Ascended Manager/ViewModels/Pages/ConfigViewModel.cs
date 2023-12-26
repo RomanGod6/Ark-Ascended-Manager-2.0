@@ -3202,6 +3202,18 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
                         case "DisablePhotoMode":
                             DisablePhotoMode = ConvertToBoolean(value);
                             break;
+                        case "DestroyTamesOverTheSoftTameLimit":
+                            DestroyTamesOverTheSoftTameLimit = ConvertToBoolean(value);
+                            break;
+                        case "AllowCryoFridgeOnSaddle":
+                            AllowCryoFridgeOnSaddle = ConvertToBoolean(value);
+                            break;
+                        case "DisableCryopodFridgeRequirement":
+                            DisableCryopodFridgeRequirement = ConvertToBoolean(value);
+                            break;
+                        case "DisableCryopodEnemyCheck":
+                            DisableCryopodEnemyCheck = ConvertToBoolean(value);
+                            break;
                         case "IncreasePvPRespawnInterval":
                             IncreasePvPRespawnInterval = ConvertToBoolean(value);
                             break;
@@ -3457,6 +3469,10 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCryoFridgeOnSaddle", AllowCryoFridgeOnSaddle.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DestroyTamesOverTheSoftTameLimit", DestroyTamesOverTheSoftTameLimit.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodFridgeRequirement", DisableCryopodFridgeRequirement.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodEnemyCheck", DisableCryopodEnemyCheck.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvETimer", AutoPvETimer.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
@@ -4759,6 +4775,46 @@ start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True
             {
                 _disablePhotoMode = value;
                 OnPropertyChanged(nameof(DisablePhotoMode));
+            }
+        }
+        private bool _destroyTamesOverTheSoftTameLimit;
+        public bool DestroyTamesOverTheSoftTameLimit
+        {
+            get { return _destroyTamesOverTheSoftTameLimit; }
+            set
+            {
+                _destroyTamesOverTheSoftTameLimit = value;
+                OnPropertyChanged(nameof(DestroyTamesOverTheSoftTameLimit));
+            }
+        }
+        private bool _allowCryoFridgeOnSaddle;
+        public bool AllowCryoFridgeOnSaddle
+        {
+            get { return _allowCryoFridgeOnSaddle; }
+            set
+            {
+                _allowCryoFridgeOnSaddle = value;
+                OnPropertyChanged(nameof(AllowCryoFridgeOnSaddle));
+            }
+        }
+        private bool _disableCryopodFridgeRequirement;
+        public bool DisableCryopodFridgeRequirement
+        {
+            get { return _disableCryopodFridgeRequirement; }
+            set
+            {
+                _disableCryopodFridgeRequirement = value;
+                OnPropertyChanged(nameof(DisableCryopodFridgeRequirement));
+            }
+        }
+        private bool _disableCryopodEnemyCheck;
+        public bool DisableCryopodEnemyCheck
+        {
+            get { return _disableCryopodEnemyCheck; }
+            set
+            {
+                _disableCryopodEnemyCheck = value;
+                OnPropertyChanged(nameof(DisableCryopodEnemyCheck));
             }
         }
 
