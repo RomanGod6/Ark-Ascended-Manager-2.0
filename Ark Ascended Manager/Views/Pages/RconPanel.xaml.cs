@@ -13,11 +13,10 @@ namespace Ark_Ascended_Manager.Views.Pages
         public RconPanelPage(RconPanelViewModel viewModel)
         {
             ViewModel = viewModel;
-            
-
             InitializeComponent();
-            DataContext = new RconPanelViewModel();
+            DataContext = viewModel; // Set the DataContext to the provided viewModel
         }
+
         private void ListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender is ListBox listBox && listBox.Parent is ScrollViewer scrollViewer)

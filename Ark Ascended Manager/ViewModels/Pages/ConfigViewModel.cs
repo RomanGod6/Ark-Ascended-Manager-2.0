@@ -694,12 +694,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "RconPort":
                                     RconPort = value;
                                     break;
-                                case "AdminPassword":
-                                    AdminPassword = value;
-                                    break;
-                                case "ServerPassword":
-                                    ServerPassword = value;
-                                    break;
                                 case "MaxPlayers":
                                     MaxPlayerCount = value;
                                     break;
@@ -733,8 +727,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(ServerName));
             OnPropertyChanged(nameof(ListenPort));
             OnPropertyChanged(nameof(RconPort));
-            OnPropertyChanged(nameof(AdminPassword));
-            OnPropertyChanged(nameof(ServerPassword));
             OnPropertyChanged(nameof(MaxPlayerCount));
             OnPropertyChanged(nameof(UseBattleye));
             OnPropertyChanged(nameof(ForceRespawnDinos));
@@ -831,8 +823,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             serverConfig.RCONPort = CurrentServerConfig.RCONPort;
             serverConfig.Mods = CurrentServerConfig.Mods; // If you have this value
             serverConfig.MaxPlayerCount = CurrentServerConfig.MaxPlayerCount;
-            serverConfig.AdminPassword = CurrentServerConfig.AdminPassword;
-            serverConfig.ServerPassword = CurrentServerConfig.ServerPassword;
             serverConfig.UseBattlEye = CurrentServerConfig.UseBattlEye; // If you have this value
             serverConfig.ForceRespawnDinos = CurrentServerConfig.ForceRespawnDinos; // If you have this value
             serverConfig.PreventSpawnAnimation = CurrentServerConfig.PreventSpawnAnimation; // If you have this value
@@ -874,12 +864,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                     break;
                                 case "RconPort":
                                     CurrentServerConfig.RCONPort = int.Parse(value);
-                                    break;
-                                case "AdminPassword":
-                                    CurrentServerConfig.AdminPassword = value;
-                                    break;
-                                case "ServerPassword":
-                                    CurrentServerConfig.ServerPassword = value;
                                     break;
                                 case "MaxPlayers":
                                     CurrentServerConfig.MaxPlayerCount = int.Parse(value);
@@ -924,8 +908,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
 set ServerName={ServerName}
-set ServerPassword={ServerPassword}
-set AdminPassword={AdminPassword}
 set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
@@ -933,7 +915,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
 
 
-start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?""ServerPassword=%ServerPassword%?""PreventSpawnAnimation=True?""ServerAdminPassword=%AdminPassword%?""Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?PreventSpawnAnimation=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
@@ -1212,6 +1194,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                             break;
                         case "SpectatorPassword":
                             SpectatorPassword = value;
+                            break;
+                        case "ServerPassword":
+                            ServerPassword = value;
+                            break;
+                        case "AdminPassword":
+                            AdminPassword = value;
                             break;
                         case "DifficultyOffset":
                             DifficultyOffset = value;
@@ -1528,6 +1516,8 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "ServerSettings", "EnablePVEGamma", EnablePVEGamma.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
             UpdateLine(ref lines, "ServerSettings", "SpectatorPassword", SpectatorPassword);
+            UpdateLine(ref lines, "ServerSettings", "ServerPassword", ServerPassword);
+            UpdateLine(ref lines, "ServerSettings", "AdminPassword", AdminPassword);
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
             UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
@@ -1617,9 +1607,10 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             string formattedHeader = $"[{header}]";
 
             // Find the index of the header, if it doesn't exist, add it
-            int headerIndex = lines.FindIndex(line => line.Equals(formattedHeader, StringComparison.OrdinalIgnoreCase));
+            int headerIndex = lines.FindIndex(line => line.Trim().Equals(formattedHeader, StringComparison.OrdinalIgnoreCase));
             if (headerIndex == -1)
             {
+                // Append the new section at the end of the file
                 lines.Add(formattedHeader);
                 lines.Add($"{key}={newValue}");
                 return;
@@ -1627,11 +1618,11 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
 
             // Calculate the range of lines under this header
             int sectionStart = headerIndex + 1;
-            int sectionEnd = lines.FindIndex(sectionStart, line => line.StartsWith("[") && line.EndsWith("]"));
+            int sectionEnd = lines.FindIndex(sectionStart, line => line.Trim().StartsWith("[") && line.Trim().EndsWith("]"));
             sectionEnd = (sectionEnd == -1) ? lines.Count : sectionEnd;
 
             // Find the index of the key within the section
-            int keyIndex = lines.FindIndex(sectionStart, sectionEnd - sectionStart, line => line.StartsWith($"{key}=", StringComparison.OrdinalIgnoreCase));
+            int keyIndex = lines.FindIndex(sectionStart, sectionEnd - sectionStart, line => line.Trim().StartsWith($"{key}=", StringComparison.OrdinalIgnoreCase));
 
             if (keyIndex != -1)
             {
@@ -1640,10 +1631,11 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             }
             else
             {
-                // If the key doesn't exist, add it before the next section or at the end of the file
+                // If the key doesn't exist, add it at the end of the section
                 lines.Insert(sectionEnd, $"{key}={newValue}");
             }
         }
+
 
 
 
@@ -2077,6 +2069,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(SpectatorPassword)); // Notify the UI of the change
             }
         }
+        
 
         private string _difficultyOffset;
         public string DifficultyOffset

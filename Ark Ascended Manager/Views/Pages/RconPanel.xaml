@@ -45,7 +45,8 @@
                 <!-- For ComboBox -->
                 <RowDefinition Height="1100"/>
                 <!-- For ListBox ScrollViewer -->
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="99"/>
+                <RowDefinition Height="12.62"/>
                 <!-- For DockPanel containing TextBox and Button -->
             </Grid.RowDefinitions>
 
@@ -53,28 +54,43 @@
       DisplayMemberPath="ServerName" 
       SelectedValuePath="ServerName"
       SelectedItem="{Binding SelectedServerProfile}"
-      Height="40" Margin="0,0,0,10">
+      Height="40" VerticalAlignment="Top">
                 <!-- Server dropdown selection -->
             </ComboBox>
 
             <!-- Wrap the ListBox in a ScrollViewer for the chat messages -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
-                <ListBox ItemsSource="{Binding ServerChat}" Margin="0,0,0,10" MinWidth="100" MinHeight="100" PreviewMouseWheel="ListBox_PreviewMouseWheel">
-                    
-                    <!-- Bind combined chat and command items here -->
+                <ListBox ItemsSource="{Binding ServerChat}" Margin="0,0,0,10" MinWidth="100" MinHeight="100">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                            <!-- Add style triggers or converters here to style the messages based on their content -->
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
+
             </ScrollViewer>
 
             <!-- The Send button and TextBox remain outside and below the ScrollViewer -->
-            <DockPanel Grid.Row="2" VerticalAlignment="Bottom">
+            <DockPanel Grid.Row="2" VerticalAlignment="Top" Margin="-91,0,-144,0" Grid.RowSpan="2">
                 <TextBox DockPanel.Dock="Top" Margin="0,0,0,10" Height="35" Text="{Binding CommandInput}" />
-                <Button Content="Send" Height="35" Width="75" Command="{Binding SendCommand}" DockPanel.Dock="Top" />
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="1">
+                    <Button Content="Send" Height="35" Width="75" Padding="1" Command="{Binding SendCommand}" />
+                    <Button Content="Clear Chat" Height="35" Width="75" Padding="1" Margin="5" Command="{Binding ClearChatCommand}" />
+                </StackPanel>
             </DockPanel>
+
+
 
         </Grid>
 
         <!-- Player List -->
         <StackPanel Grid.Column="2" Margin="10">
+            <Button Content="Copy ID" 
+        Command="{Binding CopyIdCommand}"
+        CommandParameter="{Binding SelectedPlayerInfo}"
+        IsEnabled="{Binding SelectedPlayerInfo}" />
+
             <TextBlock Text="Connected Players:" FontWeight="Bold" Margin="0,0,0,10"/>
             <ListBox x:Name="PlayersListBox" ItemsSource="{Binding ConnectedPlayers}" SelectedItem="{Binding SelectedPlayerInfo}">
                 <ListBox.ItemContainerStyle>
@@ -82,7 +98,10 @@
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}">
-                                    <MenuItem Header="Copy ID" Command="{Binding Path=DataContext.CopyIdCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding SelectedItem, ElementName=PlayersListBox}" />
+                                    <MenuItem Header="Copy ID" Command="{Binding Path=DataContext.CopyIdCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+
+
+
 
                                 </ContextMenu>
                             </Setter.Value>
@@ -90,7 +109,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            
+
 
 
 

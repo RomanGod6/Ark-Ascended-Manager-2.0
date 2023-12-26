@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET7_0;NETCOREAPP
 C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
 14-1986407429
 1-1032615778
-421803754662
+43-2133500341
 252-1856681274
 ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\PluginInstallPage.xaml;Views\Pages\PluginsPage.xaml;Views\Pages\RconPanel.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
 
-True
+False
 

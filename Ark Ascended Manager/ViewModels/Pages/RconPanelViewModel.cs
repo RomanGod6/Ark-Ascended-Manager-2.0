@@ -34,9 +34,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
 
         public ICommand SendCommand { get; }
-        public ICommand CopyIdCommand { get; }
         public ICommand TestCommand { get; private set; }
-
+        public ICommand ClearChatCommand { get; }
+        public ICommand CopyIdCommand { get; private set; }
         public RconPanelViewModel()
         {
             ServerProfiles = new ObservableCollection<ServerProfile>();
@@ -44,11 +44,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SetupUpdateTimer();
             InitializeChatUpdateTimer();
             SendCommand = new RelayCommand(ExecuteSendCommand);
-            CopyIdCommand = new RelayCommand<object>(CopySelectedPlayerIdToClipboard);
             _connectionCheckTimer = new System.Timers.Timer(10000); // Check every 10 seconds
             _connectionCheckTimer.Elapsed += OnConnectionCheckTimerElapsed;
             _connectionCheckTimer.AutoReset = true;
             _connectionCheckTimer.Enabled = true;
+            ClearChatCommand = new RelayCommand(ExecuteClearChat);
+            CopyIdCommand = new RelayCommand<string>(CopySelectedPlayerIdToClipboard);
 
         }
         private async void OnConnectionCheckTimerElapsed(object sender, ElapsedEventArgs e)
@@ -98,6 +99,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        
 
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
@@ -110,7 +112,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     Clipboard.SetText(playerId);
                 }
             }
+            else
+            {
+                // Add a debugging statement to check if this branch is executed.
+                Debug.WriteLine("CopySelectedPlayerIdToClipboard: playerInfo is null or empty.");
+            }
         }
+
 
 
         private string _selectedPlayerInfo;
@@ -137,12 +145,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public string Label { get; set; }
             public string CommandText { get; set; }
             public ICommand Command { get; set; }
+          
         }
+
 
         private async void ExecuteSendCommand()
         {
             if (!string.IsNullOrWhiteSpace(CommandInput) && _selectedServerProfile != null)
             {
+                // Add the command to ServerChat
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ServerChat.Add($"Command: {CommandInput}");
+                });
+
                 // Send the RCON command and get the response
                 var commandResponse = await SendRconCommandAsync(_selectedServerProfile, CommandInput);
 
@@ -152,15 +168,24 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 // Dispatch the action to the UI thread to update the ObservableCollection
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // Here you can choose how to format the command and its output for display
-                    ServerChat.Add($"Command: {CommandInput}");
+                    // Add each line of the command response to ServerChat
                     foreach (var line in commandResponse)
                     {
                         ServerChat.Add(line);
                     }
+                    Ark_Ascended_Manager.Services.Logger.Log($"RCON Response: {string.Join(Environment.NewLine, commandResponse)}");
                 });
             }
         }
+
+
+
+        private void ExecuteClearChat()
+        {
+            ServerChat.Clear();
+        }
+
+
         private string _selectedPlayer;
         public string SelectedPlayer
         {
@@ -334,7 +359,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     // Check if there are any new messages and they are not just '>'
-                    var newMessages = chatMessages.Where(msg => !string.IsNullOrWhiteSpace(msg) && msg.Trim() != ">").ToList();
+                    var newMessages = chatMessages
+                        .Where(msg => !string.IsNullOrWhiteSpace(msg) && !msg.Trim().Equals("Server received, But no response!!"))
+                        .ToList();
+
                     if (newMessages.Count > 0)
                     {
                         foreach (var message in newMessages)
@@ -354,6 +382,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 });
             }
         }
+
 
 
 
@@ -443,9 +472,24 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     await InitializeRconConnection(profile);
                 }
 
+                Ark_Ascended_Manager.Services.Logger.Log("Sending RCON command...");
                 string output = await rcon.SendCommandAsync(command);
                 Ark_Ascended_Manager.Services.Logger.Log($"RCON command sent. Output: {output}");
-                // Process output as before...
+
+                // Check if the response is empty or contains any error messages
+                if (string.IsNullOrWhiteSpace(output))
+                {
+                    Ark_Ascended_Manager.Services.Logger.Log("RCON response is empty.");
+                    result.Add("RCON response is empty.");
+                }
+                else
+                {
+                    // Process the output if needed
+                    // ...
+
+                    // Add the response lines to the result
+                    result.AddRange(output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+                }
             }
             catch (Exception ex)
             {
@@ -455,6 +499,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             return result;
         }
+
 
 
 

@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {
-      "Ark Ascended Manager/2.2.2": {
+      "Ark Ascended Manager/2.2.2.1": {
         "dependencies": {
           "AvalonEdit": "6.3.0.90",
           "CommunityToolkit.Mvvm": "8.2.1",
@@ -706,7 +706,7 @@
     }
   },
   "libraries": {
-    "Ark Ascended Manager/2.2.2": {
+    "Ark Ascended Manager/2.2.2.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
