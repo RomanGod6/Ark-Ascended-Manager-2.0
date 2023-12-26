@@ -140,7 +140,7 @@
                                     <CheckBox IsChecked="{Binding ServerPvE, Mode=TwoWay}" ToolTip="Toggle to set the server mode to PvE."/>
                                     <Label Content="Disable Photo Mode:" ToolTip="Toggle to enable or disable photo mode in the game."/>
                                     <CheckBox IsChecked="{Binding DisablePhotoMode, Mode=TwoWay}" ToolTip="Toggle to enable or disable photo mode."/>
-                                    <Expander Header="Chat and Notifications" ToolTip="Settings for chat and player notifications.">
+                                    <Expander Header="Cryopod Settings" ToolTip="Settings for wildcard cryopods (Not Mods)">
                                         <StackPanel>
                                             <Label Content="Disable Cryopod Enemy Check:" ToolTip="Will ignore the enemy player/structure/dino checks."/>
                                             <CheckBox IsChecked="{Binding DisableCryopodEnemyCheck, Mode=TwoWay}" ToolTip="Will ignore the enemy player/structure/dino checks."/>

@@ -915,7 +915,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
 
 
-start {executable} TheIsland_WP?listen?SessionName=%ServerName%?RCONEnabled=True?PreventSpawnAnimation=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?PreventSpawnAnimation=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
