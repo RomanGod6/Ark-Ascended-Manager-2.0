@@ -970,6 +970,15 @@
                             <Label Content="Use Battleye"/>
                             <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+                            <Label Content="Use Old Console" ToolTip="Combines the two consoles together into one if toggled on"/>
+                            <CheckBox IsChecked="{Binding UseOldConsole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Auto Destroy old Structures" ToolTip="Old structures auto destroy"/>
+                            <CheckBox IsChecked="{Binding AutoDestroyStructures, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Notify Admin Command In Game" ToolTip="Shows admin commands in game whe used"/>
+                            <CheckBox IsChecked="{Binding NotifyAdminCommandsInChat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                             <Label Content="Force Respawn Dinos"/>
                             <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 

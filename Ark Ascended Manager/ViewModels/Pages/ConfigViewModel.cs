@@ -710,6 +710,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     else if (line.Trim().StartsWith("start ", StringComparison.OrdinalIgnoreCase))
                     {
                         UseBattleye = line.Contains("-UseBattleye");
+                        UseOldConsole = line.Contains("-UseOldConsole");
+                        AutoDestroyStructures = line.Contains("-AutoDestroyStructures");
+                        NotifyAdminCommandsInChat = line.Contains("-NotifyAdminCommandsInChat");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
                         ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
                         /*Mods = ExtractModsValue(line); // Assuming you have a method to extract mods*/
@@ -728,6 +731,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(RconPort));
             OnPropertyChanged(nameof(MaxPlayerCount));
             OnPropertyChanged(nameof(UseBattleye));
+            OnPropertyChanged(nameof(UseOldConsole));
+            OnPropertyChanged(nameof(AutoDestroyStructures));
+            OnPropertyChanged(nameof(NotifyAdminCommandsInChat));
             OnPropertyChanged(nameof(ForceRespawnDinos));
             OnPropertyChanged(nameof(ServerPlatformSetting));
             OnPropertyChanged(nameof(Mods));
@@ -888,6 +894,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Combine all boolean settings into a single string
             string booleanSettings = "";
             if (UseBattleye) booleanSettings += " -UseBattleye";
+            if (UseOldConsole) booleanSettings += " -oldconsole";
+            if (AutoDestroyStructures) booleanSettings += " -AutoDestroyStructures";
+            if (NotifyAdminCommandsInChat) booleanSettings += " -NotifyAdminCommandsInChat";
             if (ForceRespawnDinos) booleanSettings += " -ForceRespawnDinos";
             
             return booleanSettings;
@@ -908,7 +917,7 @@ set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
 set mods={Mods}
-set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
+set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% 
 
 
 start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
@@ -1010,6 +1019,24 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
         {
             get => _useBattleye;
             set => SetProperty(ref _useBattleye, value);
+        }
+        private bool _useOldConsole;
+        public bool UseOldConsole
+        {
+            get => _useOldConsole;
+            set => SetProperty(ref _useOldConsole, value);
+        }
+        private bool _autoDestroyStructures;
+        public bool AutoDestroyStructures
+        {
+            get => _autoDestroyStructures;
+            set => SetProperty(ref _autoDestroyStructures, value);
+        }
+        private bool _notifyAdminCommandsInChat;
+        public bool NotifyAdminCommandsInChat
+        {
+            get => _notifyAdminCommandsInChat;
+            set => SetProperty(ref _notifyAdminCommandsInChat, value);
         }
 
         private bool _forceRespawnDinos;
@@ -2291,16 +2318,8 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(LimitTurretsRange)); // Notify the UI of the change
             }
         }
-        private bool _autoDestroyStructures;
-        public bool AutoDestroyStructures
-        {
-            get { return _autoDestroyStructures; }
-            set
-            {
-                _autoDestroyStructures = value;
-                OnPropertyChanged(nameof(AutoDestroyStructures)); // Notify the UI of the change
-            }
-        }
+         
+        
 
         private bool _useVSync;
         public bool UseVSync
