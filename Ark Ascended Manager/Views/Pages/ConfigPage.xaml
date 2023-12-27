@@ -140,6 +140,8 @@
                                     <CheckBox IsChecked="{Binding ServerPvE, Mode=TwoWay}" ToolTip="Toggle to set the server mode to PvE."/>
                                     <Label Content="Disable Photo Mode:" ToolTip="Toggle to enable or disable photo mode in the game."/>
                                     <CheckBox IsChecked="{Binding DisablePhotoMode, Mode=TwoWay}" ToolTip="Toggle to enable or disable photo mode."/>
+                                    <Label Content="Prevent Spawn Animations:" ToolTip="If enabled turns off spawn animations when spawning."/>
+                                    <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay}" ToolTip="If enabled turns off spawn animations when spawning."/>
                                     <Expander Header="Cryopod Settings" ToolTip="Settings for wildcard cryopods (Not Mods)">
                                         <StackPanel>
                                             <Label Content="Disable Cryopod Enemy Check:" ToolTip="Will ignore the enemy player/structure/dino checks."/>
@@ -150,6 +152,10 @@
                                             <CheckBox IsChecked="{Binding AllowCryoFridgeOnSaddle, Mode=TwoWay}" ToolTip="Will allow Cryofridge to be placed on rafts/saddles "/>
                                             <Label Content="Destroy Tames Over The Soft Tame Limit" ToolTip="Enables destroying tames over the limit"/>
                                             <CheckBox IsChecked="{Binding DestroyTamesOverTheSoftTameLimit, Mode=TwoWay}" ToolTip="Enables destroying tames over the limit"/>
+                                            <Label Content="Max Tamed Dinos Soft Tame Limit:" ToolTip="Dinos above the Soft Tame Server Limit will be marked “For Cryo” and display an icon and a timer indicating how soon they need to be cryopodded before they are automatically destroyed."/>
+                                            <TextBox Text="{Binding MaxTamedDinosSoftTameLimit, Mode=TwoWay}" ToolTip="Dinos above the Soft Tame Server Limit will be marked “For Cryo” and display an icon and a timer indicating how soon they need to be cryopodded before they are automatically destroyed."/>
+                                            <Label Content="Max Tamed Dinos Soft Tame Limit Countdown For Deletion Duration:" ToolTip="set the timer for destroy in seconds"/>
+                                            <TextBox Text="{Binding MaxTamedDinosSoftTameLimitCountdownForDeletionDuration, Mode=TwoWay}" ToolTip="set the timer for destroy in seconds"/>
                                         </StackPanel>
                                     </Expander>
 

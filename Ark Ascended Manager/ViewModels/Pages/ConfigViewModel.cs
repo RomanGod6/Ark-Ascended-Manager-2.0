@@ -711,7 +711,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     {
                         UseBattleye = line.Contains("-UseBattleye");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
-                        PreventSpawnAnimation = line.Contains("-PreventSpawnAnimation");
                         ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
                         /*Mods = ExtractModsValue(line); // Assuming you have a method to extract mods*/
 
@@ -730,7 +729,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(MaxPlayerCount));
             OnPropertyChanged(nameof(UseBattleye));
             OnPropertyChanged(nameof(ForceRespawnDinos));
-            OnPropertyChanged(nameof(PreventSpawnAnimation));
             OnPropertyChanged(nameof(ServerPlatformSetting));
             OnPropertyChanged(nameof(Mods));
             OnPropertyChanged(nameof(MultihomeIP));
@@ -825,7 +823,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             serverConfig.MaxPlayerCount = CurrentServerConfig.MaxPlayerCount;
             serverConfig.UseBattlEye = CurrentServerConfig.UseBattlEye; // If you have this value
             serverConfig.ForceRespawnDinos = CurrentServerConfig.ForceRespawnDinos; // If you have this value
-            serverConfig.PreventSpawnAnimation = CurrentServerConfig.PreventSpawnAnimation; // If you have this value
                                                                                             // ... Add any other properties you need to update ...
 
             // Serialize the updated list of server configs to JSON
@@ -892,7 +889,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string booleanSettings = "";
             if (UseBattleye) booleanSettings += " -UseBattleye";
             if (ForceRespawnDinos) booleanSettings += " -ForceRespawnDinos";
-            if (PreventSpawnAnimation) booleanSettings += " -PreventSpawnAnimation";
             
             return booleanSettings;
         }
@@ -915,7 +911,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -AutoDestroyStructures -NotifyAdminCommandsInChat -oldconsole -mods=%mods% 
 
 
-start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?PreventSpawnAnimation=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
@@ -1324,6 +1320,12 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "NPCNetworkStasisRangeScalePlayerCountStart":
                             NPCNetworkStasisRangeScalePlayerCountStart = value;
                             break;
+                        case "MaxTamedDinosSoftTameLimit":
+                            MaxTamedDinosSoftTameLimit = value;
+                            break;
+                        case "MaxTamedDinosSoftTameLimitCountdownForDeletionDuration":
+                            MaxTamedDinosSoftTameLimitCountdownForDeletionDuration = value;
+                            break;
                         case "NPCNetworkStasisRangeScalePlayerCountEnd":
                             NPCNetworkStasisRangeScalePlayerCountEnd = value;
                             break;
@@ -1559,6 +1561,8 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "ServerSettings", "MinimumDinoReuploadInterval", MinimumDinoReuploadInterval.ToString());
             UpdateLine(ref lines, "ServerSettings", "PvEAllowStructuresAtSupplyDrops", PvEAllowStructuresAtSupplyDrops.ToString());
             UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePlayerCountStart", NPCNetworkStasisRangeScalePlayerCountStart);
+            UpdateLine(ref lines, "ServerSettings", "MaxTamedDinos_SoftTameLimit", MaxTamedDinosSoftTameLimit);
+            UpdateLine(ref lines, "ServerSettings", "MaxTamedDinos_SoftTameLimit_CountdownForDeletionDuration", MaxTamedDinosSoftTameLimitCountdownForDeletionDuration);
             UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePlayerCountEnd", NPCNetworkStasisRangeScalePlayerCountEnd);
             UpdateLine(ref lines, "ServerSettings", "NPCNetworkStasisRangeScalePercentEnd", NPCNetworkStasisRangeScalePercentEnd);
             UpdateLine(ref lines, "ServerSettings", "MaxPersonalTamedDinos", MaxPersonalTamedDinos);
@@ -2516,6 +2520,26 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                 OnPropertyChanged(nameof(NPCNetworkStasisRangeScalePlayerCountStart)); // Notify the UI of the change
             }
         }
+        private string _maxTamedDinosSoftTameLimitCountdownForDeletionDuration;
+        public string MaxTamedDinosSoftTameLimitCountdownForDeletionDuration
+        {
+            get { return _maxTamedDinosSoftTameLimitCountdownForDeletionDuration; }
+            set
+            {
+                _maxTamedDinosSoftTameLimitCountdownForDeletionDuration = value;
+                OnPropertyChanged(nameof(MaxTamedDinosSoftTameLimitCountdownForDeletionDuration)); // Notify the UI of the change
+            }
+        }
+        private string _maxTamedDinosSoftTameLimit;
+        public string MaxTamedDinosSoftTameLimit
+        {
+            get { return _maxTamedDinosSoftTameLimit; }
+            set
+            {
+                _maxTamedDinosSoftTameLimit = value;
+                OnPropertyChanged(nameof(MaxTamedDinosSoftTameLimit)); // Notify the UI of the change
+            }
+        }
 
         private string _nPCNetworkStasisRangeScalePlayerCountEnd;
         public string NPCNetworkStasisRangeScalePlayerCountEnd
@@ -3202,6 +3226,9 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
                         case "DisablePhotoMode":
                             DisablePhotoMode = ConvertToBoolean(value);
                             break;
+                        case "PreventSpawnAnimation":
+                            PreventSpawnAnimation = ConvertToBoolean(value);
+                            break;
                         case "DestroyTamesOverTheSoftTameLimit":
                             DestroyTamesOverTheSoftTameLimit = ConvertToBoolean(value);
                             break;
@@ -3469,6 +3496,7 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventSpawnAnimation", PreventSpawnAnimation.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCryoFridgeOnSaddle", AllowCryoFridgeOnSaddle.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DestroyTamesOverTheSoftTameLimit", DestroyTamesOverTheSoftTameLimit.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodFridgeRequirement", DisableCryopodFridgeRequirement.ToString());

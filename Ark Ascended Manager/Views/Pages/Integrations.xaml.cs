@@ -70,13 +70,27 @@ namespace Ark_Ascended_Manager.Views.Pages
                 File.WriteAllText(filePath, json);
 
                 System.Windows.MessageBox.Show("Token saved successfully.", "Success", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Ask the user if they want to restart the application
+                System.Windows.MessageBoxResult restartResponse = System.Windows.MessageBox.Show(
+                    "Saving these changes requires an application restart. Would you like to restart now?",
+                    "Restart Required",
+                    System.Windows.MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (restartResponse == System.Windows.MessageBoxResult.Yes)
+                {
+                    // Restart the application
+                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                    Application.Current.Shutdown();
+                }
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"Failed to save the token: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            
+
         }
 
         private async void StartBotButton_Click(object sender, RoutedEventArgs e)
