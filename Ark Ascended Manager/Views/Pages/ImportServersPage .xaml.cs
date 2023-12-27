@@ -39,21 +39,23 @@ namespace Ark_Ascended_Manager.Views.Pages
                 // Check if a ProfileName is set in the ViewModel
                 if (string.IsNullOrEmpty(ViewModel.ProfileName))
                 {
-                    MessageBox.Show("Please enter a Profile Name before selecting a folder. Please note the Profile name MUST match the folder name for the import to be sucessful.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please enter a Profile Name before selecting a folder. Please note the Profile name MUST match the folder name for the import to be successful.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return; // Exit the method if ProfileName is not set
                 }
 
-                // Check if the folder path already contains the ProfileName
-                if (folderPath.EndsWith(ViewModel.ProfileName))
+                // Check if the selected folder's name matches the ProfileName
+                string selectedFolderName = new DirectoryInfo(folderPath).Name;
+                if (selectedFolderName != ViewModel.ProfileName)
                 {
-                    // Remove the ProfileName from the end of the folder path
-                    folderPath = folderPath.Substring(0, folderPath.Length - ViewModel.ProfileName.Length);
+                    MessageBox.Show($"The selected folder name must match the Profile Name '{ViewModel.ProfileName}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Exit the method if folder name doesn't match
                 }
 
-                // Use the modified folder path to set ViewModel.ServerPath
+                // Use the folder path as is
                 ViewModel.ServerPath = folderPath;
             }
         }
+
 
 
 

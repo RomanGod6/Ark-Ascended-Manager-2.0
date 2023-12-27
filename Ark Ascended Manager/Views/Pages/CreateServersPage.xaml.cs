@@ -13,6 +13,7 @@ using System.Text.Json;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using Newtonsoft.Json;
+using Ark_Ascended_Manager.Services;
 
 
 namespace Ark_Ascended_Manager.Views.Pages
@@ -37,11 +38,27 @@ namespace Ark_Ascended_Manager.Views.Pages
             if (dialog.ShowDialog() == true)
             {
                 string folderPath = dialog.SelectedPath;
-                // Use the ProfileName from the ViewModel instead of "ServerProfile"
-                string desiredPath = Path.Combine(folderPath, ViewModel.ProfileName);
+                string desiredPath;
+
+                // Get the name of the selected folder
+                string selectedFolderName = new DirectoryInfo(folderPath).Name;
+
+                // Check if the selected folder's name is already the ProfileName
+                if (selectedFolderName.Equals(ViewModel.ProfileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // If the folder name is already the ProfileName, use the folder path as is
+                    desiredPath = folderPath;
+                }
+                else
+                {
+                    // Otherwise, combine the folder path with the ProfileName
+                    desiredPath = Path.Combine(folderPath, ViewModel.ProfileName);
+                }
+
                 ViewModel.ServerPath = desiredPath; // Set the property on ViewModel
             }
         }
+
 
         private void SaveServerConfig(ServerConfig config)
         {
@@ -500,6 +517,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 };
 
                 // Save the server config to the master list
+                UpdateChangeNumberToLatest(newServerConfig);
                 SaveServerConfig(newServerConfig);
                 CreateServerLaunchBatchFile(newServerConfig);
                 ResetViewModel();
@@ -511,6 +529,59 @@ namespace Ark_Ascended_Manager.Views.Pages
                 SystemMessageBox.Show($"An error occurred: {ex.Message}", "Error", SystemMessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void UpdateChangeNumberToLatest(ServerConfig serverConfig)
+        {
+            // Assume LoadSanitizedData method returns the latest sanitized data for the given AppId
+            var latestSanitizedData = LoadSanitizedData(serverConfig.AppId);
+            if (latestSanitizedData != null)
+            {
+                serverConfig.ChangeNumber = latestSanitizedData.ChangeNumber;
+            }
+            else
+            {
+                Logger.Log("Issues retrieving sanitized steam db data");
+            }
+        }
+        private SanitizedSteamData LoadSanitizedData(string appId)
+        {
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string sanitizedDataFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", appId, $"sanitizedsteamdata_{appId}.json");
+
+            if (!File.Exists(sanitizedDataFilePath))
+            {
+                // Log or handle the error as needed if the file doesn't exist
+                Logger.Log($"Sanitized data file not found for AppId: {appId}");
+                return null;
+            }
+
+            try
+            {
+                string jsonContent = File.ReadAllText(sanitizedDataFilePath);
+                var sanitizedData = System.Text.Json.JsonSerializer.Deserialize<SanitizedSteamData>(jsonContent);
+                return sanitizedData;
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                // Log or handle the error as needed if deserialization fails
+                Logger.Log($"Error deserializing the sanitized data file for AppId: {appId}. Error: {ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any other exceptions as needed
+                Logger.Log($"An unexpected error occurred while loading sanitized data for AppId: {appId}. Error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public class SanitizedSteamData
+        {
+            public int ChangeNumber { get; set; }
+            // Include other properties that the sanitized JSON may contain
+        }
+
+
+
         private void CreateServerLaunchBatchFile(ServerConfig config)
         {
             // Construct the full path to the ArkAscendedServer.exe
@@ -548,13 +619,14 @@ start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?
 
         public class ServerConfig
         {
+            public string ChangeNumberStatus { get; set; }
             public string ProfileName { get; set; }
             public string ServerStatus { get; set; }
             public string ServerPath { get; set; }
             public string MapName { get; set; }
             public string AppId { get; set; }
             public bool IsRunning { get; set; }
-
+            public int ChangeNumber { get; set; }
             public string ServerName { get; set; }
             public int ListenPort { get; set; } // Ports are typically integers
             public int RCONPort { get; set; }   // Ports are typically integers

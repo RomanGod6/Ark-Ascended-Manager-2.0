@@ -22,7 +22,9 @@
 
     <StackPanel>
         <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
-        
+        <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click"/>
+
+
 
 
         <TextBlock

@@ -49,7 +49,33 @@ namespace Ark_Ascended_Manager.Views.Pages
 
 
         }
+        private void OverrideCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            OverrideTextBox.Visibility = Visibility.Visible;
+        }
 
+        private void OverrideCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OverrideTextBox.Visibility = Visibility.Collapsed;
+            UpdateViewModelMapName();
+        }
+
+
+        private void UpdateViewModelMapName()
+        {
+            var viewModel = DataContext as ConfigPageViewModel;
+            if (viewModel != null)
+            {
+                if (OverrideTextBox.Visibility == Visibility.Collapsed)
+                {
+                    viewModel.OverrideMapName = "TheIsland_WP"; // Setting default value
+                }
+                else
+                {
+                    viewModel.OverrideMapName = OverrideTextBox.Text; // Or any other logic you want
+                }
+            }
+        }
 
 
 

@@ -70,7 +70,18 @@ namespace Ark_Ascended_Manager.Views.Controls
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value?.ToString() == "Online" ? Brushes.Green : Brushes.Red;
+            // Assuming 'Online' and 'Servers Up To Date' should be green
+            if (value?.ToString() == "Online" || value?.ToString() == "Servers Up To Date")
+            {
+                return Brushes.Green;
+            }
+            // Assuming 'Offline' and 'Server is Not Up to Date' should be red
+            else if (value?.ToString() == "Offline" || value?.ToString() == "Server is Not Up to Date")
+            {
+                return Brushes.Red;
+            }
+            // Default color if status is something else or null
+            return Brushes.Gray;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -78,4 +89,5 @@ namespace Ark_Ascended_Manager.Views.Controls
             throw new NotSupportedException();
         }
     }
+
 }

@@ -33,6 +33,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand LoadLaunchServerSettingsCommand { get; private set; }
         public ICommand StartServerCommand { get; private set; }
         public ICommand UpdateServerCommand { get; private set; }
+        public ICommand ToggleTextBoxVisibilityCommand { get; private set; }
         public ICommand StopServerCommand { get; private set; }
         public ICommand SaveGameIniCommand { get; }
         public ICommand SaveGAMEIniFileCommand { get; private set; }
@@ -67,7 +68,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
-     
+
+
+
 
         public ICommand SaveIniFileCommand { get; private set; }
         
@@ -92,6 +95,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             DeleteServerCommand = new RelayCommand(DeleteServer);
             WipeServerCommand = new RelayCommand(WipeServer);
             LoadPlugins();
+            _overrideEnabled = true;
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
 
         }
@@ -104,6 +108,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 GameIniContent = File.ReadAllText(filePath);
             }
         }
+
 
         public void LoadJsonForSelectedPlugin(string selectedPlugin)
         {
@@ -122,7 +127,13 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             SaveGameIniSettings();
             SaveGameUserSettings();
+
+            // Display a message box to inform the user that the settings have been saved
+            MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+
+
 
 
 
@@ -783,9 +794,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             Ark_Ascended_Manager.Services.Logger.Log("Server Platform Setting after save: " + ServerPlatformSetting);
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
+            string mapName = OverrideEnabled ? OverrideMapName : "TheIsland_WP";
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP);
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName);
 
 
             // Write the updated content to the batch file
@@ -794,6 +806,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveServerConfigToJson();
 
             Console.WriteLine("Launch parameters have been updated.");
+            MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void SaveServerConfigToJson()
         {
@@ -902,8 +915,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP)
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName)
         {
+
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
             string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
@@ -920,7 +934,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% 
 
 
-start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
@@ -1057,6 +1071,28 @@ start {executable} TheIsland_WP?listen?""SessionName=%ServerName%?""RCONEnabled=
         {
             get => _disableCrossPlatform;
             set => SetProperty(ref _disableCrossPlatform, value);
+        }
+        private bool _overrideEnabled = false; // Default value
+
+        public bool OverrideEnabled
+        {
+            get { return _overrideEnabled; }
+            set
+            {
+                _overrideEnabled = value;
+                OnPropertyChanged(nameof(OverrideEnabled));
+            }
+        }
+        private string _overrideMapName;
+        public string OverrideMapName
+        {
+            get { return _overrideMapName; }
+            set
+            {
+                _overrideMapName = value;
+                OnPropertyChanged(nameof(OverrideMapName));
+                
+            }
         }
 
         // INotifyPropertyChanged implementation

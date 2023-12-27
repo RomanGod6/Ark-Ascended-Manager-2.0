@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using System.Threading;
 using static Ark_Ascended_Manager.Services.DiscordBotService;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -44,26 +45,33 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             _statusUpdateTimer.Start();
 
 
-
-
-
-
-
-
-
-
-
-
         }
         private void ServerStatusTimer_Tick(object sender, EventArgs e)
         {
             var servers = LoadServerConfigs();
             bool anyServerStatusChanged = false;
 
+            // Hypothetical method to load the ChangeNumber from the sanitized JSON
+           
+
             foreach (var serverConfig in servers)
             {
+                int sanitizedChangeNumber = LoadSanitizedChangeNumber(serverConfig);
                 bool isRunning = IsServerRunning(serverConfig);
                 string newStatus = isRunning ? "Online" : "Offline";
+
+                // Load server ChangeNumber (assumed part of serverConfig for this example)
+                int serverChangeNumber = serverConfig.ChangeNumber;
+
+                // Compare the ChangeNumbers
+                if (serverChangeNumber < sanitizedChangeNumber)
+                {
+                    serverConfig.ChangeNumberStatus = "Server is Not Up to Date"; // Update this property
+                }
+                else if (serverChangeNumber == sanitizedChangeNumber)
+                {
+                    serverConfig.ChangeNumberStatus = "Servers Up To Date"; // Update this property
+                }
 
                 // Check if the status has changed before updating
                 if (serverConfig.ServerStatus != newStatus)
@@ -79,6 +87,34 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 SaveServerConfigs(servers);
             }
         }
+        
+
+        private int LoadSanitizedChangeNumber(ServerConfig serverConfig)
+        {
+            
+            string appId = serverConfig.AppId; // Replace with the actual AppId if it's dynamic
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataFolder, "Ark Ascended Manager", appId, "sanitizedsteamdata_" + appId + ".json");
+
+            try
+            {
+                // Read the JSON file
+                string jsonData = File.ReadAllText(filePath);
+
+                // Parse the JSON to get the ChangeNumber
+                var jsonObject = JObject.Parse(jsonData);
+                int changeNumber = jsonObject["ChangeNumber"].Value<int>();
+
+                return changeNumber;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., file not found, parsing errors)
+                Console.WriteLine("Error reading or parsing the JSON file: " + ex.Message);
+                return 0; // Return a default value or handle the error appropriately
+            }
+        }
+
         private void SaveServerConfigs(List<ServerConfig> servers)
         {
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
@@ -454,7 +490,19 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
             }
         }
-
+        private string _changeNumberStatus;
+        public string ChangeNumberStatus
+        {
+            get => _changeNumberStatus;
+            set
+            {
+                if (_changeNumberStatus != value)
+                {
+                    _changeNumberStatus = value;
+                    OnPropertyChanged(nameof(ChangeNumberStatus));
+                }
+            }
+        }
 
 
         // These methods are placeholders for extracting the details

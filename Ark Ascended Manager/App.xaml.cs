@@ -51,6 +51,8 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<IntegrationsPage>();
                 services.AddTransient<PluginsPage>();
                 services.AddTransient<PluginInstallPage>();
+                services.AddSingleton<SteamVersionControl>();
+                services.AddSingleton<ServerUpdateService>();
 
 
 
@@ -88,6 +90,8 @@ namespace Ark_Ascended_Manager
         {
             _host.Start();
             var schedulerService = GetService<SchedulerService>();
+            var steamVersionControl = GetService<SteamVersionControl>();
+            steamVersionControl?.StartUpdateTimer();
 
             // Retrieve the ServerManager instance and start it
             // If ServerManager has a start method, call it here
@@ -100,8 +104,12 @@ namespace Ark_Ascended_Manager
         /// </summary>
         private async void OnExit(object sender, ExitEventArgs e)
         {
-            await _host.StopAsync();
+           
 
+            var steamVersionControl = GetService<SteamVersionControl>();
+            steamVersionControl?.StopUpdateTimer();
+
+            await _host.StopAsync();
             _host.Dispose();
         }
 
