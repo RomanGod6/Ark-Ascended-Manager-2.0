@@ -557,6 +557,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             "quit"
                 });
                 RunSteamCMD(scriptPath);
+                UpdateChangeNumberFromJson(currentServerConfig);
             }
             else
             {
@@ -586,6 +587,40 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 process.Start();
                 process.WaitForExit();
+            }
+        }
+        private void UpdateChangeNumberFromJson(ServerConfig currentServerConfig)
+        {
+            if (currentServerConfig == null || string.IsNullOrEmpty(currentServerConfig.AppId))
+            {
+                // Handle the case where currentServerConfig or AppId is null or empty
+                return;
+            }
+
+            string jsonFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ark Ascended Manager",
+                currentServerConfig.AppId,
+                $"sanitizedsteamdata_{currentServerConfig.AppId}.json");
+
+            if (!File.Exists(jsonFilePath))
+            {
+                // Handle the case where the JSON file does not exist
+                return;
+            }
+
+            try
+            {
+                string jsonContent = File.ReadAllText(jsonFilePath);
+                dynamic json = JsonConvert.DeserializeObject(jsonContent);
+                currentServerConfig.ChangeNumber = json.ChangeNumber; // Assuming ChangeNumber is the correct key
+
+                // Optionally, save the updated currentServerConfig if required
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions (e.g., JSON parsing errors)
+                // Log the exception or alert the user
             }
         }
 
