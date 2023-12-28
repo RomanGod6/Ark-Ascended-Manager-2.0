@@ -103,7 +103,7 @@
                             <Expander Header="Administration" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                     <Label Content="Admin Password" ToolTip="Password to become admin"/>
-                                    <TextBox Text="{Binding AdminPassword, Mode=TwoWay}" />
+                                    <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}" />
                                     <Label Content="Server Password" ToolTip="Password to join the server"/>
                                     <TextBox Text="{Binding ServerPassword, Mode=TwoWay}" />
                                     <Label Content="Banlist:" ToolTip="List of Banned Players"/>

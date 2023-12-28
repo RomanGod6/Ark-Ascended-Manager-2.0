@@ -27,6 +27,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private DispatcherTimer _statusUpdateTimer;
         private ServerConfig _currentServerInfo;
         public ServerConfig CurrentServerInfo { get; private set; }
+        public ICommand StopAllServersCommand { get; private set; }
+
+        public ICommand UpdateAllServersCommand { get; private set; }
+        public ICommand StartAllServersCommand { get; private set; }
 
 
 
@@ -43,8 +47,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             _statusUpdateTimer.Interval = TimeSpan.FromSeconds(5); // Set the desired interval
             _statusUpdateTimer.Tick += ServerStatusTimer_Tick;
             _statusUpdateTimer.Start();
-
-
+            UpdateAllServersCommand = new RelayCommand(UpdateAllServers);
+            StopAllServersCommand = new RelayCommand(StopAllServers);
+            StartAllServersCommand = new RelayCommand(StartAllServers);
         }
         private void ServerStatusTimer_Tick(object sender, EventArgs e)
         {
@@ -87,7 +92,72 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 SaveServerConfigs(servers);
             }
         }
-        
+        private async void StartAllServers()
+        {
+            // Prompt the user for the delay in seconds
+            string delayInput = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the delay in seconds between starting each server:",
+                "Start Delay",
+                "10"
+            );
+
+            if (!int.TryParse(delayInput, out int delaySeconds))
+            {
+                System.Windows.MessageBox.Show("Invalid input for delay.");
+                return;
+            }
+
+            var serverConfigsCopy = ServerConfigs.ToList();
+
+            foreach (var serverConfig in serverConfigsCopy)
+            {
+                StartServer(serverConfig);
+                await Task.Delay(TimeSpan.FromSeconds(delaySeconds));
+            }
+        }
+
+        private async void StopAllServers()
+        {
+            var stopTasks = new List<Task>();
+
+            foreach (var serverConfig in ServerConfigs)
+            {
+                // Launch the stop operation for each server and store the task
+                var stopTask = Task.Run(() => StopServer(serverConfig));
+                stopTasks.Add(stopTask);
+            }
+
+            // Wait for all stop operations to complete
+            await Task.WhenAll(stopTasks);
+        }
+
+
+        private void UpdateAllServers()
+        {
+            var runningServers = new List<string>();
+
+            foreach (var serverConfig in ServerConfigs)
+            {
+                if (IsServerRunning(serverConfig))
+                {
+                    // Add the name of the running server to the list
+                    runningServers.Add(serverConfig.ProfileName);
+                    continue;
+                }
+
+                UpdateServerBasedOnJson(serverConfig);
+            }
+
+            // Check if there are any running servers
+            if (runningServers.Any())
+            {
+                // Create a message with all running server names
+                string message = "The following servers are currently running and cannot be updated:\n\n" + string.Join("\n", runningServers);
+                System.Windows.MessageBox.Show(message, "Servers Running", System.Windows.MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+
 
         private int LoadSanitizedChangeNumber(ServerConfig serverConfig)
         {
@@ -364,12 +434,142 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             "quit"
                 });
                 RunSteamCMD(scriptPath);
+
+                // After running SteamCMD, update the change number
+                UpdateChangeNumberFromJson(serverConfig);
             }
             else
             {
                 Ark_Ascended_Manager.Services.Logger.Log("Could not update the server, App ID not found or Server Config is null");
             }
         }
+        private void UpdateChangeNumberFromJson(ServerConfig serverConfig)
+        {
+            Debug.WriteLine("UpdateChangeNumberFromJson: Method called.");
+
+            if (serverConfig == null || string.IsNullOrEmpty(serverConfig.AppId))
+            {
+                Debug.WriteLine("UpdateChangeNumberFromJson: ServerConfig is null or AppId is empty.");
+                return;
+            }
+
+            string jsonFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ark Ascended Manager",
+                serverConfig.AppId,
+                $"sanitizedsteamdata_{serverConfig.AppId}.json");
+
+            Debug.WriteLine($"UpdateChangeNumberFromJson: JSON file path - {jsonFilePath}");
+
+            if (!File.Exists(jsonFilePath))
+            {
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON file does not exist.");
+                return;
+            }
+
+            try
+            {
+                string jsonContent = File.ReadAllText(jsonFilePath);
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON content read successfully.");
+
+                dynamic json = JsonConvert.DeserializeObject(jsonContent);
+                if (json != null && json.ChangeNumber != null)
+                {
+                    Debug.WriteLine($"UpdateChangeNumberFromJson: JSON ChangeNumber found - {json.ChangeNumber}");
+                    serverConfig.ChangeNumber = json.ChangeNumber;
+                    SaveUpdatedServerConfig(serverConfig);
+                }
+                else
+                {
+                    Debug.WriteLine("UpdateChangeNumberFromJson: JSON is invalid or doesn't contain ChangeNumber.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"UpdateChangeNumberFromJson: Exception occurred - {ex.Message}");
+            }
+        }
+        private void SaveUpdatedServerConfig(ServerConfig updatedConfig)
+        {
+            Debug.WriteLine("SaveUpdatedServerConfig: Method called.");
+
+            var allServerConfigs = ReadAllServerConfigs();
+            // Use both AppId and ProfileName for a more accurate match
+            var serverToUpdate = allServerConfigs.FirstOrDefault(s => s.AppId == updatedConfig.AppId && s.ProfileName.Equals(updatedConfig.ProfileName, StringComparison.OrdinalIgnoreCase));
+
+            if (serverToUpdate != null)
+            {
+                Debug.WriteLine($"SaveUpdatedServerConfig: Current ChangeNumber for server '{serverToUpdate.ProfileName}' is {serverToUpdate.ChangeNumber}");
+                serverToUpdate.ChangeNumber = updatedConfig.ChangeNumber;
+                Debug.WriteLine($"SaveUpdatedServerConfig: New ChangeNumber to be set for server '{serverToUpdate.ProfileName}' is {updatedConfig.ChangeNumber}");
+
+                WriteAllServerConfigs(allServerConfigs);
+            }
+            else
+            {
+                Debug.WriteLine("SaveUpdatedServerConfig: Server configuration not found.");
+            }
+        }
+
+
+
+        private List<ServerConfig> ReadAllServerConfigs()
+        {
+            Debug.WriteLine("ReadAllServerConfigs: Method called.");
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"ReadAllServerConfigs: File path - {filePath}");
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    Debug.WriteLine("ReadAllServerConfigs: JSON content read successfully.");
+                    List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+                    return serverConfigs ?? new List<ServerConfig>();
+                }
+                else
+                {
+                    Debug.WriteLine("ReadAllServerConfigs: JSON file does not exist.");
+                    return new List<ServerConfig>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ReadAllServerConfigs: Exception occurred - {ex.Message}");
+                return new List<ServerConfig>();
+            }
+        }
+
+        private void WriteAllServerConfigs(List<ServerConfig> configs)
+        {
+            Debug.WriteLine("WriteAllServerConfigs: Method called.");
+
+            // Optional: Debug print for verification
+            var serverForDebug = configs.FirstOrDefault(s => s.ProfileName == "YourServerProfileName"); // Replace with the actual profile name
+            if (serverForDebug != null)
+            {
+                Debug.WriteLine($"WriteAllServerConfigs: ChangeNumber for server '{serverForDebug.ProfileName}' before writing is {serverForDebug.ChangeNumber}");
+            }
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"WriteAllServerConfigs: File path - {filePath}");
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(configs, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+                Debug.WriteLine("WriteAllServerConfigs: JSON file written successfully.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WriteAllServerConfigs: Exception occurred - {ex.Message}");
+            }
+        }
+
         private void RunSteamCMD(string scriptPath)
         {
             string steamCmdPath = FindSteamCmdPath();
@@ -579,6 +779,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             return servers;
         }
+        
+
 
 
         // Other methods and properties as needed

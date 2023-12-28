@@ -127,10 +127,48 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             SaveGameIniSettings();
             SaveGameUserSettings();
-
+            UpdateCurrentServerAdminPassword();
             // Display a message box to inform the user that the settings have been saved
             MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void UpdateCurrentServerAdminPassword()
+        {
+            if (CurrentServerConfig != null)
+            {
+                CurrentServerConfig.AdminPassword = ServerAdminPassword;
+                SaveServerConfig(CurrentServerConfig.ProfileName);
+            }
+            else
+            {
+                // Handle the case where no current server is selected
+            }
+        }
+        private void SaveServerConfig(string profileName)
+        {
+            Debug.WriteLine($"SaveServerConfig: Called for ProfileName '{profileName}' with new AdminPassword.");
+
+            var allServerConfigs = ReadAllServerConfigs();
+            var serverToUpdate = allServerConfigs.FirstOrDefault(s => s.ProfileName == profileName);
+
+            if (serverToUpdate != null)
+            {
+                Debug.WriteLine($"SaveServerConfig: Found server configuration. Current AdminPassword: '{serverToUpdate.AdminPassword}'");
+
+                // Update the AdminPassword for the matched server configuration
+                serverToUpdate.AdminPassword = ServerAdminPassword;
+                Debug.WriteLine($"SaveServerConfig: Updated AdminPassword to: '{ServerAdminPassword}'");
+
+                // Save the updated list back to servers.json
+                WriteAllServerConfigs(allServerConfigs);
+                Debug.WriteLine("SaveServerConfig: Updated server configurations written back to servers.json");
+            }
+            else
+            {
+                Debug.WriteLine("SaveServerConfig: Server configuration not found for the given ProfileName.");
+            }
+        }
+
 
 
 
@@ -546,6 +584,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             ServerConfig currentServerConfig = CurrentServerConfig; // Assuming CurrentServerConfig is a property or field
 
+            Debug.WriteLine($"UpdateServerBasedOnJson: Current Server Config - ProfileName: {currentServerConfig?.ProfileName}, AppId: {currentServerConfig?.AppId}");
+
             if (currentServerConfig != null && !string.IsNullOrEmpty(currentServerConfig.AppId))
             {
                 string scriptPath = Path.Combine(Path.GetTempPath(), "steamcmd_update_script.txt");
@@ -564,6 +604,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Ark_Ascended_Manager.Services.Logger.Log("Could not update the server, App ID not found or Server Config is null");
             }
         }
+
 
 
         private void RunSteamCMD(string scriptPath)
@@ -591,9 +632,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
         private void UpdateChangeNumberFromJson(ServerConfig currentServerConfig)
         {
+            Debug.WriteLine("UpdateChangeNumberFromJson: Method called.");
+
             if (currentServerConfig == null || string.IsNullOrEmpty(currentServerConfig.AppId))
             {
-                // Handle the case where currentServerConfig or AppId is null or empty
+                Debug.WriteLine("UpdateChangeNumberFromJson: CurrentServerConfig is null or AppId is empty.");
                 return;
             }
 
@@ -603,26 +646,119 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 currentServerConfig.AppId,
                 $"sanitizedsteamdata_{currentServerConfig.AppId}.json");
 
+            Debug.WriteLine($"UpdateChangeNumberFromJson: JSON file path - {jsonFilePath}");
+
             if (!File.Exists(jsonFilePath))
             {
-                // Handle the case where the JSON file does not exist
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON file does not exist.");
                 return;
             }
 
             try
             {
                 string jsonContent = File.ReadAllText(jsonFilePath);
-                dynamic json = JsonConvert.DeserializeObject(jsonContent);
-                currentServerConfig.ChangeNumber = json.ChangeNumber; // Assuming ChangeNumber is the correct key
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON content read successfully.");
 
-                // Optionally, save the updated currentServerConfig if required
+                dynamic json = JsonConvert.DeserializeObject(jsonContent);
+                if (json != null && json.ChangeNumber != null)
+                {
+                    Debug.WriteLine($"UpdateChangeNumberFromJson: JSON ChangeNumber found - {json.ChangeNumber}");
+                    currentServerConfig.ChangeNumber = json.ChangeNumber;
+                    SaveUpdatedServerConfig(currentServerConfig);
+                }
+                else
+                {
+                    Debug.WriteLine("UpdateChangeNumberFromJson: JSON is invalid or doesn't contain ChangeNumber.");
+                }
             }
             catch (Exception ex)
             {
-                // Handle any exceptions (e.g., JSON parsing errors)
-                // Log the exception or alert the user
+                Debug.WriteLine($"UpdateChangeNumberFromJson: Exception occurred - {ex.Message}");
             }
         }
+
+        private void SaveUpdatedServerConfig(ServerConfig updatedConfig)
+        {
+            Debug.WriteLine("SaveUpdatedServerConfig: Method called.");
+
+            var allServerConfigs = ReadAllServerConfigs();
+            // Use both AppId and ProfileName for a more accurate match
+            var serverToUpdate = allServerConfigs.FirstOrDefault(s => s.AppId == updatedConfig.AppId && s.ProfileName.Equals(updatedConfig.ProfileName, StringComparison.OrdinalIgnoreCase));
+
+            if (serverToUpdate != null)
+            {
+                Debug.WriteLine($"SaveUpdatedServerConfig: Current ChangeNumber for server '{serverToUpdate.ProfileName}' is {serverToUpdate.ChangeNumber}");
+                serverToUpdate.ChangeNumber = updatedConfig.ChangeNumber;
+                Debug.WriteLine($"SaveUpdatedServerConfig: New ChangeNumber to be set for server '{serverToUpdate.ProfileName}' is {updatedConfig.ChangeNumber}");
+
+                WriteAllServerConfigs(allServerConfigs);
+            }
+            else
+            {
+                Debug.WriteLine("SaveUpdatedServerConfig: Server configuration not found.");
+            }
+        }
+
+
+
+        private List<ServerConfig> ReadAllServerConfigs()
+        {
+            Debug.WriteLine("ReadAllServerConfigs: Method called.");
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"ReadAllServerConfigs: File path - {filePath}");
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    Debug.WriteLine("ReadAllServerConfigs: JSON content read successfully.");
+                    List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+                    return serverConfigs ?? new List<ServerConfig>();
+                }
+                else
+                {
+                    Debug.WriteLine("ReadAllServerConfigs: JSON file does not exist.");
+                    return new List<ServerConfig>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ReadAllServerConfigs: Exception occurred - {ex.Message}");
+                return new List<ServerConfig>();
+            }
+        }
+
+        private void WriteAllServerConfigs(List<ServerConfig> configs)
+        {
+            Debug.WriteLine("WriteAllServerConfigs: Method called.");
+
+            // Optional: Debug print for verification
+            var serverForDebug = configs.FirstOrDefault(s => s.ProfileName == "YourServerProfileName"); // Replace with the actual profile name
+            if (serverForDebug != null)
+            {
+                Debug.WriteLine($"WriteAllServerConfigs: ChangeNumber for server '{serverForDebug.ProfileName}' before writing is {serverForDebug.ChangeNumber}");
+            }
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"WriteAllServerConfigs: File path - {filePath}");
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(configs, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+                Debug.WriteLine("WriteAllServerConfigs: JSON file written successfully.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WriteAllServerConfigs: Exception occurred - {ex.Message}");
+            }
+        }
+
+
 
         private string FindSteamCmdPath()
         {
