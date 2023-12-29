@@ -53,6 +53,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<PluginInstallPage>();
                 services.AddSingleton<SteamVersionControl>();
                 services.AddSingleton<ServerUpdateService>();
+                services.AddSingleton<CreateSchedulePage>();
 
 
 

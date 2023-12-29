@@ -406,3 +406,22 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.pdb
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.genruntimeconfig.cache
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ref\Ark Ascended Manager.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateSchedulePage.g.cs
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Xceed.Wpf.AvalonDock.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.Aero.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.Metro.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.VS2010.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\Xceed.Wpf.Toolkit.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\cs-CZ\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\de\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\es\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\fr\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\hu\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\it\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ja-JP\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\pt-BR\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ro\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\ru\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\sv\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\zh-Hans\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateSchedulePage.baml

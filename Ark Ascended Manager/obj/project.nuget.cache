@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "7FBoVJ1ivV++9voHvANkGvpsY4u3c2/5gvmnFEFUOrnXTKYWydcJgc5ln3m1irhCf5TOcynqfYOqlaKBPuNVZg==",
+  "dgSpecHash": "zO0UhM8hoGSLYcOZYbmYw/bNhSxNUWhWIBtmecwXqgcpYfm0A1yqyfvvgJZPPmobpxjEwQ6B6TajNCbY0XMZCw==",
   "success": true,
   "projectFilePath": "C:\\Users\\griff\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
@@ -14,6 +14,7 @@
     "C:\\Users\\griff\\.nuget\\packages\\discord.net.rest\\3.13.0\\discord.net.rest.3.13.0.nupkg.sha512",
     "C:\\Users\\griff\\.nuget\\packages\\discord.net.webhook\\3.13.0\\discord.net.webhook.3.13.0.nupkg.sha512",
     "C:\\Users\\griff\\.nuget\\packages\\discord.net.websocket\\3.13.0\\discord.net.websocket.3.13.0.nupkg.sha512",
+    "C:\\Users\\griff\\.nuget\\packages\\extended.wpf.toolkit\\4.5.1\\extended.wpf.toolkit.4.5.1.nupkg.sha512",
     "C:\\Users\\griff\\.nuget\\packages\\microsoft.data.sqlite\\8.0.0\\microsoft.data.sqlite.8.0.0.nupkg.sha512",
     "C:\\Users\\griff\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.0\\microsoft.data.sqlite.core.8.0.0.nupkg.sha512",
     "C:\\Users\\griff\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",

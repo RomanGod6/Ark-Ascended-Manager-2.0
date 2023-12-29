@@ -1,0 +1,66 @@
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.CreateSchedulePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Create Schedule">
+
+    <Grid Margin="10">
+        <StackPanel>
+            <!-- Schedule Nickname -->
+            <Label Content="Schedule Nickname:"/>
+            <TextBox x:Name="nicknameTextBox" Margin="0,5"/>
+
+            <!-- Action Dropdown -->
+            <Label Content="Action:"/>
+            <ComboBox x:Name="actionComboBox" Margin="0,5" SelectionChanged="ActionComboBox_SelectionChanged">
+                <ComboBoxItem Content="Shutdown"/>
+                <ComboBoxItem Content="Restart"/>
+                <ComboBoxItem Content="Custom RCON Command"/>
+                <!-- Additional actions here -->
+            </ComboBox>
+
+
+            <TextBox x:Name="rconCommandTextBox" Margin="0,5" Visibility="Collapsed" />
+
+            <!-- Time and Day(s) Selection -->
+            <Label Content="Select Time:"/>
+            <xctk:TimePicker x:Name="timePicker" Margin="0,5" HorizontalAlignment="Left" Height="22" Width="100" />
+            <Label Content="Select Days:"/>
+            <StackPanel x:Name="daysPanel" Orientation="Horizontal" Margin="0,5">
+                <CheckBox Content="Monday"/>
+                <CheckBox Content="Tuesday"/>
+                <CheckBox Content="Wednesday"/>
+                <CheckBox Content="Thursday"/>
+                <CheckBox Content="Friday"/>
+                <CheckBox Content="Saturday"/>
+                <CheckBox Content="Sunday"/>
+                <!-- Repeat for other days -->
+            </StackPanel>
+
+            <!-- Reoccurrence Interval -->
+            <Label Content="Reoccurs Every:"/>
+            <StackPanel x:Name="reoccursEveryPanel" Orientation="Horizontal" Margin="0,5" Visibility="Collapsed">
+                <ComboBox x:Name="reoccurrenceIntervalTypeComboBox" Width="120" Margin="0,5">
+                    <ComboBoxItem Content="Minutes"/>
+                    <ComboBoxItem Content="Hours"/>
+                    <!-- Additional interval types here -->
+                </ComboBox>
+                <TextBox x:Name="reoccurrenceIntervalTextBox" Width="50" Margin="0,5"/>
+            </StackPanel>
+
+            <!-- Button to Add Another Action -->
+
+
+            <!-- Buttons for Save and Cancel -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">
+                <Button Content="Save" Width="100" Margin="5" Click="SaveButton_Click"/>
+                <Button Content="Cancel" Width="100" Margin="5" Click="CancelButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

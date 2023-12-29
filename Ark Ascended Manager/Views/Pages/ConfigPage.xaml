@@ -70,6 +70,8 @@
             <Button Content="Wipe Server" Command="{Binding WipeServerCommand}" Margin="5"/>
             <Button Content="Update Server" Command="{Binding UpdateServerCommand}" Margin="5"/>
             <Button Content="Delete Server" Command="{Binding DeleteServerCommand}" Margin="5"/>
+            <Button Content="Add New Schedule" Click="AddNewScheduleButton_Click"/>
+
 
         </StackPanel>
 
@@ -1013,55 +1015,7 @@
             <TabItem Header="System Management">
 
                 <Grid>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="20">
-                            <Label Content="Select Days:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,0,0">
-                                <CheckBox x:Name="mondayCheckBox" Content="Monday"/>
-                                <CheckBox x:Name="tuesdayCheckBox" Content="Tuesday"/>
-                                <CheckBox x:Name="wednesdayCheckBox" Content="Wednesday"/>
-                                <CheckBox x:Name="thursdayCheckBox" Content="Thursday"/>
-                                <CheckBox x:Name="fridayCheckBox" Content="Friday"/>
-                                <CheckBox x:Name="saturdayCheckBox" Content="Saturday"/>
-                                <CheckBox x:Name="sundayCheckBox" Content="Sunday"/>
-                            </StackPanel>
-
-                            <!-- Time Range Selection -->
-                            <Label Content="Select Time:" />
-                            <ComboBox x:Name="timeComboBox" >
-                                <!-- Populate with time ranges -->
-                            </ComboBox>
-
-                            <!-- Feature Selection -->
-                            <Label Content="Actions:" />
-                            <StackPanel Orientation="Horizontal" >
-                                <CheckBox x:Name="rebootCheckBox" Content="Reboot"/>
-                                <CheckBox x:Name="shutdownCheckBox" Content="Shutdown"/>
-                                <CheckBox x:Name="saveCheckBox" Content="Save"/>
-                            </StackPanel>
-
-                            <!-- Discord Webhook Configuration -->
-
-                            <Button x:Name="saveScheduleButton" Content="Save Schedule" Click="SaveScheduleButton_Click" Margin="5" />
-                            <Button Content="Remove Schedule" Click="RemoveScheduleButton_Click" Margin="5"/>
-
-                            <!-- Edit Schedules -->
-                            <!-- Other content of your page -->
-
-                            <Expander Header="View Schedules" IsExpanded="False" Margin="10">
-                                <DataGrid x:Name="schedulesDataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Day" Binding="{Binding Days}" />
-                                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" />
-                                        <DataGridTextColumn Header="Action" Binding="{Binding Action}" />
-                                        <!-- Add other columns as necessary -->
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </Expander>
-
-
-                        </StackPanel>
-                    </ScrollViewer>
+                
 
                 </Grid>
             </TabItem>
