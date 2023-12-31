@@ -152,7 +152,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                     {
                         schedule.Days.Add(checkBox.Content.ToString());
                     }
-                }6
+                }
             }
 
             return schedule;

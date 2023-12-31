@@ -1,410 +1,188 @@
-﻿using System;
+﻿using CoreRCON;
+using CoreRCON.Parsers.Standard;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Ark_Ascended_Manager.Models;
-using Newtonsoft.Json;
+using System.Timers; // This is for System.Timers.Timer
 
 namespace Ark_Ascended_Manager.Services
 {
     internal class SchedulerService
     {
-        private string JsonFilePath;
-        private Dictionary<string, List<ScheduleItem>> _restartShutdownSchedule;
-        private Dictionary<string, List<ScheduleItem>> _saveWorldSchedule;
-        private List<Timer> _timers = new List<Timer>();
-        private List<ServerProfile> _serverProfiles;
-        private Timer _countdownTimer;
+        private List<Schedule> schedules;
+        private List<Server> servers;
+        private System.Timers.Timer timer; 
+
         public SchedulerService()
         {
-            SetJsonFilePath();
+            
             LoadSchedules();
-            InitializeSchedulers();
-            LoadServerProfiles();
-            _countdownTimer = new Timer(LogNextScheduledAction, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
-        }
-        private void SetJsonFilePath()
-        {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            JsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "allServersSchedulingData.json");
-        }
-        private void LogNextScheduledAction(object state)
-        {
-            var nextAction = GetNextScheduledAction();
-            if (nextAction != null)
-            {
-                TimeSpan timeRemaining = nextAction.NextRunTime - DateTime.Now;
-                Debug.WriteLine($"Next scheduled action: {nextAction.Action} for server {nextAction.ServerName} in {timeRemaining}");
-            }
-            else
-            {
-                Debug.WriteLine("No upcoming actions scheduled.");
-            }
-        }
-
-        private ScheduledTaskInfo GetNextScheduledAction()
-        {
-            // Assuming GetScheduledTasks() returns a list of all scheduled tasks
-            var allTasks = GetScheduledTasks();
-            var upcomingTasks = allTasks.OrderBy(t => t.NextRunTime).FirstOrDefault();
-
-            return upcomingTasks;
+            LoadServers();
+            InitializeSchedulesWatcher();
+            // Initialize and configure the System.Timers.Timer
+            timer = new System.Timers.Timer(60000); // Set interval to 60,000 milliseconds (1 minute)
+            timer.Elapsed += Timer_Elapsed; // Subscribe to the Elapsed event
+            timer.AutoReset = true; // Enable AutoReset to continuously raise the event
+            timer.Start(); // Start the timer
         }
 
         private void LoadSchedules()
         {
-            try
-            {
-                string jsonContent = File.ReadAllText(JsonFilePath);
-                var schedules = JsonConvert.DeserializeObject<Schedules>(jsonContent);
-
-                _restartShutdownSchedule = schedules.RestartShutdown;
-                _saveWorldSchedule = schedules.SaveWorld;
-
-                Debug.WriteLine("Schedules loaded successfully.");
-
-                // Debug output to check the loaded schedules
-                foreach (var schedule in _restartShutdownSchedule)
-                {
-                    Debug.WriteLine($"RestartShutdown - Server: {schedule.Key}");
-                    foreach (var item in schedule.Value)
-                    {
-                        Debug.WriteLine($"  Time: {item.Time}, Days: {item.DaysAsString}");
-                    }
-                }
-
-                foreach (var schedule in _saveWorldSchedule)
-                {
-                    Debug.WriteLine($"SaveWorld - Server: {schedule.Key}");
-                    foreach (var item in schedule.Value)
-                    {
-                        Debug.WriteLine($"  Time: {item.Time}, Days: {item.DaysAsString}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading schedules: {ex.Message}");
-            }
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string schedulesFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "schedules.json");
+            string schedulesJson = File.ReadAllText(schedulesFilePath);
+            schedules = JsonConvert.DeserializeObject<List<Schedule>>(schedulesJson);
+            Debug.WriteLine($"Loaded {schedules.Count} schedules.");
         }
 
-        private void InitializeSchedulers()
+        private void LoadServers()
         {
-            // Initialize schedulers for RestartShutdown
-            if (_restartShutdownSchedule != null)
-            {
-                foreach (var schedule in _restartShutdownSchedule)
-                {
-                    foreach (var item in schedule.Value)
-                    {
-                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                        var timer = new Timer(async _ =>
-                        {
-                            await ExecuteScheduledAction(schedule.Key, item, "Restart/Shutdown");
-                        }, null, timeToAction, Timeout.InfiniteTimeSpan);
-
-                        _timers.Add(timer);
-                    }
-                }
-            }
-
-            // Initialize schedulers for SaveWorld
-            if (_saveWorldSchedule != null)
-            {
-                foreach (var schedule in _saveWorldSchedule)
-                {
-                    foreach (var item in schedule.Value)
-                    {
-                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                        var timer = new Timer(async _ =>
-                        {
-                            await ExecuteScheduledAction(schedule.Key, item, "Save World");
-                        }, null, timeToAction, Timeout.InfiniteTimeSpan);
-
-                        _timers.Add(timer);
-                    }
-                }
-            }
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string serversFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "servers.json");
+            string serversJson = File.ReadAllText(serversFilePath);
+            servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
+            Debug.WriteLine($"Loaded {servers.Count} servers.");
         }
 
-
-
-        private TimeSpan ConvertToTimeSpan(string time, List<string> days)
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!TimeSpan.TryParse(time, out TimeSpan scheduledTime))
-            {
-                throw new FormatException("Invalid time format");
-            }
-
             var now = DateTime.Now;
-            var nextOccurrence = DateTime.MaxValue;
 
-            // Calculate the next occurrence of the scheduled action
-            foreach (var day in days)
+            // Initialize a variable to track the next scheduled action time
+            TimeSpan? nextActionTime = null;
+
+            foreach (var schedule in schedules)
             {
-                if (Enum.TryParse(day, true, out DayOfWeek dayOfWeek))
+                if (schedule.Days.Contains(now.DayOfWeek.ToString()))
                 {
-                    var daysUntilNextOccurrence = ((int)dayOfWeek - (int)now.DayOfWeek + 7) % 7;
-
-                    // If the scheduled time is today but has already passed, set the next occurrence to the next week
-                    if (daysUntilNextOccurrence == 0 && now.TimeOfDay > scheduledTime)
+                    var scheduleTime = TimeSpan.Parse(schedule.Time);
+                    if (now.TimeOfDay <= scheduleTime)
                     {
-                        daysUntilNextOccurrence = 7;
+                        var timeUntilAction = scheduleTime - now.TimeOfDay;
+                        if (!nextActionTime.HasValue || timeUntilAction < nextActionTime)
+                        {
+                            nextActionTime = timeUntilAction;
+                        }
                     }
 
-                    // Calculate the datetime for the next occurrence of the action
-                    var nextDay = now.AddDays(daysUntilNextOccurrence).Date.Add(scheduledTime);
-
-                    // If this occurrence is sooner than the previously calculated one, use this one instead
-                    if (nextDay < nextOccurrence)
+                    // Check if the current time is within a minute of the scheduled time
+                    if (Math.Abs((now.TimeOfDay - scheduleTime).TotalMinutes) < 1)
                     {
-                        nextOccurrence = nextDay;
+                        Debug.WriteLine($"Executing schedule: {schedule.Nickname}");
+                        Task.Run(() => ExecuteSchedule(schedule));
                     }
                 }
             }
 
-            // Calculate the TimeSpan until the next occurrence
-            TimeSpan timeToAction = nextOccurrence - now;
-
-            // Output the debug information with the countdown
-            Debug.WriteLine($"Next action for time '{time}' on days [{string.Join(", ", days)}] is in {timeToAction.TotalHours} hours ({timeToAction}).");
-
-            return timeToAction;
+            // Log the countdown to the next action
+            if (nextActionTime.HasValue)
+            {
+                Debug.WriteLine($"Next action in {nextActionTime.Value.TotalMinutes} minutes.");
+            }
+            else
+            {
+                Debug.WriteLine("No upcoming actions today.");
+            }
         }
 
 
-        private async Task ExecuteScheduledAction(string serverName, ScheduleItem item, string actionType)
+
+        private async Task ExecuteSchedule(Schedule schedule)
         {
-            // Assuming if it's in the schedule, it should be executed
-            ServerProfile profile = GetServerProfile(serverName);
-            Debug.WriteLine("Intiating Execute Schedules");
-
-            // Send server chat command for all actions
-            await SendServerChatCommandAsync(profile, $"Action {actionType} will start shortly. Please be prepared.");
-
-            if (actionType == "Shutdown" || actionType == "Restart/Shutdown")
+            Debug.WriteLine($"Attempting to execute schedule: {schedule.Nickname}");
+            var server = servers.FirstOrDefault(s => s.ProfileName == schedule.Server);
+            if (server != null)
             {
-                // Send server chat command every minute for 9 minutes
-                for (int i = 1; i <= 9; i++)
+                Debug.WriteLine($"Found server for schedule {schedule.Nickname}: {server.ProfileName}");
+                switch (schedule.Action)
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(1));
-                    await SendServerChatCommandAsync(profile, $"{actionType} in {10 - i} minutes.");
+                    case "Restart":
+                        RestartServer(server);
+                        break;
+                    case "Shutdown":
+                        await ShutdownServer(server);
+                        break;
+                        // Add other actions as needed
                 }
-
-                // Perform save world before shutdown or restart
-                await SendRconCommandAsync(profile, "saveworld");
-                await Task.Delay(TimeSpan.FromMinutes(1));
             }
-
-            // Execute the main action
-            string command = DetermineRconCommand(item, actionType);
-            await SendRconCommandAsync(profile, command);
-
-            // If it's a restart, start the batch file after shutdown
-            if (actionType == "Restart/Shutdown")
+            else
             {
-                StartBatchFileForRestart(serverName);
+                Debug.WriteLine($"No matching server found for schedule {schedule.Nickname}");
             }
         }
 
+        private FileSystemWatcher schedulesWatcher;
 
-
-
-        private async Task SendServerChatCommandAsync(ServerProfile profile, string message)
+        private void InitializeSchedulesWatcher()
         {
-            // Implement the logic to send a server chat command
-            string chatCommand = $"ServerChat {message}";
-            await SendRconCommandAsync(profile, chatCommand);
-        }
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string schedulesFolderPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
 
-        private void StartBatchFileForRestart(string serverName)
-        {
-            // Retrieve the server profile
-            ServerProfile profile = GetServerProfile(serverName);
-            if (profile == null)
+            schedulesWatcher = new FileSystemWatcher(schedulesFolderPath, "schedules.json")
             {
-                Debug.WriteLine($"Server profile for '{serverName}' not found. Cannot start batch file.");
-                return;
-            }
-
-            // Construct the path to the batch file
-            string batchFilePath = Path.Combine(profile.ServerPath, "LaunchServer.bat");
-
-            // Check if the batch file exists
-            if (!File.Exists(batchFilePath))
-            {
-                Debug.WriteLine($"Batch file '{batchFilePath}' not found.");
-                return;
-            }
-
-            try
-            {
-                // Start the batch file
-                Process.Start(batchFilePath);
-                Debug.WriteLine($"Started batch file: {batchFilePath}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error starting batch file: {ex.Message}");
-            }
-        }
-
-
-
-
-        private string DetermineRconCommand(ScheduleItem item, string actionType)
-        {
-            switch (actionType)
-            {
-                case "Save World":
-                    return "saveworld";
-                case "Shutdown":
-                                    return "doexit";
-                case "Restart":
-                case "Restart/Shutdown":
-                    return "doexit"; // For restart, we'll handle the batch file execution separately
-                default:
-                    throw new InvalidOperationException($"Action type '{actionType}' is not recognized.");
-            }
-        }
-
-
-        private void LoadServerProfiles()
-        {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string serverProfilesPath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
-
-            try
-            {
-                string jsonContent = File.ReadAllText(serverProfilesPath);
-                _serverProfiles = JsonConvert.DeserializeObject<List<ServerProfile>>(jsonContent) ?? new List<ServerProfile>();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading server profiles: {ex.Message}");
-                _serverProfiles = new List<ServerProfile>();
-            }
-        }
-
-
-        private ServerProfile GetServerProfile(string serverName)
-        {
-            return _serverProfiles.FirstOrDefault(profile => profile.ServerName == serverName);
-        }
-
-
-
-        private async Task SendRconCommandAsync(ServerProfile profile, string command)
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    Arguments = $"/C echo {command} | mcrcon 127.0.0.1 --password {profile.AdminPassword} -p {profile.RCONPort}",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
+                NotifyFilter = NotifyFilters.LastWrite
             };
 
+            schedulesWatcher.Changed += OnSchedulesFileChanged;
+            schedulesWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnSchedulesFileChanged(object source, FileSystemEventArgs e)
+        {
+            // Debounce or delay might be needed to handle multiple events
+            LoadSchedules();
+        }
+        private void RestartServer(Server server)
+        {
             try
             {
-                Debug.WriteLine($"Attempting to send RCON command to server: {profile.Name}, Command: {command}");
-                Debug.WriteLine($"Full Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
-
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-
-                Debug.WriteLine($"RCON command sent. Output: {output}");
+                Debug.WriteLine($"Restarting server: {server.ProfileName}");
+                string batFilePath = Path.Combine(server.ServerPath, "StartServer.bat");
+                Process.Start(batFilePath);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception sending RCON command: {ex}");
+                Debug.WriteLine($"Error restarting server: {ex.Message}");
             }
         }
 
-
-        // Method to get the scheduled tasks
-        public List<ScheduledTaskInfo> GetScheduledTasks()
+        private async Task ShutdownServer(Server server)
         {
-            var tasks = new List<ScheduledTaskInfo>();
-
-            // Process RestartShutdown Schedules
-            if (_restartShutdownSchedule != null)
+            try
             {
-                foreach (var schedule in _restartShutdownSchedule)
-                {
-                    foreach (var item in schedule.Value)
-                    {
-                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                        tasks.Add(new ScheduledTaskInfo
-                        {
-                            ServerName = schedule.Key,
-                            Action = "Restart/Shutdown",
-                            NextRunTime = DateTime.Now + timeToAction
-                        });
-                    }
-                }
+                Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
+                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
+                await rcon.ConnectAsync();
+                await rcon.SendCommandAsync("doexit"); // Replace with actual shutdown command
+                Debug.WriteLine("RCON command sent successfully.");
             }
-
-            // Process SaveWorld Schedules
-            if (_saveWorldSchedule != null)
+            catch (Exception ex)
             {
-                foreach (var schedule in _saveWorldSchedule)
-                {
-                    foreach (var item in schedule.Value)
-                    {
-                        TimeSpan timeToAction = ConvertToTimeSpan(item.Time, item.Days);
-                        tasks.Add(new ScheduledTaskInfo
-                        {
-                            ServerName = schedule.Key,
-                            Action = "Save World",
-                            NextRunTime = DateTime.Now + timeToAction
-                        });
-                    }
-                }
+                Debug.WriteLine($"Error in RCON shutdown: {ex.Message}");
             }
-
-            return tasks;
         }
-
-
     }
 
-    // ScheduledTaskInfo class
-    public class ScheduledTaskInfo
+    internal class Schedule
     {
-        public string ServerName { get; set; }
+        public string Nickname { get; set; }
         public string Action { get; set; }
-        public DateTime NextRunTime { get; set; }
-    }
-
-    public class Schedules
-    {
-        public Dictionary<string, List<ScheduleItem>> RestartShutdown { get; set; }
-        public Dictionary<string, List<ScheduleItem>> SaveWorld { get; set; }
-    }
-
-    public class ScheduleItem
-    {
-        public List<string> Days { get; set; }
+        public string RconCommand { get; set; }
         public string Time { get; set; }
-        public string DaysAsString { get; set; }
-        public bool IsSelected { get; set; }
+        public List<string> Days { get; set; }
+        public string Server { get; set; }
     }
 
-    public class ServerProfile
+    internal class Server
     {
-        public string Name { get; set; }
-        public string AdminPassword { get; set; }
-        public int RCONPort { get; set; }
         public string ProfileName { get; set; }
         public string ServerPath { get; set; }
-        public string ServerName { get; set; }
+        public int RCONPort { get; set; }
+        public string AdminPassword { get; set; }
     }
 }
