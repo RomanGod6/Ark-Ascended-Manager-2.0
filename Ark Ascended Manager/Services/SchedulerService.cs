@@ -35,10 +35,22 @@ namespace Ark_Ascended_Manager.Services
         {
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string schedulesFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "schedules.json");
-            string schedulesJson = File.ReadAllText(schedulesFilePath);
-            schedules = JsonConvert.DeserializeObject<List<Schedule>>(schedulesJson);
-            Debug.WriteLine($"Loaded {schedules.Count} schedules.");
+
+            // Check if the file exists before trying to read it
+            if (File.Exists(schedulesFilePath))
+            {
+                string schedulesJson = File.ReadAllText(schedulesFilePath);
+                schedules = JsonConvert.DeserializeObject<List<Schedule>>(schedulesJson);
+                Debug.WriteLine($"Loaded {schedules.Count} schedules.");
+            }
+            else
+            {
+                // If the file doesn't exist, you could either create a new list or handle the case appropriately
+                schedules = new List<Schedule>();
+                Debug.WriteLine("No schedules.json file found. Loaded 0 schedules.");
+            }
         }
+
 
         private void LoadServers()
         {
@@ -102,10 +114,13 @@ namespace Ark_Ascended_Manager.Services
                 switch (schedule.Action)
                 {
                     case "Restart":
-                        RestartServer(server);
+                        await RestartServer(server);
                         break;
                     case "Shutdown":
                         await ShutdownServer(server);
+                        break;
+                    case "CustomRCON": // Handle custom RCON commands
+                        await ExecuteCustomRCONCommand(server, schedule.RconCommand);
                         break;
                         // Add other actions as needed
                 }
@@ -115,6 +130,22 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"No matching server found for schedule {schedule.Nickname}");
             }
         }
+        private async Task ExecuteCustomRCONCommand(Server server, string command)
+        {
+            try
+            {
+                Debug.WriteLine($"Sending custom RCON command to server {server.ProfileName}: {command}");
+                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
+                await rcon.ConnectAsync();
+                var response = await rcon.SendCommandAsync(command);
+                Debug.WriteLine($"Custom RCON command sent successfully. Response: {response}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error sending custom RCON command: {ex.Message}");
+            }
+        }
+
 
         private FileSystemWatcher schedulesWatcher;
 
@@ -137,19 +168,40 @@ namespace Ark_Ascended_Manager.Services
             // Debounce or delay might be needed to handle multiple events
             LoadSchedules();
         }
-        private void RestartServer(Server server)
+        private async Task RestartServer(Server server)
         {
             try
             {
-                Debug.WriteLine($"Restarting server: {server.ProfileName}");
+                // First, notify players of the impending shutdown via RCON
+                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
+                await rcon.ConnectAsync();
+
+                // Send countdown messages
+                for (int i = 10; i > 0; i--)
+                {
+                    await rcon.SendCommandAsync($"ServerChat Server will restart in {i} minute(s)...");
+                    Debug.WriteLine($"Server restart notification sent: {i} minute(s) remaining.");
+                    await Task.Delay(60000); // Wait for 1 minute between each notification
+                }
+
+                // Perform the shutdown
+                await rcon.SendCommandAsync("doexit");
+                Debug.WriteLine("RCON shutdown command sent successfully.");
+
+                // Wait for the server to shut down fully - this delay may need to be adjusted
+                await Task.Delay(30000); // 30 seconds delay to ensure the server has time to shut down
+
+                // Start the server again
                 string batFilePath = Path.Combine(server.ServerPath, "StartServer.bat");
                 Process.Start(batFilePath);
+                Debug.WriteLine($"Server restart process started for: {batFilePath}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error restarting server: {ex.Message}");
             }
         }
+
 
         private async Task ShutdownServer(Server server)
         {
@@ -158,14 +210,25 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
                 var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
                 await rcon.ConnectAsync();
-                await rcon.SendCommandAsync("doexit"); // Replace with actual shutdown command
-                Debug.WriteLine("RCON command sent successfully.");
+
+                // Send countdown messages
+                for (int i = 10; i > 0; i--)
+                {
+                    await rcon.SendCommandAsync($"ServerChat Server will shut down in {i} minute(s)...");
+                    Debug.WriteLine($"Shutdown notification sent: {i} minute(s) remaining.");
+                    await Task.Delay(60000); // Wait for 1 minute between each notification
+                }
+
+                // Shutdown command
+                await rcon.SendCommandAsync("doexit");
+                Debug.WriteLine("RCON shutdown command sent successfully.");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in RCON shutdown: {ex.Message}");
             }
         }
+
     }
 
     internal class Schedule
