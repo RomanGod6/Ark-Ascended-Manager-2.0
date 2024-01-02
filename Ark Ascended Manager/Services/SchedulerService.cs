@@ -107,10 +107,15 @@ namespace Ark_Ascended_Manager.Services
         private async Task ExecuteSchedule(Schedule schedule)
         {
             Debug.WriteLine($"Attempting to execute schedule: {schedule.Nickname}");
-            var server = servers.FirstOrDefault(s => s.ProfileName == schedule.Server);
+
+            // Additional debug information to log the server names being compared
+            Debug.WriteLine($"Looking for server named '{schedule.Server.Trim()}' in the list of servers.");
+
+            var server = servers.FirstOrDefault(s => s.ProfileName.Trim() == schedule.Server.Trim());
+
             if (server != null)
             {
-                Debug.WriteLine($"Found server for schedule {schedule.Nickname}: {server.ProfileName}");
+                Debug.WriteLine($"Found server for schedule '{schedule.Nickname}': {server.ProfileName}");
                 switch (schedule.Action)
                 {
                     case "Restart":
@@ -127,9 +132,14 @@ namespace Ark_Ascended_Manager.Services
             }
             else
             {
-                Debug.WriteLine($"No matching server found for schedule {schedule.Nickname}");
+                Debug.WriteLine($"No matching server found for schedule '{schedule.Nickname}'. Available servers are:");
+                foreach (var srv in servers)
+                {
+                    Debug.WriteLine($"Server ProfileName: '{srv.ProfileName.Trim()}'");
+                }
             }
         }
+
         private async Task ExecuteCustomRCONCommand(Server server, string command)
         {
             try
