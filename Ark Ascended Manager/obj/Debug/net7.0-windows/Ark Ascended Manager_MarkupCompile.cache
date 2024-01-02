@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\
 Ark_Ascended_Manager
 none
 false
 TRACE;DEBUG;NET;NET7_0;NETCOREAPP
-C:\Users\Dillon Griffey\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\App.xaml
 15-2067052406
 1-1032615778
 441909892843
-2571850346204
+257-449203941
 ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateSchedulePage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\PluginInstallPage.xaml;Views\Pages\PluginsPage.xaml;Views\Pages\RconPanel.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
 
 False
