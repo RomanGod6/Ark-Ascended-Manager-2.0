@@ -531,7 +531,14 @@ namespace Ark_Ascended_Manager.Views.Pages
         { "SessionSettings", new Dictionary<string, string> {
             { "SessionName", "" }
             // Add more key-value pairs under SessionSettings
-        }}
+        }},
+                     {
+        "MessageOfTheDay", new Dictionary<string, string>
+        {
+            {"Message", "" }
+
+        }
+    },
         // Add more sections as needed
     };
 

@@ -563,6 +563,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadIniFile();
             LoadGameIniFile();
             LoadLaunchServerSettings();
+           
         }
         // Ensure this method is in the ConfigPageViewModel if that's where it's being called
         
@@ -1558,8 +1559,8 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
                         case "Banlist":
                             Banlist = value;
                             break;
-                        case "MOTDMessage":
-                            MOTDMessage = value;
+                        case "Message":
+                            MOTD = value;
                             break;
                         case "DisableDinoDecayPvE":
                             DisableDinoDecayPvE = ConvertToBoolean(value);
@@ -1878,7 +1879,7 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
             UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
-            UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTDMessage);
+            UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTD);
             UpdateLine(ref lines, "ServerSettings", "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
             UpdateLine(ref lines, "ServerSettings", "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "PvEDinoDecayPeriodMultiplier", PvEDinoDecayPeriodMultiplier);
@@ -2475,14 +2476,14 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
         }
 
 
-        private string _mOTDMessage;
-        public string MOTDMessage
+        private string _mOTD;
+        public string MOTD
         {
-            get { return _mOTDMessage; }
+            get { return _mOTD; }
             set
             {
-                _mOTDMessage = value;
-                OnPropertyChanged(nameof(MOTDMessage));
+                _mOTD = value;
+                OnPropertyChanged(nameof(MOTD));
                 
             }
         }
@@ -3881,7 +3882,7 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture));
+            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture) ?? "");
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseCorpseLocator", UseCorpseLocator.ToString());
             UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ShowCreativeMode", ShowCreativeMode.ToString());
