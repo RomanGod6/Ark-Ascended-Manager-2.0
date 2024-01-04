@@ -396,10 +396,21 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Debug\net7.0-windows\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.csproj.AssemblyReference.cache
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateSchedulePage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\DashboardPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ImportServersPage .baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\Integrations.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\IssueReportForm.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginInstallPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\RconPanel.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\App.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.g.cs
@@ -421,17 +432,6 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.cache
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager_MarkupCompile.lref
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\ServerCard.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ConfigPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateSchedulePage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\CreateServersPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ImportServersPage .baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\IssueReportForm.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\PluginsPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\ServersPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SettingsPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Pages\SyncConfigPage.baml
-C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Views\Windows\MainWindow.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.g.resources
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Debug\net7.0-windows\Ark Ascended Manager.AssemblyInfoInputs.cache

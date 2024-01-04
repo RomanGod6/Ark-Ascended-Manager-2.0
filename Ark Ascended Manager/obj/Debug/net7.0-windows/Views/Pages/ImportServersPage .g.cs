@@ -60,7 +60,7 @@ namespace Ark_Ascended_Manager.Views.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.1;component/views/pages/importserverspage%20.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.3.1;component/views/pages/importserverspage%20.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Pages\ImportServersPage .xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

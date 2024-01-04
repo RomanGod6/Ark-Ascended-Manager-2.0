@@ -76,7 +76,7 @@ namespace Ark_Ascended_Manager {
             
             #line default
             #line hidden
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.1;component/app.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.3.1;component/app.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\App.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

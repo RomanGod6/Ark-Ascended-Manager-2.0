@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Timers; // This is for System.Timers.Timer
+using System.Windows.Forms;
 
 namespace Ark_Ascended_Manager.Services
 {
@@ -29,6 +30,7 @@ namespace Ark_Ascended_Manager.Services
             timer.Elapsed += Timer_Elapsed; // Subscribe to the Elapsed event
             timer.AutoReset = true; // Enable AutoReset to continuously raise the event
             timer.Start(); // Start the timer
+
         }
 
         private void LoadSchedules()
@@ -54,12 +56,28 @@ namespace Ark_Ascended_Manager.Services
 
         private void LoadServers()
         {
-            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string serversFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "servers.json");
-            string serversJson = File.ReadAllText(serversFilePath);
-            servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
-            Debug.WriteLine($"Loaded {servers.Count} servers.");
+            try
+            {
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string serversFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "servers.json");
+
+                if (!File.Exists(serversFilePath))
+                {
+                    // Handle the case where the file doesn't exist
+                    Debug.WriteLine("servers.json file not found.");
+                    return;
+                }
+
+                string serversJson = File.ReadAllText(serversFilePath);
+                servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
+                Debug.WriteLine($"Loaded {servers.Count} servers.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading servers: {ex.Message}");
+            }
         }
+
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -124,7 +142,7 @@ namespace Ark_Ascended_Manager.Services
                     case "Shutdown":
                         await ShutdownServer(server);
                         break;
-                    case "CustomRCON": // Handle custom RCON commands
+                    case "Custom RCON Command":
                         await ExecuteCustomRCONCommand(server, schedule.RconCommand);
                         break;
                         // Add other actions as needed
@@ -144,17 +162,20 @@ namespace Ark_Ascended_Manager.Services
         {
             try
             {
-                Debug.WriteLine($"Sending custom RCON command to server {server.ProfileName}: {command}");
+                Debug.WriteLine($"Sending custom RCON command '{command}' to server {server.ProfileName}");
                 var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
                 await rcon.ConnectAsync();
                 var response = await rcon.SendCommandAsync(command);
-                Debug.WriteLine($"Custom RCON command sent successfully. Response: {response}");
+                Debug.WriteLine($"Custom RCON command sent. Response: {response ?? "No response"}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error sending custom RCON command: {ex.Message}");
             }
         }
+
+
+
 
 
         private FileSystemWatcher schedulesWatcher;
@@ -182,12 +203,12 @@ namespace Ark_Ascended_Manager.Services
         {
             try
             {
-                // First, notify players of the impending shutdown via RCON
+                // Notify players of the impending shutdown via RCON
                 var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
                 await rcon.ConnectAsync();
 
                 // Send countdown messages
-                for (int i = 10; i > 0; i--)
+                for (int i = 1; i > 0; i--)
                 {
                     await rcon.SendCommandAsync($"ServerChat Server will restart in {i} minute(s)...");
                     Debug.WriteLine($"Server restart notification sent: {i} minute(s) remaining.");
@@ -198,11 +219,14 @@ namespace Ark_Ascended_Manager.Services
                 await rcon.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
 
-                // Wait for the server to shut down fully - this delay may need to be adjusted
+                // Wait for the server to shut down fully
                 await Task.Delay(30000); // 30 seconds delay to ensure the server has time to shut down
 
+                // Update the server before restarting
+                await UpdateServer(server);
+
                 // Start the server again
-                string batFilePath = Path.Combine(server.ServerPath, "StartServer.bat");
+                string batFilePath = Path.Combine(server.ServerPath, "LaunchServer.bat");
                 Process.Start(batFilePath);
                 Debug.WriteLine($"Server restart process started for: {batFilePath}");
             }
@@ -218,20 +242,26 @@ namespace Ark_Ascended_Manager.Services
             try
             {
                 Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
+                Debug.WriteLine($"Connecting to RCON at IP: 127.0.0.1, Port: {server.RCONPort}");
+
                 var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
                 await rcon.ConnectAsync();
 
                 // Send countdown messages
                 for (int i = 10; i > 0; i--)
                 {
+                    Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
                     await rcon.SendCommandAsync($"ServerChat Server will shut down in {i} minute(s)...");
-                    Debug.WriteLine($"Shutdown notification sent: {i} minute(s) remaining.");
                     await Task.Delay(60000); // Wait for 1 minute between each notification
                 }
 
                 // Shutdown command
+                Debug.WriteLine("Sending RCON shutdown command.");
                 await rcon.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
+
+                ServerConfig serverConfig = ConvertToServerConfig(server);
+                UpdateServer(server);
             }
             catch (Exception ex)
             {
@@ -239,7 +269,284 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
+        private ServerConfig ConvertToServerConfig(Server server)
+        {
+            return new ServerConfig
+            {
+                // Map properties from Server to ServerConfig
+                ProfileName = server.ProfileName,
+                ServerPath = server.ServerPath,
+                // ... other properties ...
+            };
+        }
+
+        private List<Server> ReadAllServers()
+        {
+            Debug.WriteLine("ReadAllServers: Method called.");
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"ReadAllServers: File path - {filePath}");
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    Debug.WriteLine("ReadAllServers: JSON content read successfully.");
+                    List<Server> servers = JsonConvert.DeserializeObject<List<Server>>(json);
+                    return servers ?? new List<Server>();
+                }
+                else
+                {
+                    Debug.WriteLine("ReadAllServers: JSON file does not exist.");
+                    return new List<Server>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ReadAllServers: Exception occurred - {ex.Message}");
+                return new List<Server>();
+            }
+        }
+
+
+        private void WriteAllServers(List<Server> servers)
+        {
+            Debug.WriteLine("WriteAllServers: Method called.");
+
+            // Optional: Debug print for verification
+            var serverForDebug = servers.FirstOrDefault(s => s.ProfileName == "YourServerProfileName"); // Replace with the actual profile name
+            if (serverForDebug != null)
+            {
+                Debug.WriteLine($"WriteAllServers: Details for server '{serverForDebug.ProfileName}' will be written.");
+            }
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+            Debug.WriteLine($"WriteAllServers: File path - {filePath}");
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+                Debug.WriteLine("WriteAllServers: JSON file written successfully.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WriteAllServers: Exception occurred - {ex.Message}");
+            }
+        }
+
+        private async Task UpdateServer(Server selectedServer)
+        {
+            if (selectedServer == null)
+            {
+                System.Windows.MessageBox.Show("Server configuration is not provided.");
+                return;
+            }
+
+            // Using 'selectedServer' to avoid shadowing
+            var serverToUpdate = servers.FirstOrDefault(s => s.ProfileName == selectedServer.ProfileName);
+
+            // Check if the server is running before updating
+            if (serverToUpdate != null && serverToUpdate.IsServerRunning)
+            {
+                System.Windows.MessageBox.Show("The server is currently running. Please stop the server before updating.");
+                return;
+            }
+
+            // Call the update method with the current server configuration
+            if (serverToUpdate != null)
+            {
+                UpdateServerBasedOnJson(serverToUpdate);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Server not found.");
+            }
+        }
+
+
+
+        public void UpdateServerBasedOnJson(Server server)
+        {
+            if (server != null && !string.IsNullOrEmpty(server.AppId))
+            {
+                string scriptPath = Path.Combine(Path.GetTempPath(), "steamcmd_update_script.txt");
+                File.WriteAllLines(scriptPath, new string[]
+                {
+            $"force_install_dir \"{server.ServerPath}\"",
+            "login anonymous",
+            $"app_update {server.AppId} validate",
+            "quit"
+                });
+
+                RunSteamCMD(scriptPath);
+
+                // After running SteamCMD, update the change number
+                UpdateChangeNumberFromJson(server);
+            }
+            else
+            {
+                Ark_Ascended_Manager.Services.Logger.Log("Could not update the server, App ID not found or server is null");
+            }
+        }
+
+        private void RunSteamCMD(string scriptPath)
+        {
+            string steamCmdPath = FindSteamCmdPath();
+            if (string.IsNullOrEmpty(steamCmdPath))
+            {
+                // Handle the error: steamcmd.exe not found
+                return;
+            }
+
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                FileName = steamCmdPath,
+                Arguments = $"+runscript \"{scriptPath}\"",
+                UseShellExecute = true,
+                CreateNoWindow = false
+            };
+
+            using (Process process = new Process { StartInfo = processStartInfo })
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+        }
+        private string FindSteamCmdPath()
+        {
+            // Define the JSON file path in the app data directory
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
+            string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
+
+            // Try to read the path from the JSON file
+            if (File.Exists(jsonFilePath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(jsonFilePath);
+                    dynamic pathData = JsonConvert.DeserializeObject<dynamic>(json);
+                    string savedPath = pathData?.SteamCmdPath;
+                    if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                    {
+                        return savedPath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions that occur during reading and deserializing the JSON file
+                    // For example, log the exception and proceed to prompt the user
+                }
+            }
+
+            // Prompt the user to locate steamcmd.exe if the path is not found or not valid
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Executable files (*.exe)|*.exe",
+                Title = "Locate steamcmd.exe"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Save the selected path to the JSON file for future use
+                SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
+                return openFileDialog.FileName;
+            }
+
+            // Return null if the path could not be found or the user cancelled the dialog
+            return null;
+        }
+
+        private void SaveSteamCmdPath(string path, string jsonFilePath)
+        {
+            var pathData = new { SteamCmdPath = path };
+            string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, json);
+        }
+        private void UpdateChangeNumberFromJson(Server server)
+        {
+            Debug.WriteLine("UpdateChangeNumberFromJson: Method called.");
+
+            if (server == null || string.IsNullOrEmpty(server.AppId))
+            {
+                Debug.WriteLine("UpdateChangeNumberFromJson: Server is null or AppId is empty.");
+                return;
+            }
+
+            string jsonFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ark Ascended Manager",
+                server.AppId,
+                $"sanitizedsteamdata_{server.AppId}.json");
+
+            Debug.WriteLine($"UpdateChangeNumberFromJson: JSON file path - {jsonFilePath}");
+
+            if (!File.Exists(jsonFilePath))
+            {
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON file does not exist.");
+                return;
+            }
+
+            try
+            {
+                string jsonContent = File.ReadAllText(jsonFilePath);
+                Debug.WriteLine("UpdateChangeNumberFromJson: JSON content read successfully.");
+
+                dynamic json = JsonConvert.DeserializeObject(jsonContent);
+                if (json != null && json.ChangeNumber != null)
+                {
+                    Debug.WriteLine($"UpdateChangeNumberFromJson: JSON ChangeNumber found - {json.ChangeNumber}");
+                    server.ChangeNumber = json.ChangeNumber; // Update only the ChangeNumber
+
+                    // After updating the ChangeNumber, save the updated server info back to the file
+                    SaveUpdatedServer(server);
+                }
+                else
+                {
+                    Debug.WriteLine("UpdateChangeNumberFromJson: JSON is invalid or doesn't contain ChangeNumber.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"UpdateChangeNumberFromJson: Exception occurred - {ex.Message}");
+            }
+        }
+
+        private void SaveUpdatedServer(Server updatedServer)
+        {
+            Debug.WriteLine("SaveUpdatedServer: Method called.");
+
+            var allServers = ReadAllServers();
+            // Find the index of the server to update
+            var index = allServers.FindIndex(s => s.AppId == updatedServer.AppId && s.ProfileName.Equals(updatedServer.ProfileName, StringComparison.OrdinalIgnoreCase));
+
+            if (index != -1) // Check if the server is found
+            {
+                Debug.WriteLine($"SaveUpdatedServer: Current ChangeNumber for server '{allServers[index].ProfileName}' is {allServers[index].ChangeNumber}");
+
+                // Update the ChangeNumber of the server
+                allServers[index].ChangeNumber = updatedServer.ChangeNumber;
+
+                Debug.WriteLine($"SaveUpdatedServer: New ChangeNumber to be set for server '{allServers[index].ProfileName}' is {updatedServer.ChangeNumber}");
+
+                // Write all servers back to storage
+                WriteAllServers(allServers);
+            }
+            else
+            {
+                Debug.WriteLine("SaveUpdatedServer: Server not found.");
+            }
+        }
+        }
+
+
+
     }
+
 
     internal class Schedule
     {
@@ -257,5 +564,8 @@ namespace Ark_Ascended_Manager.Services
         public string ServerPath { get; set; }
         public int RCONPort { get; set; }
         public string AdminPassword { get; set; }
+        public int ChangeNumber { get; set; }
+        public string AppId { get; set; }
+        public bool IsServerRunning { get; set; }
     }
-}
+

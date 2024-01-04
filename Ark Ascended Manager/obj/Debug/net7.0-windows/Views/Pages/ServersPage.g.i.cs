@@ -61,7 +61,7 @@ namespace Ark_Ascended_Manager.Views.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.1;component/views/pages/serverspage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.3.1;component/views/pages/serverspage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Pages\ServersPage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

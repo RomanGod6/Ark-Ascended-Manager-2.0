@@ -7,6 +7,7 @@
       xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+     xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers" 
       
       Title="ConfigPage"
       d:DataContext="{d:DesignInstance Type=vm:ConfigPageViewModel, IsDesignTimeCreatable=True}"
@@ -43,6 +44,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <helpers:ListToStringConverter x:Key="ListToStringConverter" />
+        
     </Page.Resources>
 
     <!-- Use a Grid as the single child of Page -->
@@ -106,10 +109,12 @@
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                     <Label Content="Admin Password" ToolTip="Password to become admin"/>
                                     <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}" />
+                                    <Label Content="MOTD" ToolTip="Message for users who log in"/>
+                                    <TextBox Text="{Binding MOTDMessage, Mode=TwoWay}" Height="209"/>
                                     <Label Content="Server Password" ToolTip="Password to join the server"/>
                                     <TextBox Text="{Binding ServerPassword, Mode=TwoWay}" />
                                     <Label Content="Banlist:" ToolTip="List of Banned Players"/>
-                                    <TextBox Text="{Binding Banlist, Mode=TwoWay}" ToolTip="List of Banned Players"/>
+                                    <TextBox Text="{Binding Message, Mode=TwoWay}" ToolTip="List of Banned Players"/>
                                     <Label Content="Photo Mode Range Limit:" ToolTip="Range of camera mode in meters"/>
                                     <TextBox Text="{Binding PhotoModeRangeLimit, Mode=TwoWay}" ToolTip="Range of camera mode in meters"/>
                                     <Label Content="Spectator Password:" ToolTip="Password needed for spectator"/>
@@ -1012,13 +1017,105 @@
                     <!-- Put the controls related to Launch Parameters here -->
                 </Grid>
             </TabItem>
-            <TabItem Header="System Management">
+            <TabItem Header="Schedules">
+                <DataGrid ItemsSource="{Binding ScheduleTasks}"
+          AutoGenerateColumns="False"
+          FontFamily="Segoe UI" 
+          FontSize="14"
+          RowHeight="30"
+          AlternationCount="2"
+          AlternatingRowBackground="#F5F5F5"
+          GridLinesVisibility="Horizontal"
+          HorizontalGridLinesBrush="#E0E0E0"
+          VerticalGridLinesBrush="#E0E0E0"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          CanUserResizeRows="False"
+          CanUserSortColumns="True"
+          SelectionMode="Single"
+          SelectionUnit="FullRow"
+          IsReadOnly="True">
 
-                <Grid>
-                
+                    <DataGrid.Resources>
+                        <!-- Define adaptable brushes instead of colors -->
+                        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#F0F0F0"/>
+                        <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#000000"/>
+                        <SolidColorBrush x:Key="RowHoverBackgroundBrush" Color="#E8E8E8"/>
+                        <SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Color="#FFFFFF"/>
 
-                </Grid>
+                        <!-- Header style -->
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource HeaderForegroundBrush}"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="10"/>
+                            <Setter Property="Height" Value="40"/>
+                        </Style>
+
+                        <!-- Cell style -->
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="8"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <!-- Row style -->
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RowHoverBackgroundBrush}"/>
+                                </Trigger>
+                                <Trigger Property="AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="{StaticResource AlternatingRowBackgroundBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+
+
+
+                    <!-- Column definitions -->
+                    <DataGrid.Columns>
+                        <!-- Your existing columns -->
+                        <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" />
+                        <DataGridTextColumn Header="Action" Binding="{Binding Action}" />
+                        <DataGridTextColumn Header="RCON Command" Binding="{Binding RconCommand}" />
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" />
+                        <DataGridTemplateColumn Header="Days">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Days, Converter={StaticResource ListToStringConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Reoccurrence Type" Binding="{Binding ReoccurrenceIntervalType}" />
+                        <DataGridTextColumn Header="Reoccurrence Interval" Binding="{Binding ReoccurrenceInterval}" />
+
+                        <!-- New column for Delete button -->
+                        <DataGridTemplateColumn Header="Delete" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete" Command="{Binding DataContext.DeleteScheduleCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}">
+                                        <!-- CommandParameter is bound to the current row's DataContext -->
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+
             </TabItem>
+
+
             <TabItem Header="Plugin Management">
                 <Grid>
                     <Grid.ColumnDefinitions>

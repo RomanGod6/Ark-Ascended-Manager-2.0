@@ -99,7 +99,7 @@ namespace Ark_Ascended_Manager.Views.Windows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.2.2.1;component/views/windows/mainwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Ark Ascended Manager;V2.3.1;component/views/windows/mainwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Windows\MainWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

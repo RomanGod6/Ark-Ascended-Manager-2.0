@@ -104,7 +104,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
 
-           NavigationService.GoBack();
+            _navigationService.GoBack();
         }
        
         public class Schedule

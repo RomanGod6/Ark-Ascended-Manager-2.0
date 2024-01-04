@@ -17,12 +17,24 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using CoreRCON;
 using System.Net;
+using System.Windows.Forms;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
+using Ark_Ascended_Manager.Helpers;
+using System.Text;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
 
     public class ConfigPageViewModel : ObservableObject
     {
+        private ObservableCollection<ScheduleTask> _scheduleTasks;
+        private string _currentServer;
+        private FileSystemWatcher _fileWatcher;
+
+
+        public ICommand DeleteScheduleCommand { get; private set; }
         public ObservableCollection<string> PluginNames { get; set; }
         
 
@@ -69,7 +81,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-
+        public ObservableCollection<ScheduleTask> ScheduleTasks
+        {
+            get => _scheduleTasks;
+            set
+            {
+                _scheduleTasks = value;
+                OnPropertyChanged(nameof(ScheduleTasks));
+            }
+        }
 
 
         public ICommand SaveIniFileCommand { get; private set; }
@@ -82,7 +102,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             }
             LoadServerProfile();
-            
+            InitializeFileWatcher();
+            LoadAndDisplaySchedules();
             SaveGameIniSettingsCommand = new RelayCommand(SaveAllSettings);
             LoadLaunchServerSettingsCommand = new RelayCommand(UpdateLaunchParameters);
             StartServerCommand = new RelayCommand(StartServer);
@@ -94,11 +115,105 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGAMEIniFileCommand = new RelayCommand(SaveCustomGAMEIniFile);
             DeleteServerCommand = new RelayCommand(DeleteServer);
             WipeServerCommand = new RelayCommand(WipeServer);
+            DeleteScheduleCommand = new RelayCommand<ScheduleTask>(DeleteSchedule);
             LoadPlugins();
             _overrideEnabled = true;
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
-
+            
         }
+        private void DeleteSchedule(ScheduleTask scheduleToDelete)
+        {
+            if (scheduleToDelete == null) return;
+
+            // Remove the schedule from the ObservableCollection
+            ScheduleTasks.Remove(scheduleToDelete);
+
+            // Update the JSON file
+            UpdateJsonFile();
+        }
+        private void UpdateJsonFile()
+        {
+            try
+            {
+                string appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string fullPath = Path.Combine(appDataRoamingPath, "Ark Ascended Manager", "schedules.json");
+
+                // Serialize the updated list to JSON
+                string updatedJson = JsonConvert.SerializeObject(ScheduleTasks.ToList());
+
+                // Write the updated JSON back to the file
+                File.WriteAllText(fullPath, updatedJson);
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the error
+                Debug.WriteLine("Error updating JSON file: " + ex.Message);
+            }
+        }
+        private void LoadAndDisplaySchedules()
+        {
+            var schedules = ReadAndParseJson(@"\AppData\Roaming\Ark Ascended Manager\schedules.json");
+            _currentServer = CurrentServerConfig.ProfileName; // Implement this method
+            ScheduleTasks = new ObservableCollection<ScheduleTask>(
+                schedules.Where(s => s.Server == _currentServer));
+        }
+        
+        private void InitializeFileWatcher()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string fullPath = Path.Combine(appDataPath, "Ark Ascended Manager", "schedules.json");
+
+            if (!File.Exists(fullPath))
+            {
+                return;
+            }
+
+            _fileWatcher = new FileSystemWatcher(Path.GetDirectoryName(fullPath), Path.GetFileName(fullPath));
+            _fileWatcher.Changed += (sender, e) => LoadAndDisplaySchedules();
+            _fileWatcher.EnableRaisingEvents = true;
+        }
+
+
+        private List<ScheduleTask> ReadAndParseJson(string fileName)
+        {
+            // Get the full path to the AppData\Roaming directory for the current user
+            string appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string fullPath = Path.Combine(appDataRoamingPath, "Ark Ascended Manager", "schedules.json");
+
+            // Log the full path for debugging purposes
+            Debug.WriteLine($"Attempting to read from: {fullPath}");
+
+            // Check if the file exists to avoid a FileNotFoundException
+            if (!File.Exists(fullPath))
+            {
+                Debug.WriteLine($"The file at path {fullPath} does not exist.");
+                // Return an empty list since the file doesn't exist
+                return new List<ScheduleTask>();
+            }
+
+            // The file exists, read the file's content and deserialize it into objects
+            var fileContent = File.ReadAllText(fullPath);
+            return JsonConvert.DeserializeObject<List<ScheduleTask>>(fileContent) ?? new List<ScheduleTask>();
+        }
+
+
+
+
+
+
+
+        public class ScheduleTask
+        {
+            public string Nickname { get; set; }
+            public string Action { get; set; }
+            public string RconCommand { get; set; }
+            public string Time { get; set; }
+            public List<string> Days { get; set; }
+            public string ReoccurrenceIntervalType { get; set; }
+            public int ReoccurrenceInterval { get; set; }
+            public string Server { get; set; }
+        }
+
         private void LoadCustomGAMEIniFile()
         {
             string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
@@ -129,7 +244,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGameUserSettings();
             UpdateCurrentServerAdminPassword();
             // Display a message box to inform the user that the settings have been saved
-            MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void UpdateCurrentServerAdminPassword()
@@ -231,7 +346,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void UpdateSelectedPluginConfig(string jsonContent)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 Ark_Ascended_Manager.Services.Logger.Log("Entering UpdateSelectedPluginConfig method.");
                 try
@@ -298,7 +413,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private void WipeServer()
         {
-            if (MessageBox.Show("Are you sure you want to wipe the server? This action cannot be undone.", "Confirm Wipe", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (System.Windows.MessageBox.Show("Are you sure you want to wipe the server? This action cannot be undone.", "Confirm Wipe", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
@@ -306,29 +421,33 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     if (Directory.Exists(savedArksPath))
                     {
                         Directory.Delete(savedArksPath, true);
-                        MessageBox.Show("The server has been wiped successfully.", "Wipe Completed", MessageBoxButton.OK, MessageBoxImage.Information);
+                        System.Windows.MessageBox.Show("The server has been wiped successfully.", "Wipe Completed", MessageBoxButton.OK, MessageBoxImage.Information);
                         // Navigate away or refresh the view as needed
                     }
                     else
                     {
-                        MessageBox.Show("The server save directory does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        System.Windows.MessageBox.Show("The server save directory does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred while wiping the server: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show($"An error occurred while wiping the server: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
-
+        public void OnNavigatedTo(object parameter)
+        {
+            LoadAndDisplaySchedules();
+            InitializeFileWatcher();
+        }
         private void SaveCustomGAMEIniFile()
         {
             // Save the IniContent back to the file
             string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
             string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
             File.WriteAllText(filePath, GameIniContent);
-            MessageBox.Show("GAME INI file saved successfully.");
+            System.Windows.MessageBox.Show("GAME INI file saved successfully.");
 
         }
         private void LoadCustomGUSIniFile()
@@ -346,7 +465,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
             string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "GameUserSettings.ini");
             File.WriteAllText(filePath, IniContent);
-            MessageBox.Show("GUS file saved successfully.");
+            System.Windows.MessageBox.Show("GUS file saved successfully.");
 
         }
         private void DeleteServer()
@@ -365,7 +484,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 // Notify the user that the names didn't match
-                MessageBox.Show("Server name does not match. Deletion cancelled.");
+                System.Windows.MessageBox.Show("Server name does not match. Deletion cancelled.");
             }
         }
 
@@ -406,7 +525,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 // Server was not found in the configuration
-                MessageBox.Show("Server not found in the configuration. No action taken.");
+                System.Windows.MessageBox.Show("Server not found in the configuration. No action taken.");
             }
         }
 
@@ -475,7 +594,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             if (CurrentServerConfig == null)
             {
-                MessageBox.Show("Current server configuration is not loaded.");
+                System.Windows.MessageBox.Show("Current server configuration is not loaded.");
                 return;
             }
 
@@ -488,7 +607,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             if (!int.TryParse(timeInput, out int countdownMinutes) || countdownMinutes <= 0)
             {
-                MessageBox.Show("Invalid input for countdown timer.");
+                System.Windows.MessageBox.Show("Invalid input for countdown timer.");
                 return;
             }
 
@@ -501,7 +620,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             if (string.IsNullOrEmpty(reason))
             {
-                MessageBox.Show("No reason for shutdown provided.");
+                System.Windows.MessageBox.Show("No reason for shutdown provided.");
                 return;
             }
 
@@ -786,7 +905,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
 
             // If the path is not found in the JSON file, prompt the user with OpenFileDialog
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
                 Filter = "Executable files (*.exe)|*.exe",
                 Title = "Locate steamcmd.exe"
@@ -977,7 +1096,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveServerConfigToJson();
 
             Console.WriteLine("Launch parameters have been updated.");
-            MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void SaveServerConfigToJson()
         {
@@ -1286,7 +1405,6 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             return true;
         }
 
-
         private void LoadIniFile()
         {
             Console.WriteLine("INI file load has been initiated.");
@@ -1439,6 +1557,9 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
                             break;
                         case "Banlist":
                             Banlist = value;
+                            break;
+                        case "MOTDMessage":
+                            MOTDMessage = value;
                             break;
                         case "DisableDinoDecayPvE":
                             DisableDinoDecayPvE = ConvertToBoolean(value);
@@ -1757,6 +1878,7 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
             UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
+            UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTDMessage);
             UpdateLine(ref lines, "ServerSettings", "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
             UpdateLine(ref lines, "ServerSettings", "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "PvEDinoDecayPeriodMultiplier", PvEDinoDecayPeriodMultiplier);
@@ -1958,6 +2080,16 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             {
                 _harvestAmountMultiplier = value;
                 OnPropertyChanged(nameof(HarvestAmountMultiplier)); // Notify the UI of the change
+            }
+        }
+        private string _message;
+        public string Message
+        {
+            get { return _message; }
+            set
+            {
+                _message = value;
+                OnPropertyChanged(nameof(Message));
             }
         }
         private string _resourcesRespawnPeriodMultiplier;
@@ -2342,6 +2474,18 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             }
         }
 
+
+        private string _mOTDMessage;
+        public string MOTDMessage
+        {
+            get { return _mOTDMessage; }
+            set
+            {
+                _mOTDMessage = value;
+                OnPropertyChanged(nameof(MOTDMessage));
+                
+            }
+        }
 
 
         private bool _disableDinoDecayPvE;

@@ -243,6 +243,11 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Discord.Net.Rest.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Discord.Net.Webhook.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Discord.Net.WebSocket.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Xceed.Wpf.AvalonDock.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.Aero.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.Metro.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Xceed.Wpf.AvalonDock.Themes.VS2010.NET5.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Xceed.Wpf.Toolkit.NET5.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Microsoft.Data.Sqlite.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Microsoft.Extensions.Configuration.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
@@ -279,6 +284,18 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\System.Linq.Async.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\System.Reactive.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\Wpf.Ui.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\cs-CZ\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\de\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\es\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\fr\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\hu\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\it\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\ja-JP\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\pt-BR\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\ro\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\ru\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\sv\Xceed.Wpf.AvalonDock.NET5.resources.dll
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\zh-Hans\Xceed.Wpf.AvalonDock.NET5.resources.dll
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\runtimes\browser-wasm\nativeassets\net7.0\e_sqlite3.a
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\runtimes\linux-arm\native\libe_sqlite3.so
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\bin\Release\net7.0-windows\runtimes\linux-arm64\native\libe_sqlite3.so
@@ -307,6 +324,7 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\App.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\ServerCard.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\ConfigPage.g.cs
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\CreateSchedulePage.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\CreateServersPage.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\DashboardPage.g.cs
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\ImportServersPage .g.cs
@@ -326,6 +344,7 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Ark Ascended Manager_MarkupCompile.lref
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\ServerCard.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\ConfigPage.baml
+C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\CreateSchedulePage.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\CreateServersPage.baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\ImportServersPage .baml
 C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Manager\obj\Release\net7.0-windows\Views\Pages\IssueReportForm.baml

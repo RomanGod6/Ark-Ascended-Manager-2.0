@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 
 
@@ -87,6 +89,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             {
                 Console.WriteLine($"ServerConfig received: {serverConfig.ProfileName}");
                 ViewModel.LoadConfig(serverConfig);
+              
             }
             else
             {
