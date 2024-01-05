@@ -66,36 +66,37 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             Debug.WriteLine("Updating Rich Text Preview");
             var flowDoc = new FlowDocument();
-            var paragraph = new Paragraph();
 
-            var parts = motd.Split(new string[] { "</>" }, StringSplitOptions.None);
-            foreach (var part in parts)
+            // The pattern includes the color start tag, the color end tag, and the newline escape sequence
+            var pattern = @"(<RichColor Color=""[0-9,. ]+"">|</>|\\n)";
+            var segments = Regex.Split(motd, pattern);
+
+            Color currentColor = Colors.Black; // Default color
+            Paragraph paragraph = new Paragraph();
+
+            foreach (var segment in segments)
             {
-                Debug.WriteLine($"Processing part: {part}");
-                if (part.Contains("<RichColor"))
+                if (segment.StartsWith("<RichColor"))
                 {
-                    int startTag = part.IndexOf("<RichColor");
-                    int endTag = part.IndexOf(">", startTag) + 1;
-                    string colorTag = part.Substring(startTag, endTag - startTag);
-
-                    Debug.WriteLine($"Found color tag: {colorTag}");
-
-                    // Find the text in front of the <RichColor> tag
-                    string text = part.Substring(0, startTag);
-
-                    Color color = ExtractColorFromTag(colorTag);
-
-                    Debug.WriteLine($"Applying color: {color} to text: {text}");
-
-                    var run = new Run(text)
-                    {
-                        Foreground = new SolidColorBrush(color)
-                    };
-                    paragraph.Inlines.Add(run);
+                    currentColor = ExtractColorFromTag(segment);
+                }
+                else if (segment.Equals("</>")) // Check if the segment is the color end tag
+                {
+                    // Do nothing, just here to prevent adding the closing tag as text
+                }
+                else if (segment.Equals("\\n")) // Check if the segment is the newline escape sequence
+                {
+                    // Add a new line to the paragraph
+                    paragraph.Inlines.Add(new LineBreak());
                 }
                 else
                 {
-                    paragraph.Inlines.Add(new Run(part));
+                    // This segment is the text that should have the current color
+                    Run run = new Run(segment)
+                    {
+                        Foreground = new SolidColorBrush(currentColor)
+                    };
+                    paragraph.Inlines.Add(run);
                 }
             }
 
@@ -103,6 +104,13 @@ namespace Ark_Ascended_Manager.Views.Pages
             richTextPreview.Document = flowDoc;
             Debug.WriteLine("Rich Text Preview Updated");
         }
+
+
+
+
+
+
+
 
 
 
