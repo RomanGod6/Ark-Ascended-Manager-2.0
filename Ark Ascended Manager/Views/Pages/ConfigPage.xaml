@@ -74,6 +74,7 @@
             <Button Content="Update Server" Command="{Binding UpdateServerCommand}" Margin="5"/>
             <Button Content="Delete Server" Command="{Binding DeleteServerCommand}" Margin="5"/>
             <Button Content="Add New Schedule" Click="AddNewScheduleButton_Click"/>
+            <Button Content="Restore Backup" Click="RestoreBackUpButton_Click"/>
 
 
         </StackPanel>

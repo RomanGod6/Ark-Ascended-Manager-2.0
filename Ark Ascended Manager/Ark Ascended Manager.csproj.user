@@ -16,6 +16,9 @@
     <Compile Update="Views\Pages\IssueReportForm.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\RestorePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="ServerCard.xaml">
@@ -46,6 +49,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\DashboardPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Pages\RestorePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\SyncConfigPage.xaml">

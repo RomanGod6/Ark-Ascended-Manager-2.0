@@ -54,8 +54,9 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<SteamVersionControl>();
                 services.AddSingleton<ServerUpdateService>();
                 services.AddSingleton<CreateSchedulePage>();
+                services.AddSingleton<RestorePage>();
 
-
+                
 
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();

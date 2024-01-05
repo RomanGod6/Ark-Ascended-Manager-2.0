@@ -228,12 +228,38 @@ namespace Ark_Ascended_Manager.Views.Pages
             return Colors.Black; // Default color if parsing fails
         }
 
+        private void RestoreBackUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Assuming ServerConfig is a class that represents your server configuration
+            ServerConfig serverConfig = new ServerConfig
+            {
+                ProfileName = ViewModel.CurrentServerConfig.ProfileName, // Replace with actual data
+                ServerPath = ViewModel.CurrentServerConfig.ServerPath          // Replace with actual data
+            };
+
+            SaveServerConfigToJson(serverConfig);
+        }
+
+        private void SaveServerConfigToJson(ServerConfig serverConfig)
+        {
+            string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appNameFolder = Path.Combine(appDataFolderPath, "Ark Ascended Manager");
+            string jsonFileName = "RestoreBackUpDataStruc.json";
+            string jsonFilePath = Path.Combine(appNameFolder, jsonFileName);
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(appNameFolder);
+
+            // Serialize the serverConfig object to JSON
+            string json = JsonConvert.SerializeObject(serverConfig);
+
+            // Save the JSON to a file
+            File.WriteAllText(jsonFilePath, json);
+
+            _navigationService.Navigate(typeof(RestorePage));
+        }
 
 
-
-
-
-        // Implement the interface member of INavigableView to handle navigation with a parameter.
         public void OnNavigatedTo(object parameter)
         {
             Console.WriteLine("OnNavigatedTo called in ConfigPage.");
