@@ -13,7 +13,11 @@ C:\Users\griff\source\repos\RomanGod6\Ark-Ascended-Manager-2.0\Ark Ascended Mana
 16913327107
 1-1032615778
 47-605283181
+<<<<<<< HEAD
 257-449203941
+=======
+257-2096367780
+>>>>>>> 8b01e1eda6e7c2d9dab8755b9bf030a3ed659d18
 ServerCard.xaml;Views\Pages\ConfigPage.xaml;Views\Pages\CreateSchedulePage.xaml;Views\Pages\CreateServersPage.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\ImportServersPage .xaml;Views\Pages\Integrations.xaml;Views\Pages\IssueReportForm.xaml;Views\Pages\PluginInstallPage.xaml;Views\Pages\PluginsPage.xaml;Views\Pages\RconPanel.xaml;Views\Pages\RestorePage.xaml;Views\Pages\ServersPage.xaml;Views\Pages\SettingsPage.xaml;Views\Pages\SyncConfigPage.xaml;Views\Windows\MainWindow.xaml;
 
 False

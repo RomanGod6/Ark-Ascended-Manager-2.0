@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "+wGK3Pbq/Diqi38+KNNSCRBk4YShLrI3mxEXgqsmapzZJg2w+qkajip2dMNmt9GsJrFHQs9ouBijd1gGvBLSmA==",
+=======
+  "dgSpecHash": "zgcf14i9DI9LdMSMdQia0cHCkNUjn3pWaPCJdh+CB48TBkbs2gUU8NffhoFKnkHSZh2DY0/RfEo99Xq3doQ7Iw==",
+>>>>>>> 8b01e1eda6e7c2d9dab8755b9bf030a3ed659d18
   "success": true,
   "projectFilePath": "C:\\Users\\griff\\source\\repos\\RomanGod6\\Ark-Ascended-Manager-2.0\\Ark Ascended Manager\\Ark Ascended Manager.csproj",
   "expectedPackageFiles": [
