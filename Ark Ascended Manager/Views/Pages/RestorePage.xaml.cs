@@ -4,18 +4,22 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class RestorePage : Page
     {
         private ObservableCollection<BackupInfo> backupsList = new ObservableCollection<BackupInfo>();
-
-        public RestorePage()
+        private ServerConfigs serverConfig; // ServerConfigs as a field within the class
+        private readonly INavigationService _navigationService;
+        public RestorePage(INavigationService navigationService)
         {
             InitializeComponent();
             LoadBackupsList();
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         }
+
         private void LoadBackupsList()
         {
             // Define the path to your JSON configuration file
@@ -32,7 +36,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             // Read the JSON content from the configuration file
             string serverConfigJson = File.ReadAllText(jsonFilePath);
-            var serverConfig = JsonConvert.DeserializeObject<ServerConfigs>(serverConfigJson);
+            serverConfig = JsonConvert.DeserializeObject<ServerConfigs>(serverConfigJson); // Assigning to the field
 
             // Check if the deserialization was successful
             if (serverConfig == null)
@@ -42,7 +46,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
 
             // Construct the path to the backup folder
-            string backupFolderPath = Path.Combine(serverConfig.Path, "ShooterGame", "Saved", "SavedArks", serverConfig.MapName);
+            string backupFolderPath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Saved", "SavedArks", serverConfig.MapName);
 
             // Ensure the backup directory exists
             if (!Directory.Exists(backupFolderPath))
@@ -51,63 +55,69 @@ namespace Ark_Ascended_Manager.Views.Pages
                 return;
             }
 
-            // Get the directory info and list the .ark files
+            // Get the directory info and list all .ark files except the current one
             DirectoryInfo di = new DirectoryInfo(backupFolderPath);
+            FileInfo currentArkFile = di.GetFiles("TheIsland_WP.ark").FirstOrDefault();
+
             foreach (FileInfo file in di.GetFiles("*.ark"))
             {
-                // Parse the backup date from the file name
-                string dateFormat = "dd.MM.yyyy_HH.mm.ss";
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
-                string[] splitName = fileNameWithoutExtension.Split(new[] { '_' }, 4); // Split by underscores to isolate the date part
-
-                if (splitName.Length < 4)
+                if (currentArkFile == null || !file.FullName.Equals(currentArkFile.FullName, StringComparison.OrdinalIgnoreCase))
                 {
-                    MessageBox.Show($"Invalid file name format: {file.Name}");
-                    continue;
-                }
-
-                // Reconstruct the date string from the split parts and parse it
-                string dateString = string.Join("_", splitName[1], splitName[2], splitName[3]);
-                if (DateTime.TryParseExact(dateString, dateFormat, null, System.Globalization.DateTimeStyles.None, out DateTime backupDate))
-                {
-                    backupsList.Add(new BackupInfo { FileName = file.Name, BackupDate = backupDate });
-                }
-                else
-                {
-                    MessageBox.Show($"Invalid date format in file name: {file.Name}");
+                    backupsList.Add(new BackupInfo { FileName = file.Name, BackupDate = file.LastWriteTime });
                 }
             }
 
-            // Bind the backups list to the ListView's ItemsSource
-            lvBackups.ItemsSource = backupsList;
+            // Bind the backups list to the ComboBox's ItemsSource
+            cbBackups.ItemsSource = backupsList;
         }
-
-        // ServerConfig and BackupInfo classes should be defined as shown earlier
-
-
-
 
         private void RestoreSelectedBackup_Click(object sender, RoutedEventArgs e)
         {
-            if (lvBackups.SelectedItem is BackupInfo selectedBackup)
+            if (cbBackups.SelectedItem is BackupInfo selectedBackup && serverConfig != null) // Ensure serverConfig is not null
             {
-                // Your restore logic here
-                MessageBox.Show($"Restoring: {selectedBackup.FileName}");
+                string backupFolderPath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Saved", "SavedArks", serverConfig.MapName);
+                string currentArkPath = Path.Combine(backupFolderPath, "TheIsland_WP.ark");
+                string selectedBackupPath = Path.Combine(backupFolderPath, selectedBackup.FileName);
+
+                try
+                {
+                    if (File.Exists(currentArkPath))
+                    {
+                        string backupCurrentArkPath = $"{currentArkPath}_{DateTime.Now.ToString("ddMMyyyy_HHmmss")}.bak";
+                        File.Move(currentArkPath, backupCurrentArkPath);
+                    }
+
+                    File.Copy(selectedBackupPath, currentArkPath, true);
+                    MessageBox.Show($"Successfully restored backup: {selectedBackup.FileName}");
+                    _navigationService.GoBack();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error restoring backup: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a backup file to restore.");
             }
         }
 
+        // Classes moved outside the RestorePage class for better organization
     }
 
+    // Define the BackupInfo class with properties for FileName and BackupDate
     public class BackupInfo
     {
         public string FileName { get; set; }
         public DateTime BackupDate { get; set; }
     }
 
+    // Define the ServerConfigs class with properties that match your JSON structure
     public class ServerConfigs
     {
         public string ProfileName { get; set; }
-        public string Path { get; set; }
+        public string ServerPath { get; set; }
         public string MapName { get; set; }
+        // ... other properties ...
     }
 }

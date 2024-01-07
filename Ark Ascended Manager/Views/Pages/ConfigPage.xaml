@@ -108,6 +108,8 @@
                         <StackPanel x:Name="Gameini" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                             <Expander Header="Administration" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                    <Label Content="Server Name" ToolTip="Server name to be seen in game"/>
+                                    <TextBox Text="{Binding ServerName, Mode=TwoWay}" />
                                     <Label Content="Admin Password" ToolTip="Password to become admin"/>
                                     <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}" />
                                     <Label Content="MOTD" ToolTip="Message for users who log in"/>

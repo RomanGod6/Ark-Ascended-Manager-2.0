@@ -234,14 +234,16 @@ namespace Ark_Ascended_Manager.Views.Pages
             ServerConfig serverConfig = new ServerConfig
             {
                 ProfileName = ViewModel.CurrentServerConfig.ProfileName, // Replace with actual data
-                ServerPath = ViewModel.CurrentServerConfig.ServerPath          // Replace with actual data
+                ServerPath = ViewModel.CurrentServerConfig.ServerPath,
+                MapName = ViewModel.CurrentServerConfig.MapName,
             };
 
             SaveServerConfigToJson(serverConfig);
         }
 
-        private void SaveServerConfigToJson(ServerConfig serverConfig)
+        private void SaveServerConfigToJson(ServerConfig serverConfig) 
         {
+            Debug.WriteLine($"Saving ServerConfig with MapName: {serverConfig.MapName ?? "null"}");
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appNameFolder = Path.Combine(appDataFolderPath, "Ark Ascended Manager");
             string jsonFileName = "RestoreBackUpDataStruc.json";

@@ -987,9 +987,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                             switch (key)
                             {
-                                case "ServerName":
-                                    ServerName = value;
-                                    break;
                                 case "Port":
                                     ListenPort = value;
                                     break;
@@ -1225,7 +1222,7 @@ set mods={Mods}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% 
 
 
-start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
 ".Trim();
 
             // Remove spaces before dashes
@@ -1501,6 +1498,9 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
                             break;
                         case "ServerAdminPassword":
                             ServerAdminPassword = value;
+                            break;
+                        case "ServerName":
+                            ServerName = value;
                             break;
                         case "ServerCrosshair":
                             ServerCrosshair = ConvertToBoolean(value);
@@ -1857,6 +1857,7 @@ start {executable} {mapName}?listen?""SessionName=%ServerName%?""RCONEnabled=Tru
             UpdateLine(ref lines, "ServerSettings", "ProximityChat", ProximityChat.ToString());
             UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
             UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
+            UpdateLine(ref lines, "ServerSettings", "SessionName", ServerName);
             UpdateLine(ref lines, "ServerSettings", "ServerCrosshair", ServerCrosshair.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerForceNoHud", ServerForceNoHud.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerHardcore", ServerHardcore.ToString());

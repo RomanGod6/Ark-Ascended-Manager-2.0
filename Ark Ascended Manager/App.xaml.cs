@@ -44,6 +44,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<CreateServersPage>();
                 services.AddTransient<ConfigPage>();
                 services.AddSingleton<SchedulerService>();
+                services.AddSingleton<BackupService>();
                 services.AddSingleton<RconPanelPage>();
                 services.AddSingleton<SyncConfigPage>();
                 services.AddSingleton<ImportServersPage>();
@@ -92,6 +93,7 @@ namespace Ark_Ascended_Manager
         {
             _host.Start();
             var schedulerService = GetService<SchedulerService>();
+            var BackupService = GetService<BackupService>();
             var steamVersionControl = GetService<SteamVersionControl>();
             steamVersionControl?.StartUpdateTimer();
 
@@ -109,6 +111,7 @@ namespace Ark_Ascended_Manager
            
 
             var steamVersionControl = GetService<SteamVersionControl>();
+            var BackupService = GetService<BackupService>();
             steamVersionControl?.StopUpdateTimer();
 
             await _host.StopAsync();
