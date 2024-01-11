@@ -27,7 +27,7 @@ public class PluginsPageViewModel : INotifyPropertyChanged
     {
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         MoreInfoCommand = new RelayCommand<BasicResource>(OpenPluginDetails);
-        string apiKey = "bpqpPHZ71cHzEP3AVSuTmLkqXvKoSBj-";
+        string apiKey = "57iSQzK_r0wY77gsPTB3S29F0069s6YF";
         _httpClient.DefaultRequestHeaders.Add("XF-Api-Key", apiKey);
         FetchAndSavePluginsAsync();
     }
@@ -72,7 +72,9 @@ public class PluginsPageViewModel : INotifyPropertyChanged
     {
         var response = await _httpClient.GetAsync(ApiEndpoint);
         if (response.IsSuccessStatusCode)
+            
         {
+            Debug.WriteLine("Response was successful.");
             var json = await response.Content.ReadAsStringAsync();
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appFolder = Path.Combine(appDataPath, "Ark Ascended Manager");
@@ -140,8 +142,10 @@ public class PluginsPageViewModel : INotifyPropertyChanged
         }
         else
         {
-            Ark_Ascended_Manager.Services.Logger.Log($"Error fetching data: {response.StatusCode} - {response.ReasonPhrase}");
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Ark_Ascended_Manager.Services.Logger.Log($"Error fetching data: {response.StatusCode} - {response.ReasonPhrase}\nResponse content: {errorContent}");
         }
+
     }
 
     protected void OnPropertyChanged(string propertyName)

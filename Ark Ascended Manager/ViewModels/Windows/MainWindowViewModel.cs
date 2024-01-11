@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.ObjectModel;
+using System.Drawing;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 
@@ -42,7 +43,14 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 Content = "Plugins",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Database20 },
                 TargetPageType = typeof(Views.Pages.PluginsPage)
-            }
+            },
+                  new NavigationViewItem()
+            {
+                Content = "Mods",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Wrench20},
+                TargetPageType = typeof(Views.Pages.CurseForgeModPage)
+            },
+
 
         };
 

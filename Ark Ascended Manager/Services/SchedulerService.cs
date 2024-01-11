@@ -185,6 +185,9 @@ namespace Ark_Ascended_Manager.Services
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string schedulesFolderPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
 
+            // Ensure the directory exists
+            Directory.CreateDirectory(schedulesFolderPath);
+
             schedulesWatcher = new FileSystemWatcher(schedulesFolderPath, "schedules.json")
             {
                 NotifyFilter = NotifyFilters.LastWrite
@@ -193,6 +196,7 @@ namespace Ark_Ascended_Manager.Services
             schedulesWatcher.Changed += OnSchedulesFileChanged;
             schedulesWatcher.EnableRaisingEvents = true;
         }
+
 
         private void OnSchedulesFileChanged(object source, FileSystemEventArgs e)
         {
