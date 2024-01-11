@@ -56,8 +56,10 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<ServerUpdateService>();
                 services.AddSingleton<CreateSchedulePage>();
                 services.AddSingleton<RestorePage>();
+                services.AddSingleton<CurseForgeModPage>();
+                services.AddSingleton<CurseForgeCurrentModPage>();
 
-                
+
 
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
