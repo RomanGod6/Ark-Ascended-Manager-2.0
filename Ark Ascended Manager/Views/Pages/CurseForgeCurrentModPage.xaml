@@ -10,53 +10,77 @@
       Title="CurseForgeCurrentModPage">
 
     <Page.Resources>
-        <!-- Reference the converter from the Helpers namespace -->
         <helpers:HtmlToXamlConverter x:Key="HtmlToXamlConverter"/>
+        <Style TargetType="TextBlock" x:Key="HeaderTextStyle">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style TargetType="StackPanel" x:Key="ContentPanelStyle">
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        <Style TargetType="Image" x:Key="IconStyle">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="DefaultTextBlockStyle">
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        <Style TargetType="Image" x:Key="GalleryImageStyle">
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="100"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
     </Page.Resources>
-
 
     <Grid>
         <ScrollViewer>
             <StackPanel>
-                <Border Background="White" Margin="10">
-                    <Image Source="{Binding Logo.Url}" Height="200" Stretch="UniformToFill"/>
-                </Border>
-                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="24" Margin="10,10,10,0"/>
-                <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" Margin="10,0,10,10"/>
-                <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
-                    <TextBlock Text="Featured: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding IsFeatured}"/>
+                <!-- Mod Icon and Title -->
+                <DockPanel Margin="1">
+                    <Image Source="{Binding Logo.Url}" Style="{StaticResource IconStyle}" DockPanel.Dock="Left"/>
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="36" Margin="10" VerticalAlignment="Center"/>
+                </DockPanel>
+
+                <!-- Mod Summary -->
+                <StackPanel Style="{StaticResource ContentPanelStyle}">
+                    <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
-                    <TextBlock Text="Mod ID: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Id}"/>
+
+                <!-- Mod Metadata -->
+                <StackPanel Style="{StaticResource ContentPanelStyle}" Orientation="Horizontal">
+                    <TextBlock Text="Mod ID: " Style="{StaticResource HeaderTextStyle}"/>
+                    <TextBlock Text="{Binding Id}" Margin="5,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
-                    <TextBlock Text="Downloads: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding DownloadCount}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
-                    <TextBlock Text="Status: " FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Status}"/>
-                </StackPanel>
-                <TextBlock Text="Description:" FontWeight="Bold" FontSize="16" Margin="10,20,0,0"/>
-                <RichTextBox IsReadOnly="True" BorderThickness="0" Background="{x:Null}">
-                    <FlowDocument>
-                        <Paragraph>
-                            <RichTextBox x:Name="descriptionRichTextBox" IsReadOnly="True" BorderThickness="0" Background="{x:Null}" />
-                        </Paragraph>
-                    </FlowDocument>
-                </RichTextBox>
-                <TextBlock Text="Screenshots:" FontWeight="Bold" FontSize="20" Margin="10,10,10,0"/>
-                <ItemsControl ItemsSource="{Binding Screenshots}" Margin="10,0,10,10">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="White" Margin="10">
-                                <Image Source="{Binding Url}" Height="600" Stretch="UniformToFill"/>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+
+                <!-- Description -->
+                <TextBlock Text="Description:" Style="{StaticResource HeaderTextStyle}" Margin="10,5,10,0"/>
+                <RichTextBox x:Name="descriptionRichTextBox" IsReadOnly="True" Background="Transparent" />
+
+
+
+
+
+
+                <!-- Screenshot Carousel -->
+                <TextBlock Text="Screenshots:" FontWeight="Bold" FontSize="20" Margin="10"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Screenshots}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="5"/>
+                                <!-- Adjust the number of columns as needed -->
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Url}" Stretch="UniformToFill"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

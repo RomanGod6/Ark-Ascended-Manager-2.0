@@ -1,22 +1,17 @@
 ﻿using Ark_Ascended_Manager.Helpers;
 using Ark_Ascended_Manager.Views.Pages;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Wpf.Ui.Controls;
+using System.Windows.Markup;
+using HtmlAgilityPack;
+using System.Windows.Documents; 
+using System.Text; 
+using System.IO;
+using System.Xml; 
+
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -31,6 +26,43 @@ namespace Ark_Ascended_Manager.Views.Pages
             _modId = modId;
             LoadModDetails();
         }
+
+
+        public static FlowDocument ConvertHtmlToFlowDocument(string html)
+        {
+            var flowDoc = new FlowDocument();
+
+            if (!string.IsNullOrWhiteSpace(html))
+            {
+                // Create an instance of HtmlToXamlConverter
+                var converter = new HtmlToXamlConverter();
+
+                // Convert HTML to XAML
+                string xamlContent = converter.ConvertHtmlToXaml(html); // Pass the HTML content to the converter
+
+                // Debug: Print the generated XAML content
+                Debug.WriteLine("Generated XAML content:");
+                Debug.WriteLine(xamlContent);
+
+                // Use a XamlReader to parse the XAML content into a FlowDocument
+                try
+                {
+                    flowDoc = XamlReader.Parse(xamlContent) as FlowDocument;
+                }
+                catch (XamlParseException ex)
+                {
+                    // Handle any exceptions that occur during parsing
+                    Debug.WriteLine("Error parsing XAML: " + ex.Message);
+                    MessageBox.Show("Error parsing XAML: " + ex.Message);
+                }
+            }
+
+            return flowDoc;
+        }
+
+
+
+
 
         private async void LoadModDetails()
         {
@@ -55,9 +87,21 @@ namespace Ark_Ascended_Manager.Views.Pages
 
                     // Set DataContext with mod details
                     this.DataContext = modDetails;
-                    HtmlToXamlConverter converter = new HtmlToXamlConverter();
-                    FlowDocument document = converter.Convert(modDetails.Description, null, null, null) as FlowDocument;
-                    descriptionRichTextBox.Document = document;
+
+                    // Create an instance of HtmlToXamlConverter
+                    var converter = new HtmlToXamlConverter();
+
+                    // Convert HTML to FlowDocument
+                    FlowDocument flowDoc = CurseForgeCurrentModPage.ConvertHtmlToFlowDocument(modDetails.Description);
+
+                    // If the conversion was successful, set the document to the RichTextBox
+                    if (flowDoc != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            descriptionRichTextBox.Document = flowDoc;
+                        });
+                    }
                 }
                 else
                 {
@@ -69,6 +113,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 // Handle error for mod details request
             }
         }
+
     }
 
 }
