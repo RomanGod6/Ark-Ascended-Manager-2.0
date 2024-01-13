@@ -252,6 +252,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (CurrentServerConfig != null)
             {
                 CurrentServerConfig.AdminPassword = ServerAdminPassword;
+                CurrentServerConfig.ServerName = SessionName;
                 SaveServerConfig(CurrentServerConfig.ProfileName);
             }
             else
@@ -261,18 +262,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
         private void SaveServerConfig(string profileName)
         {
-            Debug.WriteLine($"SaveServerConfig: Called for ProfileName '{profileName}' with new AdminPassword.");
+            Debug.WriteLine($"SaveServerConfig: Called for ProfileName '{profileName}' with new AdminPassword and ServerName.");
 
             var allServerConfigs = ReadAllServerConfigs();
             var serverToUpdate = allServerConfigs.FirstOrDefault(s => s.ProfileName == profileName);
 
             if (serverToUpdate != null)
             {
-                Debug.WriteLine($"SaveServerConfig: Found server configuration. Current AdminPassword: '{serverToUpdate.AdminPassword}'");
+                Debug.WriteLine($"SaveServerConfig: Found server configuration. Current AdminPassword: '{serverToUpdate.AdminPassword}', Current ServerName: '{serverToUpdate.ServerName}'");
 
-                // Update the AdminPassword for the matched server configuration
+                // Update the AdminPassword and ServerName for the matched server configuration
                 serverToUpdate.AdminPassword = ServerAdminPassword;
-                Debug.WriteLine($"SaveServerConfig: Updated AdminPassword to: '{ServerAdminPassword}'");
+                serverToUpdate.ServerName = SessionName;
+
+                Debug.WriteLine($"SaveServerConfig: Updated AdminPassword to: '{ServerAdminPassword}' and ServerName to: '{SessionName}'");
 
                 // Save the updated list back to servers.json
                 WriteAllServerConfigs(allServerConfigs);
@@ -283,6 +286,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Debug.WriteLine("SaveServerConfig: Server configuration not found for the given ProfileName.");
             }
         }
+
 
 
 
@@ -473,11 +477,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Show confirmation dialog and get the user input
             string userInput = ShowConfirmationDialog("Please type the server name to confirm deletion:");
 
-            if (userInput.Equals(ServerName, StringComparison.OrdinalIgnoreCase))
+            if (userInput.Equals(SessionName, StringComparison.OrdinalIgnoreCase))
             {
                 // Logic to remove server from servers.json and delete the folder
                 _navigationService.Navigate(typeof(DashboardPage));
-                RemoveServerAndFolder(ServerName);
+                RemoveServerAndFolder(SessionName);
 
 
             }
@@ -1025,7 +1029,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
 
             // Trigger UI updates if using data binding
-            OnPropertyChanged(nameof(ServerName));
             OnPropertyChanged(nameof(ListenPort));
             OnPropertyChanged(nameof(RconPort));
             OnPropertyChanged(nameof(MaxPlayerCount));
@@ -1083,6 +1086,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
             string mapName = OverrideEnabled ? OverrideMapName : "TheIsland_WP";
+     
 
             // Construct the batch file content
             string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName);
@@ -1123,7 +1127,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             serverConfig.MapName = CurrentServerConfig.MapName; // If you have this value
             serverConfig.AppId = CurrentServerConfig.AppId; // If you have this value
             serverConfig.IsRunning = CurrentServerConfig.IsRunning; // If you have this value
-            serverConfig.ServerName = CurrentServerConfig.ServerName;
             serverConfig.ListenPort = CurrentServerConfig.ListenPort;
             serverConfig.RCONPort = CurrentServerConfig.RCONPort;
             serverConfig.Mods = CurrentServerConfig.Mods; // If you have this value
@@ -1160,9 +1163,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                             switch (key)
                             {
-                                case "ServerName":
-                                    CurrentServerConfig.ServerName = value;
-                                    break;
                                 case "Port":
                                     CurrentServerConfig.ListenPort = int.Parse(value);
                                     break;
@@ -1214,7 +1214,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Always change the directory to the server's executable directory
             string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
-set ServerName={ServerName}
+set ServerName={SessionName}
 set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
@@ -1267,12 +1267,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
         }
 
 
-        private string _serverName;
-        public string ServerName
-        {
-            get => _serverName;
-            set => SetProperty(ref _serverName, value);
-        }
+
 
         private string _listenPort;
         public string ListenPort
@@ -1499,8 +1494,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "ServerAdminPassword":
                             ServerAdminPassword = value;
                             break;
-                        case "ServerName":
-                            ServerName = value;
+                        case "SessionName":
+                            SessionName = value;
                             break;
                         case "ServerCrosshair":
                             ServerCrosshair = ConvertToBoolean(value);
@@ -1857,7 +1852,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "ProximityChat", ProximityChat.ToString());
             UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
             UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
-            UpdateLine(ref lines, "ServerSettings", "SessionName", ServerName);
+            UpdateLine(ref lines, "SessionSettings", "SessionName", SessionName);
             UpdateLine(ref lines, "ServerSettings", "ServerCrosshair", ServerCrosshair.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerForceNoHud", ServerForceNoHud.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerHardcore", ServerHardcore.ToString());
@@ -2286,6 +2281,16 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             {
                 _serverAdminPassword = value;
                 OnPropertyChanged(nameof(ServerAdminPassword)); // Notify the UI of the change
+            }
+        }
+        private string _sessionName;
+        public string SessionName
+        {
+            get { return _sessionName; }
+            set
+            {
+                _sessionName = value;
+                OnPropertyChanged(nameof(SessionName)); // Notify the UI of the change
             }
         }
 
