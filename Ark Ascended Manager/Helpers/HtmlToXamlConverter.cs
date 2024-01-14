@@ -26,9 +26,16 @@ namespace Ark_Ascended_Manager.Helpers
                 string xamlContent = ConvertHtmlToXaml(content);
 
                 // Parse the XAML into a FlowDocument.
-                FlowDocument document = XamlReader.Parse(xamlContent) as FlowDocument;
-
-                return document;
+                try
+                {
+                    FlowDocument document = XamlReader.Parse(xamlContent) as FlowDocument;
+                    return document;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error converting HTML to XAML: " + ex.Message);
+                    return new FlowDocument();
+                }
             }
             else
             {
@@ -39,56 +46,42 @@ namespace Ark_Ascended_Manager.Helpers
 
         public string ConvertHtmlToXaml(string html)
         {
-            // Decode any HTML entities that are encoded in the HTML.
+            // Decode HTML entities
             html = System.Net.WebUtility.HtmlDecode(html);
 
-            // Replace line breaks with XAML line break Run elements.
+            // Replace line breaks and paragraph tags with XAML equivalents
             html = html.Replace("<br>", "<LineBreak/>")
                        .Replace("<br/>", "<LineBreak/>")
-                       .Replace("<br />", "<LineBreak/>");
-
-            // Replace paragraph tags with XAML Paragraph elements.
-            html = html.Replace("<p>", "<Paragraph>")
+                       .Replace("<br />", "<LineBreak/>")
+                       .Replace("<p>", "<Paragraph>")
                        .Replace("</p>", "</Paragraph>");
 
-            // Debug: Print the HTML content after replacing tags.
-            Console.WriteLine("HTML after tag replacements:");
-            Console.WriteLine(html);
+            // Handle <h1> tags by converting them to XAML headings
+            html = Regex.Replace(html, @"<h1>(.*?)<\/h1>", "<Paragraph><Bold>$1</Bold></Paragraph>");
 
-            // Identify and replace links with Hyperlink elements.
-            html = Regex.Replace(html, @"<a\s+(?:[^>]*?\s+)?href=['""]([^'""]*)['""][^>]*?>(.*?)</a>",
-                match =>
-                {
-                    string url = match.Groups[1].Value;
-                    string linkText = match.Groups[2].Value;
-                    return $"<Hyperlink NavigateUri=\"{url}\">{linkText}</Hyperlink>";
-                });
+            // Handle <h2> tags by converting them to XAML headings
+            html = Regex.Replace(html, @"<h2>(.*?)<\/h2>", "<Paragraph><Underline>$1</Underline></Paragraph>");
 
-            // Debug: Print the HTML content after adding Hyperlink elements.
-            Console.WriteLine("HTML after adding Hyperlink elements:");
-            Console.WriteLine(html);
+            // Remove HTML hyperlinks and URLs
+            html = Regex.Replace(html, @"<a\s+href=['""]?([^'""]*)['""]?[^>]*>(.*?)<\/a>", ""); // Remove hyperlinks
+            html = Regex.Replace(html, @"https?:\/\/[^\s]+", ""); // Remove plain URLs
 
-            // Remove JSON data
-            string jsonData = "{\"data\":";
-            if (html.StartsWith(jsonData))
-            {
-                html = html.Remove(0, jsonData.Length);
-                if (html.EndsWith("}"))
-                {
-                    html = html.Remove(html.Length - 1);
-                }
-            }
+            // Handle <ul> and <li> tags by converting them to XAML list elements
+            html = Regex.Replace(html, @"<ul>(.*?)<\/ul>", "<List>$1</List>");
+            html = Regex.Replace(html, @"<li>(.*?)<\/li>", "<ListItem>$1</ListItem>");
 
-            // Debug: Print the HTML content after removing JSON data.
-            Console.WriteLine("HTML after removing JSON data:");
-            Console.WriteLine(html);
+            // Remove newline characters
+            html = html.Replace("\n", "");
 
-            // Wrap the HTML content in a Paragraph tag to be used as FlowDocument content.
-            html = "<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">" +
-                   "<Paragraph>" + html + "</Paragraph></FlowDocument>";
+            // Wrap in a FlowDocument tag
+            html = $"<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">{html}</FlowDocument>";
 
             return html;
         }
+
+
+
+
 
 
 

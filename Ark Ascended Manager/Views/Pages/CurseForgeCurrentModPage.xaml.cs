@@ -10,7 +10,10 @@ using HtmlAgilityPack;
 using System.Windows.Documents; 
 using System.Text; 
 using System.IO;
-using System.Xml; 
+using System.Xml;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
+
 
 
 namespace Ark_Ascended_Manager.Views.Pages
@@ -28,37 +31,51 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
 
 
-        public static FlowDocument ConvertHtmlToFlowDocument(string html)
+        public static FlowDocument ConvertHtmlToFlowDocument(string jsonDescription)
         {
-            var flowDoc = new FlowDocument();
+            // Extract HTML content from JSON
+            var jsonObject = JObject.Parse(jsonDescription);
+            string htmlContent = jsonObject["data"].ToString();
 
-            if (!string.IsNullOrWhiteSpace(html))
+            // Now convert the HTML to XAML
+            var converter = new HtmlToXamlConverter();
+            string xamlContent = converter.ConvertHtmlToXaml(htmlContent);
+
+            try
             {
-                // Create an instance of HtmlToXamlConverter
-                var converter = new HtmlToXamlConverter();
+                // Wrap the xamlContent with FlowDocument tags
+                xamlContent = $"<FlowDocument>{xamlContent}</FlowDocument>";
 
-                // Convert HTML to XAML
-                string xamlContent = converter.ConvertHtmlToXaml(html); // Pass the HTML content to the converter
-
-                // Debug: Print the generated XAML content
-                Debug.WriteLine("Generated XAML content:");
-                Debug.WriteLine(xamlContent);
-
-                // Use a XamlReader to parse the XAML content into a FlowDocument
-                try
-                {
-                    flowDoc = XamlReader.Parse(xamlContent) as FlowDocument;
-                }
-                catch (XamlParseException ex)
-                {
-                    // Handle any exceptions that occur during parsing
-                    Debug.WriteLine("Error parsing XAML: " + ex.Message);
-                    MessageBox.Show("Error parsing XAML: " + ex.Message);
-                }
+                // Load the XAML as a FlowDocument
+                var flowDoc = XamlReader.Parse(xamlContent) as FlowDocument;
+                return flowDoc;
             }
-
-            return flowDoc;
+            catch (XamlParseException ex)
+            {
+                Debug.WriteLine("Error parsing XAML: " + ex.Message);
+                // Optionally rethrow or handle the exception as needed
+                return new FlowDocument(); // Return an empty FlowDocument in case of error
+            }
         }
+
+
+
+
+
+        private static bool ContainsHtmlTags(string xaml)
+        {
+            // Simple check for HTML tags - this can be more complex based on your needs
+            return Regex.IsMatch(xaml, "<.*?>");
+        }
+
+        private static string FallbackConvertHtmlToXaml(string html)
+        {
+            // Implement your fallback conversion logic here
+            // ...
+            return html;
+        }
+
+
 
 
 

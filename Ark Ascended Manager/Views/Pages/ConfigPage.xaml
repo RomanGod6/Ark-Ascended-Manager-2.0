@@ -109,7 +109,7 @@
                             <Expander Header="Administration" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                     <Label Content="Server Name" ToolTip="Server name to be seen in game"/>
-                                    <TextBox Text="{Binding ServerName, Mode=TwoWay}" />
+                                    <TextBox Text="{Binding SessionName, Mode=TwoWay}" />
                                     <Label Content="Admin Password" ToolTip="Password to become admin"/>
                                     <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}" />
                                     <Label Content="MOTD" ToolTip="Message for users who log in"/>
@@ -953,11 +953,6 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                         <StackPanel Margin="20">
 
-
-
-
-                            <Label Content="Server Name"/>
-                            <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <Label Content="Server Platform Setting"/>
                             <TextBox 
                             Text="{Binding ServerPlatformSetting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
