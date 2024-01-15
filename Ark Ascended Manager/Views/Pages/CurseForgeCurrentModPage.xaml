@@ -59,7 +59,7 @@
 
                 <!-- Description -->
                 <TextBlock Text="Description:" Style="{StaticResource HeaderTextStyle}" Margin="10,5,10,0"/>
-                <RichTextBox x:Name="descriptionRichTextBox" IsReadOnly="True" Background="Transparent" TextChanged="descriptionRichTextBox_TextChanged" />
+                <RichTextBox x:Name="descriptionRichTextBox" IsReadOnly="True" Background="Transparent" />
 
 
 

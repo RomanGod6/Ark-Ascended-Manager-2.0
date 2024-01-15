@@ -17,6 +17,8 @@
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgWPF-UI Condition=" '$(PkgWPF-UI)' == '' ">C:\Users\Dillon Griffey\.nuget\packages\wpf-ui\3.0.0-preview.4</PkgWPF-UI>
+    <PkgMicrosoft_Xaml_Behaviors_Wpf Condition=" '$(PkgMicrosoft_Xaml_Behaviors_Wpf)' == '' ">C:\Users\Dillon Griffey\.nuget\packages\microsoft.xaml.behaviors.wpf\1.1.39</PkgMicrosoft_Xaml_Behaviors_Wpf>
+    <PkgMaterialDesignThemes Condition=" '$(PkgMaterialDesignThemes)' == '' ">C:\Users\Dillon Griffey\.nuget\packages\materialdesignthemes\4.9.0</PkgMaterialDesignThemes>
     <PkgExtended_Wpf_Toolkit Condition=" '$(PkgExtended_Wpf_Toolkit)' == '' ">C:\Users\Dillon Griffey\.nuget\packages\extended.wpf.toolkit\4.5.1</PkgExtended_Wpf_Toolkit>
   </PropertyGroup>
 </Project>

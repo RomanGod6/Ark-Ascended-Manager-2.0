@@ -13,6 +13,7 @@
           "CoreRCON": "5.2.1",
           "Discord.Net": "3.13.0",
           "Extended.Wpf.Toolkit": "4.5.1",
+          "HtmlAgilityPack": "1.11.57",
           "Microsoft.Data.Sqlite": "8.0.0",
           "Microsoft.Extensions.Hosting": "7.0.1",
           "Newtonsoft.Json": "13.0.3",
@@ -196,6 +197,14 @@
           },
           "lib/net5.0/zh-Hans/Xceed.Wpf.AvalonDock.NET5.resources.dll": {
             "locale": "zh-Hans"
+          }
+        }
+      },
+      "HtmlAgilityPack/1.11.57": {
+        "runtime": {
+          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+            "assemblyVersion": "1.11.57.0",
+            "fileVersion": "1.11.57.0"
           }
         }
       },
@@ -850,6 +859,13 @@
       "sha512": "sha512-Z0AL4oOORLZsKUediAaXOVt+nQI8owUcv05RDuoup0JaS96cqN/2zeIVr2TLX5oDK6VOrm1NkJKV1zrQCj3Deg==",
       "path": "extended.wpf.toolkit/4.5.1",
       "hashPath": "extended.wpf.toolkit.4.5.1.nupkg.sha512"
+    },
+    "HtmlAgilityPack/1.11.57": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zDxnHcAvi+qhZG602eKaPJKmzm0T8npKVML0RMwjrRBabpmTRtu2OVpfNkMUfYMgQ+5EllOkSeGxu0uFVV2zFw==",
+      "path": "htmlagilitypack/1.11.57",
+      "hashPath": "htmlagilitypack.1.11.57.nupkg.sha512"
     },
     "Microsoft.Data.Sqlite/8.0.0": {
       "type": "package",

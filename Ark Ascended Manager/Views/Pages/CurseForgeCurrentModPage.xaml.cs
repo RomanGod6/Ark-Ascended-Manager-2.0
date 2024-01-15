@@ -173,12 +173,7 @@ public class ModResponse
 {
     public Mod Data { get; set; }
 }
-public class Server
-{
-    public string ProfileName { get; set; }
-    // ... other properties ...
-    public List<string> Mods { get; set; }
-}
+
 
 
 public class Mod

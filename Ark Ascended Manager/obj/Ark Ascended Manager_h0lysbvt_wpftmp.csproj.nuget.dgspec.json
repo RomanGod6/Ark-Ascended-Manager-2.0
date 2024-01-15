@@ -60,9 +60,9 @@
               "target": "Package",
               "version": "[4.5.1, )"
             },
-            "HtmlAgilityPack": {
+            "MaterialDesignThemes": {
               "target": "Package",
-              "version": "[1.11.57, )"
+              "version": "[4.9.0, )"
             },
             "Microsoft.Data.Sqlite": {
               "target": "Package",
