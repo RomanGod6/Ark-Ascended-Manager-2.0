@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,13 +19,14 @@ namespace Ark_Ascended_Manager.Views.Pages
         private const int pageSize = 50; // Number of items per page
         private int currentPageIndex = 0; // Zero-based index for API
         private int totalAvailableResults = 0; // Total available results from the API
-
+        private readonly INavigationService _navigationService;
         public ObservableCollection<Mod> Mods { get; private set; } = new ObservableCollection<Mod>();
 
-        public CurseForgeModPage()
+        public CurseForgeModPage(INavigationService navigationService)
         {
             InitializeComponent();
             DataContext = this;
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             FetchModsAsync(); // Load mods when the page is initialized
         }
 
@@ -65,7 +67,10 @@ namespace Ark_Ascended_Manager.Views.Pages
                 MessageBox.Show($"Error fetching mods: {response.ReasonPhrase}");
             }
         }
-
+        public void OnNavigatedTo(int modId)
+        {
+            SaveModIdToJson(modId);
+        }
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             currentPageIndex = 0; // Reset the current page index to start from the first page
@@ -86,15 +91,35 @@ namespace Ark_Ascended_Manager.Views.Pages
             if (e.AddedItems.Count > 0)
             {
                 Mod selectedMod = e.AddedItems[0] as Mod;
-                NavigateToModDetailsPage(selectedMod.Id);
+                if (selectedMod != null)
+                {
+                    // Assuming you have a service to store the current mod ID
+                    ModSelectionService.CurrentModId = selectedMod.Id;
+                    NavigateToModDetailsPage();
+                }
             }
         }
-
-
-        private void NavigateToModDetailsPage(int modId)
+        public static class ModSelectionService
         {
-            // Assuming you use Frame navigation in WPF
-            this.NavigationService.Navigate(new CurseForgeCurrentModPage(modId));
+            public static int CurrentModId { get; set; }
+        }
+
+        private void SaveModIdToJson(int modId)
+        {
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string directoryPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
+            Directory.CreateDirectory(directoryPath); // Ensure the directory exists
+
+            string filePath = Path.Combine(directoryPath, "currentmod.json");
+            string json = JsonConvert.SerializeObject(new { ModId = modId });
+            File.WriteAllText(filePath, json);
+        }
+
+        private void NavigateToModDetailsPage()
+        {
+            
+            _navigationService.Navigate(typeof(CurseForgeCurrentModPage));
+            
         }
 
 

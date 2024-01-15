@@ -13,6 +13,7 @@ using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using static Ark_Ascended_Manager.Views.Pages.CurseForgeModPage;
 
 
 
@@ -21,18 +22,32 @@ namespace Ark_Ascended_Manager.Views.Pages
 
     public partial class CurseForgeCurrentModPage : Page
     {
-        private readonly int _modId;
+        private int _modId;
         private Mod _currentMod;
         private readonly INavigationService _navigationService;
 
-        public CurseForgeCurrentModPage(int modId)
+        public CurseForgeCurrentModPage(INavigationService navigationService)
         {
+           
             InitializeComponent();
-            _modId = modId;
-
-           LoadModDetails();
+            _modId = ModSelectionService.CurrentModId;
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            LoadModDetails();
         }
+        private int ReadModIdFromJson()
+        {
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string filePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "currentmod.json");
 
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("The current mod configuration file was not found.");
+            }
+
+            string json = File.ReadAllText(filePath);
+            var data = JsonConvert.DeserializeObject<dynamic>(json);
+            return (int)data.ModId;
+        }
 
         public static FlowDocument ConvertHtmlToFlowDocument(string jsonDescription)
         {
@@ -71,40 +86,28 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
-
-
-
-
-
-        private static bool ContainsHtmlTags(string xaml)
+        public void OnNavigatedTo(object parameter)
         {
-            // Simple check for HTML tags - this can be more complex based on your needs
-            return Regex.IsMatch(xaml, "<.*?>");
+            ReadModIdFromJson();
         }
 
-        private static string FallbackConvertHtmlToXaml(string html)
-        {
-            // Implement your fallback conversion logic here
-            // ...
-            return html;
-        }
+
+
+
+
+
+
 
         private void AddModButton_Click(object sender, RoutedEventArgs e)
-{
-    if (_currentMod != null)
-    {
-        // Convert the Mod ID to a string, assuming the ID is an integer
-        string modId = _currentMod.Id.ToString();
+        {
+    
+         _navigationService.Navigate(typeof(AddModToServerPage));
 
-        // Navigate to AddModToServerPage with the modId
-        // This assumes you have a Frame in your application to navigate. Adjust based on your app structure.
-        /*MainFrame.Navigate(new AddModToServerPage(modId));*/
-    }
-    else
-    {
-       _navigationService.GoBack(); 
-    }
-}
+
+
+            
+   
+        }
 
 
 

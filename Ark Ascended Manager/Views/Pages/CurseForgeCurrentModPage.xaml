@@ -6,9 +6,8 @@
       xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
       xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers"
 
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CurseForgeCurrentModPage">
+      mc:Ignorable="d" d:DesignWidth="800"
+      Title="CurseForgeCurrentModPage" Height="596">
 
     <Page.Resources>
         <helpers:HtmlToXamlConverter x:Key="HtmlToXamlConverter"/>
@@ -36,10 +35,10 @@
     </Page.Resources>
 
     <Grid>
-        <Button Content="Add Mod" Margin="10" Click="AddModButton_Click" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+        <Button Content="Add Mod" Margin="1" Click="AddModButton_Click" VerticalAlignment="Top" HorizontalAlignment="Right"/>
 
-        <ScrollViewer>
-            <StackPanel>
+        <ScrollViewer Margin="0,38,0,0">
+            <StackPanel Height="430" Width="790">
                 <!-- Mod Icon and Title -->
                 <DockPanel Margin="1">
                     <Image Source="{Binding Logo.Url}" Style="{StaticResource IconStyle}" DockPanel.Dock="Left" Height="34"/>
