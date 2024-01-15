@@ -22,12 +22,15 @@ namespace Ark_Ascended_Manager.Views.Pages
     public partial class CurseForgeCurrentModPage : Page
     {
         private readonly int _modId;
+        private Mod _currentMod;
+        private readonly INavigationService _navigationService;
 
         public CurseForgeCurrentModPage(int modId)
         {
             InitializeComponent();
             _modId = modId;
-            LoadModDetails();
+
+           LoadModDetails();
         }
 
 
@@ -43,20 +46,31 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             try
             {
-                // Wrap the xamlContent with FlowDocument tags
-                xamlContent = $"<FlowDocument>{xamlContent}</FlowDocument>";
+                // Check if xamlContent already contains a FlowDocument tag
+                if (!xamlContent.TrimStart().StartsWith("<FlowDocument"))
+                {
+                    xamlContent = $"<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">{xamlContent}</FlowDocument>";
+                }
 
-                // Load the XAML as a FlowDocument
-                var flowDoc = XamlReader.Parse(xamlContent) as FlowDocument;
+                // Create a ParserContext with necessary namespace mappings
+                var context = new ParserContext();
+                context.XamlTypeMapper = new XamlTypeMapper(new string[0]);
+                context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+
+                // Load the XAML as a FlowDocument using the context
+                Debug.WriteLine("Converted XAML: " + xamlContent); // Log the XAML content
+
+                var flowDoc = XamlReader.Parse(xamlContent, context) as FlowDocument;
                 return flowDoc;
             }
             catch (XamlParseException ex)
             {
                 Debug.WriteLine("Error parsing XAML: " + ex.Message);
-                // Optionally rethrow or handle the exception as needed
+                Debug.WriteLine("Inner Exception: " + ex.InnerException?.Message); // Log more details
                 return new FlowDocument(); // Return an empty FlowDocument in case of error
             }
         }
+
 
 
 
@@ -74,6 +88,26 @@ namespace Ark_Ascended_Manager.Views.Pages
             // ...
             return html;
         }
+
+        private void AddModButton_Click(object sender, RoutedEventArgs e)
+{
+    if (_currentMod != null)
+    {
+        // Convert the Mod ID to a string, assuming the ID is an integer
+        string modId = _currentMod.Id.ToString();
+
+        // Navigate to AddModToServerPage with the modId
+        // This assumes you have a Frame in your application to navigate. Adjust based on your app structure.
+        /*MainFrame.Navigate(new AddModToServerPage(modId));*/
+    }
+    else
+    {
+       _navigationService.GoBack(); 
+    }
+}
+
+
+
 
 
 
@@ -139,6 +173,13 @@ public class ModResponse
 {
     public Mod Data { get; set; }
 }
+public class Server
+{
+    public string ProfileName { get; set; }
+    // ... other properties ...
+    public List<string> Mods { get; set; }
+}
+
 
 public class Mod
 {

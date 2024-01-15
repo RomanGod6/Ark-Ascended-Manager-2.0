@@ -58,6 +58,7 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<RestorePage>();
                 services.AddSingleton<CurseForgeModPage>();
                 services.AddSingleton<CurseForgeCurrentModPage>();
+                services.AddSingleton<AddModToServerPage>();
 
 
 

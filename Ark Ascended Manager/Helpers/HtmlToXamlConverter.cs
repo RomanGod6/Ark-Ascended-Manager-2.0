@@ -49,35 +49,43 @@ namespace Ark_Ascended_Manager.Helpers
             // Decode HTML entities
             html = System.Net.WebUtility.HtmlDecode(html);
 
-            // Replace line breaks and paragraph tags with XAML equivalents
+            // Replace line breaks, paragraph, and header tags with XAML equivalents
             html = html.Replace("<br>", "<LineBreak/>")
                        .Replace("<br/>", "<LineBreak/>")
                        .Replace("<br />", "<LineBreak/>")
                        .Replace("<p>", "<Paragraph>")
                        .Replace("</p>", "</Paragraph>");
 
-            // Handle <h1> tags by converting them to XAML headings
-            html = Regex.Replace(html, @"<h1>(.*?)<\/h1>", "<Paragraph><Bold>$1</Bold></Paragraph>");
+            // Convert HTML headers to XAML
+            html = Regex.Replace(html, @"<h[1-5]>(.*?)<\/h[1-5]>", "<Paragraph><Bold>$1</Bold></Paragraph>");
 
-            // Handle <h2> tags by converting them to XAML headings
-            html = Regex.Replace(html, @"<h2>(.*?)<\/h2>", "<Paragraph><Underline>$1</Underline></Paragraph>");
+            // Convert <strong> tags to <Bold>
+            html = Regex.Replace(html, @"<strong>(.*?)<\/strong>", "<Bold>$1</Bold>");
 
-            // Remove HTML hyperlinks and URLs
-            html = Regex.Replace(html, @"<a\s+href=['""]?([^'""]*)['""]?[^>]*>(.*?)<\/a>", ""); // Remove hyperlinks
-            html = Regex.Replace(html, @"https?:\/\/[^\s]+", ""); // Remove plain URLs
+            // Convert HTML hyperlinks to XAML Hyperlinks
+            html = Regex.Replace(html, @"<a\s+href=['""]?([^'""]*)['""]?[^>]*>(.*?)<\/a>", "<Hyperlink NavigateUri=\"$1\">$2</Hyperlink>");
 
-            // Handle <ul> and <li> tags by converting them to XAML list elements
-            html = Regex.Replace(html, @"<ul>(.*?)<\/ul>", "<List>$1</List>");
-            html = Regex.Replace(html, @"<li>(.*?)<\/li>", "<ListItem>$1</ListItem>");
+            // Convert HTML lists to XAML lists
+            html = Regex.Replace(html, @"<ul>(.*?)<\/ul>", "<List MarkerStyle=\"Disc\">$1</List>", RegexOptions.Singleline);
+            html = Regex.Replace(html, @"<li>(.*?)<\/li>", "<ListItem><Paragraph>$1</Paragraph></ListItem>", RegexOptions.Singleline);
 
-            // Remove newline characters
-            html = html.Replace("\n", "");
+            // Wrap plain text in a Paragraph if it's not already in one
+            if (!Regex.IsMatch(html, @"<\s*(Paragraph|List)[^>]*>", RegexOptions.IgnoreCase))
+            {
+                html = $"<Paragraph>{html}</Paragraph>";
+            }
 
-            // Wrap in a FlowDocument tag
-            html = $"<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">{html}</FlowDocument>";
+            // Wrap in a FlowDocument tag if not already wrapped
+            if (!html.TrimStart().StartsWith("<FlowDocument"))
+            {
+                html = $"<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">{html}</FlowDocument>";
+            }
 
             return html;
         }
+
+
+
 
 
 
