@@ -69,6 +69,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
         public void OnNavigatedTo(int modId)
         {
+          
             SaveModIdToJson(modId);
         }
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -93,12 +94,16 @@ namespace Ark_Ascended_Manager.Views.Pages
                 Mod selectedMod = e.AddedItems[0] as Mod;
                 if (selectedMod != null)
                 {
-                    // Assuming you have a service to store the current mod ID
-                    ModSelectionService.CurrentModId = selectedMod.Id;
-                    NavigateToModDetailsPage();
+                    Debug.WriteLine(ModSelectionService.CurrentModId);
+                    ModSelectionService.CurrentModId = 0; // Reset to trigger change
+                    Debug.WriteLine(ModSelectionService.CurrentModId);
+                    ModSelectionService.CurrentModId = selectedMod.Id; // Set new mod ID
+                    Debug.WriteLine(ModSelectionService.CurrentModId);
+                    NavigateToModDetailsPage(); // Navigate to details page
                 }
             }
         }
+
         public static class ModSelectionService
         {
             public static int CurrentModId { get; set; }

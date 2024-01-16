@@ -31,9 +31,11 @@ namespace Ark_Ascended_Manager.Views.Pages
            
             InitializeComponent();
             _modId = ModSelectionService.CurrentModId;
+            Debug.WriteLine(ModSelectionService.CurrentModId);
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             LoadModDetails();
         }
+
         private int ReadModIdFromJson()
         {
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -85,7 +87,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 return new FlowDocument(); // Return an empty FlowDocument in case of error
             }
         }
-
+       
         public void OnNavigatedTo(object parameter)
         {
             ReadModIdFromJson();

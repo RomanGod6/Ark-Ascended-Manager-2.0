@@ -5,9 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
       xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers"
-
-      mc:Ignorable="d" d:DesignWidth="800"
-      Title="CurseForgeCurrentModPage" Height="596">
+      mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="800"
+      Title="CurseForgeCurrentModPage">
 
     <Page.Resources>
         <helpers:HtmlToXamlConverter x:Key="HtmlToXamlConverter"/>
@@ -28,29 +27,26 @@
             <Setter Property="Margin" Value="10"/>
         </Style>
         <Style TargetType="Image" x:Key="GalleryImageStyle">
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Height" Value="100"/>
+            <Setter Property="Stretch" Value="UniformToFill"/>
             <Setter Property="Margin" Value="10"/>
+            <!-- Removed fixed Width and Height to allow dynamic resizing -->
         </Style>
     </Page.Resources>
-
     <Grid>
-        <Button Content="Add Mod" Margin="1" Click="AddModButton_Click" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+        <Button Content="Add Mod" Margin="5" VerticalAlignment="Top" HorizontalAlignment="Right" Click="AddModButton_Click" />
 
-        <ScrollViewer Margin="0,38,0,0">
-            <StackPanel Height="430" Width="790">
+        <ScrollViewer Margin="5,42,5,5">
+            <StackPanel>
                 <!-- Mod Icon and Title -->
-                <DockPanel Margin="1">
-                    <Image Source="{Binding Logo.Url}" Style="{StaticResource IconStyle}" DockPanel.Dock="Left" Height="34"/>
-                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="36" Margin="10" VerticalAlignment="Center"/>
+                <DockPanel Margin="10">
+                    <Image Source="{Binding Logo.Url}" Style="{StaticResource IconStyle}" DockPanel.Dock="Left"/>
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Center"/>
                 </DockPanel>
 
                 <!-- Mod Summary -->
                 <StackPanel Style="{StaticResource ContentPanelStyle}">
                     <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
                 </StackPanel>
-
-                <!-- Mod Metadata -->
                 <StackPanel Style="{StaticResource ContentPanelStyle}" Orientation="Horizontal">
                     <TextBlock Text="Mod ID: " Style="{StaticResource HeaderTextStyle}"/>
                     <TextBlock Text="{Binding Id}" Margin="5,0,0,0" VerticalAlignment="Center"/>
