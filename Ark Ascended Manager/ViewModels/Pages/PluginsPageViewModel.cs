@@ -168,6 +168,8 @@ public class PluginsPageViewModel : INotifyPropertyChanged
         public int DownloadCount { get; set; }
         public int ReviewCount { get; set; }
         public double ReviewAverage { get; set; }
+        public string ImagePath { get; set; }
+        public string Description { get; set; }
 
         // You may want to convert the Unix timestamp to a human-readable date
         public DateTime ReleaseDateTime => DateTimeOffset.FromUnixTimeSeconds(ReleaseDate).DateTime;
