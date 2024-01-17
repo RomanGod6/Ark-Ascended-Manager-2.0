@@ -42,7 +42,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 Content = "Plugins",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Database20 },
-                TargetPageType = typeof(Views.Pages.PluginsPage)
+                TargetPageType = typeof(Views.Pages.PluginManagementPage)
             },
                   new NavigationViewItem()
             {

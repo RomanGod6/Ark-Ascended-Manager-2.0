@@ -50,8 +50,7 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<ImportServersPage>();
                 services.AddSingleton<IssueReportForm>();
                 services.AddSingleton<IntegrationsPage>();
-                services.AddTransient<PluginsPage>();
-                services.AddTransient<PluginInstallPage>();
+                services.AddTransient<PluginManagementPage>();
                 services.AddSingleton<SteamVersionControl>();
                 services.AddSingleton<ServerUpdateService>();
                 services.AddSingleton<CreateSchedulePage>();
@@ -59,6 +58,7 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<CurseForgeModPage>();
                 services.AddTransient<CurseForgeCurrentModPage>();
                 services.AddTransient<AddModToServerPage>();
+                services.AddTransient<PluginManagementAutoInstallPage>();
 
 
 
@@ -75,8 +75,6 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<SyncConfigViewModel>();
                 services.AddSingleton<ImportServersPageViewModel>();
                 services.AddSingleton<IntegrationsViewModel>();
-                services.AddTransient<PluginsPageViewModel>();
-                services.AddTransient<PluginInstallPageViewModel>();
             }).Build();
 
         /// <summary>
