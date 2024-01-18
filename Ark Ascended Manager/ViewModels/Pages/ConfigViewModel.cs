@@ -1085,7 +1085,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             Ark_Ascended_Manager.Services.Logger.Log("Server Platform Setting after save: " + ServerPlatformSetting);
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
-            string mapName = OverrideEnabled ? OverrideMapName : "TheIsland_WP";
+            string mapName = OverrideEnabled && !string.IsNullOrEmpty(OverrideMapName) ? OverrideMapName : "TheIsland_WP";
      
 
             // Construct the batch file content

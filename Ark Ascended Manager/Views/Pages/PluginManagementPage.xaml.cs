@@ -139,37 +139,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             return false;
         }
-        private async void InstallApiButton_Click(object sender, RoutedEventArgs e)
-        {
-            string apiUrl = "https://gameservershub.com/forums/resources/ark-survival-ascended-serverapi-crossplay-supported.683/download";
-            string apiFileName = "OfficialAPI.zip"; // Specify the desired name for the downloaded API file
-
-            // Define the destination directory within the Roaming folder
-            string destinationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "plugins", "ArkAPI");
-
-            // Check if the destination directory exists, if not, create it
-            if (!Directory.Exists(destinationDirectory))
-            {
-                Directory.CreateDirectory(destinationDirectory);
-            }
-
-            // Construct the full destination path for the API file
-            string destinationPath = Path.Combine(destinationDirectory, apiFileName);
-
-            try
-            {
-                // Download the API file from the specified URL
-                 DownloadFile(apiUrl, destinationPath);
-
-                // Notify the user about successful download
-                MessageBox.Show($"API downloaded to {destinationDirectory}", "API Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                // Handle any errors during download
-                MessageBox.Show($"Error downloading API: {ex.Message}", "Download Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+       
 
         public void DownloadFile(string fileUrl, string destinationPath)
         {

@@ -12,10 +12,10 @@
             <RowDefinition Height="*" />
             <!-- Rest of the content -->
         </Grid.RowDefinitions>
-        <Button Content="Install API" Click="InstallApiButton_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0" />
+       
 
-        <Button Content="Install Plugin" Background="Blue" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Click="InstallPluginButton_Click" />
-        <Button Content="Auto Install" Click="GoToAutoInstallPageButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" />
+        <Button Content="Download Plugin" Background="Blue" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Click="InstallPluginButton_Click" />
+        <Button Content="Install Plugins" Click="GoToAutoInstallPageButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" />
 
 
         <wv2:WebView2 Name="webView" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

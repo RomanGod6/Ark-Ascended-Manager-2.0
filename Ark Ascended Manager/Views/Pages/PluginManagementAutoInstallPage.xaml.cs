@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Ark_Ascended_Manager.Services;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,14 +80,6 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void InstallButton_Click(object sender, RoutedEventArgs e)
         {
-            // Check if the ArkApi plugin directory exists
-            if (!CheckArkApiPluginDirectory())
-            {
-                // The directory doesn't exist, inform the user
-                MessageBox.Show("The ArkApi Plugins directory does not exist. Please install the ArkApi plugin first.");
-                return; // Abort the installation process
-            }
-
             // Iterate through server checkboxes to determine selected servers
             foreach (CheckBox checkBox in ServersStackPanel.Children)
             {
@@ -94,6 +88,14 @@ namespace Ark_Ascended_Manager.Views.Pages
                     ServerConfig selectedServer = checkBox.Tag as ServerConfig;
                     if (selectedServer != null)
                     {
+                        // Check if the ArkApi plugin directory exists for the selected server
+                        if (!CheckArkApiPluginDirectory(selectedServer))
+                        {
+                            // The directory doesn't exist, inform the user
+                            MessageBox.Show($"The ArkApi Plugins directory does not exist for server {selectedServer.ProfileName}. Please install the ArkApi plugin first.");
+                            continue; // Skip to the next server
+                        }
+
                         // Perform installation for the selected server
                         InstallPluginsToServer(selectedServer);
                     }
@@ -115,11 +117,13 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
-        private bool CheckArkApiPluginDirectory()
+
+        private bool CheckArkApiPluginDirectory(ServerConfig server)
         {
-            string arkApiPluginDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins");
+            string arkApiPluginDirectory = Path.Combine(server.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins");
             return Directory.Exists(arkApiPluginDirectory);
         }
+
 
         public class ServerConfig
         {
@@ -146,8 +150,10 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
         private void InstallPluginsToServer(ServerConfig server)
         {
-            // Define the destination directory for installing plugins
+            Debug.WriteLine("Starting plugin installation process.");
             string installDirectory = Path.Combine(server.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins");
+            string backupDirectory = Path.Combine(server.ServerPath, "BackupConfigs"); // Backup directory
+            Directory.CreateDirectory(backupDirectory); // Ensure the backup directory exists
 
             foreach (CheckBox checkBox in PluginsStackPanel.Children)
             {
@@ -156,30 +162,37 @@ namespace Ark_Ascended_Manager.Views.Pages
                     string selectedPlugin = checkBox.Content as string;
                     if (!string.IsNullOrEmpty(selectedPlugin))
                     {
-                        // Get the source path of the plugin from the plugins folder
                         string sourcePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "plugins", selectedPlugin);
-
-                        // Generate the destination path for the plugin in the server directory
-                        string destinationPath = Path.Combine(installDirectory, selectedPlugin);
+                        string pluginNameWithoutExtension = Path.GetFileNameWithoutExtension(selectedPlugin);
+                        string destinationPluginPath = Path.Combine(installDirectory, pluginNameWithoutExtension);
+                        string configPath = Path.Combine(destinationPluginPath, "config.json");
+                        string backupConfigPath = Path.Combine(backupDirectory, pluginNameWithoutExtension + "_config_backup.json");
 
                         try
                         {
-                            // Check if the plugin file exists
-                            if (File.Exists(sourcePath))
+                            // Backup existing config.json if it exists
+                            if (File.Exists(configPath))
                             {
-                                // Create the destination directory if it doesn't exist
-                                Directory.CreateDirectory(installDirectory);
-
-                                // Extract the ZIP file to the destination directory
-                                ZipFile.ExtractToDirectory(sourcePath, installDirectory);
-
-                                // Log the installation
-                                Debug.WriteLine($"Installed {selectedPlugin} to {server.ProfileName}");
+                                File.Copy(configPath, backupConfigPath, overwrite: true);
+                                Debug.WriteLine("Existing config.json backed up.");
                             }
-                            else
+
+                            // Delete existing plugin folder, then extract new plugin
+                            if (Directory.Exists(destinationPluginPath))
                             {
-                                Debug.WriteLine($"Plugin file not found: {selectedPlugin}");
+                                Directory.Delete(destinationPluginPath, recursive: true);
                             }
+                            ZipFile.ExtractToDirectory(sourcePath, installDirectory);
+                            Debug.WriteLine("New plugin extracted and old version removed.");
+
+                            // Merge the JSON configs
+                            if (File.Exists(backupConfigPath))
+                            {
+                                MergeJsonConfigs(configPath, backupConfigPath);
+                                Debug.WriteLine("Merged backup config.json with new config.json.");
+                            }
+
+                            Debug.WriteLine($"Installed {selectedPlugin} to {server.ProfileName}.");
                         }
                         catch (Exception ex)
                         {
@@ -191,6 +204,43 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             MessageBox.Show($"Installed selected plugins to {server.ProfileName}");
         }
+
+        private void MergeJsonConfigs(string originalConfigPath, string backupConfigPath)
+        {
+            var originalConfig = JObject.Parse(File.ReadAllText(originalConfigPath));
+            var backupConfig = JObject.Parse(File.ReadAllText(backupConfigPath));
+
+            MergeJson(originalConfig, backupConfig);
+
+            File.WriteAllText(originalConfigPath, originalConfig.ToString());
+            Debug.WriteLine($"Config merged: {originalConfigPath}");
+        }
+
+        private void MergeJson(JObject original, JObject backup)
+        {
+            foreach (var property in backup.Properties())
+            {
+                JToken originalValue;
+                if (original.TryGetValue(property.Name, out originalValue))
+                {
+                    // If it's an object, we need to go deeper
+                    if (property.Value.Type == JTokenType.Object && originalValue.Type == JTokenType.Object)
+                    {
+                        MergeJson(originalValue as JObject, property.Value as JObject);
+                    }
+                    else // Otherwise, simply overwrite the value
+                    {
+                        original[property.Name] = property.Value;
+                    }
+                }
+                // If the original config doesn't have this property, do nothing
+            }
+        }
+
+
+
+
+
 
         private void InstallPlugin(string pluginName)
         {
