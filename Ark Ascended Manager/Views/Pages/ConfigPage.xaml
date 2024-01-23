@@ -63,9 +63,8 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Label Content="{Binding CurrentServerConfig.ProfileName}" 
        FontWeight="Bold" 
-       FontSize="16"
-       RenderTransformOrigin="0.5,0.5" 
-       Width="300" 
+       FontSize="15"
+       Width="136" 
        Margin="5"/>
 
             <Button Content="Start Server" Command="{Binding StartServerCommand}" Margin="5"/>
