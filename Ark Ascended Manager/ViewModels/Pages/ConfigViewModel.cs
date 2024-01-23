@@ -1003,6 +1003,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "mods":
                                     Mods = value;
                                     break;
+                                case "passivemod":
+                                    OverridePassiveMod = value;
+                                    break;
 
 
 
@@ -1086,10 +1089,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
             string mapName = OverrideEnabled && !string.IsNullOrEmpty(OverrideMapName) ? OverrideMapName : "TheIsland_WP";
-     
+            string passiveMod = OverridePassiveMod;
+
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName);
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName, passiveMod);
 
 
             // Write the updated content to the batch file
@@ -1203,7 +1207,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName)
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName, string passiveMod)
         {
 
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
@@ -1219,7 +1223,8 @@ set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
 set mods={Mods}
-set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% 
+set passivemod={passiveMod}
+set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% -passivemod=%passivemod%
 
 
 start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
@@ -1251,6 +1256,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 lines.Add($"set {key}={value}");
             }
         }
+        
+
         public string MultihomeIP { get; set; } // Bound to the Multihome IP TextBox in XAML
         public string ServerIP { get; set; } // Bound to the Server IP TextBox in XAML
 
@@ -1377,7 +1384,17 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 
             }
         }
+        private string _overridePassiveMod;
+        public string OverridePassiveMod
+        {
+            get { return _overridePassiveMod; }
+            set
+            {
+                _overridePassiveMod = value;
+                OnPropertyChanged(nameof(OverridePassiveMod));
 
+            }
+        }
         // INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -51,6 +51,12 @@ namespace Ark_Ascended_Manager.Views.Pages
 
 
         }
+
+
+
+
+
+
         private void OverrideCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             OverrideTextBox.Visibility = Visibility.Visible;
@@ -61,6 +67,18 @@ namespace Ark_Ascended_Manager.Views.Pages
             OverrideTextBox.Visibility = Visibility.Collapsed;
             UpdateViewModelMapName();
         }
+
+        private void OverrideModCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            OverrideModTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void OverrideModCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OverrideModTextBox.Visibility = Visibility.Collapsed;
+           /* UpdateViewModelMapName();*/
+        }
+
         // Assuming this method gets called when MOTD changes.
         private void UpdateRichTextPreview(string motd)
         {
@@ -104,15 +122,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             richTextPreview.Document = flowDoc;
             Debug.WriteLine("Rich Text Preview Updated");
         }
-
-
-
-
-
-
-
-
-
+  
 
 
         private void UpdateViewModelMapName()
@@ -264,6 +274,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         public void OnNavigatedTo(object parameter)
         {
+            
             Console.WriteLine("OnNavigatedTo called in ConfigPage.");
             if (parameter is ServerConfig serverConfig)
             {

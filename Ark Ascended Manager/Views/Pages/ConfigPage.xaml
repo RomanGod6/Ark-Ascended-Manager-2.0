@@ -973,6 +973,12 @@
 
                             <Label Content="Mods (comma-separated)"/>
                             <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox Content="Add Passive Mod" Checked="OverrideModCheckBox_Checked" Unchecked="OverrideModCheckBox_Unchecked" Margin="5" ToolTip="Turn This on if you need a passive mod."/>
+                            <TextBox x:Name="OverrideModTextBox" Visibility="Collapsed" Text="{Binding OverridePassiveMod}" Margin="5" ToolTip="Insert the mod that needs to be passive. Just the mod ID followed by , if there is more than one."/>
+
+
+
+
 
                             <Label Content="Max Player Count"/>
                             <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
