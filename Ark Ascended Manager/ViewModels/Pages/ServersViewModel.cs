@@ -14,11 +14,14 @@ using System.Threading;
 using static Ark_Ascended_Manager.Services.DiscordBotService;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
     public partial class ServersViewModel : ObservableObject, INavigationAware
     {
+        private SemaphoreSlim fileSemaphore = new SemaphoreSlim(1, 1);
+
         private readonly INavigationService _navigationService;
         public ICommand SaveServerProfileCommand { get; }
         public ICommand StartServerCommand { get; private set; }
@@ -122,6 +125,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             foreach (var serverConfig in ServerConfigs)
             {
+                await RemoveServerFromMonitoringAsync(serverConfig.ServerPath);
+
                 // Launch the stop operation for each server and store the task
                 var stopTask = Task.Run(() => StopServer(serverConfig));
                 stopTasks.Add(stopTask);
@@ -276,8 +281,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     if (File.Exists(batchFilePath))
                     {
                         // Start the batch file process
-                        Process.Start(batchFilePath);
-
+                        var process = Process.Start(batchFilePath);
+                        int pid = process.Id;
+                        SaveMonitoringInfo(new MonitoringInfo { ServerDirectory = serverDirectory, Pid = pid });
                     }
                     else
                     {
@@ -292,6 +298,62 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+       
+        private void SaveMonitoringInfo(MonitoringInfo info)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
+
+            // You can decide whether to append to the file if it exists or overwrite it
+            List<MonitoringInfo> monitoringInfos;
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+                if (monitoringInfos == null) monitoringInfos = new List<MonitoringInfo>();
+            }
+            else
+            {
+                monitoringInfos = new List<MonitoringInfo>();
+            }
+
+            monitoringInfos.Add(info);
+
+            string newJson = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, newJson);
+        }
+        public class MonitoringInfo
+        {
+            public string ServerDirectory { get; set; }
+            public int Pid { get; set; }
+            // ... any other relevant information
+        }
+        private async Task RemoveServerFromMonitoringAsync(string serverDirectory)
+        {
+            await fileSemaphore.WaitAsync();
+            try
+            {
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
+
+                if (File.Exists(jsonFilePath))
+                {
+                    string json = File.ReadAllText(jsonFilePath);
+                    var monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+
+                    if (monitoringInfos != null)
+                    {
+                        monitoringInfos.RemoveAll(info => info.ServerDirectory.Equals(serverDirectory, StringComparison.OrdinalIgnoreCase));
+                        json = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
+                        File.WriteAllText(jsonFilePath, json);
+                    }
+                }
+            }
+            finally
+            {
+                fileSemaphore.Release();
+            }
+        }
         private async void StopServer(ServerConfig serverConfig)
         {
             if (serverConfig == null)
@@ -304,7 +366,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show("The server is not currently running.");
                 return;
             }
-
+            await RemoveServerFromMonitoringAsync(serverConfig.ServerPath);
             // Prompt the user for the countdown time
             string timeInput = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter the countdown time in minutes for shutdown:",
@@ -332,10 +394,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
 
             // Extract RCON details from the batch file
-            string batchFilePath = Path.Combine(serverConfig.ServerPath, "LaunchServer.bat");
-            string batchFileContent = File.ReadAllText(batchFilePath);
-            string rconPort = ExtractRconPort(batchFileContent);
-            string adminPassword = ExtractAdminPassword(batchFileContent);
+          
+            string rconPort = serverConfig.RCONPort.ToString();
+            string adminPassword = serverConfig.AdminPassword.ToString();
 
             if (string.IsNullOrEmpty(rconPort) || string.IsNullOrEmpty(adminPassword))
             {

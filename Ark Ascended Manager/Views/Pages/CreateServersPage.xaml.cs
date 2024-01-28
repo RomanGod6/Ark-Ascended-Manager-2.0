@@ -680,6 +680,7 @@ start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?
         {
             public string ChangeNumberStatus { get; set; }
             public string ProfileName { get; set; }
+            public int? Pid { get; set; }
             public string ServerStatus { get; set; }
             public string ServerPath { get; set; }
             public string MapName { get; set; }

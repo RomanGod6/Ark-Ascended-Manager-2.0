@@ -593,6 +593,25 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
             }
         }
+        private void RemoveServerFromMonitoring(string serverDirectory)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
+
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                var monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+
+                if (monitoringInfos != null)
+                {
+                    monitoringInfos.RemoveAll(info => info.ServerDirectory.Equals(serverDirectory, StringComparison.OrdinalIgnoreCase));
+                    json = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
+                    File.WriteAllText(jsonFilePath, json);
+                }
+            }
+        }
+
         public async Task InitiateServerShutdownAsync()
         {
             Ark_Ascended_Manager.Services.Logger.Log("Shutdown Clicked");
@@ -602,7 +621,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show("Current server configuration is not loaded.");
                 return;
             }
-
+            RemoveServerFromMonitoring(CurrentServerConfig.ServerPath);
             // Prompt the user for the countdown time
             string timeInput = Interaction.InputBox(
                 "Enter the countdown time in minutes for shutdown:",
@@ -961,14 +980,48 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             if (File.Exists(batchFilePath))
             {
-                Process.Start(batchFilePath);
+                var process = Process.Start(batchFilePath); 
+                int pid = process.Id;
+                SaveMonitoringInfo(new MonitoringInfo { ServerDirectory = serverDirectory, Pid = pid });
             }
             else
             {
-                // Handle the case where the batch file is not found
+             
           
             }
         }
+        private void SaveMonitoringInfo(MonitoringInfo info)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
+
+            // You can decide whether to append to the file if it exists or overwrite it
+            List<MonitoringInfo> monitoringInfos;
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+                if (monitoringInfos == null) monitoringInfos = new List<MonitoringInfo>();
+            }
+            else
+            {
+                monitoringInfos = new List<MonitoringInfo>();
+            }
+
+            monitoringInfos.Add(info);
+
+            string newJson = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, newJson);
+        }
+        public class MonitoringInfo
+        {
+            public string ServerDirectory { get; set; }
+            public int Pid { get; set; }
+            // ... any other relevant information
+        }
+
+
+
         public string ServerPlatform { get; set; }
 
         private void LoadLaunchServerSettings()
