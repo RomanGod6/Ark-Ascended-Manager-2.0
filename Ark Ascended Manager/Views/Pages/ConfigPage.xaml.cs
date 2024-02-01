@@ -193,6 +193,118 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Refresh the DataGrid
             RefreshDataGrid();
         }
+        private void RemoveRow_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("RemoveRow_Click invoked.");
+
+            // Get the Button that was clicked
+            var button = sender as System.Windows.Controls.Button; // Use the standard Button class unless you have a specific reason not to
+            if (button == null)
+            {
+                Debug.WriteLine("The clicked object is not a button.");
+                return;
+            }
+
+            Debug.WriteLine("Button was clicked.");
+
+            // Get the StackSizeOverride item related to the button clicked
+            StackSizeOverride itemToRemove = button.DataContext as StackSizeOverride;
+            if (itemToRemove == null)
+            {
+                Debug.WriteLine("DataContext is not of type StackSizeOverride.");
+                return;
+            }
+
+            Debug.WriteLine($"Removing item: {itemToRemove.ItemClassString}");
+
+            // Remove the item from the ObservableCollection
+            ViewModel.StackSizeOverrides.Remove(itemToRemove);
+
+            // Refresh the DataGrid if necessary
+            dgStackSizeOverrides.ItemsSource = null;
+            dgStackSizeOverrides.ItemsSource = ViewModel.StackSizeOverrides;
+
+            // Output the current count of items
+            Debug.WriteLine($"Current item count: {ViewModel.StackSizeOverrides.Count}");
+
+            string iniFilePath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+
+            // Create the config string to look for in the INI file
+            string configToRemove = $"ConfigOverrideItemMaxQuantity=(ItemClassString=\"{itemToRemove.ItemClassString}\"";
+
+            // Call RemoveConfigEntries with the appropriate arguments
+            RemoveConfigEntries(iniFilePath, configToRemove);
+        }
+
+        private void RemoveConfigEntries(string iniFilePath, string configStartsWith)
+        {
+            // Read the existing INI file into memory
+            var iniFileLines = File.ReadAllLines(iniFilePath).ToList();
+
+            // Find and remove all lines that start with the specified config string
+            iniFileLines.RemoveAll(line => line.Trim().StartsWith(configStartsWith));
+
+            // Write the updated INI file back to disk
+            File.WriteAllLines(iniFilePath, iniFileLines);
+
+            Debug.WriteLine("Config entries removed.");
+        }
+
+
+
+        private void UpdateIniFileWithOverrides(string iniFilePath, List<StackSizeOverride> overrides)
+        {
+            // Read the existing ini file content
+            var iniFileContents = File.ReadAllText(iniFilePath);
+            var sb = new StringBuilder(iniFileContents);
+
+            // Define the section where the overrides should be updated
+            string sectionHeader = "[/script/shootergame.shootergamemode]";
+
+            // Find the index of the section header
+            int sectionStart = iniFileContents.IndexOf(sectionHeader);
+            if (sectionStart == -1)
+            {
+                // If the section is not found, append it to the end of the file
+                sb.AppendLine(sectionHeader);
+                sectionStart = sb.Length;
+            }
+            else
+            {
+                // If the section is found, find the end of the section
+                int sectionEnd = iniFileContents.IndexOf("\n[", sectionStart + 1);
+                if (sectionEnd == -1) sectionEnd = iniFileContents.Length;
+
+                // Clear existing overrides from this section
+                sb.Remove(sectionStart, sectionEnd - sectionStart);
+
+                // Insert the section header back after clearing the section
+                sb.Insert(sectionStart, sectionHeader + "\n");
+            }
+
+            // Serialize the overrides and append them to the section
+            foreach (var overrideItem in overrides)
+            {
+                string overrideEntry = $"ConfigOverrideItemMaxQuantity=(ItemClassString=\"{overrideItem.ItemClassString}\",Quantity=(MaxItemQuantity={overrideItem.MaxItemQuantity},bIgnoreMultiplier={overrideItem.IgnoreMultiplier.ToString().ToLower()}))\n";
+                sb.Insert(sectionStart, overrideEntry);
+            }
+
+            // Write the updated contents back to the ini file
+            File.WriteAllText(iniFilePath, sb.ToString());
+        }
+
+
+
+
+        // Helper method to find a parent of a given control
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if (parentObject == null) return null;
+            T parent = parentObject as T;
+            if (parent != null) return parent;
+            return FindParent<T>(parentObject);
+        }
 
 
         private StackSizeOverride ProcessIniLine(string iniLine)
