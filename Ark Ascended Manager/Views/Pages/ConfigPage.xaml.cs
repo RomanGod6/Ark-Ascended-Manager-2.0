@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 
 
 
@@ -25,7 +26,11 @@ namespace Ark_Ascended_Manager.Views.Pages
     public partial class ConfigPage : INavigableView<ConfigPageViewModel> // Make sure the base class is Page
     {
         private ObservableCollection<string> _headers = new ObservableCollection<string>();
+        // Inside your ConfigPageViewModel class
+        public ObservableCollection<StackSizeOverride> StackSizeOverrides { get; set; } = new ObservableCollection<StackSizeOverride>();
 
+
+        private string stackOverridesPath;
         private readonly INavigationService _navigationService;
         // Constructor injects the ViewModel and sets it to the DataContext.
         private string fullPathToJson;
@@ -34,7 +39,14 @@ namespace Ark_Ascended_Manager.Views.Pages
             InitializeComponent();
             ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            stackOverridesPath = Path.Combine(viewModel.CurrentServerConfig.ServerPath, "overrides", "stacking.json");
 
+            
+            var folderPath = Path.GetDirectoryName(stackOverridesPath);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
 
 
@@ -47,13 +59,191 @@ namespace Ark_Ascended_Manager.Views.Pages
             string appNameFolder = Path.Combine(appDataFolderPath, "Ark Ascended Manager");
             string jsonFileName = "allServersSchedulingData.json";
             fullPathToJson = Path.Combine(appNameFolder, jsonFileName);
+            LoadStackSizeOverrides();
+            LoadStackSizeOverridesConfigs();
 
 
 
         }
+        public void LoadStackSizeOverrides()
+        {
+            if (File.Exists(stackOverridesPath))
+            {
+                string jsonContent = File.ReadAllText(stackOverridesPath);
+                List<StackSizeOverride> items = JsonConvert.DeserializeObject<List<StackSizeOverride>>(jsonContent);
+                StackSizeOverrides = new ObservableCollection<StackSizeOverride>(items);
+            }
+        }
+
+        private void SaveConfig_Click(object sender, RoutedEventArgs e)
+        {
+            string iniFilePath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            UpdateGameIni(iniFilePath, ViewModel.StackSizeOverrides);
+        }
+        private void UpdateGameIni(string iniFilePath, ObservableCollection<StackSizeOverride> stackSizeOverrides)
+        {
+            // Read all lines of the Game.ini file into memory
+            List<string> iniLines = File.ReadAllLines(iniFilePath).ToList();
+
+            // Find the index of the header section
+            int headerIndex = iniLines.FindIndex(line => line.Trim().Equals("[/script/shootergame.shootergamemode]", StringComparison.OrdinalIgnoreCase));
+
+            // If the section header doesn't exist, add it to the end of the file
+            if (headerIndex == -1)
+            {
+                iniLines.Add("[/script/shootergame.shootergamemode]");
+                headerIndex = iniLines.Count - 1;
+            }
+
+            // Go through each override and update the ini file
+            foreach (var overrideItem in stackSizeOverrides)
+            {
+                // Construct the line to look for or add
+                string overrideLine = $"ConfigOverrideItemMaxQuantity=(ItemClassString=\"{overrideItem.ItemClassString}\",Quantity=(MaxItemQuantity={overrideItem.MaxItemQuantity}, bIgnoreMultiplier={overrideItem.IgnoreMultiplier}))";
+
+                // Check if this line already exists based on the ItemClassString
+                int existingLineIndex = iniLines.FindIndex(headerIndex, line => line.Contains($"ItemClassString=\"{overrideItem.ItemClassString}\""));
+
+                if (existingLineIndex != -1)
+                {
+                    // Update existing line
+                    iniLines[existingLineIndex] = overrideLine;
+                }
+                else
+                {
+                    // Add new line under the header
+                    iniLines.Insert(headerIndex + 1, overrideLine);
+                }
+            }
+
+            // Write the updated lines back to the Game.ini file
+            File.WriteAllLines(iniFilePath, iniLines);
+        }
+        public void LoadStackSizeOverridesConfigs()
+        {
+            string iniFilePath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            ViewModel.LoadStackSizeOverrides(iniFilePath);
+            dgStackSizeOverrides.ItemsSource = ViewModel.StackSizeOverrides;
+        }
 
 
+        private void AddRow_Click(object sender, RoutedEventArgs e)
+        {
+            // Create a new item with blank defaults
+            var newItem = new StackSizeOverride
+            {
+                ItemClassString = "", // Set default or leave blank
+                MaxItemQuantity = 1,  // Set default quantity
+                IgnoreMultiplier = false // Set default checkbox state
+            };
 
+            // Add the new item to the ObservableCollection bound to the DataGrid
+            ViewModel.StackSizeOverrides.Add(newItem);
+        }
+
+        private void PasteItems_Click(object sender, RoutedEventArgs e)
+        {
+            // Get text from clipboard
+            var text = Clipboard.GetText();
+
+            // Call method to process and add items
+            ProcessAndAddItems(text);
+        }
+        // INI format pattern
+        string iniPattern = @"ConfigOverrideItemMaxQuantity=\(ItemClassString=""(.+?)"",Quantity=\(MaxItemQuantity=(\d+),bIgnoreMultiplier=(true|false)\)\)";
+        // JSON format pattern
+        string jsonPattern = @"{\s*""itemClassString"":\s*""(.+?)"",\s*""maxItemQuantity"":\s*(\d+),\s*""ignoreMultiplier"":\s*(true|false)\s*},?";
+
+        private void ProcessAndAddItems(string pastedText)
+        {
+            // Define the regex objects using the patterns
+            Regex iniRegex = new Regex(iniPattern);
+            Regex jsonRegex = new Regex(jsonPattern);
+
+            // Split the pasted text by new lines and iterate over each line
+            var lines = pastedText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                // Check and process the INI format
+                if (iniRegex.IsMatch(line))
+                {
+                    var match = iniRegex.Match(line);
+                    var newItem = new StackSizeOverride
+                    {
+                        ItemClassString = match.Groups[1].Value,
+                        MaxItemQuantity = int.Parse(match.Groups[2].Value),
+                        IgnoreMultiplier = bool.Parse(match.Groups[3].Value)
+                    };
+                    ViewModel.StackSizeOverrides.Add(newItem);
+                }
+                // Check and process the JSON format
+                else if (jsonRegex.IsMatch(line))
+                {
+                    var match = jsonRegex.Match(line);
+                    var newItem = new StackSizeOverride
+                    {
+                        ItemClassString = match.Groups[1].Value,
+                        MaxItemQuantity = int.Parse(match.Groups[2].Value),
+                        IgnoreMultiplier = bool.Parse(match.Groups[3].Value)
+                    };
+                    ViewModel.StackSizeOverrides.Add(newItem);
+                }
+            }
+
+            // Refresh the DataGrid
+            RefreshDataGrid();
+        }
+
+
+        private StackSizeOverride ProcessIniLine(string iniLine)
+        {
+            // Define the regex pattern for the INI format
+            string pattern = @"ConfigOverrideItemMaxQuantity=\(ItemClassString=""(.+?)"",Quantity=\(MaxItemQuantity=(\d+),bIgnoreMultiplier=(true|false)\)\)";
+            Regex regex = new Regex(pattern);
+            Match match = regex.Match(iniLine);
+
+            if (match.Success)
+            {
+                // Extract the values using the named groups
+                string extractedItemClassString = match.Groups[1].Value;
+                int extractedMaxItemQuantity = int.Parse(match.Groups[2].Value);
+                bool extractedIgnoreMultiplier = bool.Parse(match.Groups[3].Value);
+
+                // Create a new StackSizeOverride using the extracted values
+                return new StackSizeOverride
+                {
+                    ItemClassString = extractedItemClassString,
+                    MaxItemQuantity = extractedMaxItemQuantity,
+                    IgnoreMultiplier = extractedIgnoreMultiplier
+                };
+            }
+            else
+            {
+                // Handle the case where the line does not match the pattern
+                throw new ArgumentException("The provided INI line does not match the expected format.", nameof(iniLine));
+            }
+        }
+
+
+        private StackSizeOverride ProcessJsonLine(string jsonLine)
+        {
+            // Deserialize the JSON line into a StackSizeOverride object
+            return JsonConvert.DeserializeObject<StackSizeOverride>(jsonLine);
+        }
+
+        private void RefreshDataGrid()
+        {
+            dgStackSizeOverrides.ItemsSource = null;
+            dgStackSizeOverrides.ItemsSource = ViewModel.StackSizeOverrides;
+        }
+
+
+        public class StackSizeOverride
+        {
+            public string ItemClassString { get; set; }
+            public int MaxItemQuantity { get; set; }
+            public bool IgnoreMultiplier { get; set; }
+        }
 
 
 

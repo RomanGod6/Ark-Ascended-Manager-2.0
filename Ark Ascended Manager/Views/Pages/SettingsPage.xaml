@@ -8,48 +8,73 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="SettingsPage"
-    d:DataContext="{d:DesignInstance local:SettingsPage,
-                                     IsDesignTimeCreatable=False}"
+    d:DataContext="{d:DesignInstance local:SettingsPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
+
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </Page.Resources>
 
-    <StackPanel>
-        <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
-        <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <!-- Top buttons aligned to the top-right -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
+            <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click" Margin="5"/>
+        </StackPanel>
 
+        <!-- Main content -->
+        <StackPanel Grid.Row="1">
+            
 
+            <!-- GroupBox for Version -->
+            <GroupBox Header="Version" Margin="5" Padding="5">
+                <TextBlock FontSize="20" FontWeight="Medium" Text="Ark Ascended Manager - 2.3.1.0" Margin="5" HorizontalAlignment="Center"/>
+            </GroupBox>
 
-        <TextBlock
-            FontSize="20"
-            FontWeight="Medium"
-            Text="Personalization" Width="772" />
-        <TextBlock Margin="0,12,0,0" Text="Theme" Width="773" />
-        <RadioButton
+            <!-- GroupBox for Personalization -->
+            <GroupBox Header="Personalization" Margin="5" Padding="5">
+                <StackPanel>
+                    <TextBlock Text="Theme" Margin="5"/>
+                    <RadioButton
             Margin="0,12,0,0"
             Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
             CommandParameter="theme_light"
             Content="Light"
             GroupName="themeSelect"
             IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
-        <RadioButton
+                    <RadioButton
             Margin="0,8,0,0"
             Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
             CommandParameter="theme_dark"
             Content="Dark"
             GroupName="themeSelect"
             IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" Width="89" />
-        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
-        <TextBlock
-            FontSize="20"
-            FontWeight="Medium"
-            Text="About Ark Ascended Manager" Width="769" />
-    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- GroupBox for Stacking Overrides -->
+            <GroupBox Header="Stacking Overrides" Margin="5" Padding="5">
+                <StackPanel>
+                    <Button Content="Upload Stacking Overrides" Click="UploadJson_Click" Margin="5"/>
+                    <ListView x:Name="uploadedFilesList" Margin="5">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="File Name" DisplayMemberBinding="{Binding FileName}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
 </Page>

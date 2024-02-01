@@ -817,10 +817,29 @@
                                 </StackPanel>
                             </Expander>
                             <Expander Header="Stack Size Overrides">
-                                <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="1">
+                                        <Button Content="+" Click="AddRow_Click" Margin="3" Height="28"/>
+                                        <Button Content="Paste" Click="PasteItems_Click" HorizontalAlignment="Stretch" Margin="3"/>
+                                        <Button Content="Save" Click="SaveConfig_Click"/>
 
+                                    </StackPanel>
+                                    <DataGrid x:Name="dgStackSizeOverrides" AutoGenerateColumns="False" CanUserAddRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Item" Binding="{Binding ItemClassString}" />
+                                            <DataGridTextColumn Header="Max Item Quantity" Binding="{Binding MaxItemQuantity}" />
+                                            <DataGridCheckBoxColumn Header="Ignore Multiplier" Binding="{Binding IgnoreMultiplier}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    
                                 </StackPanel>
                             </Expander>
+
+
+
+
+
+
                             <Expander Header="Crafting Overrides">
                                 <StackPanel>
 

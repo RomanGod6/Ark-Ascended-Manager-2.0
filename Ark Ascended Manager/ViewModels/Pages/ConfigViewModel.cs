@@ -23,17 +23,21 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using Ark_Ascended_Manager.Helpers;
 using System.Text;
+using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
+using static Ark_Ascended_Manager.Views.Pages.ConfigPage;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
 
     public class ConfigPageViewModel : ObservableObject
     {
+       
+
         private ObservableCollection<ScheduleTask> _scheduleTasks;
         private string _currentServer;
         private FileSystemWatcher _fileWatcher;
 
-
+        public ObservableCollection<StackSizeOverride> StackSizeOverrides { get; } = new ObservableCollection<StackSizeOverride>();
         public ICommand DeleteScheduleCommand { get; private set; }
         public ObservableCollection<string> PluginNames { get; set; }
         
@@ -81,6 +85,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
+
+
         public ObservableCollection<ScheduleTask> ScheduleTasks
         {
             get => _scheduleTasks;
@@ -90,6 +96,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 OnPropertyChanged(nameof(ScheduleTasks));
             }
         }
+
 
 
         public ICommand SaveIniFileCommand { get; private set; }
@@ -119,8 +126,45 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadPlugins();
             _overrideEnabled = true;
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
-            
+            StackSizeOverrides = new ObservableCollection<StackSizeOverride>();
+
+
         }
+        public void LoadStackSizeOverrides(string iniFilePath)
+        {
+            // Read the Game.ini file
+            var iniLines = File.ReadAllLines(iniFilePath).ToList();
+            // Define a regex pattern to match the stack size override lines
+            var pattern = @"ConfigOverrideItemMaxQuantity=\(ItemClassString=""(.+?)"",Quantity=\(MaxItemQuantity=(\d+), bIgnoreMultiplier=(.+?)\)\)";
+            var regex = new Regex(pattern);
+
+            foreach (var line in iniLines)
+            {
+                var match = regex.Match(line);
+                if (match.Success)
+                {
+                    var itemClassString = match.Groups[1].Value;
+                    var maxItemQuantity = int.Parse(match.Groups[2].Value);
+                    var ignoreMultiplier = bool.Parse(match.Groups[3].Value);
+
+                    var stackSizeOverride = new StackSizeOverride
+                    {
+                        ItemClassString = itemClassString,
+                        MaxItemQuantity = maxItemQuantity,
+                        IgnoreMultiplier = ignoreMultiplier
+                    };
+
+                    StackSizeOverrides.Add(stackSizeOverride);
+                }
+            }
+        }
+
+
+
+
+
+
+
         private void DeleteSchedule(ScheduleTask scheduleToDelete)
         {
             if (scheduleToDelete == null) return;

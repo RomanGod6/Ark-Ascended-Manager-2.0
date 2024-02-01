@@ -8,19 +8,52 @@ using Ark_Ascended_Manager.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using System.IO;
 using System.Windows;
+using System.Collections.ObjectModel;
+using Microsoft.Win32;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class SettingsPage : INavigableView<SettingsViewModel>
     {
+        public ObservableCollection<string> UploadedFiles { get; private set; } = new ObservableCollection<string>();
         public SettingsViewModel ViewModel { get; }
 
         public SettingsPage(SettingsViewModel viewModel)
         {
             ViewModel = viewModel;
-            DataContext = this;
-
             InitializeComponent();
+            DataContext = this;
+            this.uploadedFilesList.ItemsSource = UploadedFiles;
+
+            LoadUploadedFilesList();
+
+           
+        }
+        private void UploadJson_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON Files (*.json)|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string destinationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Overrides", "stacking", Path.GetFileName(openFileDialog.FileName));
+                File.Copy(openFileDialog.FileName, destinationPath, true);
+                LoadUploadedFilesList();
+            }
+        }
+
+        private void LoadUploadedFilesList()
+        {
+            UploadedFiles.Clear();
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Overrides", "stacking");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            else
+            {
+                foreach (var file in Directory.GetFiles(folderPath))
+                {
+                    UploadedFiles.Add(Path.GetFileName(file));
+                }
+            }
         }
         private void OpenIssueReportForm_Click(object sender, RoutedEventArgs e)
         {
