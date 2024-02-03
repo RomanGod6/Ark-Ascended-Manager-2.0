@@ -61,10 +61,148 @@ namespace Ark_Ascended_Manager.Views.Pages
             fullPathToJson = Path.Combine(appNameFolder, jsonFileName);
             LoadStackSizeOverrides();
             LoadStackSizeOverridesConfigs();
+            LoadAndMergeEngrams();
 
 
 
         }
+        public void LoadAndMergeEngrams()
+        {
+            // Path where the JSON files are located
+            string engramsJsonPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Ark Ascended Manager", "Data", "Engrams");
+
+            // Clear existing collection
+            ViewModel.EngramOverrides.Clear();
+
+            // Load all JSON files
+            var jsonFiles = Directory.GetFiles(engramsJsonPath, "*.json");
+
+            // Deserialization structure to match the JSON file structure
+            List<Dictionary<string, List<EngramOverride>>> allEngrams = new List<Dictionary<string, List<EngramOverride>>>();
+
+            foreach (var filePath in jsonFiles)
+            {
+                string jsonContent = File.ReadAllText(filePath);
+                var engramsFromJson = JsonConvert.DeserializeObject<List<Dictionary<string, List<EngramOverride>>>>(jsonContent);
+                if (engramsFromJson != null)
+                {
+                    allEngrams.AddRange(engramsFromJson);
+                }
+            }
+
+            // Flatten the list of dictionaries into a single list of EngramOverrides
+            var flattenedEngrams = allEngrams.SelectMany(dict => dict["Engrams"]).ToList();
+
+            // Load the game.ini file
+            string gameIniPath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath,
+                                              "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+
+            // Make sure the file exists before attempting to read it
+            if (File.Exists(gameIniPath))
+            {
+                var gameIniContents = File.ReadAllLines(gameIniPath);
+
+                // Process game.ini contents and update allEngrams with any overrides found
+                foreach (var engram in flattenedEngrams)
+                {
+                    string engramOverridePattern = $@"OverrideNamedEngramEntries=\(EngramClassName=""{engram.EngramClassName}"".+?\)";
+                    var overrideMatch = gameIniContents.FirstOrDefault(line => Regex.IsMatch(line, engramOverridePattern));
+
+                    if (overrideMatch != null)
+                    {
+                        // Extract values from overrideMatch and update engram properties accordingly
+                        // Adjust the regex and parsing logic based on your actual ini file format
+                    }
+                }
+            }
+
+            // Update the ObservableCollection that is bound to the UI
+            ViewModel.EngramOverrides = new ObservableCollection<EngramOverride>(flattenedEngrams);
+        }
+        private void SaveEngramsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEngramsToIni();
+        }
+        private void SaveEngramsToIni()
+        {
+            string iniFilePath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            string sectionHeader = "[/Script/ShooterGame.ShooterGameMode]";
+
+            // Read the existing ini file into a list of strings
+            var iniLines = File.ReadAllLines(iniFilePath).ToList();
+
+            // Find the index of the section header
+            int sectionIndex = iniLines.FindIndex(line => line.Trim().Equals(sectionHeader));
+
+            if (sectionIndex != -1)
+            {
+                // The section already exists
+                // First, remove the existing engram entries under this section
+                int currentIndex = sectionIndex + 1;
+                while (currentIndex < iniLines.Count && !iniLines[currentIndex].StartsWith("["))
+                {
+                    if (iniLines[currentIndex].StartsWith("OverrideNamedEngramEntries") || iniLines[currentIndex].StartsWith("OverrideEngramEntries"))
+                    {
+                        iniLines.RemoveAt(currentIndex);
+                    }
+                    else
+                    {
+                        currentIndex++;
+                    }
+                }
+
+                // Now add the new engram entries
+                foreach (var engramOverride in ViewModel.EngramOverrides)
+                {
+                    string engramEntry = $"OverrideNamedEngramEntries=(EngramClassName=\"{engramOverride.EngramClassName}\",EngramHidden={engramOverride.EngramHidden},EngramPointsCost={engramOverride.EngramPointsCost},EngramLevelRequirement={engramOverride.EngramLevelRequirement},RemoveEngramPreReq={engramOverride.RemoveEngramPreReq})";
+                    iniLines.Insert(currentIndex++, engramEntry);
+                }
+            }
+            else
+            {
+                // The section does not exist, so add it at the end of the file
+                iniLines.Add(sectionHeader);
+                foreach (var engramOverride in ViewModel.EngramOverrides)
+                {
+                    string engramEntry = $"OverrideNamedEngramEntries=(EngramClassName=\"{engramOverride.EngramClassName}\",EngramHidden={engramOverride.EngramHidden},EngramPointsCost={engramOverride.EngramPointsCost},EngramLevelRequirement={engramOverride.EngramLevelRequirement},RemoveEngramPreReq={engramOverride.RemoveEngramPreReq})";
+                    iniLines.Add(engramEntry);
+                }
+            }
+
+            // Write the updated lines back to the Game.ini file
+            File.WriteAllLines(iniFilePath, iniLines);
+        }
+
+
+
+
+
+
+
+        public class EngramOverride
+        {
+            public int? EngramIndex { get; set; }
+            public string EngramClassName { get; set; }
+            public bool? EngramHidden { get; set; }
+            public int? EngramPointsCost { get; set; }
+            public int? EngramLevelRequirement { get; set; }
+            public bool? RemoveEngramPreReq { get; set; }
+            
+            public bool? AutoUnlock { get; set; }
+        }
+        public class EngramConfig
+        {
+            public string EngramClassName { get; set; }
+            public bool EngramHidden { get; set; }
+            public int EngramPointsCost { get; set; }
+            public int EngramLevelRequirement { get; set; }
+            public bool RemoveEngramPreReq { get; set; }
+            public bool AutoUnlock { get; set; }
+        }
+
+
         public void LoadStackSizeOverrides()
         {
             if (File.Exists(stackOverridesPath))

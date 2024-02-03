@@ -807,10 +807,45 @@
                                 </StackPanel>
                             </Expander>
                             <Expander Header="Engrams">
-                                <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                <StackPanel>
+                                    <DataGrid x:Name="dgEngramOverrides"
+                  ItemsSource="{Binding EngramOverrides}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  Margin="0,10,0,0">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Engram Class Name"
+                                    Binding="{Binding EngramClassName}"
+                                    Width="*"/>
+                                            <DataGridCheckBoxColumn Header="Hidden"
+                                        Binding="{Binding EngramHidden}"
+                                        Width="Auto"/>
+                                            <DataGridTextColumn Header="Points Cost"
+                                    Binding="{Binding EngramPointsCost}"
+                                    Width="Auto"/>
+                                            <DataGridTextColumn Header="Level Requirement"
+                                    Binding="{Binding EngramLevelRequirement}"
+                                    Width="Auto"/>
+                                            <DataGridCheckBoxColumn Header="Remove PreReq"
+                                        Binding="{Binding RemoveEngramPreReq}"
+                                        Width="Auto"/>
+                                            <DataGridTemplateColumn Header="Actions" Width="SizeToCells" IsReadOnly="True">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
 
+                                    <Button Content="Save Engrams"
+        Click="SaveEngramsButton_Click"
+        Margin="0,10,0,0"/>
                                 </StackPanel>
                             </Expander>
+
+
                             <Expander Header="Hosted Files">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
 

@@ -35,7 +35,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             openFileDialog.Filter = "JSON Files (*.json)|*.json";
             if (openFileDialog.ShowDialog() == true)
             {
-                string destinationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Overrides", "stacking", Path.GetFileName(openFileDialog.FileName));
+                string destinationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Data", "Engrams", Path.GetFileName(openFileDialog.FileName));
                 File.Copy(openFileDialog.FileName, destinationPath, true);
                 LoadUploadedFilesList();
             }
@@ -44,7 +44,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void LoadUploadedFilesList()
         {
             UploadedFiles.Clear();
-            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Overrides", "stacking");
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Data", "Engrams");
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
             else

@@ -36,6 +36,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private ObservableCollection<ScheduleTask> _scheduleTasks;
         private string _currentServer;
         private FileSystemWatcher _fileWatcher;
+       
+        public ObservableCollection<EngramConfig> EngramConfigs { get; set; } = new ObservableCollection<EngramConfig>();
 
         public ObservableCollection<StackSizeOverride> StackSizeOverrides { get; } = new ObservableCollection<StackSizeOverride>();
         public ICommand DeleteScheduleCommand { get; private set; }
@@ -84,6 +86,24 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        private ObservableCollection<EngramOverride> _engramOverrides;
+        public ObservableCollection<EngramOverride> EngramOverrides
+        {
+            get
+            {
+                if (_engramOverrides == null)
+                {
+                    _engramOverrides = new ObservableCollection<EngramOverride>();
+                }
+                return _engramOverrides;
+            }
+            set
+            {
+                _engramOverrides = value;
+                OnPropertyChanged(nameof(EngramOverrides));
+            }
+        }
+
 
 
 

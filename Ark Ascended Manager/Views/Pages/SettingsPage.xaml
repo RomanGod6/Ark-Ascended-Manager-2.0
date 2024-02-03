@@ -63,9 +63,9 @@
             </GroupBox>
 
             <!-- GroupBox for Stacking Overrides -->
-            <GroupBox Header="Stacking Overrides" Margin="5" Padding="5">
+            <GroupBox Header="Engram Datas" Margin="5" Padding="5">
                 <StackPanel>
-                    <Button Content="Upload Stacking Overrides" Click="UploadJson_Click" Margin="5"/>
+                    <Button Content="Upload Engram Data" Click="UploadJson_Click" Margin="5"/>
                     <ListView x:Name="uploadedFilesList" Margin="5">
                         <ListView.View>
                             <GridView>
