@@ -807,7 +807,13 @@
                                 </StackPanel>
                             </Expander>
                             <Expander Header="Engrams">
+                                
                                 <StackPanel>
+
+                                    <Button Content="Save Engrams"
+        Click="SaveEngramsButton_Click"
+        Margin="0,10,0,0"/>
+                                    <TextBox x:Name="SearchBox" Margin="5" TextChanged="SearchBox_TextChanged"/>
                                     <DataGrid x:Name="dgEngramOverrides"
                   ItemsSource="{Binding EngramOverrides}"
                   AutoGenerateColumns="False"
@@ -816,7 +822,7 @@
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="Engram Class Name"
                                     Binding="{Binding EngramClassName}"
-                                    Width="*"/>
+                                    Width="2*"/>
                                             <DataGridCheckBoxColumn Header="Hidden"
                                         Binding="{Binding EngramHidden}"
                                         Width="Auto"/>
@@ -826,22 +832,12 @@
                                             <DataGridTextColumn Header="Level Requirement"
                                     Binding="{Binding EngramLevelRequirement}"
                                     Width="Auto"/>
-                                            <DataGridCheckBoxColumn Header="Remove PreReq"
-                                        Binding="{Binding RemoveEngramPreReq}"
-                                        Width="Auto"/>
-                                            <DataGridTemplateColumn Header="Actions" Width="SizeToCells" IsReadOnly="True">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                            <DataGridCheckBoxColumn Header="Auto Unlock" Binding="{Binding AutoUnlock}" Width="Auto"/>
+                                            <DataGridTextColumn Header="Level To Auto Unlock" Binding="{Binding LevelToAutoUnlock}" Width="Auto"/>
+
                                         </DataGrid.Columns>
                                     </DataGrid>
 
-                                    <Button Content="Save Engrams"
-        Click="SaveEngramsButton_Click"
-        Margin="0,10,0,0"/>
                                 </StackPanel>
                             </Expander>
 

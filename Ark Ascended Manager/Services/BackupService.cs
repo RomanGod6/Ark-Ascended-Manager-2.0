@@ -68,6 +68,8 @@ namespace Ark_Ascended_Manager.Services
                 else
                 {
                     Debug.WriteLine($"Save file not found for server at path: {saveFilePath}");
+                    return;
+                    Debug.WriteLine($"Save file not found for server at path: {saveFilePath}");
                 }
             }
         }
