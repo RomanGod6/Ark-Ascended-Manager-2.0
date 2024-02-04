@@ -243,7 +243,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             public int? EngramLevelRequirement { get; set; }
             public bool? RemoveEngramPreReq { get; set; } = false; // Default to false
             public bool AutoUnlock { get; set; } = false; // Default to false
-            public int LevelToAutoUnlock { get; set; } = 0; // Default to 0
+            public int LevelToAutoUnlock { get; set; } = 1; // Default to 0
         }
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
