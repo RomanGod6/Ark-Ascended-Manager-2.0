@@ -103,7 +103,6 @@ namespace Ark_Ascended_Manager.Views.Pages
             string gameIniPath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath,
                                               "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
 
-            // Make sure the file exists before attempting to read it
             if (File.Exists(gameIniPath))
             {
                 var gameIniContents = File.ReadAllLines(gameIniPath);
@@ -111,53 +110,62 @@ namespace Ark_Ascended_Manager.Views.Pages
                 // Process game.ini contents and update allEngrams with any overrides found
                 foreach (var engram in flattenedEngrams)
                 {
-                    Debug.WriteLine($"Processing engram: {engram.EngramClassName}");
+                    string lineToFind = $"OverrideNamedEngramEntries=(EngramClassName=\"{engram.EngramClassName}\"";
+                    string foundLine = gameIniContents.FirstOrDefault(line => line.Contains(lineToFind));
 
-                    // This pattern is expecting the RemoveEngramPreReq group to possibly be empty.
-                    string engramOverridePattern = $@"OverrideNamedEngramEntries=\(EngramClassName=""{engram.EngramClassName}""(,EngramHidden=(True|False))?(,EngramPointsCost=(\d+))?(,EngramLevelRequirement=(\d+))?(,RemoveEngramPreReq=(True|False))?\)";
-
-                    var overrideMatch = gameIniContents.FirstOrDefault(line => Regex.IsMatch(line, engramOverridePattern));
-
-                    if (overrideMatch != null)
+                    if (foundLine != null)
                     {
-                        var match = Regex.Match(overrideMatch, engramOverridePattern);
-                        if (match.Success)
-                        {
-                            if (match.Groups[2].Success && !string.IsNullOrWhiteSpace(match.Groups[2].Value))
-                            {
-                                engram.EngramHidden = bool.Parse(match.Groups[2].Value);
-                            }
-                            if (match.Groups[4].Success && !string.IsNullOrWhiteSpace(match.Groups[4].Value))
-                            {
-                                engram.EngramPointsCost = int.Parse(match.Groups[4].Value);
-                            }
-                            if (match.Groups[6].Success && !string.IsNullOrWhiteSpace(match.Groups[6].Value))
-                            {
-                                engram.EngramLevelRequirement = int.Parse(match.Groups[6].Value);
-                            }
-                            // Here we check if the group for RemoveEngramPreReq is successful or if it's empty, which implies false.
-                            if (match.Groups[8].Success && !string.IsNullOrWhiteSpace(match.Groups[8].Value))
-                            {
-                                engram.RemoveEngramPreReq = bool.Parse(match.Groups[8].Value);
-                            }
-                            else if (match.Groups[8].Success)
-                            {
-                                string removeEngramPreReqValue = match.Groups[8].Value;
-                                engram.RemoveEngramPreReq = !string.IsNullOrEmpty(removeEngramPreReqValue) && bool.Parse(removeEngramPreReqValue);
-                            }
+                        // Split the line into components
+                        string[] components = foundLine.Split(',');
 
-                        }
-                        else
+                        foreach (string component in components)
                         {
-                            Debug.WriteLine($"Pattern match failed for override in Game.ini for {engram.EngramClassName}");
+                            string[] keyValue = component.Split('=');
+                            if (keyValue.Length == 2) // Make sure there is a key and a value
+                            {
+                                string key = keyValue[0].Trim();
+                                string value = keyValue[1].Trim().TrimEnd(')'); // Trim the ending parenthesis if present
+
+                                switch (key)
+                                {
+                                    case "EngramHidden":
+                                        if (bool.TryParse(value, out bool hiddenValue))
+                                        {
+                                            engram.EngramHidden = hiddenValue;
+                                        }
+                                        break;
+                                    case "EngramPointsCost":
+                                        if (int.TryParse(value, out int pointsCostValue))
+                                        {
+                                            engram.EngramPointsCost = pointsCostValue;
+                                        }
+                                        break;
+                                    case "EngramLevelRequirement":
+                                        if (int.TryParse(value, out int levelRequirementValue))
+                                        {
+                                            engram.EngramLevelRequirement = levelRequirementValue;
+                                        }
+                                        break;
+                                    case "RemoveEngramPreReq":
+                                        if (bool.TryParse(value, out bool removePreReqValue))
+                                        {
+                                            engram.RemoveEngramPreReq = removePreReqValue;
+                                        }
+                                        break;
+                                        // Repeat for other properties as needed
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        Debug.WriteLine($"No override found in Game.ini for {engram.EngramClassName}, using default values.");
+                        Debug.WriteLine($"No override found in Game.ini for {engram.EngramClassName}");
                     }
 
+
                 }
+
+                // Process AutoUnlocks from game.ini
                 foreach (var line in gameIniContents)
                 {
                     if (line.StartsWith("EngramEntryAutoUnlocks=("))
@@ -169,7 +177,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                             var engramClassName = match.Groups[1].Value;
                             var levelToAutoUnlock = int.Parse(match.Groups[2].Value);
 
-                            var engram = ViewModel.EngramOverrides.FirstOrDefault(e => e.EngramClassName == engramClassName);
+                            var engram = flattenedEngrams.FirstOrDefault(e => e.EngramClassName == engramClassName);
                             if (engram != null)
                             {
                                 engram.AutoUnlock = true;
@@ -178,12 +186,16 @@ namespace Ark_Ascended_Manager.Views.Pages
                         }
                     }
                 }
-
+            }
+            else
+            {
+                Debug.WriteLine($"Game.ini file not found at path: {gameIniPath}");
             }
 
             // Update the ObservableCollection that is bound to the UI
             ViewModel.EngramOverrides = new ObservableCollection<EngramOverride>(flattenedEngrams);
-        }
+}
+
         private void SaveEngramsButton_Click(object sender, RoutedEventArgs e)
         {
             SaveEngramsToIni();
@@ -202,7 +214,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Remove existing engram entries to avoid duplicates
             iniLines.RemoveAll(line => line.StartsWith("OverrideNamedEngramEntries=") || line.StartsWith("EngramEntryAutoUnlocks="));
 
-            // Add section header if it does not exist
+            // Add section header if it does not existLoadAndMergeEngrams
             if (sectionIndex == -1)
             {
                 iniLines.Add(sectionHeader);

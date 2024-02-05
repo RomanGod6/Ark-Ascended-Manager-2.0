@@ -38,7 +38,7 @@
 
             <!-- GroupBox for Version -->
             <GroupBox Header="Version" Margin="5" Padding="5">
-                <TextBlock FontSize="20" FontWeight="Medium" Text="Ark Ascended Manager - 2.3.1.0" Margin="5" HorizontalAlignment="Center"/>
+                <TextBlock FontSize="20" FontWeight="Medium" Text="Ark Ascended Manager - 2.3.6" Margin="5" HorizontalAlignment="Center"/>
             </GroupBox>
 
             <!-- GroupBox for Personalization -->
