@@ -601,10 +601,67 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
 
         // Assuming this method gets called when MOTD changes.
+        /*private void UpdateRichTextPreview(string motd)
+        {
+
+            Debug.WriteLine("Updating Rich Text Preview");
+            var flowDoc = new FlowDocument();
+
+            // The pattern includes the color start tag, the color end tag, and the newline escape sequence
+            var pattern = @"(<RichColor Color=""[0-9,. ]+"">|</>|\\n)";
+            var segments = Regex.Split(motd, pattern);
+            
+
+            Color currentColor = Colors.Black; // Default color
+            Paragraph paragraph = new Paragraph();
+
+            foreach (var segment in segments)
+            {
+                if (segment.StartsWith("<RichColor"))
+                {
+                    currentColor = ExtractColorFromTag(segment);
+                }
+                else if (segment.Equals("</>")) // Check if the segment is the color end tag
+                {
+                    // Do nothing, just here to prevent adding the closing tag as text
+                }
+                else if (segment.Equals("\\n")) // Check if the segment is the newline escape sequence
+                {
+                    // Add a new line to the paragraph
+                    paragraph.Inlines.Add(new LineBreak());
+                }
+                else
+                {
+                    // This segment is the text that should have the current color
+                    Run run = new Run(segment)
+                    {
+                        Foreground = new SolidColorBrush(currentColor)
+                    };
+                    paragraph.Inlines.Add(run);
+                }
+            }
+
+            flowDoc.Blocks.Add(paragraph);
+            richTextPreview.Document = flowDoc;
+            Debug.WriteLine("Rich Text Preview Updated");
+        }*/
         private void UpdateRichTextPreview(string motd)
         {
             Debug.WriteLine("Updating Rich Text Preview");
-            var flowDoc = new FlowDocument();
+            FlowDocument flowDoc;
+            // Check if 'motd' is null or empty before proceeding
+            if (string.IsNullOrEmpty(motd))
+            {
+                // Initialize flowDoc here with a default message
+                flowDoc = new FlowDocument();
+                flowDoc.Blocks.Add(new Paragraph(new Run("No message of the day provided.")));
+                richTextPreview.Document = flowDoc;
+                Debug.WriteLine("Rich Text Preview Updated with default message.");
+                return; // Exit the method as there's nothing to process.
+            }
+
+            // If 'motd' is not null or empty, initialize flowDoc here
+            flowDoc = new FlowDocument();
 
             // The pattern includes the color start tag, the color end tag, and the newline escape sequence
             var pattern = @"(<RichColor Color=""[0-9,. ]+"">|</>|\\n)";
@@ -643,7 +700,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             richTextPreview.Document = flowDoc;
             Debug.WriteLine("Rich Text Preview Updated");
         }
-  
+
 
 
         private void UpdateViewModelMapName()
