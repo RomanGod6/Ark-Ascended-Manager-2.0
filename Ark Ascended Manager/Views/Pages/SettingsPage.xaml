@@ -30,6 +30,8 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
             <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click" Margin="5"/>
+            <Button x:Name="UpdateApplicationButton" Content="Update AAM" Click="UpdateApplicationButton_Click" />
+
         </StackPanel>
 
         <!-- Main content -->
@@ -38,7 +40,7 @@
 
             <!-- GroupBox for Version -->
             <GroupBox Header="Version" Margin="5" Padding="5">
-                <TextBlock FontSize="20" FontWeight="Medium" Text="Ark Ascended Manager - 2.3.6" Margin="5" HorizontalAlignment="Center"/>
+                <TextBlock FontSize="20" FontWeight="Medium" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" Margin="5" HorizontalAlignment="Center"/>
             </GroupBox>
 
             <!-- GroupBox for Personalization -->
