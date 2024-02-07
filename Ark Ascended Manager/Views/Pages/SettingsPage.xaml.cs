@@ -14,6 +14,8 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Diagnostics;
+using System.IO.Compression;
+using System.Windows.Media;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -28,10 +30,16 @@ namespace Ark_Ascended_Manager.Views.Pages
             InitializeComponent();
             DataContext = this;
             this.uploadedFilesList.ItemsSource = UploadedFiles;
+            Loaded += async (s, e) => await CheckAndUpdateVersionStatusAsync();
+            Loaded += SettingsPage_Loaded;
             CheckForUpdatesAsync();
             LoadUploadedFilesList();
 
            
+        }
+        private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LoadReleaseNotes();
         }
         private void UploadJson_Click(object sender, RoutedEventArgs e)
         {
@@ -95,6 +103,29 @@ namespace Ark_Ascended_Manager.Views.Pages
                 System.Windows.MessageBox.Show($"An error occurred: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private const string GitHubApiLatestReleaseUrl = "https://api.github.com/repos/RomanGod6/Ark-Ascended-Manager-Updater/releases/latest";
+
+        private async Task<string> GetLatestVersionTagAsync()
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", "ArkAscendedManagerClientApplication");
+
+                var response = await client.GetAsync(GitHubApiLatestReleaseUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    dynamic latestRelease = JObject.Parse(jsonString);
+                    return latestRelease.tag_name;
+                }
+                else
+                {
+                    // Handle the case where the API call fails
+                    throw new InvalidOperationException("Could not fetch latest version tag from GitHub.");
+                }
+            }
+        }
+
         private async void UpdateApplicationButton_Click(object sender, RoutedEventArgs e)
         {
             // Disable the button to prevent multiple clicks
@@ -102,50 +133,128 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             try
             {
-                // URL of the zip file containing the MSI installer on GitHub
-                string downloadUrl = "https://github.com/RomanGod6/Ark-Ascended-Manager-Updater/releases/download/{tag}/YourAppInstaller.zip";
-
-                // Start the update process
-                await DownloadAndInstallUpdateAsync(downloadUrl);
+                // Get the latest version tag from GitHub
+                string versionTag = await GetLatestVersionTagAsync();
+                if (!string.IsNullOrEmpty(versionTag))
+                {
+                    // If a new version is available, download and install the update
+                    await DownloadAndInstallUpdateAsync(versionTag.TrimStart('v'));
+                }
             }
             catch (Exception ex)
             {
-                // Re-enable the button in case of an error
+                // Handle exceptions (e.g., network issues, parsing errors)
+                System.Windows.MessageBox.Show($"Error checking for updates: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                // Re-enable the button after the process is complete or has failed
                 UpdateApplicationButton.IsEnabled = true;
-
-                // Handle any exceptions that occur during the process
-                System.Windows.MessageBox.Show($"Failed to update the application: {ex.Message}", "Update Failed", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private async Task DownloadAndInstallUpdateAsync(string downloadUrl)
+        private async Task CheckAndUpdateVersionStatusAsync()
         {
-            using (var client = new HttpClient())
+            string latestVersionTag = await GetLatestVersionTagAsync(); // Should return something like "v2.4.0"
+            string currentFullVersion = ViewModel.AppVersion; // Might return something like "Ark Ascended Manager - 2.4.0.0"
+
+            // Extract just the version part of the string
+            string currentVersionString = currentFullVersion.Split('-').Last().Trim();
+
+            // Remove the 'v' prefix from the GitHub tag and ensure it's a valid version string
+            latestVersionTag = latestVersionTag.TrimStart('v');
+            if (Version.TryParse(latestVersionTag, out Version latestVersion) &&
+                Version.TryParse(currentVersionString, out Version currentVersion))
             {
-                // Download the zip file
-                var zipBytes = await client.GetByteArrayAsync(downloadUrl);
-
-                // Save the zip file to a temporary location
-                var tempZipPath = Path.GetTempFileName();
-                await File.WriteAllBytesAsync(tempZipPath, zipBytes);
-
-                // Extract the MSI from the zip
-                string tempExtractionPath = Path.GetTempPath() + "\\YourAppInstaller";
-                System.IO.Compression.ZipFile.ExtractToDirectory(tempZipPath, tempExtractionPath);
-
-                // Find the MSI file in the extracted files
-                var msiFilePath = Directory.GetFiles(tempExtractionPath, "*.msi").FirstOrDefault();
-
-                if (msiFilePath != null)
+                if (latestVersion > currentVersion)
                 {
-                    // Start the MSI installation process
-                    Process.Start("msiexec", $"/i \"{msiFilePath}\"");
+                    VersionStatusTextBlock.Text = $"Update available - New version: {latestVersion}";
+                    VersionStatusTextBlock.Foreground = new SolidColorBrush(Colors.Red);
                 }
                 else
                 {
-                    throw new FileNotFoundException("MSI file not found in the downloaded zip.");
+                    VersionStatusTextBlock.Text = "Up to date";
+                    VersionStatusTextBlock.Foreground = new SolidColorBrush(Colors.Green);
+                }
+            }
+            else
+            {
+                // Handle invalid version string format
+                Debug.WriteLine("Invalid version string format.");
+            }
+        }
+
+
+        private async Task DownloadAndInstallUpdateAsync(string versionTag)
+        {
+            string downloadUrl = $"https://github.com/RomanGod6/Ark-Ascended-Manager-Updater/archive/refs/tags/v{versionTag}.zip";
+            string tempZipPath = Path.GetTempFileName();
+            string extractionPath = Path.Combine(Path.GetTempPath(), "ArkAscendedManagerUpdate");
+            string msiFileName = "ArkAscendedManager.msi";
+
+            using (var client = new HttpClient())
+            {
+
+                // Download the ZIP file
+                try
+                {
+                    byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl);
+                    await File.WriteAllBytesAsync(tempZipPath, fileBytes);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error downloading update: {ex.Message}", "Download Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Extract the ZIP file
+                try
+                {
+                    if (Directory.Exists(extractionPath))
+                    {
+                        Directory.Delete(extractionPath, true); // Ensures the directory is clean before extracting
+                    }
+                    Directory.CreateDirectory(extractionPath);
+                    ZipFile.ExtractToDirectory(tempZipPath, extractionPath);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error extracting update: {ex.Message}", "Extraction Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Find the MSI file within the extracted directory
+                string msiFilePath = Directory.EnumerateFiles(extractionPath, msiFileName, SearchOption.AllDirectories).FirstOrDefault();
+
+                if (!string.IsNullOrEmpty(msiFilePath))
+                {
+                    // Correctly launch the MSI installer using msiexec
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        FileName = "msiexec",
+                        Arguments = $"/i \"{msiFilePath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas" // Ensure the installer runs with admin privileges
+                    };
+
+                    try
+                    {
+                        Process process = Process.Start(startInfo);
+
+                        // You may want to close your application here
+                        Application.Current.Shutdown();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show($"Failed to start installer: {ex.Message}", "Installation Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Installer file not found after extraction.", "Update Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
+
 
 
         private async Task CheckForUpdatesAsync()
@@ -168,23 +277,25 @@ namespace Ark_Ascended_Manager.Views.Pages
                     if (new Version(latestVersionTag.TrimStart('v')) > new Version(currentVersion))
                     {
                         // Notify the user that an update is available
-                        System.Windows.MessageBox.Show("A new update is available!", "Update Available", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+                        Debug.WriteLine("A new update is available!", "Update Available", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
                         // You would typically provide a way for the user to download the update here
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("You have the latest version installed.", "No Updates", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+                        Debug.WriteLine("You have the latest version installed.", "No Updates", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Failed to check for updates.", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine("Failed to check for updates.", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
-        
-        
+
+
+
+
 
     }
 }

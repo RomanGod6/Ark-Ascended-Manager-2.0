@@ -28,12 +28,22 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // Initialize the WebView2 control
-            await webView.EnsureCoreWebView2Async(null);
+            // Specify a user data folder within the user's AppData directory
+            string userDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "WebView2");
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(userDataFolder);
+
+            // Create a new CoreWebView2Environment with the specified user data folder
+            CoreWebView2Environment webView2Environment = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+
+            // Initialize the WebView2 control with the created environment
+            await webView.EnsureCoreWebView2Async(webView2Environment);
 
             // Navigate to the website where you want to automate actions
             webView.CoreWebView2.Navigate("https://gameservershub.com/");
         }
+
 
         // Event handler for the "Install Plugin" button click
         // Event handler for the "Install Plugin" button click

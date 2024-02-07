@@ -1,6 +1,8 @@
 ﻿
 
 using Ark_Ascended_Manager.Views.Pages;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -31,7 +33,52 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (!_isInitialized)
                 InitializeViewModel();
         }
-       
+        private string _releaseNotes;
+        public string ReleaseNotes
+        {
+            get => _releaseNotes;
+            set
+            {
+                _releaseNotes = value;
+                OnPropertyChanged(nameof(ReleaseNotes));
+            }
+        }
+        private const string GitHubReleasesUrl = "https://api.github.com/repos/RomanGod6/Ark-Ascended-Manager-Updater/releases";
+
+        private async Task<List<string>> FetchReleaseNotesAsync()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "ArkAscendedManagerClientApplication");
+
+                var response = await httpClient.GetAsync(GitHubReleasesUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var releasesJson = await response.Content.ReadAsStringAsync();
+                    var releases = JArray.Parse(releasesJson);
+
+                    return releases.Select(release => release["body"].ToString()).ToList();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Could not fetch release notes from GitHub.");
+                }
+            }
+        }
+
+        public async void LoadReleaseNotes()
+        {
+            try
+            {
+                ReleaseNotes = "Loading release notes...";
+                var releaseNotes = await FetchReleaseNotesAsync();
+                ReleaseNotes = string.Join(Environment.NewLine + new string('-', 80) + Environment.NewLine, releaseNotes);
+            }
+            catch (Exception ex)
+            {
+                ReleaseNotes = "Failed to load release notes: " + ex.Message;
+            }
+        }
 
         public void OnNavigatedFrom() { }
 
