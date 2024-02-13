@@ -25,6 +25,8 @@ using Ark_Ascended_Manager.Helpers;
 using System.Text;
 using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
 using static Ark_Ascended_Manager.Views.Pages.ConfigPage;
+using Logger = Ark_Ascended_Manager.Services.Logger;
+
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -313,7 +315,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private void UpdateCurrentServerAdminPassword()
         {
-            if (CurrentServerConfig != null)
+            try
+            {
+                if (CurrentServerConfig != null)
             {
                 CurrentServerConfig.AdminPassword = ServerAdminPassword;
                 CurrentServerConfig.ServerName = SessionName;
@@ -322,6 +326,14 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 // Handle the case where no current server is selected
+            }
+        }
+            catch (Exception ex)
+            {
+                // Log the error
+                Logger.Log($"An error occurred while saving game settings: {ex.Message}");
+                // Optionally, log the stack trace or other details
+                Logger.Log(ex.StackTrace);
             }
         }
         private void SaveServerConfig(string profileName)
@@ -1954,7 +1966,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
 
         private void SaveGameUserSettings()
         {
-            string serverPath = CurrentServerConfig.ServerPath;
+            try
+            {
+                string serverPath = CurrentServerConfig.ServerPath;
             string iniFilePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "GameUserSettings.ini");
 
             // Read all lines
@@ -2082,6 +2096,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
 
             // Write the updated lines back to the file
             File.WriteAllLines(iniFilePath, lines);
+        }
+            catch (Exception ex)
+            {
+                // Log the error
+                Logger.Log($"An error occurred while saving game settings: {ex.Message}");
+                // Optionally, log the stack trace or other details
+                Logger.Log(ex.StackTrace);
+            }
         }
 
         private void UpdateLine(ref List<string> lines, string header, string key, string newValue)
@@ -3886,177 +3908,187 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
         }
         private void SaveGameIniSettings()
         {
-            string serverPath = CurrentServerConfig.ServerPath;
-            string iniFilePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+            try
+            {
+                string serverPath = CurrentServerConfig.ServerPath;
+                string iniFilePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
 
-            // Read all lines
-            var lines = File.ReadAllLines(iniFilePath).ToList();
+                // Read all lines
+                var lines = File.ReadAllLines(iniFilePath).ToList();
 
-            // Update specific lines
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintingStatScaleMultiplier", BabyImprintingStatScaleMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleIntervalMultiplier", BabyCuddleIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleGracePeriodMultiplier", BabyCuddleGracePeriodMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleLoseImprintQualitySpeedMultiplier", BabyCuddleLoseImprintQualitySpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[0]", PerLevelStatsMultiplier_DinoTamed_0);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[1]", PerLevelStatsMultiplier_DinoTamed_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[2]", PerLevelStatsMultiplier_DinoTamed_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[3]", PerLevelStatsMultiplier_DinoTamed_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[4]", PerLevelStatsMultiplier_DinoTamed_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[4]", PerLevelStatsMultiplier_Player_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[5]", PerLevelStatsMultiplier_Player_5);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[6]", PerLevelStatsMultiplier_Player_6);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[7]", PerLevelStatsMultiplier_Player_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[3]", PlayerBaseStatMultipliers_3);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[4]", PlayerBaseStatMultipliers_4);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxAlliancesPerTribe", MaxAlliancesPerTribe);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxTribesPerAlliance", MaxTribesPerAlliance);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PoopIntervalMultiplier", PoopIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingIntervalMultiplier", MatingIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintAmountMultiplier", BabyImprintAmountMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingSpeedMultiplier", MatingSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStartTimeSeconds", AutoPvEStartTimeSeconds);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStopTimeSeconds", AutoPvEStopTimeSeconds);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "KillXPMultiplier", KillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HarvestXPMultiplier", HarvestXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftXPMultiplier", CraftXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SpecialXPMultiplier", SpecialXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventSpawnAnimation", PreventSpawnAnimation.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCryoFridgeOnSaddle", AllowCryoFridgeOnSaddle.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DestroyTamesOverTheSoftTameLimit", DestroyTamesOverTheSoftTameLimit.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodFridgeRequirement", DisableCryopodFridgeRequirement.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodEnemyCheck", DisableCryopodEnemyCheck.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvETimer", AutoPvETimer.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bPvPDisableFriendlyFire", BPvPDisableFriendlyFire.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableLootCrates", DisableLootCrates.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCustomRecipes", AllowCustomRecipes.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture) ?? "");
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseCorpseLocator", UseCorpseLocator.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ShowCreativeMode", ShowCreativeMode.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "NonPermanentDiseases", NonPermanentDiseases.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventDiseases", PreventDiseases.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture) ?? "");
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableDinoTaming", DisableDinoTaming.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAllowUnclaimDinos", AllowUnclaimDinos.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoBreeding", DisableDinoBreeding.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoRiding", DisableDinoRiding.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ForceAllowCaveFlyers", ForceAllowCaveFlyers.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventMateBoost", PreventMateBoost.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BossKillXPMultiplier", BossKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AlphaKillXPMultiplier", AlphaKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildKillXPMultiplier", WildKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CaveKillXPMultiplier", CaveKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedKillXPMultiplier", TamedKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
-            UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
+                // Update specific lines
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintingStatScaleMultiplier", BabyImprintingStatScaleMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleIntervalMultiplier", BabyCuddleIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleGracePeriodMultiplier", BabyCuddleGracePeriodMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyCuddleLoseImprintQualitySpeedMultiplier", BabyCuddleLoseImprintQualitySpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[0]", PerLevelStatsMultiplier_DinoTamed_0);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[1]", PerLevelStatsMultiplier_DinoTamed_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[2]", PerLevelStatsMultiplier_DinoTamed_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[3]", PerLevelStatsMultiplier_DinoTamed_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[4]", PerLevelStatsMultiplier_DinoTamed_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[4]", PerLevelStatsMultiplier_Player_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[5]", PerLevelStatsMultiplier_Player_5);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[6]", PerLevelStatsMultiplier_Player_6);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[7]", PerLevelStatsMultiplier_Player_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[3]", PlayerBaseStatMultipliers_3);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[4]", PlayerBaseStatMultipliers_4);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvPZoneStructureDamageMultiplier", PvPZoneStructureDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "StructureDamageRepairCooldown", StructureDamageRepairCooldown);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalCheckPeriod", IncreasePvPRespawnIntervalCheckPeriod);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalMultiplier", IncreasePvPRespawnIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnIntervalBaseAmount", IncreasePvPRespawnIntervalBaseAmount);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxAlliancesPerTribe", MaxAlliancesPerTribe);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxTribesPerAlliance", MaxTribesPerAlliance);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ResourceNoReplenishRadiusPlayers", ResourceNoReplenishRadiusPlayers);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropGrowthSpeedMultiplier", CropGrowthSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "LayEggIntervalMultiplier", LayEggIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PoopIntervalMultiplier", PoopIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CropDecaySpeedMultiplier", CropDecaySpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingIntervalMultiplier", MatingIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyImprintAmountMultiplier", BabyImprintAmountMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "EggHatchSpeedMultiplier", EggHatchSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MatingSpeedMultiplier", MatingSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyMatureSpeedMultiplier", BabyMatureSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStartTimeSeconds", AutoPvEStartTimeSeconds);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AutoPvEStopTimeSeconds", AutoPvEStopTimeSeconds);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "KillXPMultiplier", KillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HarvestXPMultiplier", HarvestXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftXPMultiplier", CraftXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SpecialXPMultiplier", SpecialXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventSpawnAnimation", PreventSpawnAnimation.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCryoFridgeOnSaddle", AllowCryoFridgeOnSaddle.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DestroyTamesOverTheSoftTameLimit", DestroyTamesOverTheSoftTameLimit.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodFridgeRequirement", DisableCryopodFridgeRequirement.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodEnemyCheck", DisableCryopodEnemyCheck.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "IncreasePvPRespawnInterval", IncreasePvPRespawnInterval.ToString(CultureInfo.InvariantCulture));
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvETimer", AutoPvETimer.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAutoPvEUseSystemTime", AutoPvEUseSystemTime.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bPvPDisableFriendlyFire", BPvPDisableFriendlyFire.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FlyerPlatformAllowUnalignedDinoBasing", FlyerPlatformAllowUnalignedDinoBasing.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableLootCrates", DisableLootCrates.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCustomRecipes", AllowCustomRecipes.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture) ?? "");
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseCorpseLocator", UseCorpseLocator.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ShowCreativeMode", ShowCreativeMode.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "NonPermanentDiseases", NonPermanentDiseases.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventDiseases", PreventDiseases.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture) ?? "");
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableDinoTaming", DisableDinoTaming.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bAllowUnclaimDinos", AllowUnclaimDinos.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoBreeding", DisableDinoBreeding.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableDinoRiding", DisableDinoRiding.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ForceAllowCaveFlyers", ForceAllowCaveFlyers.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventMateBoost", PreventMateBoost.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BossKillXPMultiplier", BossKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AlphaKillXPMultiplier", AlphaKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildKillXPMultiplier", WildKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CaveKillXPMultiplier", CaveKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedKillXPMultiplier", TamedKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
 
-            // ... Continue for all other properties
+                // ... Continue for all other properties
 
-            // Write the updated lines back to the file
-            File.WriteAllLines(iniFilePath, lines);
+                // Write the updated lines back to the file
+                File.WriteAllLines(iniFilePath, lines);
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Logger.Log($"An error occurred while saving game settings: {ex.Message}");
+                // Optionally, log the stack trace or other details
+                Logger.Log(ex.StackTrace);
+            }
         }
         private string _babyImprintingStatScaleMultiplier;
         public string BabyImprintingStatScaleMultiplier
