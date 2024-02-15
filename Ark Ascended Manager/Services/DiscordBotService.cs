@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using CoreRCON.Parsers.Standard;
+using Ark_Ascended_Manager.Views.Pages;
 
 namespace Ark_Ascended_Manager.Services
 {
@@ -415,9 +416,17 @@ namespace Ark_Ascended_Manager.Services
         private string RemoveUnwantedMessages(string chatMessages)
         {
             var lines = chatMessages.Split('\n');
-            var filteredLines = lines.Where(line => !line.Contains("Server received, But no response!!")).ToArray();
+            var ignoredPatterns = IntegrationsPage.CurrentInstance.GetIgnoredPatterns();
+
+            var filteredLines = lines.Where(line =>
+            {
+                // Check each line against all ignored patterns
+                return !ignoredPatterns.Any(pattern => line.Contains(pattern));
+            }).ToArray();
+
             return string.Join("\n", filteredLines);
         }
+
 
 
 

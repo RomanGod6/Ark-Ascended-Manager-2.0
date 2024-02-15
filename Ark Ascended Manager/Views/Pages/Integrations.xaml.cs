@@ -10,7 +10,7 @@ namespace Ark_Ascended_Manager.Views.Pages
     {
         private DiscordBotService _botService;
         private readonly IServiceProvider _services; // Add a field to hold IServiceProvider
-
+        public static IntegrationsPage CurrentInstance { get; private set; }
         public IntegrationsViewModel ViewModel { get; private set; }
 
         // Ensure IServiceProvider is passed to the constructor
@@ -19,7 +19,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
-
+            CurrentInstance = this;
             _services = services; // Store the provided IServiceProvider
             InitializeBotService(); // Initialize the Discord bot service
         }
@@ -32,8 +32,15 @@ namespace Ark_Ascended_Manager.Views.Pages
                 BotTokenTextBox.Text = settings.Token; 
                 GuildIdTextBox.Text = settings.GuildId;
                 WebhookUrlTextBox.Text = settings.WebhookUrl;
-                _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl); // Pass both IServiceProvider and Guild ID
-
+                _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl);
+                if (settings.IgnoredPatterns != null)
+                {
+                    IgnoreMessagesTextBox.Text = String.Join(Environment.NewLine, settings.IgnoredPatterns);
+                }
+                else
+                {
+                    IgnoreMessagesTextBox.Text = string.Empty; // Set to empty if there are no patterns
+                }
             }
             else
             {
@@ -41,7 +48,11 @@ namespace Ark_Ascended_Manager.Views.Pages
                 // Show an appropriate message to the user or log the error
             }
         }
-
+        public string[] GetIgnoredPatterns()
+        {
+            // Get the text from the TextBox
+            return IgnoreMessagesTextBox.Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+        }
         private void SaveTokenButton_Click(object sender, RoutedEventArgs e)
         {
             string token = BotTokenTextBox.Text;
@@ -51,7 +62,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             // ...
 
             // Create an instance of BotSettings
-            BotSettings settings = new BotSettings { Token = token, GuildId = guildId, WebhookUrl = webhookUrl };
+            BotSettings settings = new BotSettings { Token = token, GuildId = guildId, WebhookUrl = webhookUrl, IgnoredPatterns = GetIgnoredPatterns() };
 
             // Serialize the settings object to JSON
             string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
@@ -111,7 +122,8 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             public string Token { get; set; }
             public string GuildId { get; set; }
-            public string WebhookUrl { get; set; } // Add this line
+            public string WebhookUrl { get; set; }
+            public string[] IgnoredPatterns { get; set; } // Add this line
         }
 
         public class TokenManager
