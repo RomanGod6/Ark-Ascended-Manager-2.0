@@ -124,8 +124,44 @@ namespace Ark_Ascended_Manager.Services
             await FetchAndSendServerChat(server);
             
         }
+        public class BotSettings
+        {
+            public string Token { get; set; }
+            public string GuildId { get; set; }
+            public string WebhookUrl { get; set; }
+            public string[] IgnoredPatterns { get; set; }
+            public List<ulong> AuthorizedRoleIds { get; set; }
+        }
+        private BotSettings RetrieveBotSettings()
+        {
+            // Construct the path dynamically to point to the user's AppData\Roaming directory
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string folderPath = Path.Combine(appDataPath, "Ark Ascended Manager");
+            string filePath = Path.Combine(folderPath, "botsettings.json");
+
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                BotSettings settings = JsonConvert.DeserializeObject<BotSettings>(json);
+                return settings;
+            }
+            return null; 
+        }
+
         private async Task SlashCommandHandler(SocketSlashCommand command)
         {
+            // Assume RetrieveBotSettings is properly implemented and accessible here
+            var settings = RetrieveBotSettings();
+            var authorizedRoleIds = settings?.AuthorizedRoleIds ?? new List<ulong>();
+
+            // Adjusted UserHasRequiredRole method to directly accept SocketSlashCommand
+            if (!await UserHasRequiredRole(command, authorizedRoleIds))
+            {
+                // The user does not have the required role, do not proceed
+                return;
+            }
+
+            // Handle the command as usual because the user is authorized
             switch (command.CommandName)
             {
                 case "showservers":
@@ -134,8 +170,11 @@ namespace Ark_Ascended_Manager.Services
                 case "listplayers":
                     await HandleListPlayersCommand(command);
                     break;
+                    // Add more cases for other commands
             }
         }
+
+
         private async Task HandleListPlayersCommand(SocketSlashCommand command)
         {
             await command.DeferAsync(ephemeral: true); // Acknowledge the command
@@ -886,6 +925,24 @@ namespace Ark_Ascended_Manager.Services
 
             public string ServerPath { get; set; }
             // Include other properties as needed
+        }
+
+        private async Task<bool> UserHasRequiredRole(SocketSlashCommand command, List<ulong> authorizedRoleIds)
+        {
+            // Get the roles of the user who issued the command
+            var user = command.User as SocketGuildUser;
+            var userRoles = user?.Roles.Select(r => r.Id).ToList();
+
+            // Check if any of the user's roles are in the list of authorized roles
+            bool isAuthorized = userRoles.Any(roleId => authorizedRoleIds.Contains(roleId));
+
+            if (!isAuthorized)
+            {
+                // If not authorized, send a message to the user
+                await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
+            }
+
+            return isAuthorized;
         }
 
 

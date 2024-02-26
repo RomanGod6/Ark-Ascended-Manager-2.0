@@ -13,6 +13,8 @@
 
             <Label Content="Guild ID:" HorizontalAlignment="Left"/>
             <TextBox x:Name="GuildIdTextBox" Width="200" Margin="0,5"/>
+            <Label Content="What Role Can Use this Bot:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="AuthorizedRolesTextBox"/>
             <Label Content="CrossChat Webhook:" HorizontalAlignment="Left"/>
             <TextBox x:Name="WebhookUrlTextBox" Width="200" Margin="0,5"/>
 

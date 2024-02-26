@@ -174,6 +174,24 @@
                             </Expander>
                             <Expander Header="Rules">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                    <Expander Header="Cluster Options" Padding="2" ToolTip="Settings for transferring characters, items, and dinos between clusters.">
+                                        <StackPanel>
+                                            <Label Content="No Tribute Downloads:" ToolTip="Toggle to prevent or allow tribute downloads between clusters."/>
+                                            <CheckBox IsChecked="{Binding NoTributeDownloads, Mode=TwoWay}" ToolTip="Toggle to prevent or allow tribute downloads between clusters."/>
+                                            <Label Content="Prevent Download Survivors:" ToolTip="Toggle to prevent or allow downloading survivors between clusters."/>
+                                            <CheckBox IsChecked="{Binding PreventDownloadSurvivors, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading survivors between clusters."/>
+                                            <Label Content="Prevent Download Items:" ToolTip="Toggle to prevent or allow downloading items between clusters."/>
+                                            <CheckBox IsChecked="{Binding PreventDownloadItems, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading items between clusters."/>
+                                            <Label Content="Prevent Download Dinos:" ToolTip="Toggle to prevent or allow downloading dinosaurs between clusters."/>
+                                            <CheckBox IsChecked="{Binding PreventDownloadDinos, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading dinosaurs between clusters."/>
+                                            <Label Content="Tribute Character Expiration in Seconds:" ToolTip="When characters would expire in upload."/>
+                                            <TextBox Text="{Binding TributeCharacterExpirationSeconds, Mode=TwoWay}" ToolTip="When characters would expire in upload."/>
+                                            <Label Content="Tribute Dino Expiration in Seconds:" ToolTip="When tributes would expire in upload."/>
+                                            <TextBox Text="{Binding TributeDinoExpirationSeconds, Mode=TwoWay}" ToolTip="When tributes would expire in upload."/>
+                                            <Label Content="Tribute Item Expiration in Seconds:" ToolTip="When items would expire in upload."/>
+                                            <TextBox Text="{Binding TributeItemExpirationSeconds, Mode=TwoWay}" ToolTip="When items would expire in upload."/>
+                                        </StackPanel>
+                                    </Expander>
                                     <Label Content="Enable Hardcore Mode:" ToolTip="Enabling this mode will make the game more challenging by increasing the difficulty of survival."/>
                                     <CheckBox IsChecked="{Binding ServerHardcore, Mode=TwoWay}" ToolTip="Toggle to enable or disable Hardcore Mode."/>
                                     <Label Content="Disable PvP Friendly Fire:" ToolTip="Disable friendly fire in Player vs. Player combat."/>
@@ -210,18 +228,7 @@
                                     <TextBox Text="{Binding MaxPlatformSaddleStructureLimit, Mode=TwoWay}" ToolTip="Enter the maximum structure limit for platform saddles."/>
                                     <Label Content="Max Difficulty:" ToolTip="Instead of fixed difficulties such as Easy, Medium, and Hard, the difficulty is expressed using a number currently between 0.5 and 4.0[1] (or 5.0 in The Center). "/>
                                     <TextBox Text="{Binding MaxDifficulty, Mode=TwoWay}" ToolTip="Instead of fixed difficulties such as Easy, Medium, and Hard, the difficulty is expressed using a number currently between 0.5 and 4.0[1] (or 5.0 in The Center). "/>
-                                    <Expander Header="Cluster Options" ToolTip="Settings for transferring characters, items, and dinos between clusters.">
-                                        <StackPanel>
-                                            <Label Content="No Tribute Downloads:" ToolTip="Toggle to prevent or allow tribute downloads between clusters."/>
-                                            <CheckBox IsChecked="{Binding NoTributeDownloads, Mode=TwoWay}" ToolTip="Toggle to prevent or allow tribute downloads between clusters."/>
-                                            <Label Content="Prevent Download Survivors:" ToolTip="Toggle to prevent or allow downloading survivors between clusters."/>
-                                            <CheckBox IsChecked="{Binding PreventDownloadSurvivors, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading survivors between clusters."/>
-                                            <Label Content="Prevent Download Items:" ToolTip="Toggle to prevent or allow downloading items between clusters."/>
-                                            <CheckBox IsChecked="{Binding PreventDownloadItems, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading items between clusters."/>
-                                            <Label Content="Prevent Download Dinos:" ToolTip="Toggle to prevent or allow downloading dinosaurs between clusters."/>
-                                            <CheckBox IsChecked="{Binding PreventDownloadDinos, Mode=TwoWay}" ToolTip="Toggle to prevent or allow downloading dinosaurs between clusters."/>
-                                        </StackPanel>
-                                    </Expander>
+                 
                                     <Label Content="Increase PvP Respawn Interval Check Period:" ToolTip="Set the check period for increasing PvP respawn interval."/>
                                     <TextBox Text="{Binding IncreasePvPRespawnIntervalCheckPeriod, Mode=TwoWay}" ToolTip="Enter the check period for increasing PvP respawn interval."/>
                                     <Label Content="Increase PvP Respawn Interval Multiplier:" ToolTip="Set the multiplier for increasing PvP respawn interval."/>
@@ -1008,6 +1015,8 @@
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                         <StackPanel Margin="20">
+                            <Button Content="Save Launch Parameters" Margin="20" HorizontalAlignment="Right" Command="{Binding LoadLaunchServerSettingsCommand}" />
+
 
                             <Label Content="Server Platform Setting"/>
                             <TextBox 
@@ -1058,13 +1067,20 @@
 
                             <Label Content="Prevent Spawn Animation"/>
                             <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label Content="Cluster ID"/>
+                            <TextBox 
+                            Text="{Binding ClusterID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            ToolTip="Enter the cluster ID for your server." />
+
+                                                    <Label Content="Cluster Directory Override"/>
+                                                <TextBox 
+                            Text="{Binding ClusterDirOverride, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            ToolTip="Enter the path to override the cluster directory." />
 
 
 
                             <Label Content="Enable Plugins"/>
                             <CheckBox Content="Enable Plugins" IsChecked="{Binding PluginsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-
 
                             <Label Content="Multihome IP (Adapter IP) - Leave BLANK if not using"/>
                             <TextBox Text="{Binding MultihomeIP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1072,8 +1088,7 @@
                             <Label Content="Server IP (Public IP) - Leave BLANK for AAM to auto detect"/>
                             <TextBox Text="{Binding ServerIP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <Button Content="Update Launch Parameters" Margin="20"  Command="{Binding LoadLaunchServerSettingsCommand}" />
-
+                            
                         </StackPanel>
                     </ScrollViewer>
                     <!-- Put the controls related to Launch Parameters here -->

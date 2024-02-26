@@ -1156,6 +1156,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         MultihomeIP = ExtractParameterValue(line, "-multihome");
                         ServerIP = ExtractParameterValue(line, "-ServerIP");
                         PluginsEnabled = line.Contains("AsaApiLoader.exe");
+                        ClusterID = ExtractParameterValue(line, "-clusterid");
+                        ClusterDirOverride = ExtractParameterValue(line, "-ClusterDirOverride");
                     }
                 }
             }
@@ -1174,13 +1176,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(MultihomeIP));
             OnPropertyChanged(nameof(ServerIP));
             OnPropertyChanged(nameof(PluginsEnabled));
+            OnPropertyChanged(nameof(ClusterID));
+            OnPropertyChanged(nameof(ClusterDirOverride));
         }
 
         private string ExtractParameterValue(string line, string parameterName)
         {
-            // Updated regex pattern to capture between "=" and the first space or end of line
-            var match = Regex.Match(line, $@"{parameterName}=([^\s-]+)");
-            return match.Success ? match.Groups[1].Value.Trim() : string.Empty;
+            // This pattern should capture the value after the parameter name and equals sign, handling quotes if present
+            var match = Regex.Match(line, $@"{parameterName}=""?([^""\s]+)""?");
+            if (!match.Success)
+            {
+                // Try another pattern if the parameter can be without quotes
+                match = Regex.Match(line, $@"{parameterName}=([^""\s]+)");
+            }
+            return match.Success ? match.Groups[1].Value : string.Empty;
         }
 
 
@@ -1229,10 +1238,57 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             File.WriteAllText(batFilePath, newBatchFileContent);
             UpdateServerConfigFromBatch(serverPath);
             SaveServerConfigToJson();
+            EnsureClusterDirectoryExists(batFilePath);
 
             Console.WriteLine("Launch parameters have been updated.");
             System.Windows.MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void EnsureClusterDirectoryExists(string batFilePath)
+        {
+            string clusterDirOverride = ExtractClusterDirOverride(batFilePath);
+
+            if (!string.IsNullOrWhiteSpace(clusterDirOverride))
+            {
+                // Check if the directory exists
+                if (!Directory.Exists(clusterDirOverride))
+                {
+                    try
+                    {
+                        // Attempt to create the directory
+                        Directory.CreateDirectory(clusterDirOverride);
+                        Ark_Ascended_Manager.Services.Logger.Log($"Cluster directory created: {clusterDirOverride}");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the exception if directory creation fails
+                        Ark_Ascended_Manager.Services.Logger.Log($"Failed to create cluster directory: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Ark_Ascended_Manager.Services.Logger.Log($"Cluster directory already exists: {clusterDirOverride}");
+                }
+            }
+        }
+
+        private string ExtractClusterDirOverride(string batFilePath)
+        {
+            string[] batFileLines = File.ReadAllLines(batFilePath);
+            foreach (var line in batFileLines)
+            {
+                if (line.Contains("-ClusterDirOverride"))
+                {
+                    var match = Regex.Match(line, @"-ClusterDirOverride=""([^""]+)""");
+                    if (match.Success)
+                    {
+                        return match.Groups[1].Value;
+                    }
+                }
+            }
+            return null;
+        }
+
         private void SaveServerConfigToJson()
         {
             // Define the path to the servers.json file
@@ -1338,11 +1394,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName, string passiveMod)
         {
-
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
             string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
-            Ark_Ascended_Manager.Services.Logger.Log("Server Platform Argument: " + serverPlatformSetting);
+            string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
+            string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
 
             // Always change the directory to the server's executable directory
             string batchFileContent = $@"
@@ -1355,15 +1411,12 @@ set mods={Mods}
 set passivemod={passiveMod}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% -passivemod=%passivemod%
 
-
-start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument} %AdditionalSettings%
+start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument} %AdditionalSettings%
 ".Trim();
-
-            // Remove spaces before dashes
-            /*batchFileContent = Regex.Replace(batchFileContent, @"\s+-", "-");*/
 
             return batchFileContent;
         }
+
 
 
 
@@ -1402,6 +1455,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
+        public string ClusterID { get; set; }
+        public string ClusterDirOverride { get; set; }
 
 
 
@@ -1630,6 +1685,15 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PreventDownloadDinos":
                             PreventDownloadDinos = ConvertToBoolean(value);
+                            break;
+                        case "TributeItemExpirationSeconds":
+                            TributeItemExpirationSeconds = value;
+                            break;
+                        case "TributeDinoExpirationSeconds":
+                            TributeDinoExpirationSeconds = value;
+                            break;
+                        case "TributeCharacterExpirationSeconds":
+                            TributeCharacterExpirationSeconds = value;
                             break;
                         case "ProximityChat":
                             ProximityChat = ConvertToBoolean(value);
@@ -1997,6 +2061,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadSurvivors", PreventDownloadSurvivors.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadItems", PreventDownloadItems.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadDinos", PreventDownloadDinos.ToString());
+            UpdateLine(ref lines, "ServerSettings", "TributeItemExpirationSeconds", TributeItemExpirationSeconds.ToString());
+            UpdateLine(ref lines, "ServerSettings", "TributeDinoExpirationSeconds", TributeDinoExpirationSeconds.ToString());
+            UpdateLine(ref lines, "ServerSettings", "TributeCharacterExpirationSeconds", TributeCharacterExpirationSeconds.ToString());
             UpdateLine(ref lines, "ServerSettings", "ProximityChat", ProximityChat.ToString());
             UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
             UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
@@ -2394,6 +2461,36 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             {
                 _preventDownloadDinos = value;
                 OnPropertyChanged(nameof(PreventDownloadDinos)); // Notify the UI of the change
+            }
+        }
+        private string _tributeItemExpirationSeconds;
+        public string TributeItemExpirationSeconds
+        {
+            get { return _tributeItemExpirationSeconds; }
+            set
+            {
+                _tributeItemExpirationSeconds = value;
+                OnPropertyChanged(nameof(TributeItemExpirationSeconds)); // Notify the UI of the change
+            }
+        }
+        private string _tributeDinoExpirationSeconds;
+        public string TributeDinoExpirationSeconds
+        {
+            get { return _tributeDinoExpirationSeconds; }
+            set
+            {
+                _tributeDinoExpirationSeconds = value;
+                OnPropertyChanged(nameof(TributeDinoExpirationSeconds)); // Notify the UI of the change
+            }
+        }
+        private string _tributeCharacterExpirationSeconds;
+        public string TributeCharacterExpirationSeconds
+        {
+            get { return _tributeCharacterExpirationSeconds; }
+            set
+            {
+                _tributeCharacterExpirationSeconds = value;
+                OnPropertyChanged(nameof(TributeCharacterExpirationSeconds)); // Notify the UI of the change
             }
         }
         private bool _clampResourceHarvestDamage;

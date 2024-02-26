@@ -26,7 +26,7 @@ namespace Ark_Ascended_Manager.Services
 
         private void LoadServers()
         {
-            Debug.WriteLine("Loading servers...");
+            Logger.Log("Loading servers...");
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string serversFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "servers.json");
 
@@ -34,67 +34,94 @@ namespace Ark_Ascended_Manager.Services
             {
                 string serversJson = File.ReadAllText(serversFilePath);
                 servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
-                Debug.WriteLine($"Loaded {servers.Count} servers from {serversFilePath}.");
+                Logger.Log($"Loaded {servers.Count} servers from {serversFilePath}.");
             }
             else
             {
-                Debug.WriteLine($"Servers file not found at path: {serversFilePath}");
+                Logger.Log($"Servers file not found at path: {serversFilePath}");
             }
         }
 
         private void SetupFileWatchers()
         {
-            Debug.WriteLine("Setting up file watchers...");
-            watchers.ForEach(watcher => watcher.Dispose());
-            watchers.Clear();
-
-            foreach (var server in servers)
+            try
             {
-                string saveFilePath = Path.Combine(server.ServerPath, "ShooterGame", "Saved", "SavedArks", "TheIsland_WP", "TheIsland_WP.ark");
-                if (File.Exists(saveFilePath))
+                if (watchers == null)
                 {
-                    var watcher = new FileSystemWatcher
-                    {
-                        Path = Path.GetDirectoryName(saveFilePath),
-                        Filter = Path.GetFileName(saveFilePath),
-                        NotifyFilter = NotifyFilters.LastWrite
-                    };
-
-                    watcher.Changed += OnSaveFileChanged;
-                    watcher.EnableRaisingEvents = true;
-                    watchers.Add(watcher);
-                    Debug.WriteLine($"File watcher set for {saveFilePath}");
-                }
-                else
-                {
-                    Debug.WriteLine($"Save file not found for server at path: {saveFilePath}");
+                    Logger.Log("Watchers list is null.");
                     return;
-                    Debug.WriteLine($"Save file not found for server at path: {saveFilePath}");
                 }
+
+                Logger.Log("Setting up file watchers...");
+
+                // Dispose existing watchers
+                foreach (var watcher in watchers)
+                {
+                    watcher.Dispose();
+                }
+                watchers.Clear();
+
+                // Ensure servers collection is not null
+                if (servers == null)
+                {
+                    Logger.Log("Servers collection is null.");
+                    return;
+                }
+
+                foreach (var server in servers)
+                {
+                    string saveFilePath = Path.Combine(server.ServerPath, "ShooterGame", "Saved", "SavedArks", "TheIsland_WP", "TheIsland_WP.ark");
+                    if (File.Exists(saveFilePath))
+                    {
+                        var watcher = new FileSystemWatcher
+                        {
+                            Path = Path.GetDirectoryName(saveFilePath),
+                            Filter = Path.GetFileName(saveFilePath),
+                            NotifyFilter = NotifyFilters.LastWrite
+                        };
+
+                        watcher.Changed += OnSaveFileChanged;
+                        watcher.EnableRaisingEvents = true;
+                        watchers.Add(watcher);
+                        Logger.Log($"File watcher set for {saveFilePath}");
+                    }
+                    else
+                    {
+                        Logger.Log($"Save file not found for server at path: {saveFilePath}");
+                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"An error occurred while setting up file watchers: {ex.Message}");
+                // Optionally, you can throw the exception further if you want to handle it at a higher level
+                // throw;
             }
         }
 
 
+
         private void OnSaveFileChanged(object sender, FileSystemEventArgs e)
         {
-            Debug.WriteLine($"Detected change in file: {e.FullPath}");
+            Logger.Log($"Detected change in file: {e.FullPath}");
             string backupFileName = $"{Path.GetFileNameWithoutExtension(e.Name)}_{DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss")}{Path.GetExtension(e.Name)}";
             string backupFilePath = Path.Combine(Path.GetDirectoryName(e.FullPath), backupFileName);
 
             try
             {
                 File.Copy(e.FullPath, backupFilePath, true);
-                Debug.WriteLine($"Backup created: {backupFilePath}");
+                Logger.Log($"Backup created: {backupFilePath}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error creating backup: {ex.Message}");
+                Logger.Log($"Error creating backup: {ex.Message}");
             }
         }
 
         private void InitializeRefreshTimer()
         {
-            Debug.WriteLine("Initializing refresh timer...");
+            Logger.Log("Initializing refresh timer...");
             refreshTimer = new System.Timers.Timer(300000); // Refresh every 5 minutes (300000 ms)
             refreshTimer.Elapsed += OnRefreshTimerElapsed;
             refreshTimer.AutoReset = true;
@@ -103,7 +130,7 @@ namespace Ark_Ascended_Manager.Services
 
         private void OnRefreshTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Debug.WriteLine("Refresh timer elapsed. Reloading servers and setting up watchers again...");
+            Logger.Log("Refresh timer elapsed. Reloading servers and setting up watchers again...");
             LoadServers();
             SetupFileWatchers(); // Re-setup file watchers for new servers
         }

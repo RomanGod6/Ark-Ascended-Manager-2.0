@@ -27,27 +27,41 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void InitializeBotService()
         {
             var settings = RetrieveBotSettings();
-            if (settings != null && ulong.TryParse(settings.GuildId, out ulong guildId))
+            if (settings != null)
             {
-                BotTokenTextBox.Text = settings.Token; 
-                GuildIdTextBox.Text = settings.GuildId;
-                WebhookUrlTextBox.Text = settings.WebhookUrl;
-                _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl);
-                if (settings.IgnoredPatterns != null)
+                // Successfully retrieved settings; proceed to initialize the UI and bot service
+                BotTokenTextBox.Text = settings.Token ?? ""; // Using null-coalescing operator for safety
+                GuildIdTextBox.Text = settings.GuildId ?? "";
+                WebhookUrlTextBox.Text = settings.WebhookUrl ?? "";
+
+                // Check if GuildId is a valid ulong before attempting to parse and use it
+                if (ulong.TryParse(settings.GuildId, out ulong guildId))
                 {
-                    IgnoreMessagesTextBox.Text = String.Join(Environment.NewLine, settings.IgnoredPatterns);
+                    // GuildId is valid; proceed to initialize the bot service
+                    _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl);
                 }
                 else
                 {
-                    IgnoreMessagesTextBox.Text = string.Empty; // Set to empty if there are no patterns
+                    // Invalid GuildId; consider logging this issue or notifying the user
                 }
+
+                // Handle IgnoredPatterns, if any
+                IgnoreMessagesTextBox.Text = settings.IgnoredPatterns != null
+                    ? String.Join(Environment.NewLine, settings.IgnoredPatterns)
+                    : string.Empty;
+
+                // Handle AuthorizedRoleIds, if any
+                AuthorizedRolesTextBox.Text = settings.AuthorizedRoleIds != null
+                    ? String.Join(Environment.NewLine, settings.AuthorizedRoleIds)
+                    : string.Empty;
             }
             else
             {
-                // Handle error: settings are null or Guild ID is invalid
-                // Show an appropriate message to the user or log the error
+                // Settings could not be retrieved; handle this scenario appropriately
+                System.Windows.MessageBox.Show("Unable to load settings. Please check your configuration.", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         public string[] GetIgnoredPatterns()
         {
             // Get the text from the TextBox
@@ -58,12 +72,22 @@ namespace Ark_Ascended_Manager.Views.Pages
             string token = BotTokenTextBox.Text;
             string guildId = GuildIdTextBox.Text;
             string webhookUrl = WebhookUrlTextBox.Text;
-            // Perform token validation here (if necessary)
-            // ...
+            var ignoredPatterns = GetIgnoredPatterns();
 
-            // Create an instance of BotSettings
-            BotSettings settings = new BotSettings { Token = token, GuildId = guildId, WebhookUrl = webhookUrl, IgnoredPatterns = GetIgnoredPatterns() };
+            // Assuming AuthorizedRolesTextBox.Text contains the role IDs separated by newlines
+            var authorizedRoleIds = AuthorizedRolesTextBox.Text
+                .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(ulong.Parse) // Convert each ID from string to ulong
+                .ToList();
 
+            BotSettings settings = new BotSettings
+            {
+                Token = token,
+                GuildId = guildId,
+                WebhookUrl = webhookUrl,
+                IgnoredPatterns = ignoredPatterns,
+                AuthorizedRoleIds = authorizedRoleIds // Save the authorized role IDs
+            };
             // Serialize the settings object to JSON
             string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
 
@@ -123,7 +147,8 @@ namespace Ark_Ascended_Manager.Views.Pages
             public string Token { get; set; }
             public string GuildId { get; set; }
             public string WebhookUrl { get; set; }
-            public string[] IgnoredPatterns { get; set; } // Add this line
+            public string[] IgnoredPatterns { get; set; }
+            public List<ulong> AuthorizedRoleIds { get; set; }// Add this line
         }
 
         public class TokenManager
