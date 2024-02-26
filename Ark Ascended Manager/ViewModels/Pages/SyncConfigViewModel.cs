@@ -118,5 +118,6 @@ public class ServerProfile
 {
     public string ServerName { get; set; }
     public string ServerPath { get; set; }
-    // Other properties...
+    public bool IsMapNameOverridden { get; set; }
+  
 }

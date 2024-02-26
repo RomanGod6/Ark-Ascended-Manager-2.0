@@ -101,7 +101,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             string updatedJson = JsonConvert.SerializeObject(servers, Formatting.Indented);
 
             File.WriteAllText(filePath, updatedJson);
-            System.Windows.MessageBox.Show($"Server config saved to: {filePath}", "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+         
         }
 
         private string FindSteamCmdPath()
@@ -529,13 +529,13 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Add more key-value pairs under ServerSettings
         }},
         { "SessionSettings", new Dictionary<string, string> {
-            { "SessionName", "" }
+            { "SessionName",  ViewModel.ServerName }
             // Add more key-value pairs under SessionSettings
         }},
                      {
         "MessageOfTheDay", new Dictionary<string, string>
         {
-            {"Message", "" }
+            {"Message", "Welcome! This needs to be updated :)" }
 
         }
     },
@@ -670,8 +670,8 @@ start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?
             // Write the content to the batch file
             File.WriteAllText(batchFilePath, batchFileContent);
 
-            // Optionally, notify the user where the batch file was saved
-            SystemMessageBox.Show($"Server launch batch file saved to: {batchFilePath}", "Batch File Created", MessageBoxButton.OK, MessageBoxImage.Information);
+
+          
         }
 
 
@@ -679,6 +679,7 @@ start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?
         public class ServerConfig
         {
             public string ChangeNumberStatus { get; set; }
+            public bool IsMapNameOverridden { get; set; }
             public string ProfileName { get; set; }
             public int? Pid { get; set; }
             public string ServerStatus { get; set; }

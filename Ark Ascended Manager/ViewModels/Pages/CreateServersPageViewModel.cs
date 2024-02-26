@@ -166,7 +166,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private Dictionary<string, string> _mapToAppId = new Dictionary<string, string>()
         {
-            { "TheIsland_WP", "2430930" }
+            { "TheIsland_WP", "2430930" },
+            { "TheCenter_WP", "2430930" },
+            { "ScorchedEarth_WP", "2430930" }
             // Add more mappings here
         };
 

@@ -64,6 +64,8 @@ namespace Ark_Ascended_Manager.Views.Pages
             LoadStackSizeOverrides();
             LoadStackSizeOverridesConfigs();
             LoadAndMergeEngrams();
+            InitializeCheckBoxStates();
+            InitializeCheckBoxState();
             engramCollectionView = CollectionViewSource.GetDefaultView(ViewModel.EngramOverrides);
             dgEngramOverrides.ItemsSource = engramCollectionView;
 
@@ -577,28 +579,110 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
 
 
+     
+        public class ServerProfile
+        {
+            public string ChangeNumberStatus { get; set; }
+            public bool IsMapNameOverridden { get; set; }
+            public string ProfileName { get; set; }
+            public int? Pid { get; set; }
+            public string ServerStatus { get; set; }
+            public string ServerPath { get; set; }
+            public string MapName { get; set; }
+            public string AppId { get; set; }
+            public bool IsRunning { get; set; }
+            public int ChangeNumber { get; set; }
+            public string ServerName { get; set; }
+            public int ListenPort { get; set; } // Ports are typically integers
+            public int RCONPort { get; set; }   // Ports are typically integers
+            public List<string> Mods { get; set; } // Assuming Mods can be a list
+            public int MaxPlayerCount { get; set; }
+            public string AdminPassword { get; set; }
+            public string ServerPassword { get; set; }
+            public bool UseBattlEye { get; set; } // Use bool for checkboxes
+            public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
+            public bool PreventSpawnAnimation { get; set; }
+
+        }
+
+
+
+
+        private void InitializeCheckBoxStates()
+        {
+            var viewModel = DataContext as ConfigPageViewModel; // Replace 'ConfigPageViewModel' with your actual ViewModel class name
+
+            if (viewModel == null)
+            {
+                System.Diagnostics.Debug.WriteLine("InitializeCheckBoxStates: ViewModel is null");
+                return;
+            }
+
+            var excludedMapNames = new List<string> { "TheIsland_WP" }; // Add more items as needed
+
+            if (!string.IsNullOrWhiteSpace(viewModel.OverrideMapName) &&
+                !excludedMapNames.Contains(viewModel.OverrideMapName))
+            {
+                System.Diagnostics.Debug.WriteLine("InitializeCheckBoxStates: Setting checkbox to checked and textbox to visible");
+                OverrideTextBox.Visibility = Visibility.Visible;
+                OverrideCheckBox.IsChecked = true;
+               
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("InitializeCheckBoxStates: Setting checkbox to unchecked and textbox to collapsed");
+                OverrideTextBox.Visibility = Visibility.Collapsed;
+                OverrideCheckBox.IsChecked = false;
+                
+            }
+        }
 
         private void OverrideCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            OverrideTextBox.Visibility = Visibility.Visible;
+            System.Diagnostics.Debug.WriteLine("OverrideCheckBox_Checked: Checkbox is checked");
+            Dispatcher.Invoke(() =>
+            {
+                OverrideTextBox.Visibility = Visibility.Visible;
+            });
         }
+
 
         private void OverrideCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("OverrideCheckBox_Unchecked: Checkbox is unchecked");
             OverrideTextBox.Visibility = Visibility.Collapsed;
-            UpdateViewModelMapName();
+        }
+
+
+
+        private void InitializeCheckBoxState()
+        {
+
+            var viewModel = DataContext as ConfigPageViewModel;
+
+            if (viewModel != null && !string.IsNullOrWhiteSpace(viewModel.OverridePassiveMod))
+            {
+                // If there's a value, check the checkbox
+                OverrideModCheckBox.IsChecked = true; // This line assumes that you have named your CheckBox as 'OverrideModCheckBox' in your XAML
+            }
+            else
+            {
+                // If there's no value, uncheck the checkbox
+                OverrideModCheckBox.IsChecked = false; // Same assumption as above
+            }
         }
 
         private void OverrideModCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            OverrideModTextBox.Visibility = Visibility.Visible;
+            OverrideModTextBox.Visibility = Visibility.Visible; // Make sure OverrideModTextBox is the name of your TextBox
         }
 
+        // Event handler for when the CheckBox is unchecked
         private void OverrideModCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            OverrideModTextBox.Visibility = Visibility.Collapsed;
-           /* UpdateViewModelMapName();*/
+            OverrideModTextBox.Visibility = Visibility.Collapsed; // Make sure OverrideModTextBox is the name of your TextBox
         }
+
 
         // Assuming this method gets called when MOTD changes.
         /*private void UpdateRichTextPreview(string motd)
@@ -701,23 +785,6 @@ namespace Ark_Ascended_Manager.Views.Pages
             Debug.WriteLine("Rich Text Preview Updated");
         }
 
-
-
-        private void UpdateViewModelMapName()
-        {
-            var viewModel = DataContext as ConfigPageViewModel;
-            if (viewModel != null)
-            {
-                if (OverrideTextBox.Visibility == Visibility.Collapsed)
-                {
-                    viewModel.OverrideMapName = "TheIsland_WP"; // Setting default value
-                }
-                else
-                {
-                    viewModel.OverrideMapName = OverrideTextBox.Text; // Or any other logic you want
-                }
-            }
-        }
         private IEnumerable<Paragraph> ParseMOTDToParagraphs(string motd)
         {
             List<Paragraph> paragraphs = new List<Paragraph>();

@@ -222,6 +222,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             _currentServer = CurrentServerConfig.ProfileName; // Implement this method
             ScheduleTasks = new ObservableCollection<ScheduleTask>(
                 schedules.Where(s => s.Server == _currentServer));
+
         }
         
         private void InitializeFileWatcher()
@@ -1144,21 +1145,34 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     }
                     else if (line.Trim().StartsWith("start ", StringComparison.OrdinalIgnoreCase))
                     {
+                        // Existing settings extraction
                         UseBattleye = line.Contains("-UseBattleye");
                         UseOldConsole = line.Contains("-UseOldConsole");
                         AutoDestroyStructures = line.Contains("-AutoDestroyStructures");
                         NotifyAdminCommandsInChat = line.Contains("-NotifyAdminCommandsInChat");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
                         ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
-                        /*Mods = ExtractModsValue(line); // Assuming you have a method to extract mods*/
-
-                        // Extract Multihome and ServerIP values
                         MultihomeIP = ExtractParameterValue(line, "-multihome");
                         ServerIP = ExtractParameterValue(line, "-ServerIP");
                         PluginsEnabled = line.Contains("AsaApiLoader.exe");
                         ClusterID = ExtractParameterValue(line, "-clusterid");
                         ClusterDirOverride = ExtractParameterValue(line, "-ClusterDirOverride");
+
+                        // Map name and other parameters extraction from the command
+                        var commandParts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (commandParts.Length > 1)
+                        {
+                            // Assuming the map name is immediately after "start <ExecutableName>"
+                            var args = commandParts[2].Split('?');
+                            if (args.Length > 0)
+                            {
+                                var mapNameWithParams = args[0];
+                                // Check if map name is correctly formatted or needs adjustment
+                                OverrideMapName = mapNameWithParams.EndsWith("_WP") ? mapNameWithParams : $"{mapNameWithParams}_WP";
+                            }
+                        }
                     }
+
                 }
             }
 
@@ -1211,6 +1225,31 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
+        public class ServerConfigs
+        {
+            public string ChangeNumberStatus { get; set; }
+            public bool IsMapNameOverridden { get; set; }
+            public string ProfileName { get; set; }
+            public int? Pid { get; set; }
+            public string ServerStatus { get; set; }
+            public string ServerPath { get; set; }
+            public string MapName { get; set; }
+            public string AppId { get; set; }
+            public bool IsRunning { get; set; }
+            public int ChangeNumber { get; set; }
+            public string ServerName { get; set; }
+            public int ListenPort { get; set; } // Ports are typically integers
+            public int RCONPort { get; set; }   // Ports are typically integers
+            public List<string> Mods { get; set; } // Assuming Mods can be a list
+            public int MaxPlayerCount { get; set; }
+            public string AdminPassword { get; set; }
+            public string ServerPassword { get; set; }
+            public bool UseBattlEye { get; set; } // Use bool for checkboxes
+            public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
+            public bool PreventSpawnAnimation { get; set; } // Use bool for checkboxes
+
+            // ... other relevant details
+        }
 
 
 

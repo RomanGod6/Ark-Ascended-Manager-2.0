@@ -1024,8 +1024,8 @@
                             ToolTip="Enter the server platform(s) separated by commas. Options: PC, XSX, WINGDK, PS5, All." />
 
 
-                            <CheckBox Content="Override Map Name" Checked="OverrideCheckBox_Checked" Unchecked="OverrideCheckBox_Unchecked" Margin="5" ToolTip="Turn this on to override the offical maps. Turning this on and setting nothing will cause the game to not start."/>
-                            <TextBox x:Name="OverrideTextBox" Visibility="Collapsed" Text="{Binding OverrideMapName}" Margin="5" ToolTip="Insert the new map name like TheIsland_WP. do not include the ? at the end."/>
+                            <CheckBox x:Name="OverrideCheckBox" Content="Override Map Name" Checked="OverrideCheckBox_Checked" Unchecked="OverrideCheckBox_Unchecked" Margin="5" ToolTip="Turn this on to override the official maps. Turning this on and setting nothing will cause the game to not start."/>
+                            <TextBox x:Name="OverrideTextBox" Visibility="Collapsed" Text="{Binding OverrideMapName}" Margin="5" ToolTip="Insert the new map name like TheIsland_WP. Do not include the ? at the end."/>
 
 
 
@@ -1038,7 +1038,8 @@
 
                             <Label Content="Mods (comma-separated)"/>
                             <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <CheckBox Content="Add Passive Mod" Checked="OverrideModCheckBox_Checked" Unchecked="OverrideModCheckBox_Unchecked" Margin="5" ToolTip="Turn This on if you need a passive mod."/>
+                            <CheckBox x:Name="OverrideModCheckBox" Content="Add Passive Mod" Checked="OverrideModCheckBox_Checked" Unchecked="OverrideModCheckBox_Unchecked" Margin="5" ToolTip="Turn This on if you need a passive mod."/>
+
                             <TextBox x:Name="OverrideModTextBox" Visibility="Collapsed" Text="{Binding OverridePassiveMod}" Margin="5" ToolTip="Insert the mod that needs to be passive. Just the mod ID followed by , if there is more than one."/>
 
 
