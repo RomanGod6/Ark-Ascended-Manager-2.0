@@ -74,6 +74,7 @@
             <Button Content="Delete Server" Command="{Binding DeleteServerCommand}" Margin="5"/>
             <Button Content="Add New Schedule" Click="AddNewScheduleButton_Click"/>
             <Button Content="Restore Backup" Click="RestoreBackUpButton_Click"/>
+            <Button Content="Open Server Folder" Click="OpenServerFolderButton_Click"/>
 
 
         </StackPanel>
@@ -117,8 +118,10 @@
                                     <RichTextBox x:Name="richTextPreview" IsReadOnly="True" Height="209"/>
                                     <Label Content="Server Password" ToolTip="Password to join the server"/>
                                     <TextBox Text="{Binding ServerPassword, Mode=TwoWay}" />
-                                    <Label Content="Banlist:" ToolTip="List of Banned Players"/>
+                                    <Label Content="Banlist:" Tag="Banlist" ToolTip="List of Banned Players"/>
                                     <TextBox Text="{Binding Message, Mode=TwoWay}" ToolTip="List of Banned Players"/>
+                                    <Label Content="Cosmetic Whitelist Override:" ToolTip="The approved list of cosmetics on your server (use URL)"/>
+                                    <TextBox Text="{Binding CosmeticWhitelistOverride, Mode=TwoWay}" ToolTip="The approved list of cosmetics on your server (use URL)"/>
                                     <Label Content="Photo Mode Range Limit:" ToolTip="Range of camera mode in meters"/>
                                     <TextBox Text="{Binding PhotoModeRangeLimit, Mode=TwoWay}" ToolTip="Range of camera mode in meters"/>
                                     <Label Content="Spectator Password:" ToolTip="Password needed for spectator"/>
@@ -373,12 +376,6 @@
                                                     <TextBox Text="{Binding PlayerBaseStatMultipliers_6, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's base temperature stat."/>
                                                     <Label Content="Player Base[Weight]:" ToolTip="Set the multiplier for the player's base weight stat."/>
                                                     <TextBox Text="{Binding PlayerBaseStatMultipliers_7, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's base weight stat."/>
-                                                    <Label Content="Player Base[Melee Damage]:" ToolTip="Set the multiplier for the player's base melee damage stat."/>
-                                                    <TextBox Text="{Binding PlayerBaseStatMultipliers_8, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's base melee damage stat."/>
-                                                    <Label Content="Player Base[Movement Speed]:" ToolTip="Set the multiplier for the player's base movement speed stat."/>
-                                                    <TextBox Text="{Binding PlayerBaseStatMultipliers_9, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's base movement speed stat."/>
-                                                    <Label Content="Player Base[Fortitude]:" ToolTip="Set the multiplier for the player's base fortitude stat."/>
-                                                    <TextBox Text="{Binding PlayerBaseStatMultipliers_10, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's base fortitude stat."/>
 
                                                 </StackPanel>
                                     </Expander>
@@ -386,7 +383,7 @@
                                             <Expander Header="Per Level Stat Muiltiplier">
                                                 <StackPanel>
 
-                                                    <Label Content="Player[Health]:"/>
+                                                   
                                                     <Label Content="Player[Health]:" ToolTip="Set the multiplier for the player's health per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_Player_0, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's health per-level stats."/>
                                                     <Label Content="Player[Stamina]:" ToolTip="Set the multiplier for the player's stamina per-level stats."/>
@@ -409,8 +406,12 @@
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_Player_9, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's movement speed per-level stats."/>
                                                     <Label Content="Player[Fortitude]:" ToolTip="Set the multiplier for the player's fortitude per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_Player_10, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's fortitude per-level stats."/>
+                                                    <Label Content="Player[Crafting]:" ToolTip="Set the multiplier for the player's crafting per-level stats."/>
+                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_Player_11, Mode=TwoWay}" ToolTip="Enter the multiplier for the player's crafting per-level stats."/>
 
                                                 </StackPanel>
+                                                
+                                                
                                             </Expander>
                                         </StackPanel>
                                     </Expander>
@@ -526,19 +527,13 @@
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_3, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino oxygen per-level stats."/>
                                                     <Label Content="DinoTamed_Add[Food]:" ToolTip="Set the multiplier for additional tamed dino food per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_4, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino food per-level stats."/>
-                                                    <Label Content="DinoTamed_Add[Water]:" ToolTip="Set the multiplier for additional tamed dino water per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_5, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino water per-level stats."/>
-                                                    <Label Content="DinoTamed_Add[Temperature]:" ToolTip="Set the multiplier for additional tamed dino temperature per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_6, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino temperature per-level stats."/>
                                                     <Label Content="DinoTamed_Add[Weight]:" ToolTip="Set the multiplier for additional tamed dino weight per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_7, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino weight per-level stats."/>
                                                     <Label Content="DinoTamed_Add[Melee Damage]:" ToolTip="Set the multiplier for additional tamed dino melee damage per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_8, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino melee damage per-level stats."/>
                                                     <Label Content="DinoTamed_Add[Movement Speed]:" ToolTip="Set the multiplier for additional tamed dino movement speed per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_9, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino movement speed per-level stats."/>
-                                                    <Label Content="DinoTamed_Add[Fortitude]:" ToolTip="Set the multiplier for additional tamed dino fortitude per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Add_10, Mode=TwoWay}" ToolTip="Enter the multiplier for additional tamed dino fortitude per-level stats."/>
-
+                
 
 
 
@@ -562,18 +557,13 @@
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_3, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity oxygen per-level stats."/>
                                                     <Label Content="DinoTamed_Affinity[Food]:" ToolTip="Set the multiplier for tamed dinos with affinity food per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_4, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity food per-level stats."/>
-                                                    <Label Content="DinoTamed_Affinity[Water]:" ToolTip="Set the multiplier for tamed dinos with affinity water per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_5, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity water per-level stats."/>
-                                                    <Label Content="DinoTamed_Affinity[Temperature]:" ToolTip="Set the multiplier for tamed dinos with affinity temperature per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_6, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity temperature per-level stats."/>
                                                     <Label Content="DinoTamed_Affinity[Weight]:" ToolTip="Set the multiplier for tamed dinos with affinity weight per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_7, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity weight per-level stats."/>
                                                     <Label Content="DinoTamed_Affinity[Melee Damage]:" ToolTip="Set the multiplier for tamed dinos with affinity melee damage per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_8, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity melee damage per-level stats."/>
                                                     <Label Content="DinoTamed_Affinity[Movement Speed]:" ToolTip="Set the multiplier for tamed dinos with affinity movement speed per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_9, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity movement speed per-level stats."/>
-                                                    <Label Content="DinoTamed_Affinity[Fortitude]:" ToolTip="Set the multiplier for tamed dinos with affinity fortitude per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_Affinity_10, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dinos with affinity fortitude per-level stats."/>
+                                                   
 
 
 
@@ -598,18 +588,13 @@
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_3, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' oxygen per-level stats."/>
                                                     <Label Content="DinoWild[Food]:" ToolTip="Set the multiplier for wild dinos' food per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_4, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' food per-level stats."/>
-                                                    <Label Content="DinoWild[Water]:" ToolTip="Set the multiplier for wild dinos' water per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_5, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' water per-level stats."/>
-                                                    <Label Content="DinoWild[Temperature]:" ToolTip="Set the multiplier for wild dinos' temperature per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_6, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' temperature per-level stats."/>
                                                     <Label Content="DinoWild[Weight]:" ToolTip="Set the multiplier for wild dinos' weight per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_7, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' weight per-level stats."/>
                                                     <Label Content="DinoWild[Melee Damage]:" ToolTip="Set the multiplier for wild dinos' melee damage per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_8, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' melee damage per-level stats."/>
                                                     <Label Content="DinoWild[Movement Speed]:" ToolTip="Set the multiplier for wild dinos' movement speed per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_9, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' movement speed per-level stats."/>
-                                                    <Label Content="DinoWild[Fortitude]:" ToolTip="Set the multiplier for wild dinos' fortitude per-level stats."/>
-                                                    <TextBox Text="{Binding PerLevelStatsMultiplier_DinoWild_10, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dinos' fortitude per-level stats."/>
+                                                    
 
 
 
@@ -1056,6 +1041,9 @@
 
                             <Label Content="Use Old Console" ToolTip="Combines the two consoles together into one if toggled on"/>
                             <CheckBox IsChecked="{Binding UseOldConsole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="Disable Custom Cosmetics" ToolTip="Turning this on will disable custom cosmetics on this server."/>
+                            <CheckBox IsChecked="{Binding DisableCustomCosmetics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Label Content="Auto Destroy old Structures" ToolTip="Old structures auto destroy"/>
                             <CheckBox IsChecked="{Binding AutoDestroyStructures, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

@@ -31,6 +31,7 @@
             <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
             <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click" Margin="5"/>
             <Button x:Name="UpdateApplicationButton" Content="Update AAM" Click="UpdateApplicationButton_Click" />
+            <Button Content="Open AAM App Data" Click="OpenAppDataFolder_Click" Margin="5"/>
 
         </StackPanel>
 

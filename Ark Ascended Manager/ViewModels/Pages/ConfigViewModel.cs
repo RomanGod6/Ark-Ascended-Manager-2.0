@@ -1147,7 +1147,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     {
                         // Existing settings extraction
                         UseBattleye = line.Contains("-UseBattleye");
-                        UseOldConsole = line.Contains("-UseOldConsole");
+                        UseOldConsole = line.Contains("-oldconsole");
+                        DisableCustomCosmetics = line.Contains("-DisableCustomCosmetics");
                         AutoDestroyStructures = line.Contains("-AutoDestroyStructures");
                         NotifyAdminCommandsInChat = line.Contains("-NotifyAdminCommandsInChat");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
@@ -1182,6 +1183,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(MaxPlayerCount));
             OnPropertyChanged(nameof(UseBattleye));
             OnPropertyChanged(nameof(UseOldConsole));
+            OnPropertyChanged(nameof(DisableCustomCosmetics));
             OnPropertyChanged(nameof(AutoDestroyStructures));
             OnPropertyChanged(nameof(NotifyAdminCommandsInChat));
             OnPropertyChanged(nameof(ForceRespawnDinos));
@@ -1422,8 +1424,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             // Combine all boolean settings into a single string
             string booleanSettings = "";
-            if (UseBattleye) booleanSettings += " -UseBattleye";
+            booleanSettings += UseBattleye ? " -UseBattleye" : " -NoBattlEye";
             if (UseOldConsole) booleanSettings += " -oldconsole";
+            if (DisableCustomCosmetics) booleanSettings += " -DisableCustomCosmetics";
             if (AutoDestroyStructures) booleanSettings += " -AutoDestroyStructures";
             if (NotifyAdminCommandsInChat) booleanSettings += " -NotifyAdminCommandsInChat";
             if (ForceRespawnDinos) booleanSettings += " -ForceRespawnDinos";
@@ -1552,6 +1555,12 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
         {
             get => _useOldConsole;
             set => SetProperty(ref _useOldConsole, value);
+        }
+        private bool _disableCustomCosmetics;
+        public bool DisableCustomCosmetics
+        {
+            get => _disableCustomCosmetics;
+            set => SetProperty(ref _disableCustomCosmetics, value);
         }
         private bool _autoDestroyStructures;
         public bool AutoDestroyStructures
@@ -1802,6 +1811,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "Banlist":
                             Banlist = value;
+                            break;
+                        case "CosmeticWhitelistOverride":
+                            CosmeticWhitelistOverride = value;
                             break;
                         case "Message":
                             MOTD = value;
@@ -2100,9 +2112,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadSurvivors", PreventDownloadSurvivors.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadItems", PreventDownloadItems.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventDownloadDinos", PreventDownloadDinos.ToString());
-            UpdateLine(ref lines, "ServerSettings", "TributeItemExpirationSeconds", TributeItemExpirationSeconds.ToString());
-            UpdateLine(ref lines, "ServerSettings", "TributeDinoExpirationSeconds", TributeDinoExpirationSeconds.ToString());
-            UpdateLine(ref lines, "ServerSettings", "TributeCharacterExpirationSeconds", TributeCharacterExpirationSeconds.ToString());
+            UpdateLine(ref lines, "ServerSettings", "TributeItemExpirationSeconds", TributeItemExpirationSeconds?.ToString() ?? "86400");
+            UpdateLine(ref lines, "ServerSettings", "TributeDinoExpirationSeconds", TributeDinoExpirationSeconds.ToString() ?? "86400");
+            UpdateLine(ref lines, "ServerSettings", "TributeCharacterExpirationSeconds", TributeCharacterExpirationSeconds.ToString() ?? "86400");
             UpdateLine(ref lines, "ServerSettings", "ProximityChat", ProximityChat.ToString());
             UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
             UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
@@ -2129,6 +2141,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
             UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
+            UpdateLine(ref lines, "ServerSettings", "CosmeticWhitelistOverride", CosmeticWhitelistOverride);
             UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTD);
             UpdateLine(ref lines, "ServerSettings", "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
             UpdateLine(ref lines, "ServerSettings", "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
@@ -2773,6 +2786,16 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
+        private string _cosmeticWhitelistOverride;
+        public string CosmeticWhitelistOverride
+        {
+            get { return _cosmeticWhitelistOverride; }
+            set
+            {
+                _cosmeticWhitelistOverride = value;
+                OnPropertyChanged(nameof(CosmeticWhitelistOverride)); // Notify the UI of the change
+            }
+        }
 
         private string _mOTD;
         public string MOTD
@@ -3584,9 +3607,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "PerLevelStatsMultiplier_DinoTamed[9]":
                             PerLevelStatsMultiplier_DinoTamed_9 = value;
                             break;
-                        case "PerLevelStatsMultiplier_DinoTamed[10]":
-                            PerLevelStatsMultiplier_DinoTamed_10 = value;
-                            break;
                         case "PerLevelStatsMultiplier_DinoTamed_Add[0]":
                             PerLevelStatsMultiplier_DinoTamed_Add_0 = value;
                             break;
@@ -3601,13 +3621,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PerLevelStatsMultiplier_DinoTamed_Add[4]":
                             PerLevelStatsMultiplier_DinoTamed_Add_4 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Add[5]":
-                            PerLevelStatsMultiplier_DinoTamed_Add_5 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Add[6]":
-                            PerLevelStatsMultiplier_DinoTamed_Add_6 = value;
-                            break;
+                            break; 
                         case "PerLevelStatsMultiplier_DinoTamed_Add[7]":
                             PerLevelStatsMultiplier_DinoTamed_Add_7 = value;
                             break;
@@ -3616,9 +3630,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PerLevelStatsMultiplier_DinoTamed_Add[9]":
                             PerLevelStatsMultiplier_DinoTamed_Add_9 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Add[10]":
-                            PerLevelStatsMultiplier_DinoTamed_Add_10 = value;
                             break;
                         // ... Similar cases for PerLevelStatsMultiplier_DinoTamed_Add[1] to [10]
                         case "PerLevelStatsMultiplier_DinoTamed_Affinity[0]":
@@ -3636,12 +3647,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "PerLevelStatsMultiplier_DinoTamed_Affinity[4]":
                             PerLevelStatsMultiplier_DinoTamed_Affinity_4 = value;
                             break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[5]":
-                            PerLevelStatsMultiplier_DinoTamed_Affinity_5 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[6]":
-                            PerLevelStatsMultiplier_DinoTamed_Affinity_6 = value;
-                            break;
                         case "PerLevelStatsMultiplier_DinoTamed_Affinity[7]":
                             PerLevelStatsMultiplier_DinoTamed_Affinity_7 = value;
                             break;
@@ -3650,9 +3655,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PerLevelStatsMultiplier_DinoTamed_Affinity[9]":
                             PerLevelStatsMultiplier_DinoTamed_Affinity_9 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoTamed_Affinity[10]":
-                            PerLevelStatsMultiplier_DinoTamed_Affinity_10 = value;
                             break;
                         // ... Similar cases for PerLevelStatsMultiplier_DinoTamed_Affinity[1] to [10]
                         case "PerLevelStatsMultiplier_DinoWild[0]":
@@ -3670,12 +3672,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "PerLevelStatsMultiplier_DinoWild[4]":
                             PerLevelStatsMultiplier_DinoWild_4 = value;
                             break;
-                        case "PerLevelStatsMultiplier_DinoWild[5]":
-                            PerLevelStatsMultiplier_DinoWild_5 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoWild[6]":
-                            PerLevelStatsMultiplier_DinoWild_6 = value;
-                            break;
                         case "PerLevelStatsMultiplier_DinoWild[7]":
                             PerLevelStatsMultiplier_DinoWild_7 = value;
                             break;
@@ -3684,9 +3680,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PerLevelStatsMultiplier_DinoWild[9]":
                             PerLevelStatsMultiplier_DinoWild_9 = value;
-                            break;
-                        case "PerLevelStatsMultiplier_DinoWild[10]":
-                            PerLevelStatsMultiplier_DinoWild_10 = value;
                             break;
                         // ... Similar cases for PerLevelStatsMultiplier_DinoWild[1] to [10]
                         case "PerLevelStatsMultiplier_Player[0]":
@@ -3722,6 +3715,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "PerLevelStatsMultiplier_Player[10]":
                             PerLevelStatsMultiplier_Player_10 = value;
                             break;
+                        case "PerLevelStatsMultiplier_Player[11]":
+                            PerLevelStatsMultiplier_Player_11 = value;
+                            break;
                         case "PlayerBaseStatMultipliers[0]":
                             PlayerBaseStatMultipliers_0 = value;
                             break;
@@ -3745,15 +3741,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PlayerBaseStatMultipliers[7]":
                             PlayerBaseStatMultipliers_7 = value;
-                            break;
-                        case "PlayerBaseStatMultipliers[8]":
-                            PlayerBaseStatMultipliers_8 = value;
-                            break;
-                        case "PlayerBaseStatMultipliers[9]":
-                            PlayerBaseStatMultipliers_9 = value;
-                            break;
-                        case "PlayerBaseStatMultipliers[10]":
-                            PlayerBaseStatMultipliers_10 = value;
                             break;
                         // ... Similar cases for PerLevelStatsMultiplier_Player[1] to [10]
                         case "GlobalSpoilingTimeMultiplier":
@@ -4065,39 +4052,31 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[7]", PerLevelStatsMultiplier_DinoTamed_7);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[8]", PerLevelStatsMultiplier_DinoTamed_8);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[9]", PerLevelStatsMultiplier_DinoTamed_9);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed[10]", PerLevelStatsMultiplier_DinoTamed_10);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[0]", PerLevelStatsMultiplier_DinoTamed_Add_0);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[1]", PerLevelStatsMultiplier_DinoTamed_Add_1);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[2]", PerLevelStatsMultiplier_DinoTamed_Add_2);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[3]", PerLevelStatsMultiplier_DinoTamed_Add_3);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[4]", PerLevelStatsMultiplier_DinoTamed_Add_4);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[5]", PerLevelStatsMultiplier_DinoTamed_Add_5);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[6]", PerLevelStatsMultiplier_DinoTamed_Add_6);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[7]", PerLevelStatsMultiplier_DinoTamed_Add_7);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[8]", PerLevelStatsMultiplier_DinoTamed_Add_8);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[9]", PerLevelStatsMultiplier_DinoTamed_Add_9);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Add[10]", PerLevelStatsMultiplier_DinoTamed_Add_10);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[0]", PerLevelStatsMultiplier_DinoTamed_Affinity_0);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[1]", PerLevelStatsMultiplier_DinoTamed_Affinity_1);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[2]", PerLevelStatsMultiplier_DinoTamed_Affinity_2);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[3]", PerLevelStatsMultiplier_DinoTamed_Affinity_3);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[4]", PerLevelStatsMultiplier_DinoTamed_Affinity_4);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[5]", PerLevelStatsMultiplier_DinoTamed_Affinity_5);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[6]", PerLevelStatsMultiplier_DinoTamed_Affinity_6);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[7]", PerLevelStatsMultiplier_DinoTamed_Affinity_7);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[8]", PerLevelStatsMultiplier_DinoTamed_Affinity_8);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[9]", PerLevelStatsMultiplier_DinoTamed_Affinity_9);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoTamed_Affinity[10]", PerLevelStatsMultiplier_DinoTamed_Affinity_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[0]", PerLevelStatsMultiplier_DinoWild_0);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[1]", PerLevelStatsMultiplier_DinoWild_1);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[2]", PerLevelStatsMultiplier_DinoWild_2);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[3]", PerLevelStatsMultiplier_DinoWild_3);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[4]", PerLevelStatsMultiplier_DinoWild_4);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[5]", PerLevelStatsMultiplier_DinoWild_5);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[6]", PerLevelStatsMultiplier_DinoWild_6);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[7]", PerLevelStatsMultiplier_DinoWild_7);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[8]", PerLevelStatsMultiplier_DinoWild_8);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[9]", PerLevelStatsMultiplier_DinoWild_9);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_DinoWild[10]", PerLevelStatsMultiplier_DinoWild_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[0]", PerLevelStatsMultiplier_Player_0);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[1]", PerLevelStatsMultiplier_Player_1);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[2]", PerLevelStatsMultiplier_Player_2);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[3]", PerLevelStatsMultiplier_Player_3);
@@ -4108,6 +4087,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[8]", PerLevelStatsMultiplier_Player_8);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[9]", PerLevelStatsMultiplier_Player_9);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[10]", PerLevelStatsMultiplier_Player_10);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PerLevelStatsMultiplier_Player[11]", PerLevelStatsMultiplier_Player_11);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[0]", PlayerBaseStatMultipliers_0);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[1]", PlayerBaseStatMultipliers_1);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[2]", PlayerBaseStatMultipliers_2);
@@ -4116,9 +4096,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[5]", PlayerBaseStatMultipliers_5);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[6]", PlayerBaseStatMultipliers_6);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[7]", PlayerBaseStatMultipliers_7);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[8]", PlayerBaseStatMultipliers_8);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[9]", PlayerBaseStatMultipliers_9);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerBaseStatMultipliers[10]", PlayerBaseStatMultipliers_10);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalSpoilingTimeMultiplier", GlobalSpoilingTimeMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalItemDecompositionTimeMultiplier", GlobalItemDecompositionTimeMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GlobalCorpseDecompositionTimeMultiplier", GlobalCorpseDecompositionTimeMultiplier);
@@ -4358,16 +4335,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoTamed_10;
-        public string PerLevelStatsMultiplier_DinoTamed_10
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_10; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_10 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_10));
-            }
-        }
+
         private string _perLevelStatsMultiplier_DinoTamed_Add_0;
         public string PerLevelStatsMultiplier_DinoTamed_Add_0
         {
@@ -4422,27 +4390,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoTamed_Add_5;
-        public string PerLevelStatsMultiplier_DinoTamed_Add_5
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Add_5; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Add_5 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_5));
-            }
-        }
-
-        private string _perLevelStatsMultiplier_DinoTamed_Add_6;
-        public string PerLevelStatsMultiplier_DinoTamed_Add_6
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Add_6; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Add_6 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_6));
-            }
-        }
 
         private string _perLevelStatsMultiplier_DinoTamed_Add_7;
         public string PerLevelStatsMultiplier_DinoTamed_Add_7
@@ -4477,16 +4424,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoTamed_Add_10;
-        public string PerLevelStatsMultiplier_DinoTamed_Add_10
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Add_10; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Add_10 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Add_10));
-            }
-        }
+
         private string _perLevelStatsMultiplier_DinoTamed_Affinity_0;
         public string PerLevelStatsMultiplier_DinoTamed_Affinity_0
         {
@@ -4541,27 +4479,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoTamed_Affinity_5;
-        public string PerLevelStatsMultiplier_DinoTamed_Affinity_5
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_5; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Affinity_5 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_5));
-            }
-        }
-
-        private string _perLevelStatsMultiplier_DinoTamed_Affinity_6;
-        public string PerLevelStatsMultiplier_DinoTamed_Affinity_6
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_6; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Affinity_6 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_6));
-            }
-        }
 
         private string _perLevelStatsMultiplier_DinoTamed_Affinity_7;
         public string PerLevelStatsMultiplier_DinoTamed_Affinity_7
@@ -4596,16 +4513,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoTamed_Affinity_10;
-        public string PerLevelStatsMultiplier_DinoTamed_Affinity_10
-        {
-            get { return _perLevelStatsMultiplier_DinoTamed_Affinity_10; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoTamed_Affinity_10 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoTamed_Affinity_10));
-            }
-        }
+
         private string _perLevelStatsMultiplier_DinoWild_0;
         public string PerLevelStatsMultiplier_DinoWild_0
         {
@@ -4660,27 +4568,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoWild_5;
-        public string PerLevelStatsMultiplier_DinoWild_5
-        {
-            get { return _perLevelStatsMultiplier_DinoWild_5; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoWild_5 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_5));
-            }
-        }
 
-        private string _perLevelStatsMultiplier_DinoWild_6;
-        public string PerLevelStatsMultiplier_DinoWild_6
-        {
-            get { return _perLevelStatsMultiplier_DinoWild_6; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoWild_6 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_6));
-            }
-        }
 
         private string _perLevelStatsMultiplier_DinoWild_7;
         public string PerLevelStatsMultiplier_DinoWild_7
@@ -4715,16 +4603,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _perLevelStatsMultiplier_DinoWild_10;
-        public string PerLevelStatsMultiplier_DinoWild_10
-        {
-            get { return _perLevelStatsMultiplier_DinoWild_10; }
-            set
-            {
-                _perLevelStatsMultiplier_DinoWild_10 = value;
-                OnPropertyChanged(nameof(PerLevelStatsMultiplier_DinoWild_10));
-            }
-        }
         private string _perLevelStatsMultiplier_Player_0;
         public string PerLevelStatsMultiplier_Player_0
         {
@@ -4844,6 +4722,16 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_10));
             }
         }
+        private string _perLevelStatsMultiplier_Player_11;
+        public string PerLevelStatsMultiplier_Player_11
+        {
+            get { return _perLevelStatsMultiplier_Player_11; }
+            set
+            {
+                _perLevelStatsMultiplier_Player_11= value;
+                OnPropertyChanged(nameof(PerLevelStatsMultiplier_Player_11));
+            }
+        }
         private string _PlayerBaseStatMultipliers_0;
         public string PlayerBaseStatMultipliers_0
         {
@@ -4924,36 +4812,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(PlayerBaseStatMultipliers_7));
             }
         }
-        private string _PlayerBaseStatMultipliers_8;
-        public string PlayerBaseStatMultipliers_8
-        {
-            get { return _PlayerBaseStatMultipliers_8; }
-            set
-            {
-                _PlayerBaseStatMultipliers_8 = value;
-                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_8));
-            }
-        }
-        private string _PlayerBaseStatMultipliers_9;
-        public string PlayerBaseStatMultipliers_9
-        {
-            get { return _PlayerBaseStatMultipliers_9; }
-            set
-            {
-                _PlayerBaseStatMultipliers_9 = value;
-                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_9));
-            }
-        }
-        private string _PlayerBaseStatMultipliers_10;
-        public string PlayerBaseStatMultipliers_10
-        {
-            get { return _PlayerBaseStatMultipliers_10; }
-            set
-            {
-                _PlayerBaseStatMultipliers_10 = value;
-                OnPropertyChanged(nameof(PlayerBaseStatMultipliers_10));
-            }
-        }
+
         private string _globalSpoilingTimeMultiplier;
         public string GlobalSpoilingTimeMultiplier
         {

@@ -525,7 +525,11 @@ namespace Ark_Ascended_Manager.Views.Pages
                             {"ItemStackSizeMultiplier", "1" },
                             {"AllowMultipleAttachedC4", "False" },
                             {"AllowRaidDinoFeeding", "False" },
-                            {"AllowHitMarkers", "True" }
+                            {"AllowHitMarkers", "True" },
+                            {"CosmeticWhitelistOverride", "" },
+                            {"TributeItemExpirationSeconds", "86400" },
+                            {"TributeDinoExpirationSeconds", "86400" },
+                             {"TributeCharacterExpirationSeconds", "86400" }
             // Add more key-value pairs under ServerSettings
         }},
         { "SessionSettings", new Dictionary<string, string> {

@@ -54,21 +54,46 @@ namespace Ark_Ascended_Manager.Views.Pages
                 
             }
         }
+        private void OpenAppDataFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string arkAscendedManagerFolder = Path.Combine(appDataFolder, "Ark Ascended Manager");
+
+            // Ensure the directory exists before trying to open it
+            if (!Directory.Exists(arkAscendedManagerFolder))
+            {
+                // Optionally, create the directory if it doesn't exist, or inform the user
+                // Directory.CreateDirectory(arkAscendedManagerFolder); // To create the directory
+                System.Windows.MessageBox.Show("The Ark Ascended Manager folder does not exist in AppData.");
+                return;
+            }
+
+            // Open the directory in Windows Explorer
+            Process.Start("explorer.exe", arkAscendedManagerFolder);
+        }
 
         private void LoadUploadedFilesList()
         {
             UploadedFiles.Clear();
             string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Data", "Engrams");
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-            else
+            try
             {
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
                 foreach (var file in Directory.GetFiles(folderPath))
                 {
                     UploadedFiles.Add(Path.GetFileName(file));
                 }
             }
+            catch (Exception ex)
+            {
+                // Handle the exception (log it, show message to the user, etc.)
+                Debug.WriteLine($"Error loading uploaded files list: {ex.Message}");
+                System.Windows.MessageBox.Show($"An error occurred while accessing the Engrams directory: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
         private void OpenIssueReportForm_Click(object sender, RoutedEventArgs e)
         {
             // Navigate to IssueReportForm

@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Windows.Threading;
 
 
 
@@ -605,7 +606,23 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         }
 
+        private void OpenServerFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as ConfigPageViewModel; // Replace with your actual ViewModel class name if different
+            if (viewModel != null && !string.IsNullOrEmpty(viewModel.CurrentServerConfig.ServerPath))
+            {
+                string serverFolderPath = viewModel.CurrentServerConfig.ServerPath;
 
+                // Open the directory in Windows Explorer
+                Process.Start("explorer.exe", serverFolderPath);
+            }
+            else
+            {
+                // Optionally, show a message if the path is not set
+                System.Windows.MessageBox.Show("The server path is not set.");
+            }
+        }
+       
 
 
         private void InitializeCheckBoxStates()
@@ -623,14 +640,14 @@ namespace Ark_Ascended_Manager.Views.Pages
             if (!string.IsNullOrWhiteSpace(viewModel.OverrideMapName) &&
                 !excludedMapNames.Contains(viewModel.OverrideMapName))
             {
-                System.Diagnostics.Debug.WriteLine("InitializeCheckBoxStates: Setting checkbox to checked and textbox to visible");
+                
                 OverrideTextBox.Visibility = Visibility.Visible;
                 OverrideCheckBox.IsChecked = true;
                
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("InitializeCheckBoxStates: Setting checkbox to unchecked and textbox to collapsed");
+                
                 OverrideTextBox.Visibility = Visibility.Collapsed;
                 OverrideCheckBox.IsChecked = false;
                 
@@ -639,7 +656,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void OverrideCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("OverrideCheckBox_Checked: Checkbox is checked");
+            
             Dispatcher.Invoke(() =>
             {
                 OverrideTextBox.Visibility = Visibility.Visible;
@@ -649,7 +666,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void OverrideCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("OverrideCheckBox_Unchecked: Checkbox is unchecked");
+          
             OverrideTextBox.Visibility = Visibility.Collapsed;
         }
 
@@ -662,6 +679,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             if (viewModel != null && !string.IsNullOrWhiteSpace(viewModel.OverridePassiveMod))
             {
+                
                 // If there's a value, check the checkbox
                 OverrideModCheckBox.IsChecked = true; // This line assumes that you have named your CheckBox as 'OverrideModCheckBox' in your XAML
             }
@@ -1103,21 +1121,144 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void SearchButtonGameini_Click(object sender, RoutedEventArgs e)
         {
-            string searchText = SearchBoxGameIni.Text.ToLower();
-            SearchAndBringIntoView(Gameini, searchText);
-        }
+            string searchQuery = SearchBoxGameIni.Text.ToLower();
+            // Search through the expanders and their content
+            Expander result = FindExpanderWithContent(Gameini, searchQuery);
+            FrameworkElement resultControl = FindControlWithText(Gameini, searchQuery);
 
-        private void SearchAndBringIntoView(StackPanel stackPanel, string searchText)
-        {
-            foreach (var child in stackPanel.Children)
+            if (resultControl != null)
             {
-                if (child is Label label && label.Content.ToString().ToLower().Contains(searchText))
+                // If a control was found, expand its parent Expander
+                if (result != null)
                 {
-                    label.BringIntoView();
-                    break; // Exit the loop after the first match is found
+                    result.IsExpanded = true;
                 }
+                HighlightControl(resultControl); // This is safe to call now that we've checked resultControl is not null
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("No matching settings found.");
             }
         }
+
+        private void HighlightControl(FrameworkElement control)
+        {
+            if (control == null) return; // Ensure control is not null
+
+            switch (control)
+            {
+                case System.Windows.Controls.TextBox textBox:
+                    textBox.Focus();
+                    textBox.SelectAll();
+                    break;
+                case Label label:
+                    var currentLabelBackground = label.Background ?? Brushes.Transparent; // Handle a potentially null background
+                    label.Background = new SolidColorBrush(Colors.Orange);
+                    var labelTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
+                    labelTimer.Tick += (sender, args) =>
+                    {
+                        labelTimer.Stop();
+                        label.Background = currentLabelBackground;
+                    };
+                    labelTimer.Start();
+                    break;
+                case System.Windows.Controls.TextBlock textBlock:
+                    var currentTextBlockBackground = textBlock.Background ?? Brushes.Transparent; // Handle a potentially null background
+                    textBlock.Background = new SolidColorBrush(Colors.Orange);
+                    var textBlockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
+                    textBlockTimer.Tick += (sender, args) =>
+                    {
+                        textBlockTimer.Stop();
+                        textBlock.Background = currentTextBlockBackground;
+                    };
+                    textBlockTimer.Start();
+                    break;
+                    // Add cases for other control types as necessary
+            }
+
+            // Bring the control into view if it's inside a ScrollViewer
+            control.BringIntoView();
+        }
+
+
+
+
+        private Expander FindExpanderWithContent(DependencyObject parent, string searchQuery)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                // First, check if the child is an Expander
+                if (child is Expander expander)
+                {
+                    // Check the header of the Expander
+                    if (expander.Header is string header && header.ToLower().Contains(searchQuery))
+                    {
+                        return expander;
+                    }
+                    // Check the content of the Expander if it is expanded or not
+                    if (expander.IsExpanded || expander.Content is not null)
+                    {
+                        // Search through the content of the Expander
+                        var contentAsDependencyObject = expander.Content as DependencyObject;
+                        if (contentAsDependencyObject != null)
+                        {
+                            var foundInContent = FindControlWithText(contentAsDependencyObject, searchQuery);
+                            if (foundInContent != null)
+                            {
+                                // If found, return this Expander
+                                return expander;
+                            }
+                        }
+                    }
+                }
+                // Recursive search inside the child controls
+                var foundExpander = FindExpanderWithContent(child, searchQuery);
+                if (foundExpander != null)
+                {
+                    return foundExpander;
+                }
+            }
+            return null;
+        }
+
+        private FrameworkElement FindControlWithText(DependencyObject parent, string searchQuery)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                // Check various control types that might contain text
+                if (child is System.Windows.Controls.TextBlock textBlock && textBlock.Text.ToLower().Contains(searchQuery))
+                {
+                    return textBlock;
+                }
+                else if (child is System.Windows.Controls.TextBox textBox && textBox.Text.ToLower().Contains(searchQuery))
+                {
+                    return textBox;
+                }
+                else if (child is Label label && label.Content is string labelText && labelText.ToLower().Contains(searchQuery))
+                {
+                    return label;
+                }
+                else if (child is ContentControl contentControl && contentControl.Content is string content && content.ToLower().Contains(searchQuery))
+                {
+                    return contentControl;
+                }
+
+                // Otherwise, continue recursive search
+                var result = FindControlWithText(child, searchQuery);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
+
+
+
+
 
 
 
