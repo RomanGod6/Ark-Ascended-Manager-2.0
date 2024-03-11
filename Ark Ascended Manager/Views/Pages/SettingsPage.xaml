@@ -54,6 +54,26 @@
                 </ScrollViewer>
             </GroupBox>
 
+            <GroupBox Header="Manager Settings" Margin="5" Padding="5">
+                <StackPanel>
+                    <!-- Toggle for Auto Update Servers on Reboot -->
+                    <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersOnReboot, Mode=TwoWay}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Auto Update Servers on Reboot" VerticalAlignment="Center"/>
+                            <!-- Optionally, add a ToggleSwitch-like visual here if your library supports it -->
+                        </StackPanel>
+                    </CheckBox>
+
+                    <!-- Toggle for Auto Update Servers when New Update Available -->
+                    <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersWhenNewUpdateAvailable, Mode=TwoWay}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Auto Update Servers when New Update Available" VerticalAlignment="Center"/>
+                            <!-- Optionally, add a ToggleSwitch-like visual here if your library supports it -->
+                        </StackPanel>
+                    </CheckBox>
+                </StackPanel>
+            </GroupBox>
+
 
             <!-- GroupBox for Personalization -->
             <GroupBox Header="Personalization" Margin="5" Padding="5">

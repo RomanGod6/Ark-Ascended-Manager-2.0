@@ -1248,7 +1248,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public string ServerPassword { get; set; }
             public bool UseBattlEye { get; set; } // Use bool for checkboxes
             public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
-            public bool PreventSpawnAnimation { get; set; } // Use bool for checkboxes
 
             // ... other relevant details
         }
@@ -1582,12 +1581,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             set => SetProperty(ref _forceRespawnDinos, value);
         }
 
-        private bool _preventSpawnAnimation;
-        public bool PreventSpawnAnimation
-        {
-            get => _disableCrossPlatform;
-            set => SetProperty(ref _disableCrossPlatform, value);
-        }
+
         private bool _disableCrossPlatform;
         public bool DisableCrossPlatform
         {
@@ -2037,6 +2031,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "AllowHitMarkers":
                             AllowHitMarkers = ConvertToBoolean(value);
                             break;
+                        case "PreventSpawnAnimations":
+                            PreventSpawnAnimations = ConvertToBoolean(value);
+                            break;
                         case "AllowMultipleAttachedC4":
                             AllowMultipleAttachedC4 = ConvertToBoolean(value);
                             break;
@@ -2163,6 +2160,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "LimitTurretsRange", LimitTurretsRange);
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyStructures", AutoDestroyStructures.ToString());
             UpdateLine(ref lines, "ServerSettings", "UseVSync", UseVSync.ToString());
+            UpdateLine(ref lines, "ServerSettings", "PreventSpawnAnimations", PreventSpawnAnimations.ToString());
             UpdateLine(ref lines, "ServerSettings", "MaxPlatformSaddleStructureLimit", MaxPlatformSaddleStructureLimit);
             UpdateLine(ref lines, "ServerSettings", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
             UpdateLine(ref lines, "ServerSettings", "bPvEDisableFriendlyFire", BPvEDisableFriendlyFire.ToString());
@@ -3882,9 +3880,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "DisablePhotoMode":
                             DisablePhotoMode = ConvertToBoolean(value);
                             break;
-                        case "PreventSpawnAnimation":
-                            PreventSpawnAnimation = ConvertToBoolean(value);
-                            break;
                         case "DestroyTamesOverTheSoftTameLimit":
                             DestroyTamesOverTheSoftTameLimit = ConvertToBoolean(value);
                             break;
@@ -4144,7 +4139,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisablePhotoMode", DisablePhotoMode.ToString());
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventSpawnAnimation", PreventSpawnAnimation.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowCryoFridgeOnSaddle", AllowCryoFridgeOnSaddle.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DestroyTamesOverTheSoftTameLimit", DestroyTamesOverTheSoftTameLimit.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableCryopodFridgeRequirement", DisableCryopodFridgeRequirement.ToString());
@@ -5381,6 +5375,16 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             {
                 _disableCryopodEnemyCheck = value;
                 OnPropertyChanged(nameof(DisableCryopodEnemyCheck));
+            }
+        }
+        private bool _preventSpawnAnimations;
+        public bool PreventSpawnAnimations
+        {
+            get { return _preventSpawnAnimations; }
+            set
+            {
+                _preventSpawnAnimations = value;
+                OnPropertyChanged(nameof(PreventSpawnAnimations));
             }
         }
 

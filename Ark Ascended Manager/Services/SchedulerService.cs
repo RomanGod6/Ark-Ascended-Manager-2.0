@@ -63,7 +63,6 @@ namespace Ark_Ascended_Manager.Services
 
                 if (!File.Exists(serversFilePath))
                 {
-                    // Handle the case where the file doesn't exist
                     Debug.WriteLine("servers.json file not found.");
                     return;
                 }
@@ -79,33 +78,43 @@ namespace Ark_Ascended_Manager.Services
         }
 
 
+
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             var now = DateTime.Now;
-
-            // Initialize a variable to track the next scheduled action time
             TimeSpan? nextActionTime = null;
 
+            // First, handle any regular scheduled tasks.
             foreach (var schedule in schedules)
             {
                 if (schedule.Days.Contains(now.DayOfWeek.ToString()))
                 {
                     var scheduleTime = TimeSpan.Parse(schedule.Time);
-                    if (now.TimeOfDay <= scheduleTime)
+                    var timeUntilAction = scheduleTime - now.TimeOfDay;
+
+                    if (now.TimeOfDay <= scheduleTime &&
+                        (!nextActionTime.HasValue || timeUntilAction < nextActionTime))
                     {
-                        var timeUntilAction = scheduleTime - now.TimeOfDay;
-                        if (!nextActionTime.HasValue || timeUntilAction < nextActionTime)
-                        {
-                            nextActionTime = timeUntilAction;
-                        }
+                        nextActionTime = timeUntilAction;
                     }
 
                     // Check if the current time is within a minute of the scheduled time
-                    if (Math.Abs((now.TimeOfDay - scheduleTime).TotalMinutes) < 1)
+                    if (Math.Abs(timeUntilAction.TotalMinutes) < 1)
                     {
-                        Debug.WriteLine($"Executing schedule: {schedule.Nickname}");
+                        Debug.WriteLine($"Executing scheduled task: {schedule.Nickname}");
                         Task.Run(() => ExecuteSchedule(schedule));
                     }
+                }
+            }
+
+            // Next, check if there are any update-on-restart actions to be performed.
+            foreach (var server in servers)
+            {
+                if (server.UpdateOnRestart && !server.IsServerRunning)
+                {
+                    // You need to define the "IsServerOnline" method if not already present.
+                    Debug.WriteLine($"Server {server.ProfileName} is scheduled to be updated on restart.");
+                    Task.Run(() => UpdateServerIfNecessary(server));
                 }
             }
 
@@ -119,7 +128,18 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine("No upcoming actions today.");
             }
         }
-
+        private async Task UpdateServerIfNecessary(Server server)
+        {
+            if (!server.IsServerRunning)
+            {
+                // Perform update logic here
+                await UpdateServer(server);
+            }
+            else
+            {
+                Debug.WriteLine("Server is currently running. Consider scheduling the update for later.");
+            }
+        }
 
 
         private async Task ExecuteSchedule(Schedule schedule)
@@ -245,6 +265,7 @@ namespace Ark_Ascended_Manager.Services
         {
             try
             {
+                RemoveServerFromMonitoring(server.ServerPath);
                 Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
                 Debug.WriteLine($"Connecting to RCON at IP: 127.0.0.1, Port: {server.RCONPort}");
 
@@ -270,6 +291,25 @@ namespace Ark_Ascended_Manager.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in RCON shutdown: {ex.Message}");
+            }
+        }
+        private void RemoveServerFromMonitoring(string serverDirectory)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
+
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                var monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+
+                if (monitoringInfos != null)
+                {
+                    monitoringInfos.RemoveAll(info => info.ServerDirectory.Equals(serverDirectory, StringComparison.OrdinalIgnoreCase));
+                    json = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
+                    File.WriteAllText(jsonFilePath, json);
+ 
+                }
             }
         }
 
@@ -571,5 +611,6 @@ namespace Ark_Ascended_Manager.Services
         public int ChangeNumber { get; set; }
         public string AppId { get; set; }
         public bool IsServerRunning { get; set; }
-    }
+    public bool UpdateOnRestart { get; set; }
+}
 

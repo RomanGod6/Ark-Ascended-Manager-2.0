@@ -155,7 +155,7 @@
                                     <Label Content="Disable Photo Mode:" ToolTip="Toggle to enable or disable photo mode in the game."/>
                                     <CheckBox IsChecked="{Binding DisablePhotoMode, Mode=TwoWay}" ToolTip="Toggle to enable or disable photo mode."/>
                                     <Label Content="Prevent Spawn Animations:" ToolTip="If enabled turns off spawn animations when spawning."/>
-                                    <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay}" ToolTip="If enabled turns off spawn animations when spawning."/>
+                                    <CheckBox IsChecked="{Binding PreventSpawnAnimations, Mode=TwoWay}" ToolTip="If enabled turns off spawn animations when spawning."/>
                                     <Expander Header="Cryopod Settings" ToolTip="Settings for wildcard cryopods (Not Mods)">
                                         <StackPanel>
                                             <Label Content="Disable Cryopod Enemy Check:" ToolTip="Will ignore the enemy player/structure/dino checks."/>
@@ -1054,8 +1054,7 @@
                             <Label Content="Force Respawn Dinos"/>
                             <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <Label Content="Prevent Spawn Animation"/>
-                            <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                             <Label Content="Cluster ID"/>
                             <TextBox 
                             Text="{Binding ClusterID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 

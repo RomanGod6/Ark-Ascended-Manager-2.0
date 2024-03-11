@@ -1,10 +1,12 @@
 ﻿
 
 using Ark_Ascended_Manager.Views.Pages;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
+using System.IO;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 
@@ -32,6 +34,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             if (!_isInitialized)
                 InitializeViewModel();
+            LoadSettings();
         }
         private string _releaseNotes;
         public string ReleaseNotes
@@ -101,6 +104,71 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             get => _groupConsoles;
             set => SetProperty(ref _groupConsoles, value);
         }
+        public class AAMGlobalSettings
+        {
+            public bool AutoUpdateServersOnReboot { get; set; }
+            public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
+        }
+        private AAMGlobalSettings _globalSettings;
+
+        public AAMGlobalSettings GlobalSettings
+        {
+            get => _globalSettings;
+            set
+            {
+                _globalSettings = value;
+                OnPropertyChanged(nameof(GlobalSettings));
+            }
+        }
+
+        private string SettingsFilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "AAMGlobalSettings.json");
+
+        private void LoadSettings()
+        {
+            if (File.Exists(SettingsFilePath))
+            {
+                var json = File.ReadAllText(SettingsFilePath);
+                GlobalSettings = JsonConvert.DeserializeObject<AAMGlobalSettings>(json) ?? new AAMGlobalSettings();
+            }
+            else
+            {
+                GlobalSettings = new AAMGlobalSettings();
+            }
+        }
+        public bool AutoUpdateServersOnReboot
+        {
+            get => GlobalSettings.AutoUpdateServersOnReboot;
+            set
+            {
+                if (GlobalSettings.AutoUpdateServersOnReboot != value)
+                {
+                    GlobalSettings.AutoUpdateServersOnReboot = value;
+                    OnPropertyChanged();
+                    SaveSettings();
+                }
+            }
+        }
+
+        public bool AutoUpdateServersWhenNewUpdateAvailable
+        {
+            get => GlobalSettings.AutoUpdateServersWhenNewUpdateAvailable;
+            set
+            {
+                if (GlobalSettings.AutoUpdateServersWhenNewUpdateAvailable != value)
+                {
+                    GlobalSettings.AutoUpdateServersWhenNewUpdateAvailable = value;
+                    OnPropertyChanged();
+                    SaveSettings();
+                }
+            }
+        }
+
+        private void SaveSettings()
+        {
+            var json = JsonConvert.SerializeObject(GlobalSettings, Formatting.Indented);
+            File.WriteAllText(SettingsFilePath, json);
+        }
+
 
 
         [RelayCommand]

@@ -45,6 +45,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<ConfigPage>();
                 services.AddSingleton<SchedulerService>();
                 services.AddSingleton<BackupService>();
+                services.AddSingleton<AutoUpdateService>();
                 services.AddSingleton<CrashDetection>();
                 services.AddSingleton<RconPanelPage>();
                 services.AddSingleton<SyncConfigPage>();
@@ -100,6 +101,9 @@ namespace Ark_Ascended_Manager
             var crashDetection = GetService<CrashDetection>();
             var steamVersionControl = GetService<SteamVersionControl>();
             steamVersionControl?.StartUpdateTimer();
+            // Start the AutoUpdateService timer
+            var autoUpdateService = GetService<AutoUpdateService>();
+            autoUpdateService?.StartCheckingUpdates();
 
             // Retrieve the ServerManager instance and start it
             // If ServerManager has a start method, call it here
