@@ -863,6 +863,14 @@
                                     </DataGrid>
                                 </StackPanel>
                             </Expander>
+                            <Expander Header="Dino Overrides">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel x:Name="dinoOverridePanel" Orientation="Vertical" Margin="10">
+                                        <!-- Example button for adding a new Dino Override -->
+                                        <Button Content="Add New Dino Override" Click="AddDinoOverride_Click"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Expander>
 
 
 
@@ -875,11 +883,7 @@
 
                                 </StackPanel>
                             </Expander>
-                            <Expander Header="Map Spawn Overrides">
-                                <StackPanel>
 
-                                </StackPanel>
-                            </Expander>
                             <Expander Header="Loot Overrides">
                                 <StackPanel>
 

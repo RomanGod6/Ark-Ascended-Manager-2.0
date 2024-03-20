@@ -32,8 +32,8 @@
             <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click" Margin="5"/>
             <Button x:Name="UpdateApplicationButton" Content="Update AAM" Click="UpdateApplicationButton_Click" />
             <Button Content="Open AAM App Data" Click="OpenAppDataFolder_Click" Margin="5"/>
-
         </StackPanel>
+
 
         <!-- Main content -->
         <StackPanel Grid.Row="1">
@@ -60,7 +60,6 @@
                     <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersOnReboot, Mode=TwoWay}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Auto Update Servers on Reboot" VerticalAlignment="Center"/>
-                            <!-- Optionally, add a ToggleSwitch-like visual here if your library supports it -->
                         </StackPanel>
                     </CheckBox>
 
@@ -68,11 +67,18 @@
                     <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersWhenNewUpdateAvailable, Mode=TwoWay}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Auto Update Servers when New Update Available" VerticalAlignment="Center"/>
-                            <!-- Optionally, add a ToggleSwitch-like visual here if your library supports it -->
                         </StackPanel>
                     </CheckBox>
+
+                    <!-- Label for Update Countdown Timer -->
+                    <TextBlock Text="Update Countdown Timer" Margin="5" VerticalAlignment="Center"/>
+
+                    <!-- TextBox for displaying Update Countdown Timer -->
+                    <TextBox Margin="5" Text="{Binding ViewModel.UpdateCountdownTimer, Mode=TwoWay}" IsReadOnly="False"/>
                 </StackPanel>
             </GroupBox>
+
+
 
 
             <!-- GroupBox for Personalization -->

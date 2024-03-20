@@ -1689,6 +1689,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "HarvestHealthMultiplier":
                             HarvestHealthMultiplier = value;
                             break;
+                        case "PlayerCharacterFoodDrainMultiplier":
+                            PlayerCharacterFoodDrainMultiplier = value;
+                            break;
                         case "AllowThirdPersonPlayer":
                             AllowThirdPersonPlayer = ConvertToBoolean(value);
                             break;
@@ -1953,6 +1956,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "AutoDestroyDecayedDinos":
                             AutoDestroyDecayedDinos = ConvertToBoolean(value);
                             break;
+                        case "PlayerCharacterWaterDrainMultiplier":
+                            PlayerCharacterWaterDrainMultiplier = value;
+                            break;
                         case "ClampItemSpoilingTimes":
                             ClampItemSpoilingTimes = ConvertToBoolean(value);
                             break;
@@ -2116,6 +2122,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "ResourceNoReplenishRadiusStructures", ResourceNoReplenishRadiusStructures);
             UpdateLine(ref lines, "ServerSettings", "ServerAdminPassword", ServerAdminPassword);
             UpdateLine(ref lines, "SessionSettings", "SessionName", SessionName);
+            UpdateLine(ref lines, "ServerSettings", "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
             UpdateLine(ref lines, "ServerSettings", "ServerCrosshair", ServerCrosshair.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerForceNoHud", ServerForceNoHud.ToString());
             UpdateLine(ref lines, "ServerSettings", "ServerHardcore", ServerHardcore.ToString());
@@ -3835,9 +3843,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "PlayerDamageMultiplier":
                             PlayerDamageMultiplier = value;
                             break;
-                        case "PlayerCharacterWaterDrainMultiplier":
-                            PlayerCharacterWaterDrainMultiplier = value;
-                            break;
                         case "MaxFallSpeedMultiplier":
                             MaxFallSpeedMultiplier = value;
                             break;
@@ -3864,9 +3869,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             break;
                         case "PlayerResistanceMultiplier":
                             PlayerResistanceMultiplier = value;
-                            break;
-                        case "PlayerCharacterFoodDrainMultiplier":
-                            PlayerCharacterFoodDrainMultiplier = value;
                             break;
                         case "SpecialXPMultiplier":
                             SpecialXPMultiplier = value;
@@ -4124,7 +4126,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftXPMultiplier", CraftXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterWaterDrainMultiplier", PlayerCharacterWaterDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
@@ -4133,7 +4134,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterFoodDrainMultiplier", PlayerCharacterFoodDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SpecialXPMultiplier", SpecialXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);

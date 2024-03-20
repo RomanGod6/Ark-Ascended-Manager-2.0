@@ -108,7 +108,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             public bool AutoUpdateServersOnReboot { get; set; }
             public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
+            public string UpdateCountdownTimer { get; set; } 
         }
+
         private AAMGlobalSettings _globalSettings;
 
         public AAMGlobalSettings GlobalSettings
@@ -135,19 +137,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 GlobalSettings = new AAMGlobalSettings();
             }
         }
-        public bool AutoUpdateServersOnReboot
+        public string UpdateCountdownTimer
         {
-            get => GlobalSettings.AutoUpdateServersOnReboot;
+            get => GlobalSettings.UpdateCountdownTimer;
             set
             {
-                if (GlobalSettings.AutoUpdateServersOnReboot != value)
+                if (GlobalSettings.UpdateCountdownTimer != value)
                 {
-                    GlobalSettings.AutoUpdateServersOnReboot = value;
+                    GlobalSettings.UpdateCountdownTimer = value;
                     OnPropertyChanged();
-                    SaveSettings();
+                    SaveSettings(); 
                 }
             }
         }
+
 
         public bool AutoUpdateServersWhenNewUpdateAvailable
         {

@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ark_Ascended_Manager.Views.Pages;
+using CoreRCON;
 using Newtonsoft.Json;
 
 namespace Ark_Ascended_Manager.Services
@@ -44,7 +46,7 @@ namespace Ark_Ascended_Manager.Services
         public async Task CheckAndUpdateServers()
         {
             // Load global settings to determine if auto-update is enabled
-            var globalSettings = LoadGlobalSettings();
+            var globalSettings = LoadGlobalSettings(); // Assume this method now also loads the UpdateCountdownTimer
             if (!globalSettings.AutoUpdateServersWhenNewUpdateAvailable)
             {
                 Debug.WriteLine("Auto-update is disabled.");
@@ -54,12 +56,34 @@ namespace Ark_Ascended_Manager.Services
             // Load server profiles
             var servers = LoadServerProfiles(_serversConfigPath);
             bool updatesMade = false;
+
+            // Convert UpdateCountdownTimer from string to int
+            if (!int.TryParse(globalSettings.UpdateCountdownTimer, out int countdownStart))
+            {
+                Debug.WriteLine("Invalid UpdateCountdownTimer value. Defaulting to 10 minutes.");
+                countdownStart = 10; // Default value in case of parsing failure
+            }
+
             foreach (var server in servers)
             {
                 // Check if the server is online
                 if (IsServerOnline(server))
                 {
-                    Console.WriteLine($"Server {server.ProfileName} is currently online. Skipping update.");
+                    var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
+                    await rcon.ConnectAsync();
+
+                    // Send countdown messages starting from the UpdateCountdownTimer value
+                    for (int i = countdownStart; i > 0; i--)
+                    {
+                        Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
+                        await rcon.SendCommandAsync($"Broadcast Server will shut down in {i} minute(s)...New Update Detected");
+                        await Task.Delay(60000); // Wait for 1 minute between each notification
+                    }
+
+                    // Shutdown command
+                    Debug.WriteLine("Sending RCON shutdown command.");
+                    await rcon.SendCommandAsync("doexit");
+                    Debug.WriteLine("RCON shutdown command sent successfully.");
                     continue;
                 }
 
@@ -81,6 +105,7 @@ namespace Ark_Ascended_Manager.Services
         {
             public bool AutoUpdateServersOnReboot { get; set; }
             public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
+            public string UpdateCountdownTimer { get; set; }
         }
 
 

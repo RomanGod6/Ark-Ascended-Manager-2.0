@@ -28,6 +28,8 @@ namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class ConfigPage : INavigableView<ConfigPageViewModel> // Make sure the base class is Page
     {
+        private List<SpawnClassEntry> spawnClassEntries;
+        private List<CreatureIdEntry> creatureIdEntries;
         private ObservableCollection<string> _headers = new ObservableCollection<string>();
         // Inside your ConfigPageViewModel class
         public ObservableCollection<StackSizeOverride> StackSizeOverrides { get; set; } = new ObservableCollection<StackSizeOverride>();
@@ -43,8 +45,29 @@ namespace Ark_Ascended_Manager.Views.Pages
             ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             stackOverridesPath = Path.Combine(viewModel.CurrentServerConfig.ServerPath, "overrides", "stacking.json");
+            // Using System.IO and System.Environment to construct the path
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            Debug.WriteLine(appDataPath);
+            var dinoBPsPath = Path.Combine(appDataPath, "Ark Ascended Manager", "Data", "DinoBPs");
+            Debug.WriteLine(dinoBPsPath);
+            var spawnClassesPath = Path.Combine(dinoBPsPath, "Spawns.json"); 
+            Debug.WriteLine(spawnClassesPath);
+            var creatureIdsPath = Path.Combine(dinoBPsPath, "Dinos.json"); 
+            try
+            {
+                var spawnClassContent = File.ReadAllText(spawnClassesPath);
+                var spawnClassEntries = JsonConvert.DeserializeObject<List<SpawnClassEntry>>(spawnClassContent);
+                var creatureIdContent = File.ReadAllText(creatureIdsPath);
+                var creatureIdEntries = JsonConvert.DeserializeObject<List<CreatureIdEntry>>(creatureIdContent);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
 
-            
+
+
+
             var folderPath = Path.GetDirectoryName(stackOverridesPath);
             if (!Directory.Exists(folderPath))
             {
@@ -73,6 +96,60 @@ namespace Ark_Ascended_Manager.Views.Pages
 
 
         }
+
+        private void AddDinoOverride_Click(object sender, RoutedEventArgs e)
+        {
+            // Example of dynamically adding UI elements for the new override configuration
+            var stackPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5) };
+
+            var spawnClassComboBox = new ComboBox();
+            spawnClassComboBox.ItemsSource = spawnClassEntries; // Assuming this is already loaded
+            spawnClassComboBox.DisplayMemberPath = "Name";
+
+            var creatureIdComboBox = new ComboBox();
+            creatureIdComboBox.ItemsSource = creatureIdEntries; // Assuming this is already loaded
+            creatureIdComboBox.DisplayMemberPath = "Name";
+
+            var spawnNameTextBox = new Wpf.Ui.Controls.TextBox { Width = 100 };
+            var factorTextBox = new Wpf.Ui.Controls.TextBox { Width = 100 };
+            var percentageTextBox = new Wpf.Ui.Controls.TextBox { Width = 100 };
+
+            // Add the controls to the StackPanel
+            stackPanel.Children.Add(spawnClassComboBox);
+            stackPanel.Children.Add(creatureIdComboBox);
+            stackPanel.Children.Add(spawnNameTextBox);
+            stackPanel.Children.Add(factorTextBox);
+            stackPanel.Children.Add(percentageTextBox);
+
+            // Add the StackPanel to the parent container (e.g., dinoOverridePanel)
+            dinoOverridePanel.Children.Add(stackPanel);
+        }
+
+
+        public class SpawnClassEntry
+        {
+            public string Name { get; set; }
+            public string ClassString { get; set; }
+        }
+
+        public class CreatureIdEntry
+        {
+            public string Name { get; set; }
+            public string Id { get; set; }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
         public void LoadAndMergeEngrams()
         {
             // Path where the JSON files are located
