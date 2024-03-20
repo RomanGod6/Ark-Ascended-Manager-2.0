@@ -332,6 +332,8 @@
                             </Expander>
                             <Expander Header="Player Settings">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                    <Label Content="XP Multiplier:" ToolTip="Set the multiplier for generic experience points (XP) gain."/>
+                                    <TextBox Text="{Binding XPMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for generic XP gain."/>
                                     <Label Content="Generic XP Multiplier:" ToolTip="Set the multiplier for generic experience points (XP) gain."/>
                                     <TextBox Text="{Binding GenericXPMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for generic XP gain."/>
                                     <Label Content="Player Damage Multiplier:" ToolTip="Set the multiplier for player damage."/>
