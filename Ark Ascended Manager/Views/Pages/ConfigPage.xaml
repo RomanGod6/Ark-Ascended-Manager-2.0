@@ -114,12 +114,14 @@
                                     <TextBox Text="{Binding ServerAdminPassword, Mode=TwoWay}" />
                                     <Label Content="MOTD" ToolTip="Message for users who log in"/>
                                     <TextBox Text="{Binding MOTD, Mode=TwoWay}" Height="209"/>
-                                    <Label Content="MOTD As Seen In Game" ToolTip="Actual message that users see in game" />
+                                    <Label Content="MOTD In Game" ToolTip="Specifies in seconds the duration of the displayed message on player log-in." />
                                     <RichTextBox x:Name="richTextPreview" IsReadOnly="True" Height="209"/>
+                                    <Label Content="MOTD Duration" ToolTip="Specifies in seconds the duration of the displayed message on player log-in." />
+                                    <TextBox Text="{Binding Duration, Mode=TwoWay}" Height="209"/>
                                     <Label Content="Server Password" ToolTip="Password to join the server"/>
                                     <TextBox Text="{Binding ServerPassword, Mode=TwoWay}" />
                                     <Label Content="Banlist:" Tag="Banlist" ToolTip="List of Banned Players"/>
-                                    <TextBox Text="{Binding Message, Mode=TwoWay}" ToolTip="List of Banned Players"/>
+                                    <TextBox Text="{Binding Banlist, Mode=TwoWay}" ToolTip="List of Banned Players"/>
                                     <Label Content="Cosmetic Whitelist Override:" ToolTip="The approved list of cosmetics on your server (use URL)"/>
                                     <TextBox Text="{Binding CosmeticWhitelistOverride, Mode=TwoWay}" ToolTip="The approved list of cosmetics on your server (use URL)"/>
                                     <Label Content="Photo Mode Range Limit:" ToolTip="Range of camera mode in meters"/>
@@ -500,7 +502,7 @@
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_3, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino oxygen per-level stats."/>
                                                     <Label Content="DinoTamed[Food]:" ToolTip="Set the multiplier for tamed dino food per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_4, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino food per-level stats."/>
-                                                    <Label Content="DinoTamed[Water]:" ToolTip="Set the multiplier for tamed dino water per-level stats."/>
+                                                    <Label Content="DinoTamed[Weight]:" ToolTip="Set the multiplier for tamed dino water per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_7, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino water per-level stats."/>
                                                     <Label Content="DinoTamed[Melee Damage]:" ToolTip="Set the multiplier for tamed dino melee damage per-level stats."/>
                                                     <TextBox Text="{Binding PerLevelStatsMultiplier_DinoTamed_8, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino melee damage per-level stats."/>
@@ -1059,7 +1061,10 @@
 
                             <Label Content="Force Respawn Dinos"/>
                             <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+                            <Label Content="Custom Launch Options"/>
+                            <TextBox 
+ Text="{Binding CustomLaunchOptions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+ ToolTip="Enter customer launch parameters by -value, or leave blank for nothing." />
 
                             <Label Content="Cluster ID"/>
                             <TextBox 
@@ -1070,6 +1075,11 @@
                                                 <TextBox 
                             Text="{Binding ClusterDirOverride, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                             ToolTip="Enter the path to override the cluster directory." />
+                            
+
+                            
+                            
+                            
 
 
 

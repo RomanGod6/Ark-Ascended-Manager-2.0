@@ -15,105 +15,53 @@
         <!-- RCON Connection Status -->
         <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10">
             <TextBlock Text="RCON Status" FontWeight="Bold"/>
-            <TextBlock Text="{Binding RconStatus}">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding RconStatus}" Value="Disconnected">
-                                <Setter Property="Foreground" Value="Red"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding RconStatus}" Value="Connected">
-                                <Setter Property="Foreground" Value="Green"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding RconStatus}" Value="Online">
-                                <Setter Property="Foreground" Value="Green"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding RconStatus}" Value="No Players Connected">
-                                <Setter Property="Foreground" Value="Yellow"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+            <TextBlock Text="{Binding RconStatus}" />
+            <!-- Add additional status indicators here -->
         </StackPanel>
 
-
-        <!-- Command History and Server Chat -->
+        <!-- Central Chat and Command Input Area -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <!-- For ComboBox -->
-                <RowDefinition Height="1100"/>
-                <!-- For ListBox ScrollViewer -->
-                <RowDefinition Height="99"/>
-                <RowDefinition Height="12.62"/>
-                <!-- For DockPanel containing TextBox and Button -->
+                <RowDefinition Height="*"/>
+                <!-- For Chat Messages -->
+                <RowDefinition Height="Auto"/>
+                <!-- For Command Input and Buttons -->
             </Grid.RowDefinitions>
 
+            <!-- Server Dropdown Selection -->
             <ComboBox Grid.Row="0" ItemsSource="{Binding ServerProfiles}"
-      DisplayMemberPath="ServerName" 
-      SelectedValuePath="ServerName"
-      SelectedItem="{Binding SelectedServerProfile}"
-      Height="40" VerticalAlignment="Top">
-                <!-- Server dropdown selection -->
-            </ComboBox>
+                      DisplayMemberPath="ServerName"
+                      SelectedValuePath="ServerName"
+                      SelectedItem="{Binding SelectedServerProfile}"
+                      Height="40" VerticalAlignment="Top"/>
 
-            <!-- Wrap the ListBox in a ScrollViewer for the chat messages -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
-                <ListBox ItemsSource="{Binding ServerChat}" Margin="0,0,0,10" MinWidth="100" MinHeight="100">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" />
-                            <!-- Add style triggers or converters here to style the messages based on their content -->
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            <!-- Chat Messages in a Scrollable Area -->
+            <Border Grid.Row="1" Background="White" BorderBrush="Gray" BorderThickness="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="400">
+                    <ItemsControl ItemsSource="{Binding ServerChat}" />
+                </ScrollViewer>
+            </Border>
 
-            </ScrollViewer>
-
-            <!-- The Send button and TextBox remain outside and below the ScrollViewer -->
-            <DockPanel Grid.Row="2" VerticalAlignment="Top" Margin="-91,0,-144,0" Grid.RowSpan="2">
-                <TextBox DockPanel.Dock="Top" Margin="0,0,0,10" Height="35" Text="{Binding CommandInput}" />
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="1">
-                    <Button Content="Send" Height="35" Width="75" Padding="1" Command="{Binding SendCommand}" />
-                    <Button Content="Clear Chat" Height="35" Width="75" Padding="1" Margin="5" Command="{Binding ClearChatCommand}" />
-                </StackPanel>
-            </DockPanel>
-
-
-
+            <!-- Command Input and Send/Clear Buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <TextBox Width="300" Margin="5" Text="{Binding CommandInput}" />
+                <Button Content="Send" Command="{Binding SendCommand}" Margin="5"/>
+                <Button Content="Clear Chat" Command="{Binding ClearChatCommand}" Margin="5"/>
+            </StackPanel>
         </Grid>
 
         <!-- Player List -->
         <StackPanel Grid.Column="2" Margin="10">
-            <Button Content="Copy ID" 
-        Command="{Binding CopyIdCommand}"
-        CommandParameter="{Binding SelectedPlayerInfo}"
-        IsEnabled="{Binding SelectedPlayerInfo}" />
-
+            <Button Content="Copy ID" Command="{Binding CopyIdCommand}"
+                    CommandParameter="{Binding SelectedPlayerInfo}"
+                    IsEnabled="{Binding SelectedPlayerInfo}" />
             <TextBlock Text="Connected Players:" FontWeight="Bold" Margin="0,0,0,10"/>
-            <ListBox x:Name="PlayersListBox" ItemsSource="{Binding ConnectedPlayers}" SelectedItem="{Binding SelectedPlayerInfo}">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}">
-                                    <MenuItem Header="Copy ID" Command="{Binding Path=DataContext.CopyIdCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-
-
-
-
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox ItemsSource="{Binding ConnectedPlayers}"
+                     SelectedItem="{Binding SelectedPlayerInfo}">
+                <!-- Player list items -->
             </ListBox>
-
-
-
-
         </StackPanel>
-
     </Grid>
 </Page>

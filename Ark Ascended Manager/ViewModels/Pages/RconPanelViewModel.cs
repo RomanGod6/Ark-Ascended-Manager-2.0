@@ -104,6 +104,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
             var playerInfo = parameter as string;
+            if (string.IsNullOrEmpty(playerInfo))
+            {
+
+                Debug.WriteLine("No player information available to copy.");
+                return; // Exit the method as there's nothing to copy
+            }
             if (!string.IsNullOrEmpty(playerInfo))
             {
                 var playerId = ExtractPlayerId(playerInfo);

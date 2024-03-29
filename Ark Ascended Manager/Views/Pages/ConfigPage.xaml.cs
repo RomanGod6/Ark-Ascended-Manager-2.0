@@ -1031,16 +1031,19 @@ namespace Ark_Ascended_Manager.Views.Pages
         }
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (sender is ScrollViewer scrollViewer)
+            if (!e.Handled)
             {
-                if (e.Delta > 0)
-                    scrollViewer.LineUp();
-                else
-                    scrollViewer.LineDown();
-
                 e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                {
+                    RoutedEvent = UIElement.MouseWheelEvent,
+                    Source = sender
+                };
+                var parent = ((Control)sender).Parent as UIElement;
+                parent?.RaiseEvent(eventArg);
             }
         }
+
 
 
         private void LoadPluginsToListBox()

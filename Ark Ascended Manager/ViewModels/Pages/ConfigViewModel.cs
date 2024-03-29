@@ -1815,6 +1815,9 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "Message":
                             MOTD = value;
                             break;
+                        case "Duration":
+                            Duration = value;
+                            break;
                         case "DisableDinoDecayPvE":
                             DisableDinoDecayPvE = ConvertToBoolean(value);
                             break;
@@ -1929,10 +1932,10 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "NPCNetworkStasisRangeScalePlayerCountStart":
                             NPCNetworkStasisRangeScalePlayerCountStart = value;
                             break;
-                        case "MaxTamedDinosSoftTameLimit":
+                        case "MaxTamedDinos_SoftTameLimit":
                             MaxTamedDinosSoftTameLimit = value;
                             break;
-                        case "MaxTamedDinosSoftTameLimitCountdownForDeletionDuration":
+                        case "MaxTamedDinos_SoftTameLimit_CountdownForDeletionDuration":
                             MaxTamedDinosSoftTameLimitCountdownForDeletionDuration = value;
                             break;
                         case "NPCNetworkStasisRangeScalePlayerCountEnd":
@@ -2148,6 +2151,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
             UpdateLine(ref lines, "ServerSettings", "CosmeticWhitelistOverride", CosmeticWhitelistOverride);
             UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTD);
+            UpdateLine(ref lines, "MessageOfTheDay", "Duration", Duration);
             UpdateLine(ref lines, "ServerSettings", "ServerAutoForceRespawnWildDinosInterval", ServerAutoForceRespawnWildDinosInterval);
             UpdateLine(ref lines, "ServerSettings", "DisableDinoDecayPvE", DisableDinoDecayPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "PvEDinoDecayPeriodMultiplier", PvEDinoDecayPeriodMultiplier);
@@ -2812,6 +2816,17 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 _mOTD = value;
                 OnPropertyChanged(nameof(MOTD));
                 
+            }
+        }
+        private string _duration;
+        public string Duration
+        {
+            get { return _duration; }
+            set
+            {
+                _duration = value;
+                OnPropertyChanged(nameof(Duration));
+
             }
         }
 
@@ -5563,7 +5578,19 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(HardLimitTurretsInRange));
             }
         }
-
+        private string _customLaunchOptions;
+        public string CustomLaunchOptions
+        {
+            get { return _customLaunchOptions; }
+            set
+            {
+                if (_customLaunchOptions != value)
+                {
+                    _customLaunchOptions = value;
+                    OnPropertyChanged(nameof(CustomLaunchOptions));
+                }
+            }
+        }
         private bool _disableStructurePlacementCollision;
         public bool DisableStructurePlacementCollision
         {
