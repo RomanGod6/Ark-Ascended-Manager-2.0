@@ -1136,6 +1136,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "passivemod":
                                     OverridePassiveMod = value;
                                     break;
+                                case "customparameters":
+                                    CustomLaunchOptions = value;
+                                    break;
+
 
 
 
@@ -1271,7 +1275,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName, passiveMod);
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName, passiveMod, CustomLaunchOptions);
 
 
             // Write the updated content to the batch file
@@ -1433,15 +1437,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName, string passiveMod)
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName, string passiveMod, string customLaunchOptions)
         {
             string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
             string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
             string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
             string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
+            string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
 
-            // Always change the directory to the server's executable directory
             string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
 set ServerName={SessionName}
@@ -1449,10 +1453,11 @@ set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
 set mods={Mods}
+set customparameters={customLaunchOptionsArgument}
 set passivemod={passiveMod}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% -passivemod=%passivemod%
 
-start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument} %AdditionalSettings%
+start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
 
             return batchFileContent;
