@@ -1015,6 +1015,12 @@
                             <TextBox 
                             Text="{Binding ServerPlatformSetting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="Enter the server platform(s) separated by commas. Options: PC, XSX, WINGDK, PS5, All." />
+                            <Label Content="Official Map Selection"/>
+                            <ComboBox x:Name="MapSelectionComboBox"
+    ItemsSource="{Binding OptionsList}" 
+    SelectedValue="{Binding SelectedOption}"
+    SelectedValuePath="Key"
+    DisplayMemberPath="Value" />
 
 
                             <CheckBox x:Name="OverrideCheckBox" Content="Override Map Name" Checked="OverrideCheckBox_Checked" Unchecked="OverrideCheckBox_Unchecked" Margin="5" ToolTip="Turn this on to override the official maps. Turning this on and setting nothing will cause the game to not start."/>

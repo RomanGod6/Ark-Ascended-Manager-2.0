@@ -112,7 +112,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(propertyName);
         }
 
-        private List<string> _optionsList = new List<string> { "TheIsland_WP" }; // Example options
+        private List<string> _optionsList = new List<string> { "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP(Coming Soon)" }; // Example options
         public List<string> OptionsList
         {
             get { return _optionsList; }

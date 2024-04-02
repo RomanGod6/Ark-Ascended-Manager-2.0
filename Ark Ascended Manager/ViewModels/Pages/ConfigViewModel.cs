@@ -45,6 +45,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand DeleteScheduleCommand { get; private set; }
         public ObservableCollection<string> PluginNames { get; set; }
         
+        public Dictionary<string, string> OptionsList { get; set; }
+
 
         private readonly INavigationService _navigationService;
         public ServerConfig CurrentServerConfig { get; private set; }
@@ -88,6 +90,40 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        private string _selectedOption;
+        public string SelectedOption
+        {
+            get => _selectedOption;
+            set
+            {
+                if (_selectedOption != value)
+                {
+                    Logger.Log($"Changing SelectedOption from {_selectedOption} to {value}");
+                    _selectedOption = value;
+                    OnPropertyChanged();
+
+                    // Check if CurrentServerConfig is null before trying to access it
+                    if (CurrentServerConfig != null)
+                    {
+                        CurrentServerConfig.MapName = value;
+                        Logger.Log($"CurrentServerConfig.MapName set to {value}");
+
+                        // Save changes to servers.json
+                        SaveServerConfigToJson();
+                    }
+                    else
+                    {
+                        Logger.Log("CurrentServerConfig is null. Cannot set MapName.");
+                    }
+                }
+                else
+                {
+                    Logger.Log($"SelectedOption set with same value: {value}. No changes made.");
+                }
+            }
+        }
+
+
         private ObservableCollection<EngramOverride> _engramOverrides;
         public ObservableCollection<EngramOverride> EngramOverrides
         {
@@ -130,7 +166,14 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             }
+            OptionsList = new Dictionary<string, string>
+    {
+        { "TheIsland_WP", "The Island" },
+        { "ScorchedEarth_WP", "Scorched Earth" },
+        // ... Add other maps as needed
+    };
             LoadServerProfile();
+            
             InitializeFileWatcher();
             LoadAndDisplaySchedules();
             SaveGameIniSettingsCommand = new RelayCommand(SaveAllSettings);
@@ -149,6 +192,32 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             _overrideEnabled = true;
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
             StackSizeOverrides = new ObservableCollection<StackSizeOverride>();
+            OnPropertyChanged(nameof(OptionsList));
+
+            if (CurrentServerConfig != null)
+            {
+                Logger.Log($"CurrentServerConfig.MapName: {CurrentServerConfig.MapName}");
+                if (OptionsList.ContainsKey(CurrentServerConfig.MapName))
+                {
+                    SelectedOption = CurrentServerConfig.MapName;
+                }
+                else
+                {
+                    Logger.Log("Map name not found in OptionsList. Available maps are:");
+                    foreach (var map in OptionsList.Keys)
+                    {
+                        Logger.Log($"Available map: {map}");
+                    }
+                }
+            }
+            else
+            {
+                Logger.Log("CurrentServerConfig is null.");
+            }
+
+            OnPropertyChanged(nameof(SelectedOption));
+
+
 
 
         }
@@ -1167,13 +1236,24 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         var commandParts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         if (commandParts.Length > 1)
                         {
-                            // Assuming the map name is immediately after "start <ExecutableName>"
                             var args = commandParts[2].Split('?');
                             if (args.Length > 0)
                             {
                                 var mapNameWithParams = args[0];
-                                // Check if map name is correctly formatted or needs adjustment
-                                OverrideMapName = mapNameWithParams.EndsWith("_WP") ? mapNameWithParams : $"{mapNameWithParams}_WP";
+
+                                // Check if mapNameWithParams is an official map
+                                if (mapNameWithParams.EndsWith("_WP") && OptionsList.ContainsKey(mapNameWithParams))
+                                {
+                                    // It's an official map, so no override is needed
+                                    OverrideMapName = null;
+                                    OverrideEnabled = false;
+                                }
+                                else
+                                {
+                                    // It's not an official map, or doesn't follow the naming convention
+                                    OverrideMapName = mapNameWithParams;
+                                    OverrideEnabled = true;
+                                }
                             }
                         }
                     }
@@ -1261,6 +1341,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private void UpdateLaunchParameters()
         {
+            string servermap = CurrentServerConfig.MapName;
+         
             string serverPath = CurrentServerConfig.ServerPath;
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
             string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
@@ -1270,8 +1352,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             Ark_Ascended_Manager.Services.Logger.Log("Server Platform Setting after save: " + ServerPlatformSetting);
             // Determine the executable based on whether plugins are enabled
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
-            string mapName = OverrideEnabled && !string.IsNullOrEmpty(OverrideMapName) ? OverrideMapName : "TheIsland_WP";
+            string mapName = OverrideEnabled && !string.IsNullOrEmpty(OverrideMapName) ? OverrideMapName : servermap;
             string passiveMod = OverridePassiveMod;
+
 
 
             // Construct the batch file content

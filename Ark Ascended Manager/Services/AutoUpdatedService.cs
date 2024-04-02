@@ -178,10 +178,36 @@ namespace Ark_Ascended_Manager.Services
 
         private bool IsServerOnline(ServerConfig server)
         {
-            // The IsRunning property indicates if the server is currently online
-            // Return true if IsRunning is true, indicating the server is online
-            // Return false otherwise, indicating the server is offline
-            return server.IsRunning;
+            // Original check based on IsRunning property
+            if (server.IsRunning)
+            {
+                return true;
+            }
+
+            // Check if either ArkAscendedServer.exe or AsaApiLoader.exe is running for this server
+            string exePath1 = Path.Combine(server.ServerPath, @"ShooterGame\Binaries\Win64\ArkAscendedServer.exe");
+            string exePath2 = Path.Combine(server.ServerPath, @"ShooterGame\Binaries\Win64\AsaApiLoader.exe");
+
+            return IsProcessRunningForPath(exePath1) || IsProcessRunningForPath(exePath2);
+        }
+
+        private bool IsProcessRunningForPath(string fullPath)
+        {
+            foreach (var process in Process.GetProcesses())
+            {
+                try
+                {
+                    if (string.Equals(process.MainModule.FileName, fullPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    // Ignore processes that we don't have access to
+                }
+            }
+            return false;
         }
 
 

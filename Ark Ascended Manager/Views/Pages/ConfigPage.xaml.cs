@@ -90,12 +90,15 @@ namespace Ark_Ascended_Manager.Views.Pages
             LoadAndMergeEngrams();
             InitializeCheckBoxStates();
             InitializeCheckBoxState();
+
             engramCollectionView = CollectionViewSource.GetDefaultView(ViewModel.EngramOverrides);
             dgEngramOverrides.ItemsSource = engramCollectionView;
 
 
 
         }
+
+        
 
         private void AddDinoOverride_Click(object sender, RoutedEventArgs e)
         {
