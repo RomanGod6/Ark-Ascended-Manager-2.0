@@ -1199,6 +1199,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "MaxPlayers":
                                     MaxPlayerCount = value;
                                     break;
+                                case "MultiHome":
+                                    MultihomeIP = value;
+                                    break;
                                 case "mods":
                                     Mods = value;
                                     break;
@@ -1226,7 +1229,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         NotifyAdminCommandsInChat = line.Contains("-NotifyAdminCommandsInChat");
                         ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
                         ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
-                        MultihomeIP = ExtractParameterValue(line, "-multihome");
                         ServerIP = ExtractParameterValue(line, "-ServerIP");
                         PluginsEnabled = line.Contains("AsaApiLoader.exe");
                         ClusterID = ExtractParameterValue(line, "-clusterid");
@@ -1358,7 +1360,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, MultihomeIP, ServerIP, mapName, passiveMod, CustomLaunchOptions);
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, ServerIP, mapName, passiveMod, CustomLaunchOptions);
 
 
             // Write the updated content to the batch file
@@ -1520,9 +1522,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string multihomeIP, string serverIP, string mapName, string passiveMod, string customLaunchOptions)
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string serverIP, string mapName, string passiveMod, string customLaunchOptions)
         {
-            string multihomeArgument = !string.IsNullOrWhiteSpace(multihomeIP) ? $" -multihome={multihomeIP}" : "";
             string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
             string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
             string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
@@ -1536,18 +1537,31 @@ set Port={ListenPort}
 set RconPort={RconPort}
 set MaxPlayers={MaxPlayerCount}
 set mods={Mods}
+set MultiHome={MultihomeIP}
 set customparameters={customLaunchOptionsArgument}
 set passivemod={passiveMod}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% -passivemod=%passivemod%
 
-start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%{booleanSettings}{multihomeArgument}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
+start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
-
+            BatchFilePreview = batchFileContent;
             return batchFileContent;
         }
 
 
-
+        private string _batchFilePreview;
+        public string BatchFilePreview
+        {
+            get { return _batchFilePreview; }
+            set
+            {
+                if (_batchFilePreview != value)
+                {
+                    _batchFilePreview = value;
+                    OnPropertyChanged(nameof(BatchFilePreview)); 
+                }
+            }
+        }
 
 
 

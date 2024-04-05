@@ -1009,12 +1009,16 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                         <StackPanel Margin="20">
                             <Button Content="Save Launch Parameters" Margin="20" HorizontalAlignment="Right" Command="{Binding LoadLaunchServerSettingsCommand}" />
-
+                         
 
                             <Label Content="Server Platform Setting"/>
                             <TextBox 
                             Text="{Binding ServerPlatformSetting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="Enter the server platform(s) separated by commas. Options: PC, XSX, WINGDK, PS5, All." />
+
+                            <Label Content="Command Line"/>
+                            <TextBlock x:Name="BatchFilePreview" TextWrapping="Wrap" FontFamily="Consolas" />
+
                             <Label Content="Official Map Selection"/>
                             <ComboBox x:Name="MapSelectionComboBox"
     ItemsSource="{Binding OptionsList}" 
