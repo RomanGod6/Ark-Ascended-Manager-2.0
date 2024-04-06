@@ -65,6 +65,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string _iniContent;
         private CoreRCON.RCON rcon;
+  
+
         public string IniContent
         {
             get => _iniContent;
@@ -716,29 +718,51 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
            
         }
         // Ensure this method is in the ConfigPageViewModel if that's where it's being called
-        
 
-      
 
-        private async Task SendRconCommandAsync(string command)
+
+
+        private async Task<bool> SendRconCommandAsync(string command, TimeSpan timeout)
         {
-            if (rcon == null || CurrentServerConfig == null)
-            {
-                Ark_Ascended_Manager.Services.Logger.Log("RCON connection is not established or server profile is not selected.");
-                return;
-            }
-
+            CancellationTokenSource cts = new CancellationTokenSource();
+            cts.CancelAfter(timeout);
             try
             {
-                // Send the command using the CoreRCON library's method
-                string response = await rcon.SendCommandAsync(command);
+                Ark_Ascended_Manager.Services.Logger.Log($"Sending RCON command: {command}");
+
+                // Create a task that represents the operation you want to timeout
+                var sendCommandTask = rcon.SendCommandAsync(command);
+
+                // Wait for the send command task or the cancellation token to complete, whichever comes first
+                await Task.WhenAny(sendCommandTask, Task.Delay(timeout, cts.Token));
+
+                // If the cancellation token is cancelled first (i.e., timeout), throw a TimeoutException
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"Timeout occurred while sending RCON command: {command}");
+                }
+
+                // Otherwise, await the send command task to propagate exceptions or continue execution
+                var response = await sendCommandTask;
                 Ark_Ascended_Manager.Services.Logger.Log($"RCON command response: {response}");
+                return true; // Indicate success
+            }
+            catch (TimeoutException ex)
+            {
+                Ark_Ascended_Manager.Services.Logger.Log($"Timeout sending RCON command: {ex.Message}");
+                return false; // Indicate timeout failure
             }
             catch (Exception ex)
             {
-                Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex.Message}");
+                Ark_Ascended_Manager.Services.Logger.Log($"Error sending RCON command: {ex.Message}");
+                return false; // Indicate failure for other exceptions
+            }
+            finally
+            {
+                cts.Dispose();
             }
         }
+
         private void RemoveServerFromMonitoring(string serverDirectory)
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -794,36 +818,39 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 return;
             }
 
-            // Ensure RCON is connected before initiating shutdown
-            await InitializeRconConnection(CurrentServerConfig);
+
+            
+                await InitializeRconConnection(CurrentServerConfig);
+          
 
             // Countdown logic
             for (int minute = countdownMinutes; minute > 0; minute--)
             {
                 // Send a warning message to server
-                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes for {reason}.");
+                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes for {reason}.", TimeSpan.FromSeconds(30));
+                Ark_Ascended_Manager.Services.Logger.Log($"Server shutdown countdown at {minute} minutes for reason: {reason}");
                 // Wait for 1 minute
                 await Task.Delay(TimeSpan.FromMinutes(1));
             }
 
             // Save world before shutdown
-            await SendRconCommandAsync("saveworld");
+            await SendRconCommandAsync("saveworld", TimeSpan.FromSeconds(30));
             // Shutdown command
-            await SendRconCommandAsync("doexit");
+            await SendRconCommandAsync("doexit", TimeSpan.FromSeconds(30));
         }
 
         private async Task InitializeRconConnection(ServerConfig profile)
         {
             try
             {
+                Ark_Ascended_Manager.Services.Logger.Log($"Attempting to initialize RCON connection to {profile.ServerName} at {profile.RCONPort}");
                 rcon = new CoreRCON.RCON(IPAddress.Parse("127.0.0.1"), (ushort)profile.RCONPort, profile.AdminPassword);
                 await rcon.ConnectAsync(); // Attempt to establish connection
-                
+                Ark_Ascended_Manager.Services.Logger.Log($"RCON connection successfully established to {profile.ServerName}");
             }
             catch (Exception ex)
             {
-                Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection: {ex.Message}");
-                
+                Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection to {profile.ServerName}: {ex.Message}");
             }
         }
 
