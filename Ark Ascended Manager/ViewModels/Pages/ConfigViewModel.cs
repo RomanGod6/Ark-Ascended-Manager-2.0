@@ -1965,12 +1965,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "StructureResistanceMultiplier":
                             StructureResistanceMultiplier = value;
                             break;
-                        case "LimitTurretsNum":
-                            LimitTurretsNum = value;
-                            break;
-                        case "LimitTurretsRange":
-                            LimitTurretsRange = value;
-                            break;
                         case "AutoDestroyStructures":
                             AutoDestroyStructures = ConvertToBoolean(value);
                             break;
@@ -2270,8 +2264,6 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
             UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier);
             UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "LimitTurretsNum", LimitTurretsNum);
-            UpdateLine(ref lines, "ServerSettings", "LimitTurretsRange", LimitTurretsRange);
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyStructures", AutoDestroyStructures.ToString());
             UpdateLine(ref lines, "ServerSettings", "UseVSync", UseVSync.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventSpawnAnimations", PreventSpawnAnimations.ToString());
@@ -4131,6 +4123,12 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "CraftingSkillBonusMultiplier":
                             CraftingSkillBonusMultiplier = value;
                             break;
+                        case "LimitTurretsNum":
+                            LimitTurretsNum = value;
+                            break;
+                        case "LimitTurretsRange":
+                            LimitTurretsRange = value;
+                            break;
                         case "AllowSpeedLeveling":
                             AllowSpeedLeveling = ConvertToBoolean(value);
                             break;
@@ -4233,6 +4231,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BabyFoodConsumptionSpeedMultiplier", BabyFoodConsumptionSpeedMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoTurretDamageMultiplier", DinoTurretDamageMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DinoHarvestingDamageMultiplier", DinoHarvestingDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "LimitTurretsNum", LimitTurretsNum);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "LimitTurretsRange", LimitTurretsRange);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerHarvestingDamageMultiplier", PlayerHarvestingDamageMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeEffectivenessMultiplier", CustomRecipeEffectivenessMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CustomRecipeSkillMultiplier", CustomRecipeSkillMultiplier);
