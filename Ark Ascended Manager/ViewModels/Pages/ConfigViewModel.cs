@@ -4054,8 +4054,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "HardLimitTurretsInRange":
                             HardLimitTurretsInRange = ConvertToBoolean(value);
                             break;
-                        case "DisableStructurePlacementCollision":
-                            DisableStructurePlacementCollision = ConvertToBoolean(value);
+                        case "bDisableStructurePlacementCollision":
+                            bDisableStructurePlacementCollision = ConvertToBoolean(value);
                             break;
                         case "AllowPlatformSaddleMultiFloors":
                             AllowPlatformSaddleMultiFloors = ConvertToBoolean(value);
@@ -4277,7 +4277,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "NonPermanentDiseases", NonPermanentDiseases.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventDiseases", PreventDiseases.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HardLimitTurretsInRange", HardLimitTurretsInRange.ToString(CultureInfo.InvariantCulture) ?? "");
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableStructurePlacementCollision", DisableStructurePlacementCollision.ToString());
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "bDisableStructurePlacementCollision", bDisableStructurePlacementCollision.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowPlatformSaddleMultiFloors", AllowPlatformSaddleMultiFloors.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowUnlimitedRespec", AllowUnlimitedRespec.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "DisableDinoTaming", DisableDinoTaming.ToString());
@@ -5693,14 +5693,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 }
             }
         }
-        private bool _disableStructurePlacementCollision;
-        public bool DisableStructurePlacementCollision
+        private bool _bdisableStructurePlacementCollision;
+        public bool bDisableStructurePlacementCollision
         {
-            get { return _disableStructurePlacementCollision; }
+            get { return _bdisableStructurePlacementCollision; }
             set
             {
-                _disableStructurePlacementCollision = value;
-                OnPropertyChanged(nameof(DisableStructurePlacementCollision));
+                _bdisableStructurePlacementCollision = value;
+                OnPropertyChanged(nameof(bDisableStructurePlacementCollision));
             }
         }
 

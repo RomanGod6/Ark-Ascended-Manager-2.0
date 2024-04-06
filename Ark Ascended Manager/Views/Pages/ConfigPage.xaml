@@ -752,7 +752,7 @@
                             <Expander Header="Structures">
                                 <StackPanel PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                                     <Label Content="Disable Structure Placement Collision:" ToolTip="Disable collision checking when placing structures. This allows you to place structures even if they intersect with other objects."/>
-                                    <CheckBox IsChecked="{Binding DisableStructurePlacementCollision, Mode=TwoWay}" ToolTip="Disable collision checking when placing structures. This allows you to place structures even if they intersect with other objects."/>
+                                    <CheckBox IsChecked="{Binding bDisableStructurePlacementCollision, Mode=TwoWay}" ToolTip="Disable collision checking when placing structures. This allows you to place structures even if they intersect with other objects."/>
                                     <Label Content="Structure Damage Repair Cooldown:" ToolTip="Cooldown time (in seconds) for repairing damaged structures."/>
                                     <TextBox Text="{Binding StructureDamageRepairCooldown, Mode=TwoWay}" ToolTip="Cooldown time (in seconds) for repairing damaged structures."/>
                                     <Label Content="Enable PvP Structure Decay:" ToolTip="Enable or disable structure decay in PvP mode. If enabled, structures will gradually decay over time in PvP mode."/>
