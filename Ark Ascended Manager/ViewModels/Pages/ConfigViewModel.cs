@@ -1530,6 +1530,9 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
             string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
 
+            // Check if modsSetting is not empty and construct modsArgument accordingly
+            string modsArgument = !string.IsNullOrWhiteSpace(modsSetting) ? $" -mods=%mods%" : "";
+
             string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
 set ServerName={SessionName}
@@ -1540,13 +1543,14 @@ set mods={Mods}
 set MultiHome={MultihomeIP}
 set customparameters={customLaunchOptionsArgument}
 set passivemod={passiveMod}
-set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log -mods=%mods% -passivemod=%passivemod%
+set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log{modsArgument} -passivemod=%passivemod%
 
 start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
             BatchFilePreview = batchFileContent;
             return batchFileContent;
         }
+
 
 
         private string _batchFilePreview;
