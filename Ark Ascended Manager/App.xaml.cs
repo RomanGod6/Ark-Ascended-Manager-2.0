@@ -46,7 +46,7 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<SchedulerService>();
                 services.AddSingleton<BackupService>();
                 services.AddSingleton<AutoUpdateService>();
-                services.AddSingleton<CrashDetection>();
+               /* services.AddSingleton<CrashDetection>() Removed for now - I will refactor this later to many bugs*/;
                 services.AddSingleton<RconPanelPage>();
                 services.AddSingleton<SyncConfigPage>();
                 services.AddSingleton<ImportServersPage>();
