@@ -61,6 +61,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<CurseForgeCurrentModPage>();
                 services.AddTransient<AddModToServerPage>();
                 services.AddTransient<PluginManagementAutoInstallPage>();
+                services.AddSingleton<ISettingsService, SettingsService>();
 
 
 
@@ -96,6 +97,9 @@ namespace Ark_Ascended_Manager
         private void OnStartup(object sender, StartupEventArgs e)
         {
             _host.Start();
+            var settingsService = _host.Services.GetService<ISettingsService>();
+            settingsService?.LoadSettings();
+            Wpf.Ui.Appearance.Theme.Apply(settingsService.CurrentTheme);
             var schedulerService = GetService<SchedulerService>();
             var BackupService = GetService<BackupService>();
             var crashDetection = GetService<CrashDetection>();

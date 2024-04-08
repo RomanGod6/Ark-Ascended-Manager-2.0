@@ -108,7 +108,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             public bool AutoUpdateServersOnReboot { get; set; }
             public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
-            public string UpdateCountdownTimer { get; set; } 
+            public string UpdateCountdownTimer { get; set; }
+            public string CurrentTheme { get; set; } = "Light";
         }
 
         private AAMGlobalSettings _globalSettings;
@@ -131,6 +132,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 var json = File.ReadAllText(SettingsFilePath);
                 GlobalSettings = JsonConvert.DeserializeObject<AAMGlobalSettings>(json) ?? new AAMGlobalSettings();
+                ApplyTheme(GlobalSettings.CurrentTheme); // Apply theme based on loaded setting
             }
             else
             {
@@ -165,6 +167,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        private void ApplyTheme(string theme)
+        {
+            Wpf.Ui.Appearance.ThemeType themeType = theme == "Light" ? Wpf.Ui.Appearance.ThemeType.Light : Wpf.Ui.Appearance.ThemeType.Dark;
+            Wpf.Ui.Appearance.Theme.Apply(themeType);
+            CurrentTheme = themeType;
+        }
 
         private void SaveSettings()
         {
@@ -185,7 +193,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                     Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light);
                     CurrentTheme = Wpf.Ui.Appearance.ThemeType.Light;
-
                     break;
 
                 default:
@@ -194,9 +201,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                     Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark);
                     CurrentTheme = Wpf.Ui.Appearance.ThemeType.Dark;
-
                     break;
             }
+            GlobalSettings.CurrentTheme = CurrentTheme.ToString();
+            SaveSettings();
         }
+
     }
 }
