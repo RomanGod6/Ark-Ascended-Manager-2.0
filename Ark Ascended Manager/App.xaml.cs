@@ -108,6 +108,8 @@ namespace Ark_Ascended_Manager
             // Start the AutoUpdateService timer
             var autoUpdateService = GetService<AutoUpdateService>();
             autoUpdateService?.StartCheckingUpdates();
+            Logger.Initialize();
+
 
             // Retrieve the ServerManager instance and start it
             // If ServerManager has a start method, call it here

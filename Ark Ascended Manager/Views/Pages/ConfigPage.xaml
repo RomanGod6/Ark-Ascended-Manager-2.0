@@ -775,8 +775,8 @@
                                     <CheckBox IsChecked="{Binding PvEAllowStructuresAtSupplyDrops, Mode=TwoWay}" ToolTip="Allow structure placement at supply drop locations in PvE mode."/>
                                     <Label Content="Auto Destroy Structures:" ToolTip="Automatically destroy structures under certain conditions."/>
                                     <CheckBox IsChecked="{Binding AutoDestroyStructures, Mode=TwoWay}" ToolTip="Automatically destroy structures under certain conditions."/>
-                                    <Label Content="PvE Structure Decay Destruction Period:" ToolTip="Time (in seconds) before structures start decaying in PvE mode."/>
-                                    <TextBox Text="{Binding PvEStructureDecayDestructionPeriod, Mode=TwoWay}" ToolTip="Time (in seconds) before structures start decaying in PvE mode."/>
+                                    <Label Content="PvE Structure Decay Multiplier:" ToolTip="Time (in seconds) before structures start decaying in PvE mode."/>
+                                    <TextBox Text="{Binding PvEStructureDecayPeriodMultiplier , Mode=TwoWay}" ToolTip="Time (in seconds) before structures start decaying in PvE mode."/>
                                     <Label Content="Auto Destroy Old Structures Multiplier:" ToolTip="Multiplier for the time it takes for old structures to be automatically destroyed."/>
                                     <TextBox Text="{Binding AutoDestroyOldStructuresMultiplier, Mode=TwoWay}" ToolTip="Multiplier for the time it takes for old structures to be automatically destroyed."/>
                                     <Label Content="Force All Structure Locking:" ToolTip="Force all structures to be locked."/>

@@ -10,6 +10,9 @@
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Width="221">
             <Label Content="Discord Bot Token:" HorizontalAlignment="Left"/>
             <TextBox x:Name="BotTokenTextBox" Width="200" Margin="0,5"/>
+            <Label Content="Logger Discord Webhook URL:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="LoggerWebhookUrlTextBox" Width="200" Margin="0,5"/>
+
 
             <Label Content="Guild ID:" HorizontalAlignment="Left"/>
             <TextBox x:Name="GuildIdTextBox" Width="200" Margin="0,5"/>

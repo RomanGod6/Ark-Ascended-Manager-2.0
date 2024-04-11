@@ -1936,8 +1936,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "DifficultyOffset":
                             DifficultyOffset = value;
                             break;
-                        case "PvEStructureDecayDestructionPeriod":
-                            PvEStructureDecayDestructionPeriod = value;
+                        case "PvEStructureDecayPeriodMultiplier ":
+                            PvEStructureDecayPeriodMultiplier = value;
                             break;
                         case "Banlist":
                             Banlist = value;
@@ -2274,7 +2274,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "ServerPassword", ServerPassword);
             UpdateLine(ref lines, "ServerSettings", "AdminPassword", AdminPassword);
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
-            UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayDestructionPeriod", PvEStructureDecayDestructionPeriod);
+            UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayPeriodMultiplier ", PvEStructureDecayPeriodMultiplier);
             UpdateLine(ref lines, "ServerSettings", "Banlist", Banlist);
             UpdateLine(ref lines, "ServerSettings", "CosmeticWhitelistOverride", CosmeticWhitelistOverride);
             UpdateLine(ref lines, "MessageOfTheDay", "Message", MOTD);
@@ -2899,14 +2899,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private string _pveStructureDecayDestructionPeriod;
-        public string PvEStructureDecayDestructionPeriod
+        private string _pvEStructureDecayPeriodMultiplier;
+        public string PvEStructureDecayPeriodMultiplier
         {
-            get { return _pveStructureDecayDestructionPeriod; }
+            get { return _pvEStructureDecayPeriodMultiplier; }
             set
             {
-                _pveStructureDecayDestructionPeriod = value;
-                OnPropertyChanged(nameof(PvEStructureDecayDestructionPeriod)); // Notify the UI of the change
+                _pvEStructureDecayPeriodMultiplier = value;
+                OnPropertyChanged(nameof(PvEStructureDecayPeriodMultiplier)); // Notify the UI of the change
             }
         }
 

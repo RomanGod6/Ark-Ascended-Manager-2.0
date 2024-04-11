@@ -33,7 +33,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 BotTokenTextBox.Text = settings.Token ?? ""; // Using null-coalescing operator for safety
                 GuildIdTextBox.Text = settings.GuildId ?? "";
                 WebhookUrlTextBox.Text = settings.WebhookUrl ?? "";
-
+                LoggerWebhookUrlTextBox.Text = settings.LoggerWebhookUrl ?? "";
                 // Check if GuildId is a valid ulong before attempting to parse and use it
                 if (ulong.TryParse(settings.GuildId, out ulong guildId))
                 {
@@ -79,13 +79,15 @@ namespace Ark_Ascended_Manager.Views.Pages
                 .Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(ulong.Parse) // Convert each ID from string to ulong
                 .ToList();
-
+            string loggerWebhookUrl = LoggerWebhookUrlTextBox.Text;
             BotSettings settings = new BotSettings
             {
                 Token = token,
                 GuildId = guildId,
                 WebhookUrl = webhookUrl,
+                LoggerWebhookUrl = loggerWebhookUrl,
                 IgnoredPatterns = ignoredPatterns,
+
                 AuthorizedRoleIds = authorizedRoleIds // Save the authorized role IDs
             };
             // Serialize the settings object to JSON
@@ -130,10 +132,10 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private async void StartBotButton_Click(object sender, RoutedEventArgs e)
         {
-            var settings = RetrieveBotSettings();
+            var settings = RetrieveBotSettings(); 
             if (settings != null && _botService != null)
             {
-                await _botService.StartAsync(settings.Token);
+                await _botService.StartAsync(settings);
                 BotStatusTextBlock.Text = "Bot Status: Connected";
             }
             else
@@ -142,14 +144,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
-        public class BotSettings
-        {
-            public string Token { get; set; }
-            public string GuildId { get; set; }
-            public string WebhookUrl { get; set; }
-            public string[] IgnoredPatterns { get; set; }
-            public List<ulong> AuthorizedRoleIds { get; set; }// Add this line
-        }
+
 
         public class TokenManager
         {
@@ -173,8 +168,15 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private async void StopBotButton_Click(object sender, RoutedEventArgs e)
         {
-            await _botService.StopAsync();
-            BotStatusTextBlock.Text = "Bot Status: Disconnected";
+            if (_botService != null)
+            {
+                await _botService.StopAsync();
+                BotStatusTextBlock.Text = "Bot Status: Disconnected";
+            }
+            else
+            {
+                BotStatusTextBlock.Text = "Bot service not initialized";
+            }
         }
         private BotSettings RetrieveBotSettings()
         {
