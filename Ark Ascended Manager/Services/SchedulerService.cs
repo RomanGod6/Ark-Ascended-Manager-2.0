@@ -604,13 +604,28 @@ namespace Ark_Ascended_Manager.Services
 
     internal class Server
     {
-        public string ProfileName { get; set; }
-        public string ServerPath { get; set; }
-        public int RCONPort { get; set; }
-        public string AdminPassword { get; set; }
-        public int ChangeNumber { get; set; }
-        public string AppId { get; set; }
-        public bool IsServerRunning { get; set; }
+    public string ChangeNumberStatus { get; set; }
+    public bool IsMapNameOverridden { get; set; }
+    public string ProfileName { get; set; }
+    public string ServerIP { get; set; }
+    public int? Pid { get; set; }
+    public string ServerStatus { get; set; }
+    public string ServerPath { get; set; }
+    public string MapName { get; set; }
+    public string AppId { get; set; }
+    public bool IsRunning { get; set; }
+    public int ChangeNumber { get; set; }
+    public string ServerName { get; set; }
+    public int ListenPort { get; set; } // Ports are typically integers
+    public int RCONPort { get; set; }   // Ports are typically integers
+    public List<string> Mods { get; set; } // Assuming Mods can be a list
+    public int MaxPlayerCount { get; set; }
+    public string AdminPassword { get; set; }
+    public string ServerPassword { get; set; }
+    public bool UseBattlEye { get; set; } // Use bool for checkboxes
+    public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
+    public bool PreventSpawnAnimation { get; set; } // Use bool for checkboxes
+    public bool IsServerRunning { get; set; }
     public bool UpdateOnRestart { get; set; }
 }
 

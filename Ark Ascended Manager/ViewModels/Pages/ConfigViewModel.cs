@@ -26,6 +26,7 @@ using System.Text;
 using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
 using static Ark_Ascended_Manager.Views.Pages.ConfigPage;
 using Logger = Ark_Ascended_Manager.Services.Logger;
+using System.Net.Http;
 
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
@@ -381,8 +382,74 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveGameIniSettings();
             SaveGameUserSettings();
             UpdateCurrentServerAdminPassword();
+          
             // Display a message box to inform the user that the settings have been saved
             System.Windows.MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public async Task UpdateCurrentServerIPAddress()
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+
+            List<ServerConfig> serverConfigs;
+
+            // Read existing configs or initialize a new list if none exist
+            if (File.Exists(filePath))
+            {
+                string existingJson = File.ReadAllText(filePath);
+                serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(existingJson) ?? new List<ServerConfig>();
+            }
+            else
+            {
+                serverConfigs = new List<ServerConfig>();
+            }
+
+            // Find the current server config in the list or add it if it doesn't exist
+            var serverConfig = serverConfigs.FirstOrDefault(sc => sc.ServerName == CurrentServerConfig.ServerName);
+            if (serverConfig == null)
+            {
+                serverConfig = new ServerConfig(); // Assuming ServerConfig is a constructor of your config class
+                serverConfigs.Add(serverConfig);
+            }
+
+            // Update the IP address
+            if (string.IsNullOrWhiteSpace(ServerIP))
+            {
+                serverConfig.ServerIP = await FetchExternalIPAddress();
+            }
+            else
+            {
+                serverConfig.ServerIP = ServerIP;
+            }
+
+            // Serialize the updated list to JSON
+            string json = JsonConvert.SerializeObject(serverConfigs, Formatting.Indented);
+            File.WriteAllText(filePath, json);
+        }
+
+
+
+        private async Task<string> FetchExternalIPAddress()
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage response = await client.GetAsync("https://api64.ipify.org?format=json");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResult = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<dynamic>(jsonResult);
+                        return result.ip;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to fetch external IP: {ex.Message}");
+            }
+
+            return "Unable to fetch IP";
         }
 
         private void UpdateCurrentServerAdminPassword()
@@ -1383,7 +1450,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string executable = PluginsEnabled ? "AsaApiLoader.exe" : "ArkAscendedServer.exe";
             string mapName = OverrideEnabled && !string.IsNullOrEmpty(OverrideMapName) ? OverrideMapName : servermap;
             string passiveMod = OverridePassiveMod;
-
+            UpdateCurrentServerIPAddress();
 
 
             // Construct the batch file content
@@ -1455,8 +1522,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (File.Exists(jsonFilePath))
             {
                 string json = File.ReadAllText(jsonFilePath);
+                Debug.WriteLine($"JSON Content: {json}");
                 serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
             }
+
 
             // Find the existing server config by ProfileName or create a new one if it doesn't exist
             var serverConfig = serverConfigs.FirstOrDefault(sc => sc.ProfileName == CurrentServerConfig.ProfileName);
@@ -5647,6 +5716,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(MaxDifficulty));
             }
         }
+
+
 
         private bool _useSingleplayerSettings;
         public bool UseSingleplayerSettings

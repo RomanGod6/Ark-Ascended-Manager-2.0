@@ -204,6 +204,7 @@ namespace Ark_Ascended_Manager.Services
         public string ServerPath { get; set; }
         public string MapName { get; set; }
         public string AppId { get; set; }
+        public string ServerIP { get; set; }
         public bool IsRunning { get; set; }
         public string ServerName { get; set; }
         public int ListenPort { get; set; }

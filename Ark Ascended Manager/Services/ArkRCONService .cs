@@ -1,5 +1,4 @@
-﻿/*using CoreRCON;
-using CoreRCON.Parsers.Standard;
+﻿using CoreRCON;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,6 +11,7 @@ namespace Ark_Ascended_Manager.Services
         private readonly IPAddress _serverIP;
         private readonly ushort _serverPort;
         private readonly string _password;
+        private bool _isConnected = false;
 
         public ArkRCONService(string ip, ushort port, string password)
         {
@@ -22,53 +22,73 @@ namespace Ark_Ascended_Manager.Services
 
         public async Task ConnectAsync()
         {
+            if (_isConnected) return;
+
             _rconClient = new RCON(_serverIP, _serverPort, _password);
-            await _rconClient.ConnectAsync();
+            try
+            {
+                await _rconClient.ConnectAsync();
+                _isConnected = true;
+            }
+            catch (Exception ex)
+            {
+                // Handle connection errors
+                _isConnected = false;
+                throw new InvalidOperationException("Could not connect to RCON server.", ex);
+            }
         }
 
         public async Task<string> SendCommandAsync(string command)
         {
-            if (_rconClient == null || !_rconClient.IsConnected)
+            if (!_isConnected)
+                await ConnectAsync();
+
+            try
             {
-                throw new InvalidOperationException("Not connected to RCON server.");
+                return await _rconClient.SendCommandAsync(command);
             }
-            return await _rconClient.SendCommandAsync(command);
-        }
-
-        public async Task StartServerAsync()
-        {
-            // Command to start the server (replace "StartServerCommand" with the actual command)
-            await SendCommandAsync("StartServerCommand");
-        }
-
-        public async Task StopServerAsync(int warningTimeInMinutes)
-        {
-            // Broadcast shutdown warning messages based on warningTimeInMinutes
-            for (int i = warningTimeInMinutes; i > 0; i--)
+            catch (Exception)
             {
-                await SendCommandAsync($"broadcast Server shutting down in {i} minute(s)");
-                // Wait for 1 minute before sending the next message
+                // If a command fails, assume the connection is broken and reset it
+                _isConnected = false;
+                throw;
+            }
+        }
+
+        public async Task ShutdownServerAsync(int countdownMinutes, string reason)
+        {
+            if (!_isConnected) await ConnectAsync();
+
+            for (int i = countdownMinutes; i > 0; i--)
+            {
+                await SendCommandAsync($"broadcast Server shutting down in {i} minute(s) due to {reason}.");
                 await Task.Delay(TimeSpan.FromMinutes(1));
             }
-            // Command to stop the server (replace "StopServerCommand" with the actual command)
-            await SendCommandAsync("StopServerCommand");
+            await SendCommandAsync("doexit");
         }
 
-        public async Task ScheduleCommandAsync(string command, TimeSpan delay)
+        public async Task SaveWorldAsync()
         {
-            // Delay the command execution by the specified delay
-            await Task.Delay(delay);
-            await SendCommandAsync(command);
+            if (!_isConnected) await ConnectAsync();
+            await SendCommandAsync("saveworld");
         }
 
-        // Additional methods for your specific functionalities, like Scheduled Commands, Cross Chat, etc.
+        public async Task<string> ListPlayersAsync()
+        {
+            if (!_isConnected) await ConnectAsync();
+            return await SendCommandAsync("listplayers");
+        }
 
-        // Ensure to properly disconnect and clean up resources
+        public async Task<string> GetServerChatAsync()
+        {
+            if (!_isConnected) await ConnectAsync();
+            return await SendCommandAsync("getchat");
+        }
+
         public void Dispose()
         {
-            _rconClient?.Disconnect();
-            _rconClient = null;
+            _rconClient?.Dispose();
+            _isConnected = false;
         }
     }
 }
-*/

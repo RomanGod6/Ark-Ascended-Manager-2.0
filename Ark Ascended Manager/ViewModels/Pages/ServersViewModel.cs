@@ -15,7 +15,8 @@ using static Ark_Ascended_Manager.Services.DiscordBotService;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
-
+using Ark_Ascended_Manager.Services;
+using ServerConfig = Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig;
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
     public partial class ServersViewModel : ObservableObject, INavigationAware
@@ -136,6 +137,72 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             await Task.WhenAll(stopTasks);
         }
 
+        private async void StopServer(ServerConfig serverConfig)
+        {
+            if (serverConfig == null)
+            {
+                System.Windows.MessageBox.Show("Server configuration is not provided.");
+                return;
+            }
+            if (!IsServerRunning(serverConfig))
+            {
+                System.Windows.MessageBox.Show("The server is not currently running.");
+                return;
+            }
+            await RemoveServerFromMonitoringAsync(serverConfig.ServerPath);
+
+            // Prompt the user for the countdown time
+            string timeInput = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the countdown time in minutes for shutdown:",
+                "Shutdown Timer",
+                "10"
+            );
+
+            if (!int.TryParse(timeInput, out int countdownMinutes))
+            {
+                System.Windows.MessageBox.Show("Invalid input for countdown timer.");
+                return;
+            }
+
+            // Prompt the user for the reason for shutdown
+            string reason = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the reason for the shutdown:",
+                "Shutdown Reason",
+                "Maintenance"
+            );
+
+            if (string.IsNullOrEmpty(reason))
+            {
+                System.Windows.MessageBox.Show("No reason for shutdown provided.");
+                return;
+            }
+
+            try
+            {
+                // Display the server information in a MessageBox for debugging
+                string serverInfo = $"Server Name: {serverConfig.ServerName}\n" +
+                                    $"Server IP: {serverConfig.ServerIP}\n" +
+                                    $"RCON Port: {serverConfig.RCONPort}\n" +
+                                    $"Admin Password: {serverConfig.AdminPassword}";
+                System.Windows.MessageBox.Show(serverInfo, "Server Information");
+
+                // Create an instance of ArkRCONService using server details
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+
+                // Connect to RCON
+                await rconService.ConnectAsync();
+
+                // Initiate server shutdown with the user-defined countdown and reason
+                await rconService.ShutdownServerAsync(countdownMinutes, reason);
+
+                // Optionally, disconnect after command execution
+                rconService.Dispose();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to shutdown server: {ex.Message}");
+            }
+        }
 
         private void UpdateAllServers()
         {
@@ -354,59 +421,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 fileSemaphore.Release();
             }
         }
-        private async void StopServer(ServerConfig serverConfig)
-        {
-            if (serverConfig == null)
-            {
-                System.Windows.MessageBox.Show("Server configuration is not provided.");
-                return;
-            }
-            if (!IsServerRunning(serverConfig))
-            {
-                System.Windows.MessageBox.Show("The server is not currently running.");
-                return;
-            }
-            await RemoveServerFromMonitoringAsync(serverConfig.ServerPath);
-            // Prompt the user for the countdown time
-            string timeInput = Microsoft.VisualBasic.Interaction.InputBox(
-                "Enter the countdown time in minutes for shutdown:",
-                "Shutdown Timer",
-                "10"
-            );
-
-            if (!int.TryParse(timeInput, out int countdownMinutes))
-            {
-                System.Windows.MessageBox.Show("Invalid input for countdown timer.");
-                return;
-            }
-
-            // Prompt the user for the reason for shutdown
-            string reason = Microsoft.VisualBasic.Interaction.InputBox(
-                "Enter the reason for the shutdown:",
-                "Shutdown Reason",
-                "Maintenance"
-            );
-
-            if (string.IsNullOrEmpty(reason))
-            {
-                System.Windows.MessageBox.Show("No reason for shutdown provided.");
-                return;
-            }
-
-            // Extract RCON details from the batch file
-          
-            string rconPort = serverConfig.RCONPort.ToString();
-            string adminPassword = serverConfig.AdminPassword.ToString();
-
-            if (string.IsNullOrEmpty(rconPort) || string.IsNullOrEmpty(adminPassword))
-            {
-                System.Windows.MessageBox.Show("Failed to extract RCON details from batch file.");
-                return;
-            }
-
-            // Initiate server shutdown with the user-defined countdown and reason
-            await InitiateServerShutdownAsync(countdownMinutes, reason, rconPort, adminPassword);
-        }
+        
         public bool IsServerRunning(ServerConfig serverConfig)
         {
             bool isServerRunning = false; // Initialize the flag as false
@@ -708,21 +723,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
 
 
-        public async Task InitiateServerShutdownAsync(int countdownMinutes, string reason, string rconPort, string adminPassword)
-        {
-            Ark_Ascended_Manager.Services.Logger.Log("Shutdown initiated");
-
-            // Countdown logic with messages at each minute
-            for (int minute = countdownMinutes; minute > 0; minute--)
-            {
-                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes due to {reason}.", rconPort, adminPassword);
-                await Task.Delay(TimeSpan.FromMinutes(1));
-            }
-
-            await SendRconCommandAsync($"ServerChat Server is shutting down NOW due to {reason}.", rconPort, adminPassword);
-            await SendRconCommandAsync("saveworld", rconPort, adminPassword);
-            await SendRconCommandAsync("doexit", rconPort, adminPassword);
-        }
+        
 
 
 

@@ -1016,6 +1016,7 @@
                             Text="{Binding ServerPlatformSetting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="Enter the server platform(s) separated by commas. Options: PC, XSX, WINGDK, PS5, All." />
 
+
                             <Label Content="Command Line"/>
                             <TextBlock x:Name="BatchFilePreview" TextWrapping="Wrap" FontFamily="Consolas" />
 

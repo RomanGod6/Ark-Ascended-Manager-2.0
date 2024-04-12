@@ -176,9 +176,17 @@ namespace Ark_Ascended_Manager.Services
                         .AddField("Max Players", $"{serverConfig.MaxPlayerCount}", true)
                         .WithThumbnailUrl("https://media.discordapp.net/attachments/1168388628657995836/1182037772224180308/AAM_Icon.png?ex=66295a76&is=6616e576&hm=f4fa28aa9f7952a0398c483b767c35d1e374bd20544c372bcf875d76a48666f7&=&format=webp&quality=lossless&width=222&height=230")
                         .Build();
+                    var buttons = new ComponentBuilder()
+                        .WithButton("Restart", "restart_id", ButtonStyle.Primary, disabled: true)
+                        .WithButton("Shutdown", "shutdown_id", ButtonStyle.Danger, disabled: true)
+                        .WithButton("Save World", "save_world_id", ButtonStyle.Secondary, disabled: true)
+                        .WithButton("Update", "update_id", ButtonStyle.Success, disabled: true)
+                        .WithButton("Manage", "manage_id", ButtonStyle.Secondary, disabled: true)
+                        .Build();
 
-                    await command.FollowupAsync(embed: embed);
-                    Logger.LogInfoToDiscord($"Embed sent for server: {serverConfig.ServerName}");
+                    await command.FollowupAsync(embed: embed, components: buttons);
+                    Logger.LogInfoToDiscord($"Embed with buttons sent for server: {serverConfig.ServerName}");
+
                 }
                 catch (Exception ex)
                 {
