@@ -27,7 +27,8 @@ using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
 using static Ark_Ascended_Manager.Views.Pages.ConfigPage;
 using Logger = Ark_Ascended_Manager.Services.Logger;
 using System.Net.Http;
-
+using Ark_Ascended_Manager.Services;
+using ServerConfig = Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -849,31 +850,71 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
+        public bool IsServerRunning(ServerConfig serverConfig)
+        {
+            bool isServerRunning = false; // Initialize the flag as false
+
+            // Get the name of the server executable without the extension
+            string serverExeName = Path.GetFileNameWithoutExtension("ArkAscendedServer.exe");
+            string asaApiLoaderExeName = Path.GetFileNameWithoutExtension("AsaApiLoader.exe");
+
+            // Get the full path to the server executable
+            string serverExePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkAscendedServer.exe");
+            string asaApiLoaderExePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "AsaApiLoader.exe");
+
+            // Check if there's a process running from the server's executable path
+            var allProcesses = Process.GetProcesses();
+            foreach (var process in allProcesses)
+            {
+                try
+                {
+                    // Check if the process is a server process and if it's running from the expected path
+                    if ((process.ProcessName.Equals(serverExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(serverExePath, StringComparison.OrdinalIgnoreCase)) ||
+                        (process.ProcessName.Equals(asaApiLoaderExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(asaApiLoaderExePath, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        isServerRunning = true; // Set the flag to true if the server process is found
+                        break; // No need to continue checking once we found a running server
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // This catch block can handle exceptions due to accessing process.MainModule which may require administrative privileges
+                    Ark_Ascended_Manager.Services.Logger.Log($"Error checking process: {ex.Message}");
+                }
+            }
+
+            return isServerRunning; // Return the flag indicating whether the server is running
+        }
+
         public async Task InitiateServerShutdownAsync()
         {
-            Ark_Ascended_Manager.Services.Logger.Log("Shutdown Clicked");
-
             if (CurrentServerConfig == null)
             {
-                System.Windows.MessageBox.Show("Current server configuration is not loaded.");
+                System.Windows.MessageBox.Show("Server configuration is not provided.");
                 return;
             }
-            RemoveServerFromMonitoring(CurrentServerConfig.ServerPath);
+            if (!IsServerRunning(CurrentServerConfig))
+            {
+                System.Windows.MessageBox.Show("The server is not currently running.");
+                return;
+            }
+
+
             // Prompt the user for the countdown time
-            string timeInput = Interaction.InputBox(
+            string timeInput = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter the countdown time in minutes for shutdown:",
                 "Shutdown Timer",
                 "10"
             );
 
-            if (!int.TryParse(timeInput, out int countdownMinutes) || countdownMinutes <= 0)
+            if (!int.TryParse(timeInput, out int countdownMinutes))
             {
                 System.Windows.MessageBox.Show("Invalid input for countdown timer.");
                 return;
             }
 
             // Prompt the user for the reason for shutdown
-            string reason = Interaction.InputBox(
+            string reason = Microsoft.VisualBasic.Interaction.InputBox(
                 "Enter the reason for the shutdown:",
                 "Shutdown Reason",
                 "Maintenance"
@@ -885,41 +926,34 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 return;
             }
 
-
-            
-                await InitializeRconConnection(CurrentServerConfig);
-          
-
-            // Countdown logic
-            for (int minute = countdownMinutes; minute > 0; minute--)
-            {
-                // Send a warning message to server
-                await SendRconCommandAsync($"ServerChat Shutdown in {minute} minutes for {reason}.", TimeSpan.FromSeconds(30));
-                Ark_Ascended_Manager.Services.Logger.Log($"Server shutdown countdown at {minute} minutes for reason: {reason}");
-                // Wait for 1 minute
-                await Task.Delay(TimeSpan.FromMinutes(1));
-            }
-
-            // Save world before shutdown
-            await SendRconCommandAsync("saveworld", TimeSpan.FromSeconds(30));
-            // Shutdown command
-            await SendRconCommandAsync("doexit", TimeSpan.FromSeconds(30));
-        }
-
-        private async Task InitializeRconConnection(ServerConfig profile)
-        {
             try
             {
-                Ark_Ascended_Manager.Services.Logger.Log($"Attempting to initialize RCON connection to {profile.ServerName} at {profile.RCONPort}");
-                rcon = new CoreRCON.RCON(IPAddress.Parse("127.0.0.1"), (ushort)profile.RCONPort, profile.AdminPassword);
-                await rcon.ConnectAsync(); // Attempt to establish connection
-                Ark_Ascended_Manager.Services.Logger.Log($"RCON connection successfully established to {profile.ServerName}");
+                // Display the server information in a MessageBox for debugging
+                string serverInfo = $"Server Name: {CurrentServerConfig.ServerName}\n" +
+                                    $"Server IP: {CurrentServerConfig.ServerIP}\n" +
+                                    $"RCON Port: {CurrentServerConfig.RCONPort}\n" +
+                                    $"Admin Password: {CurrentServerConfig.AdminPassword}";
+                System.Windows.MessageBox.Show(serverInfo, "Server Information");
+
+                // Create an instance of ArkRCONService using server details
+                var rconService = new ArkRCONService(CurrentServerConfig.ServerIP, (ushort)CurrentServerConfig.RCONPort, CurrentServerConfig.AdminPassword);
+
+                // Connect to RCON
+                await rconService.ConnectAsync();
+
+                // Initiate server shutdown with the user-defined countdown and reason
+                await rconService.ShutdownServerAsync(countdownMinutes, reason);
+
+                // Optionally, disconnect after command execution
+                rconService.Dispose();
             }
             catch (Exception ex)
             {
-                Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection to {profile.ServerName}: {ex.Message}");
+                System.Windows.MessageBox.Show($"Failed to shutdown server: {ex.Message}");
             }
         }
+
+        
 
 
 

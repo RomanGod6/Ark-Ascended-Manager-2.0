@@ -44,19 +44,52 @@ namespace Ark_Ascended_Manager.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error logging message: {ex.Message}");
+                Logger.Log($"Error logging message: {ex.Message}");
             }
         }
 
-        public static void LogToDiscord(string message)
+        public static async Task LogToDiscord(string title, string description, string footerText, Discord.Color color)
         {
             if (!string.IsNullOrWhiteSpace(_webhookUrl))
             {
-                Task.Run(() => SendDiscordEmbed(message)).ConfigureAwait(false);
+                var embed = new
+                {
+                    embeds = new[]
+                    {
+                new
+                {
+                    title = title,
+                    description = description,
+                    color = color.RawValue,
+                    timestamp = DateTime.UtcNow,
+                    footer = new { text = footerText }
+                }
+            }
+                };
+
+                var jsonPayload = JsonConvert.SerializeObject(embed);
+                using (var httpClient = new HttpClient())
+                {
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                    try
+                    {
+                        var response = await httpClient.PostAsync(_webhookUrl, content);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine($"Failed to send log to Discord webhook. Status: {response.StatusCode}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error sending log to Discord: {ex.Message}");
+                    }
+                }
             }
         }
 
-        private static async Task SendDiscordEmbed(string message)
+
+
+        private static async Task SendDiscordEmbed(string title, string description, string footerText, int color)
         {
             var embed = new
             {
@@ -64,11 +97,11 @@ namespace Ark_Ascended_Manager.Services
                 {
             new
             {
-                description = message,
-                title = "Important Notification",
-                color = 3447003, // Light blue color, change as needed
+                title = title,
+                description = description,
+                color = color,
                 timestamp = DateTime.UtcNow,
-                footer = new { text = "Notification Logger" }
+                footer = new { text = footerText }
             }
         }
             };
@@ -91,10 +124,18 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
         }
+
         public static void LogInfoToDiscord(string message)
         {
-            LogToDiscord(message);
+            // Assuming 'message' is the description, provide a title and other required parameters
+            string title = "Information";
+            string footerText = "Log Footer";
+            Discord.Color color = new Discord.Color(52, 152, 219); // A nice blue color in hexadecimal (you can change it to any color you like)
+
+            // Now call LogToDiscord with all required parameters
+            LogToDiscord(title, message, footerText, color);
         }
+
 
 
         // Define BotSettings class if not already defined elsewhere
