@@ -689,6 +689,7 @@ start {serverExecutablePath} {config.MapName}?listen?""SessionName=%ServerName%?
             public int? Pid { get; set; }
             public string ServerStatus { get; set; }
             public string ServerPath { get; set; }
+            public string ServerIcon { get; set; }
             public string MapName { get; set; }
             public string AppId { get; set; }
             public bool IsRunning { get; set; }

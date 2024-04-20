@@ -26,41 +26,37 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void InitializeBotService()
         {
-            var settings = RetrieveBotSettings();
+            var settings = RetrieveBotSettings(); // Make sure this method returns a valid BotSettings object
             if (settings != null)
             {
-                // Successfully retrieved settings; proceed to initialize the UI and bot service
-                BotTokenTextBox.Text = settings.Token ?? ""; // Using null-coalescing operator for safety
+                // Set UI elements from settings
+                BotTokenTextBox.Text = settings.Token ?? "";
                 GuildIdTextBox.Text = settings.GuildId ?? "";
                 WebhookUrlTextBox.Text = settings.WebhookUrl ?? "";
+                VerboseLoggingCheckBox.IsChecked = settings.VerboseLogging;
                 LoggerWebhookUrlTextBox.Text = settings.LoggerWebhookUrl ?? "";
-                // Check if GuildId is a valid ulong before attempting to parse and use it
+                IgnoreMessagesTextBox.Text = settings.IgnoredPatterns != null ? String.Join(Environment.NewLine, settings.IgnoredPatterns) : string.Empty;
+                AuthorizedRolesTextBox.Text = settings.AuthorizedRoleIds != null ? String.Join(", ", settings.AuthorizedRoleIds.Select(id => id.ToString())) : "";
+
+                // Initialize the bot service if the Guild ID is valid
                 if (ulong.TryParse(settings.GuildId, out ulong guildId))
                 {
-                    // GuildId is valid; proceed to initialize the bot service
-                    _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl);
+                    // Assuming BotSettings is adjusted or the constructor of DiscordBotService accepts these parameters
+                    _botService = new DiscordBotService(_services, guildId, settings.WebhookUrl, settings);
                 }
                 else
                 {
-                    // Invalid GuildId; consider logging this issue or notifying the user
+                    // Log or notify about the invalid Guild ID
+                    System.Windows.MessageBox.Show("Invalid Guild ID provided in settings.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 }
-
-                // Handle IgnoredPatterns, if any
-                IgnoreMessagesTextBox.Text = settings.IgnoredPatterns != null
-                    ? String.Join(Environment.NewLine, settings.IgnoredPatterns)
-                    : string.Empty;
-
-                // Handle AuthorizedRoleIds, if any
-                AuthorizedRolesTextBox.Text = settings.AuthorizedRoleIds != null
-                    ? String.Join(Environment.NewLine, settings.AuthorizedRoleIds)
-                    : string.Empty;
             }
             else
             {
-                // Settings could not be retrieved; handle this scenario appropriately
-                System.Windows.MessageBox.Show("Unable to load settings. Please check your configuration.", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+                // Handle the scenario where settings couldn't be loaded
+                System.Windows.MessageBox.Show("Unable to load settings. Please check your configuration.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
+
 
         public string[] GetIgnoredPatterns()
         {
@@ -87,6 +83,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 WebhookUrl = webhookUrl,
                 LoggerWebhookUrl = loggerWebhookUrl,
                 IgnoredPatterns = ignoredPatterns,
+                VerboseLogging = VerboseLoggingCheckBox.IsChecked ?? false,
 
                 AuthorizedRoleIds = authorizedRoleIds // Save the authorized role IDs
             };

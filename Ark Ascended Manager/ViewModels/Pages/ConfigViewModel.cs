@@ -197,6 +197,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
             StackSizeOverrides = new ObservableCollection<StackSizeOverride>();
             OnPropertyChanged(nameof(OptionsList));
+            ServerIcon = CurrentServerConfig.ServerIcon;
 
             if (CurrentServerConfig != null)
             {
@@ -461,6 +462,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 CurrentServerConfig.AdminPassword = ServerAdminPassword;
                 CurrentServerConfig.ServerName = SessionName;
+                CurrentServerConfig.ServerIcon = ServerIcon;
                 SaveServerConfig(CurrentServerConfig.ProfileName);
             }
             else
@@ -490,6 +492,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 // Update the AdminPassword and ServerName for the matched server configuration
                 serverToUpdate.AdminPassword = ServerAdminPassword;
                 serverToUpdate.ServerName = SessionName;
+                serverToUpdate.ServerIcon = ServerIcon;
 
                 Debug.WriteLine($"SaveServerConfig: Updated AdminPassword to: '{ServerAdminPassword}' and ServerName to: '{SessionName}'");
 
@@ -777,6 +780,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                 // Deserialize the JSON to a ServerConfig object
                 CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
+                
 
                
             }
@@ -1459,6 +1463,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public List<string> Mods { get; set; } // Assuming Mods can be a list
             public int MaxPlayerCount { get; set; }
             public string AdminPassword { get; set; }
+            public string ServerIcon { get; set; }
             public string ServerPassword { get; set; }
             public bool UseBattlEye { get; set; } // Use bool for checkboxes
             public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
@@ -2826,6 +2831,23 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(ServerAdminPassword)); // Notify the UI of the change
             }
         }
+
+        private string _serverIcon;
+
+        public string ServerIcon
+        {
+            get => _serverIcon;
+            set
+            {
+                if (_serverIcon != value)
+                {
+                    _serverIcon = value;
+                    OnPropertyChanged(nameof(ServerIcon));
+                }
+            }
+        }
+
+
         private string _sessionName;
         public string SessionName
         {

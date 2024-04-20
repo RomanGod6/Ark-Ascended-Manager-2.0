@@ -18,6 +18,8 @@ namespace Ark_Ascended_Manager.Services
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _services;
+        private readonly BotSettings _settings;
+
         public List<DiscordServerConfig> ServerConfigs { get; private set; } = new List<DiscordServerConfig>();
         // Added properties
         public ulong GuildId { get; private set; }
@@ -25,25 +27,33 @@ namespace Ark_Ascended_Manager.Services
 
 
         // Updated constructor to accept additional parameters
-        public DiscordBotService(IServiceProvider services, ulong guildId, string webhookUrl)
+        public DiscordBotService(IServiceProvider services, ulong guildId, string webhookUrl, BotSettings settings)
         {
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _services = services;
+            _settings = settings;
 
             // Initialize properties
             GuildId = guildId;
             WebhookUrl = webhookUrl;
-
+          
             _client.Log += LogAsync;
             _client.Ready += ReadyAsync;
             _client.ButtonExecuted += HandleButtonExecutedAsync; 
             _client.ModalSubmitted += HandleModalSubmittedAsync;
+            
             // Other event subscriptions as needed
         }
 
         private async Task HandleButtonExecutedAsync(SocketMessageComponent component)
         {
+            var user = (SocketGuildUser)component.User;
+            if (!user.Roles.Any(role => _settings.AuthorizedRoleIds.Contains(role.Id)))
+            {
+                await component.RespondAsync("You do not have permission to do this.", ephemeral: true);
+                return;
+            }
             var parts = component.Data.CustomId.Split(':');
             if (parts.Length > 1)
             {
@@ -53,6 +63,9 @@ namespace Ark_Ascended_Manager.Services
                 {
                     case "start_id":
                         await StartServer(component, serverIdentifier);
+                        break;
+                    case "save_world_id":
+                        await ProcessSaveWorld(component, serverIdentifier);
                         break;
                     case "shutdown_id":
                         // Define and send the modal for shutdown
@@ -69,45 +82,65 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
+        private async Task ProcessSaveWorld(SocketMessageComponent component, string serverName)
+        {
+            await component.DeferAsync(); // Acknowledge the interaction immediately
+
+            var serverConfig = ServerConfigs.FirstOrDefault(s => s.ServerName == serverName);
+            if (serverConfig == null)
+            {
+                await component.FollowupAsync($"Server configuration for {serverName} not found.");
+                return;
+            }
+
+            try
+            {
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+                await rconService.ConnectAsync();
+                await rconService.SaveWorldAsync();
+                await component.FollowupAsync($"World save initiated for {serverName}.");
+            }
+            catch (Exception ex)
+            {
+                await component.FollowupAsync($"Failed to initiate world save: {ex.Message}");
+            }
+        }
+
+
         private async Task StartServer(SocketMessageComponent component, string serverName)
         {
             // Immediately acknowledge the interaction.
             await component.DeferAsync();
 
-            Debug.WriteLine($"Attempting to start server: {serverName}");
+          
             var discordServerConfig = ServerConfigs.FirstOrDefault(s => s.ServerName == serverName);
 
             if (discordServerConfig == null)
             {
-                Debug.WriteLine("Server configuration not found for: " + serverName);
-                // Followup since we used DeferAsync()
+
                 await component.FollowupAsync($"Server configuration for {serverName} not found.");
                 return;
             }
 
             var serverConfig = ConvertToServerConfig(discordServerConfig);
-            Debug.WriteLine("Converted server configuration: " + JsonConvert.SerializeObject(serverConfig));
+
 
             if (serverConfig.ServerPath == null || serverConfig.ServerPath == "")
             {
-                Debug.WriteLine("Server path is undefined or empty.");
                 await component.FollowupAsync("Server path is undefined or empty.");
                 return;
             }
 
             if (IsServerRunning(serverConfig))
             {
-                Debug.WriteLine("Server already running: " + serverName);
                 await component.FollowupAsync($"Server {serverName} is already running.");
                 return;
             }
 
             string batchFilePath = Path.Combine(serverConfig.ServerPath, "LaunchServer.bat");
-            Debug.WriteLine("Batch file path: " + batchFilePath);
 
             if (!File.Exists(batchFilePath))
             {
-                Debug.WriteLine("Batch file does not exist: " + batchFilePath);
                 await component.FollowupAsync("Launch batch file does not exist.");
                 return;
             }
@@ -131,17 +164,17 @@ namespace Ark_Ascended_Manager.Services
                         string description = $"{serverName} server has been started.";
                         // Ensure Logger.LogToDiscord can be awaited
                         Logger.LogToDiscord("Server Started", description, "Notification", greenColor);
-                        Debug.WriteLine($"Server {serverName} started.");
+                     ;
                     }
                     else
                     {
-                        Debug.WriteLine($"Failed to start the server process for {serverName}.");
+                
                         Logger.LogToDiscord("Server Start Failed", $"Could not start the server process for {serverName}.", "Error", new Discord.Color(255, 0, 0));
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Exception when trying to start server {serverName}: {ex}");
+         
                     Logger.LogToDiscord("Server Start Failed", $"Failed to start server {serverName}: {ex.Message}", "Error", new Discord.Color(255, 0, 0));
                 }
             });
@@ -259,7 +292,7 @@ namespace Ark_Ascended_Manager.Services
                 catch (Exception ex)
                 {
                     // This catch block can handle exceptions due to accessing process.MainModule which may require administrative privileges
-                    Ark_Ascended_Manager.Services.Logger.Log($"Error checking process: {ex.Message}");
+                    Logger.LogInfoToDiscord($"Error checking process: {ex.Message}");
                 }
             }
 
@@ -282,18 +315,18 @@ namespace Ark_Ascended_Manager.Services
             {
                 await _client.LoginAsync(TokenType.Bot, settings.Token);
                 await _client.StartAsync();
-                Debug.WriteLine("Bot is now connected!");
+
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error during bot start: {ex.Message}");
+                Logger.LogInfoToDiscord($"Error during bot start: {ex.Message}");
             }
         }
 
 
         public async Task StopAsync()
         {
-            Console.WriteLine($"{_client.CurrentUser.Username} went to sleep");
+      
             Logger.LogInfoToDiscord($"{_client.CurrentUser.Username} went to sleep");
             await _client.LogoutAsync();
             await _client.StopAsync();
@@ -313,20 +346,20 @@ namespace Ark_Ascended_Manager.Services
                 {
                     string json = await File.ReadAllTextAsync(filePath);
                     servers = JsonConvert.DeserializeObject<List<DiscordServerConfig>>(json) ?? new List<DiscordServerConfig>();
-                    Debug.WriteLine($"Loaded server configs: {servers.Count} entries found.");
+
                 }
                 else
                 {
-                    Debug.WriteLine("Server configuration file not found.");
+                    Logger.LogInfoToDiscord("Server configuration file not found.");
                 }
             }
             catch (JsonException jsonEx)
             {
-                Debug.WriteLine($"JSON deserialization failed: {jsonEx.Message}");
+                Logger.LogInfoToDiscord($"JSON deserialization failed: {jsonEx.Message}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"An error occurred when loading server configs: {ex.Message}");
+                Logger.LogInfoToDiscord($"An error occurred when loading server configs: {ex.Message}");
             }
 
             return servers;
@@ -334,17 +367,18 @@ namespace Ark_Ascended_Manager.Services
 
         private Task LogAsync(LogMessage logMessage)
         {
-            Console.WriteLine(logMessage.ToString());
+            Logger.LogInfoToDiscord(logMessage.ToString());
             return Task.CompletedTask;
         }
 
         private async Task ReadyAsync()
         {
-            Console.WriteLine($"Connected as {_client.CurrentUser.Username}");
+
             Logger.LogInfoToDiscord($"Bot connected and ready as {_client.CurrentUser.Username}");
             ServerConfigs = await LoadServerConfigsAsync();
             _client.SlashCommandExecuted += HandleSlashCommandExecutedAsync;
             await RegisterCommands();
+
             
         }
 
@@ -357,6 +391,7 @@ namespace Ark_Ascended_Manager.Services
                     .WithName("listservers")
                     .WithDescription("List all servers with their status and information")
                     .Build());
+                await PeriodicServerStatusCheck();
             }
             else
             {
@@ -365,24 +400,27 @@ namespace Ark_Ascended_Manager.Services
         }
 
 
-
         private async Task HandleSlashCommandExecutedAsync(SocketSlashCommand command)
         {
-            // Check if the executed command is /listservers
             if (command.Data.Name == "listservers")
             {
-                try
+                var user = (SocketGuildUser)command.User;
+                // Use _botSettings to access AuthorizedRoleIds
+                if (user.Roles.Any(role => _settings.AuthorizedRoleIds.Contains(role.Id)))
                 {
+                    // User has an authorized role, proceed with the command
                     await command.DeferAsync();
                     await SendServerStatusEmbeds(command);
                 }
-                catch (Exception ex)
+                else
                 {
-                    // Log the exception to your logging system or print out for debugging
-                    Logger.LogInfoToDiscord($"An error occurred: {ex.Message}");
+                    // User does not have an authorized role, send a message
+                    await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
                 }
             }
         }
+
+
         public ServerConfig ConvertToServerConfig(DiscordServerConfig discordConfig)
         {
             return new ServerConfig
@@ -398,15 +436,20 @@ namespace Ark_Ascended_Manager.Services
 
 
         // Method to send server status embeds as a response to /listservers command
+
+        private Dictionary<string, ulong> serverMessageIds = new Dictionary<string, ulong>();
+        private Dictionary<string, ulong> serverChannelIds = new Dictionary<string, ulong>();
+
+
         public async Task SendServerStatusEmbeds(SocketSlashCommand command)
         {
-            Logger.LogInfoToDiscord($"Starting to send server status embeds for {ServerConfigs.Count} servers.");
-
+            var channelId = command.Channel.Id;
             foreach (var serverConfig in ServerConfigs)
             {
+                serverChannelIds[serverConfig.ServerName] = channelId;
                 try
                 {
-                    Logger.LogInfoToDiscord($"Preparing embed for server: {serverConfig.ServerName}");
+
                     var isOnline = serverConfig.ServerStatus == "Online";
                     var embed = new EmbedBuilder()
                         .WithTitle($"{serverConfig.ServerName}")
@@ -416,18 +459,18 @@ namespace Ark_Ascended_Manager.Services
                         .AddField("Server IP", serverConfig.ServerIP)
                         /* .AddField("Current Players", $"{serverConfig.CurrentPlayerCount}", true) */
                         .AddField("Max Players", $"{serverConfig.MaxPlayerCount}", true)
-                        .WithThumbnailUrl("https://media.discordapp.net/attachments/1168388628657995836/1182037772224180308/AAM_Icon.png?ex=66295a76&is=6616e576&hm=f4fa28aa9f7952a0398c483b767c35d1e374bd20544c372bcf875d76a48666f7&=&format=webp&quality=lossless&width=222&height=230")
+                        .WithThumbnailUrl($"{serverConfig.ServerIcon}")
                         .Build();
                     var buttons = new ComponentBuilder()
                         .WithButton("Start", $"start_id:{serverConfig.ServerName}", ButtonStyle.Primary, disabled: false)
                         .WithButton("Shutdown", $"shutdown_id:{serverConfig.ServerName}", ButtonStyle.Danger)
-                        .WithButton("Save World", $"save_world_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: true)
+                        .WithButton("Save World", $"save_world_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: false)
                         .WithButton("Update", $"update_id:{serverConfig.ServerName}", ButtonStyle.Success, disabled: true)
                         .WithButton("Manage", $"manage_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: true)
                         .Build();
 
                     await command.FollowupAsync(embed: embed, components: buttons);
-                    Logger.LogInfoToDiscord($"Embed with buttons sent for server: {serverConfig.ServerName}");
+
 
                 }
                 catch (Exception ex)
@@ -436,8 +479,183 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
 
-            Logger.LogInfoToDiscord("Finished sending server status embeds.");
+
         }
+        private async Task PeriodicServerStatusCheck()
+        {
+            while (true)
+            {
+                // Reload the server configurations before each check to get the latest data
+                ServerConfigs = await LoadServerConfigsAsync();
+
+                foreach (var serverConfig in ServerConfigs)
+                {
+                    try
+                    {
+                        // Now you have the latest server configuration for each tick
+                        var embed = await CreateServerEmbed(serverConfig);
+                        await UpdateServerEmbed(serverConfig, embed);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogInfoToDiscord($"Error in periodic check for {serverConfig.ServerName}: {ex.Message}");
+                    }
+                }
+                await Task.Delay(TimeSpan.FromMinutes(1)); // Or your preferred interval
+            }
+        }
+
+
+
+
+
+
+
+        private bool CheckServerStatus(DiscordServerConfig serverConfig)
+        {
+            return serverConfig.ServerStatus == "Online";
+        }
+
+        public async Task ReloadServerConfigsAsync()
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+
+            if (File.Exists(filePath))
+            {
+                string json = await File.ReadAllTextAsync(filePath);
+                List<DiscordServerConfig> updatedConfigs = JsonConvert.DeserializeObject<List<DiscordServerConfig>>(json) ?? new List<DiscordServerConfig>();
+
+                if (ServerConfigs.Count != updatedConfigs.Count)
+                {
+
+                }
+
+                ServerConfigs = updatedConfigs;
+                
+            }
+            else
+            {
+                Logger.LogInfoToDiscord("Configuration file not found. Unable to reload configurations. Please ensure servers.json at appdata/roaming/arkascendedmanager/server.json excists.");
+            }
+        }
+
+
+        private async Task UpdateServerEmbed(DiscordServerConfig serverConfig, Embed embed)
+        {
+            if (serverChannelIds.TryGetValue(serverConfig.ServerName, out ulong channelId))
+            {
+                var channel = await _client.GetChannelAsync(channelId) as IMessageChannel;
+                if (channel != null)
+                {
+                    var messages = await channel.GetMessagesAsync().FlattenAsync();
+                    var message = messages.FirstOrDefault(msg => msg.Embeds.Any(e => e.Title.Contains(serverConfig.ServerName)));
+                    if (message != null)
+                    {
+                        Logger.LogInfoToDiscord($"Updating message for {serverConfig.ServerName}");
+                        await (message as IUserMessage).ModifyAsync(msg => msg.Embed = embed);
+                    }
+                    else
+                    {
+                        Logger.LogInfoToDiscord($"No existing message found for {serverConfig.ServerName}. Sending new message.");
+                        await channel.SendMessageAsync(embed: embed);
+                    }
+                }
+            }
+            else
+            {
+                Logger.LogInfoToDiscord($"Channel ID not found for {serverConfig.ServerName}");
+            }
+        }
+
+
+
+
+        private async Task<string> GetCurrentPlayerCount(DiscordServerConfig serverConfig)
+        {
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            try
+            {
+                await rconService.ConnectAsync();
+                var playerListResponse = await rconService.ListPlayersAsync();
+                if (playerListResponse.Trim().Equals("No players connected", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "0"; // No players connected
+                }
+                else
+                {
+                    var playerLines = playerListResponse.Split('\n');
+                    int playerCount = playerLines.Count(line => !string.IsNullOrWhiteSpace(line));
+                    return playerCount.ToString(); // Active players count
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfoToDiscord($"Error getting player count for {serverConfig.ServerName}: {ex.Message}");
+
+               
+                serverConfig.IsRunning = false;
+                serverConfig.ServerStatus = "Offline";
+                return "Offline"; // Return a special string indicating that the server is offline
+            }
+            finally
+            {
+                rconService.Dispose();
+            }
+        }
+
+
+
+
+
+
+
+
+
+        private async Task<Embed> CreateServerEmbed(DiscordServerConfig serverConfig)
+        {
+            try
+            {
+                var playerCount = await GetCurrentPlayerCount(serverConfig);
+                var isOnline = playerCount != "Offline";
+                Logger.LogInfoToDiscord($"Creating embed for {serverConfig.ServerName} - Status: {isOnline} - Players: {playerCount}");
+                var embed = new EmbedBuilder()
+                    .WithTitle(serverConfig.ServerName)
+                    .WithColor(isOnline ? Color.Green : Color.Red)
+                    .AddField("Status", isOnline ? "Online" : "Offline", true)
+                    .AddField("Map", serverConfig.MapName, true)
+                    .AddField("Server IP", serverConfig.ServerIP)
+                    .AddField("Players", $"{playerCount}/{serverConfig.MaxPlayerCount}", true)
+                    .WithThumbnailUrl($"{serverConfig.ServerIcon}")
+                    .Build();
+                return embed;
+            }
+            catch (Exception ex)
+            {
+                // If there is an RCON failure, we catch it here
+                Logger.LogInfoToDiscord($"RCON failure when getting player count for {serverConfig.ServerName}: {ex.Message}");
+
+                // Update the server status to offline due to RCON failure
+                serverConfig.ServerStatus = "Offline";
+                serverConfig.IsRunning = false;
+
+                // Now create an embed reflecting the offline status
+                var embed = new EmbedBuilder()
+                    .WithTitle(serverConfig.ServerName)
+                    .WithColor(Color.Red)
+                    .AddField("Status", "Offline", true)
+                    .AddField("Map", serverConfig.MapName, true)
+                    .AddField("Server IP", serverConfig.ServerIP)
+                    .AddField("Players", $"0/{serverConfig.MaxPlayerCount}", true)
+                    .WithThumbnailUrl($"{serverConfig.ServerIcon}")
+                    .Build();
+                return embed;
+
+            }
+        }
+
+
+
+
 
 
 
@@ -453,20 +671,21 @@ namespace Ark_Ascended_Manager.Services
         public string ServerIP { get; set; }
         public string MapName { get; set; }
         public string AppId { get; set; }
+        public string ServerIcon { get; set; }
         public bool IsRunning { get; set; }
         public int ChangeNumber { get; set; }
         public string ServerName { get; set; }
-        public int ListenPort { get; set; } // Ports are typically integers
-        public int RCONPort { get; set; }   // Ports are typically integers
-        public List<string> Mods { get; set; } // Assuming Mods can be a list
+        public int ListenPort { get; set; } 
+        public int RCONPort { get; set; }   
+        public List<string> Mods { get; set; } 
         public int MaxPlayerCount { get; set; }
         public string AdminPassword { get; set; }
         public string ServerPassword { get; set; }
-        public bool UseBattlEye { get; set; } // Use bool for checkboxes
-        public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
-        public bool PreventSpawnAnimation { get; set; } // Use bool for checkboxes
+        public bool UseBattlEye { get; set; } 
+        public bool ForceRespawnDinos { get; set; } 
+        public bool PreventSpawnAnimation { get; set; } 
 
-        // ... other relevant details
+    
     }
     public class BotSettings
     {
@@ -475,6 +694,7 @@ namespace Ark_Ascended_Manager.Services
         public string WebhookUrl { get; set; }
         public string LoggerWebhookUrl { get; set; }
         public string[] IgnoredPatterns { get; set; }
-        public List<ulong> AuthorizedRoleIds { get; set; }// Add this line
+        public List<ulong> AuthorizedRoleIds { get; set; }
+        public bool VerboseLogging { get; set; }
     }
 }

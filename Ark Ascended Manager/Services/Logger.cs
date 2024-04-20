@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace Ark_Ascended_Manager.Services
     {
         private static readonly string logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "debug.log");
         private static string _webhookUrl;
+        private static bool _verboseLogging;
 
         public static void Initialize()
         {
@@ -27,6 +29,7 @@ namespace Ark_Ascended_Manager.Services
                 {
                     var settings = JsonConvert.DeserializeObject<BotSettings>(json);
                     _webhookUrl = settings.LoggerWebhookUrl;
+                    _verboseLogging = settings.VerboseLogging;
                 }
                 catch (JsonException ex)
                 {
@@ -50,7 +53,7 @@ namespace Ark_Ascended_Manager.Services
 
         public static async Task LogToDiscord(string title, string description, string footerText, Discord.Color color)
         {
-            if (!string.IsNullOrWhiteSpace(_webhookUrl))
+            if (!string.IsNullOrWhiteSpace(_webhookUrl) && _verboseLogging)
             {
                 var embed = new
                 {
@@ -142,6 +145,7 @@ namespace Ark_Ascended_Manager.Services
         private class BotSettings
         {
             public string LoggerWebhookUrl { get; set; }
+            public bool VerboseLogging {  get; set; }
         }
     }
 }

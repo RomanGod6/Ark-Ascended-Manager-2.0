@@ -122,6 +122,8 @@
                                     <TextBox Text="{Binding ServerPassword, Mode=TwoWay}" />
                                     <Label Content="Banlist:" Tag="Banlist" ToolTip="List of Banned Players"/>
                                     <TextBox Text="{Binding Banlist, Mode=TwoWay}" ToolTip="List of Banned Players"/>
+                                    <Label Content="Server Icon:" Tag="ServerIcon" ToolTip="Icon That will display on discord bot services."/>
+                                    <TextBox Text="{Binding ServerIcon, Mode=TwoWay}" ToolTip="Icon That will display on discord bot services."/>
                                     <Label Content="Cosmetic Whitelist Override:" ToolTip="The approved list of cosmetics on your server (use URL)"/>
                                     <TextBox Text="{Binding CosmeticWhitelistOverride, Mode=TwoWay}" ToolTip="The approved list of cosmetics on your server (use URL)"/>
                                     <Label Content="Photo Mode Range Limit:" ToolTip="Range of camera mode in meters"/>

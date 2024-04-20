@@ -212,6 +212,7 @@ namespace Ark_Ascended_Manager.Services
         public List<string> Mods { get; set; }
         public int MaxPlayerCount { get; set; }
         public string AdminPassword { get; set; }
+        public string ServerIcon { get; set; }
         public string ServerPassword { get; set; }
         public bool UseBattlEye { get; set; }
         public bool ForceRespawnDinos { get; set; }
