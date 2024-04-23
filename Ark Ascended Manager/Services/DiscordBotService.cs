@@ -111,13 +111,15 @@ namespace Ark_Ascended_Manager.Services
                     await NotifyServerUpdateAndCheckOnline(serverConfig); // This will handle the 15-minute countdown
                     await StopServer(discordServerConfig);  // Stop the server
                     Debug.WriteLine("Server shutdown initiated. Proceeding with update after a brief delay.");
-                    await Task.Delay(TimeSpan.FromSeconds(20));  // Wait for the server to properly shutdown
+                    await Task.Delay(TimeSpan.FromSeconds(5));  // Wait for the server to properly shutdown
                 }
 
                 Debug.WriteLine("Server is offline or shutdown complete, proceeding with update.");
                 bool updateSuccessful = await UpdateServerBasedOnJson(discordServerConfig, component);
                 if (updateSuccessful)
                 {
+                    await ReloadServerConfigsAsync();  // Ensure server configs are reloaded after update
+                   /* await UpdateServerEmbeds(discordServerConfig);*/
                     await component.FollowupAsync($"Update completed for {serverIdentifier}. Server will reboot when completed. Estimated time is 2-3 minutes.");
                 }
                 else
@@ -126,6 +128,52 @@ namespace Ark_Ascended_Manager.Services
                 }
             });
         }
+        public async Task UpdateServerEmbeds(DiscordServerConfig serverConfig)
+        {
+            if (serverChannelIds.TryGetValue(serverConfig.ServerName, out ulong channelId))
+            {
+                var channel = _client.GetChannel(channelId) as IMessageChannel;
+                if (channel != null)
+                {
+                    // Retrieve all messages and find the one with the existing embed
+                    var messages = await channel.GetMessagesAsync().FlattenAsync();
+                    var message = messages.FirstOrDefault(msg => msg.Embeds.Any(e => e.Title.Contains(serverConfig.ServerName)));
+
+                    // Delete the old message if found
+                    if (message != null)
+                    {
+                        await (message as IUserMessage).DeleteAsync();
+                    }
+
+                    var buttons = new ComponentBuilder()
+                   .WithButton("Start", $"start_id:{serverConfig.ServerName}", ButtonStyle.Primary, disabled: false)
+                   .WithButton("Shutdown", $"shutdown_id:{serverConfig.ServerName}", ButtonStyle.Danger)
+                   .WithButton("Save World", $"save_world_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: false)
+                   .WithButton("Update", $"update_id:{serverConfig.ServerName}", ButtonStyle.Success, disabled: false)
+                   .WithButton("Manage", $"manage_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: true)
+                   .Build();
+                    // Create a new embed with updated information
+                    var (embed, components) = await CreateServerEmbedAndButtons(serverConfig);
+
+                    // Send the new embed message
+                    // Send the new embed message with the buttons
+                    await channel.SendMessageAsync(embed: embed, components: buttons);
+
+                    Logger.LogInfoToDiscord($"Updated server status by creating a new embed for {serverConfig.ServerName}.");
+                }
+                else
+                {
+                    Logger.LogInfoToDiscord($"Channel not found for server {serverConfig.ServerName}.");
+                }
+            }
+            else
+            {
+                Logger.LogInfoToDiscord($"Channel ID not found for {serverConfig.ServerName}. Ensure that channel IDs are correctly mapped.");
+            }
+        }
+
+
+
 
         public async Task<bool> NotifyServerUpdateAndCheckOnline(ServerConfig serverConfig)
         {
@@ -690,7 +738,7 @@ namespace Ark_Ascended_Manager.Services
                     try
                     {
                         // Now you have the latest server configuration for each tick
-                        var embed = await CreateServerEmbed(serverConfig);
+                        var (embed, components) = await CreateServerEmbedAndButtons(serverConfig);
                         await UpdateServerEmbed(serverConfig, embed);
                     }
                     catch (Exception ex)
@@ -698,7 +746,7 @@ namespace Ark_Ascended_Manager.Services
                         Logger.LogInfoToDiscord($"Error in periodic check for {serverConfig.ServerName}: {ex.Message}");
                     }
                 }
-                await Task.Delay(TimeSpan.FromMinutes(1)); // Or your preferred interval
+                await Task.Delay(TimeSpan.FromSeconds(5)); // Or your preferred interval
             }
         }
 
@@ -769,6 +817,13 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task<string> GetCurrentPlayerCount(DiscordServerConfig serverConfig)
         {
+            // If the server is known to be offline, return "Offline" immediately.
+            if (serverConfig.ServerStatus == "Offline")
+            {
+                return "Offline";
+            }
+
+            // If the status is not known, try to connect and get the player count.
             var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
             try
             {
@@ -787,18 +842,21 @@ namespace Ark_Ascended_Manager.Services
             }
             catch (Exception ex)
             {
-                Logger.LogInfoToDiscord($"Error getting player count for {serverConfig.ServerName}: {ex.Message}");
-
-               
-                serverConfig.IsRunning = false;
+                // If an exception occurs, assume the server is offline.
+                // Update the server's status accordingly.
                 serverConfig.ServerStatus = "Offline";
-                return "Offline"; // Return a special string indicating that the server is offline
+                Logger.LogInfoToDiscord($"Exception when trying to retrieve player count: {ex.Message}");
+                return "Offline";
             }
             finally
             {
                 rconService.Dispose();
             }
         }
+
+
+
+
 
         private Process GetServerProcess(string serverPath, string primaryExecutableName, string secondaryExecutableName)
         {
@@ -850,7 +908,7 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
 
-            return null; // If not found
+            return null; 
         }
 
 
@@ -908,60 +966,64 @@ namespace Ark_Ascended_Manager.Services
 
 
 
-        private async Task<Embed> CreateServerEmbed(DiscordServerConfig serverConfig)
+        private async Task<(Embed, ComponentBuilder)> CreateServerEmbedAndButtons(DiscordServerConfig serverConfig)
         {
-            Process process = null;
             try
             {
-                string primaryExecutableName = "ArkAscendedServer.exe";
-                string secondaryExecutableName = "AsaApiLoader.exe";
-                string serverExecutablePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", primaryExecutableName);
+                if (string.IsNullOrEmpty(serverConfig.ServerName))
+                    throw new Exception("Server name is not defined.");
+                if (string.IsNullOrEmpty(serverConfig.ServerIP))
+                    throw new Exception("Server IP is not defined.");
 
-                Process serverProcess = GetServerProcess(serverExecutablePath, primaryExecutableName, secondaryExecutableName);
+                Process serverProcess = GetServerProcess(serverConfig.ServerPath, "ArkAscendedServer.exe", "AsaApiLoader.exe");
                 var playerCount = await GetCurrentPlayerCount(serverConfig);
-                var maxPlayers = serverConfig.MaxPlayerCount; // Assuming this is populated correctly
-                var isOnline = playerCount != "Offline";
-
-                // Fetch total physical memory (RAM)
-                var totalRam = GetTotalPhysicalMemory();
-
-                long ramUsage = GetProcessMemoryUsage(serverProcess);
-                double cpuUsage = GetCpuUsageForProcess(process);
-
-                long ramUsageMB = GetProcessMemoryUsage(serverProcess);
+                bool isOnline = playerCount != "Offline" && serverProcess != null;
+                long ramUsageMB = isOnline ? GetProcessMemoryUsage(serverProcess) : 0;
                 double ramUsageGB = ramUsageMB / 1024.0; // Convert MB to GB
-
                 ulong totalRamMB = GetTotalPhysicalMemory();
-                double totalRamGB = totalRamMB / 1024.0 / 1024.0;
+                double totalRamGB = totalRamMB / 1024.0 / 1024.0; // Convert bytes to GB
+                double cpuUsage = isOnline ? GetCpuUsageForProcess(serverProcess) : 0;
 
-                var embed = new EmbedBuilder()
+                var embedBuilder = new EmbedBuilder()
                     .WithTitle(serverConfig.ServerName)
                     .WithColor(isOnline ? Color.Green : Color.Red)
                     .AddField("Status", isOnline ? "Online" : "Offline", true)
-                    .AddField("Map", serverConfig.MapName, true)
-                    .AddField("Server IP", serverConfig.ServerIP, true)
-                    .AddField("Players", $"{playerCount}/{maxPlayers}", true)
-                    .AddField("RAM Usage", $"{ramUsageGB:N2} GB / {totalRamGB:N2} GB", true)
-                    .AddField("CPU Usage", $"{cpuUsage:N2}%", true)  // Display CPU usage
-                    .WithThumbnailUrl(serverConfig.ServerIcon)
-                    .Build();
+                    .AddField("Map", serverConfig.MapName ?? "Unknown", true)
+                    .AddField("Server IP", serverConfig.ServerIP)
+                    .AddField("Players", playerCount, true)
+                    .AddField("RAM Usage", isOnline ? $"{ramUsageGB:N2} GB / {totalRamGB:N2} GB" : "N/A", true)
+                    .AddField("CPU Usage", isOnline ? $"{cpuUsage:N2}%" : "N/A", true)
+                    .WithThumbnailUrl(serverConfig.ServerIcon ?? "default_icon_url_here");
 
-                return embed;
+                var embed = embedBuilder.Build();
+
+                var buttons = new ComponentBuilder()
+                    .WithButton("Start", $"start_id:{serverConfig.ServerName}", ButtonStyle.Primary, disabled: !isOnline)
+                    .WithButton("Shutdown", $"shutdown_id:{serverConfig.ServerName}", ButtonStyle.Danger, disabled: !isOnline)
+                    .WithButton("Save World", $"save_world_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: !isOnline)
+                    .WithButton("Update", $"update_id:{serverConfig.ServerName}", ButtonStyle.Success, disabled: !isOnline)
+                    .WithButton("Manage", $"manage_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: true);
+
+                return (embed, buttons);
             }
             catch (Exception ex)
             {
-                Logger.LogInfoToDiscord($"Error when creating server embed for {serverConfig.ServerName}: {ex.Message}");
-                return new EmbedBuilder()
+                Logger.LogInfoToDiscord($"Error creating server embed for {serverConfig.ServerName}: {ex.Message}");
+                var errorEmbed = new EmbedBuilder()
                     .WithTitle("Error")
-                    .WithDescription($"Failed to create embed for {serverConfig.ServerName}")
+                    .WithDescription($"Failed to create embed for {serverConfig.ServerName}. Exception: {ex.Message}")
                     .WithColor(Color.Red)
                     .Build();
+
+                return (errorEmbed, new ComponentBuilder()); // Return the error embed and an empty ComponentBuilder
             }
         }
 
-      
-        
-            private static ulong GetTotalPhysicalMemory()
+
+
+
+
+        private static ulong GetTotalPhysicalMemory()
                 {
                     ComputerInfo CI = new ComputerInfo();
                     ulong totalPhysicalMemory = CI.TotalPhysicalMemory;
