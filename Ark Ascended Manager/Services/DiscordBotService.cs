@@ -4,12 +4,16 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.Devices;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic.Devices;
+using System.Net.Sockets;
 
 namespace Ark_Ascended_Manager.Services
 {
@@ -67,6 +71,9 @@ namespace Ark_Ascended_Manager.Services
                     case "save_world_id":
                         await ProcessSaveWorld(component, serverIdentifier);
                         break;
+                    case "update_id":
+                        await InitiateUpdateProcess(component, serverIdentifier);
+                        break;
                     case "shutdown_id":
                         // Define and send the modal for shutdown
                         var modal = new ModalBuilder()
@@ -81,6 +88,219 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
         }
+
+        private async Task InitiateUpdateProcess(SocketMessageComponent component, string serverIdentifier)
+        {
+            // Acknowledge the interaction immediately to avoid timeout
+            await component.DeferAsync();
+            Debug.WriteLine($"Initiating update process for server {serverIdentifier}.");
+
+            Task.Run(async () =>
+            {
+                var discordServerConfig = ServerConfigs.FirstOrDefault(s => s.ServerName == serverIdentifier);
+                if (discordServerConfig == null)
+                {
+                    await component.FollowupAsync("Server configuration not found.");
+                    return;
+                }
+
+                ServerConfig serverConfig = ConvertToServerConfig(discordServerConfig);
+                if (await IsServerOnlineUsingRCON(serverConfig))
+                {
+                    // Server is online, proceed with countdown and shutdown
+                    await NotifyServerUpdateAndCheckOnline(serverConfig); // This will handle the 15-minute countdown
+                    await StopServer(discordServerConfig);  // Stop the server
+                    Debug.WriteLine("Server shutdown initiated. Proceeding with update after a brief delay.");
+                    await Task.Delay(TimeSpan.FromSeconds(20));  // Wait for the server to properly shutdown
+                }
+
+                Debug.WriteLine("Server is offline or shutdown complete, proceeding with update.");
+                bool updateSuccessful = await UpdateServerBasedOnJson(discordServerConfig, component);
+                if (updateSuccessful)
+                {
+                    await component.FollowupAsync($"Update completed for {serverIdentifier}. Server will reboot when completed. Estimated time is 2-3 minutes.");
+                }
+                else
+                {
+                    await component.FollowupAsync($"Update failed for {serverIdentifier}. Please check logs for details.");
+                }
+            });
+        }
+
+        public async Task<bool> NotifyServerUpdateAndCheckOnline(ServerConfig serverConfig)
+        {
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            try
+            {
+                await rconService.ConnectAsync();
+                Logger.LogInfoToDiscord($"Connected to RCON for server {serverConfig.ServerName}");
+
+                // Begin countdown of 15 minutes, sending an update notification every minute.
+                for (int minutesLeft = 1; minutesLeft > 0; minutesLeft--)
+                {
+                    await rconService.SendServerChatAsync($"Server Update Required in {minutesLeft} minutes. Please prepare to log off.");
+                    Logger.LogInfoToDiscord($"Update notification sent to server {serverConfig.ServerName}: {minutesLeft} minutes remaining.");
+                    await Task.Delay(TimeSpan.FromMinutes(1)); // Wait for 1 minute before next notification.
+                }
+
+                // Finally, check if server is still responding before the update.
+                await rconService.SaveWorldAsync();
+                Logger.LogInfoToDiscord($"Successfully sent save world command to server {serverConfig.ServerName}");
+                return true; // If command succeeds, server is considered online.
+            }
+            catch (SocketException ex)
+            {
+                Logger.LogInfoToDiscord($"SocketException on server {serverConfig.ServerName}: {ex.Message}");
+                return false; // Assume server is offline on socket error
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfoToDiscord($"Failed to send RCON command to server {serverConfig.ServerName}: {ex.Message}");
+                return false; // If command fails, treat server as offline
+            }
+            finally
+            {
+                try
+                {
+                    rconService.Dispose(); // Attempt to properly close the connection
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInfoToDiscord($"Error disposing RCON service for server {serverConfig.ServerName}: {ex.Message}");
+                }
+            }
+        }
+
+
+        public async Task<bool> UpdateServerBasedOnJson(DiscordServerConfig serverConfig, SocketMessageComponent component)
+        {
+            string steamCmdPath = FindSteamCmdPath();
+            if (!string.IsNullOrEmpty(steamCmdPath) && !string.IsNullOrEmpty(serverConfig.AppId))
+            {
+                Debug.WriteLine($"Starting update for {serverConfig.ServerName} using SteamCMD.");
+                string scriptPath = Path.Combine(Path.GetTempPath(), "steamcmd_update_script.txt");
+                File.WriteAllLines(scriptPath, new string[]
+                {
+            $"force_install_dir \"{serverConfig.ServerPath}\"",
+            "login anonymous",
+            $"app_update {serverConfig.AppId} validate",
+            "quit"
+                });
+
+                ProcessStartInfo processStartInfo = new ProcessStartInfo
+                {
+                    FileName = steamCmdPath,
+                    Arguments = $"+runscript \"{scriptPath}\"",
+                    UseShellExecute = true,
+                    CreateNoWindow = false
+                };
+
+                using (Process process = new Process { StartInfo = processStartInfo })
+                {
+                    process.Start();
+                    process.WaitForExit();
+                    Debug.WriteLine($"SteamCMD exited with code {process.ExitCode}.");
+
+                    if (process.ExitCode == 0)
+                    {
+                        await component.FollowupAsync($"Update completed successfully for {serverConfig.ServerName}.");
+                        // Call to start the server if update succeeds
+                        return await StartServerAfterUpdate(serverConfig, component);
+                    }
+                    else
+                    {
+                        await component.FollowupAsync($"Update failed for {serverConfig.ServerName}. Check logs for details.");
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                Debug.WriteLine("SteamCMD path not found or App ID is empty, update cannot proceed.");
+                await component.FollowupAsync("Update failed: SteamCMD path not found or App ID is empty.");
+                return false;
+            }
+        }
+
+        private async Task<bool> StartServerAfterUpdate(DiscordServerConfig serverConfig, SocketMessageComponent component)
+        {
+            string batchFilePath = Path.Combine(serverConfig.ServerPath, "LaunchServer.bat");
+            if (File.Exists(batchFilePath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(batchFilePath)
+                {
+                    WorkingDirectory = serverConfig.ServerPath,
+                    UseShellExecute = true,
+                    CreateNoWindow = false
+                };
+
+                Process serverProcess = Process.Start(startInfo);
+                if (serverProcess != null)
+                {
+                    Debug.WriteLine($"Server {serverConfig.ServerName} is starting.");
+                    await component.FollowupAsync($"Server {serverConfig.ServerName} is restarting. ");
+                    return true;
+                }
+                else
+                {
+                    await component.FollowupAsync("Failed to start the server. Process could not be initiated.");
+                    return false;
+                }
+            }
+            else
+            {
+                await component.FollowupAsync("Launch batch file does not exist. Server start failed.");
+                return false;
+            }
+        }
+
+
+
+
+        private string FindSteamCmdPath()
+        {
+            // Define the JSON file path in the app data folder
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
+            string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
+
+            // Try to read the path from the JSON file
+            if (File.Exists(jsonFilePath))
+            {
+                string json = File.ReadAllText(jsonFilePath);
+                dynamic pathData = JsonConvert.DeserializeObject<dynamic>(json);
+                string savedPath = pathData?.SteamCmdPath;
+                if (!string.IsNullOrEmpty(savedPath) && File.Exists(savedPath))
+                {
+                    return savedPath;
+                }
+            }
+
+
+            return null; // or handle this case appropriately
+        }
+
+        private async Task StopServer(DiscordServerConfig serverConfig)
+        {
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            try
+            {
+                await rconService.ConnectAsync();
+                await rconService.SendCommandAsync("doexit"); 
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfoToDiscord($"Error stopping server {serverConfig.ServerName}: {ex.Message}");
+            }
+            finally
+            {
+                rconService.Dispose();
+            }
+        }
+
+
+
+
 
         private async Task ProcessSaveWorld(SocketMessageComponent component, string serverName)
         {
@@ -109,79 +329,57 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task StartServer(SocketMessageComponent component, string serverName)
         {
-            // Immediately acknowledge the interaction.
-            await component.DeferAsync();
-
-          
-            var discordServerConfig = ServerConfigs.FirstOrDefault(s => s.ServerName == serverName);
-
-            if (discordServerConfig == null)
+            try
             {
-
-                await component.FollowupAsync($"Server configuration for {serverName} not found.");
-                return;
-            }
-
-            var serverConfig = ConvertToServerConfig(discordServerConfig);
-
-
-            if (serverConfig.ServerPath == null || serverConfig.ServerPath == "")
-            {
-                await component.FollowupAsync("Server path is undefined or empty.");
-                return;
-            }
-
-            if (IsServerRunning(serverConfig))
-            {
-                await component.FollowupAsync($"Server {serverName} is already running.");
-                return;
-            }
-
-            string batchFilePath = Path.Combine(serverConfig.ServerPath, "LaunchServer.bat");
-
-            if (!File.Exists(batchFilePath))
-            {
-                await component.FollowupAsync("Launch batch file does not exist.");
-                return;
-            }
-
-            // Run the server startup in a separate task to not block the thread
-            _ = Task.Run(() =>
-            {
-                try
+                Debug.WriteLine("Start Server Called intially");
+                await component.DeferAsync();
+                Debug.WriteLine("Start Server Called");
+                var discordServerConfig = ServerConfigs.FirstOrDefault(s => s.ServerName == serverName);
+                if (discordServerConfig == null)
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo(batchFilePath)
-                    {
-                        WorkingDirectory = serverConfig.ServerPath,
-                        UseShellExecute = true
-                    };
-
-                    Process process = Process.Start(startInfo);
-                    if (process != null)
-                    {
-                        // Use the correct color format (Discord.Color)
-                        Discord.Color greenColor = new Discord.Color(0, 255, 0);
-                        string description = $"{serverName} server has been started.";
-                        // Ensure Logger.LogToDiscord can be awaited
-                        Logger.LogToDiscord("Server Started", description, "Notification", greenColor);
-                     ;
-                    }
-                    else
-                    {
-                
-                        Logger.LogToDiscord("Server Start Failed", $"Could not start the server process for {serverName}.", "Error", new Discord.Color(255, 0, 0));
-                    }
+                    await component.FollowupAsync($"Server configuration for {serverName} not found.");
+                    return;
                 }
-                catch (Exception ex)
+
+                var serverConfig = ConvertToServerConfig(discordServerConfig);
+                if (serverConfig.ServerPath == null || serverConfig.ServerPath == "")
                 {
-         
-                    Logger.LogToDiscord("Server Start Failed", $"Failed to start server {serverName}: {ex.Message}", "Error", new Discord.Color(255, 0, 0));
+                    await component.FollowupAsync("Server path is undefined or empty.");
+                    return;
                 }
-            });
 
-            // Inform the user that the server is starting up
-            await component.FollowupAsync($"Server {serverName} is starting up...");
+                string batchFilePath = Path.Combine(serverConfig.ServerPath, "LaunchServer.bat");
+                if (!File.Exists(batchFilePath))
+                {
+                    await component.FollowupAsync("Launch batch file does not exist.");
+                    return;
+                }
+
+                Debug.WriteLine($"Attempting to start server {serverName} using batch file at {batchFilePath}.");
+
+                ProcessStartInfo startInfo = new ProcessStartInfo(batchFilePath)
+                {
+                    WorkingDirectory = serverConfig.ServerPath,
+                    UseShellExecute = true,  // Change this to true to show the command window
+                    CreateNoWindow = false   // This will now function correctly to show the window
+                };
+
+                Process process = Process.Start(startInfo);
+                await Task.Delay(5000); // Wait for a few seconds to assume starting is initiated
+                Debug.WriteLine($"Process launched for server {serverName}, check server directly for more details.");
+                await component.FollowupAsync($"Server {serverName} is starting up. Please check directly for operation status.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in StartServer: {ex}");
+                Logger.LogInfoToDiscord($"Exception when trying to start server {serverName}: {ex.Message}");
+                await component.FollowupAsync($"Exception occurred while starting {serverName}. Please check server logs.");
+            }
         }
+
+
+
+
 
 
 
@@ -263,41 +461,40 @@ namespace Ark_Ascended_Manager.Services
 
 
 
-        public bool IsServerRunning(ServerConfig serverConfig)
+        public async Task<bool> IsServerOnlineUsingRCON(ServerConfig serverConfig)
         {
-            bool isServerRunning = false; // Initialize the flag as false
-
-            // Get the name of the server executable without the extension
-            string serverExeName = Path.GetFileNameWithoutExtension("ArkAscendedServer.exe");
-            string asaApiLoaderExeName = Path.GetFileNameWithoutExtension("AsaApiLoader.exe");
-
-            // Get the full path to the server executable
-            string serverExePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkAscendedServer.exe");
-            string asaApiLoaderExePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "AsaApiLoader.exe");
-
-            // Check if there's a process running from the server's executable path
-            var allProcesses = Process.GetProcesses();
-            foreach (var process in allProcesses)
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            try
+            {
+                await rconService.ConnectAsync();
+                await rconService.SaveWorldAsync();
+                Logger.LogInfoToDiscord($"Successfully sent RCON command to server {serverConfig.ServerName}");
+                return true; // If command succeeds, server is online
+            }
+            catch (SocketException ex)
+            {
+                Logger.LogInfoToDiscord($"SocketException on server {serverConfig.ServerName}: {ex.Message}");
+                return false; // Assume server is offline on socket error
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfoToDiscord($"Failed to send RCON command to server {serverConfig.ServerName}: {ex.Message}");
+                return false; // If command fails, treat server as offline
+            }
+            finally
             {
                 try
                 {
-                    // Check if the process is a server process and if it's running from the expected path
-                    if ((process.ProcessName.Equals(serverExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(serverExePath, StringComparison.OrdinalIgnoreCase)) ||
-                        (process.ProcessName.Equals(asaApiLoaderExeName, StringComparison.OrdinalIgnoreCase) && process.MainModule.FileName.Equals(asaApiLoaderExePath, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        isServerRunning = true; // Set the flag to true if the server process is found
-                        break; // No need to continue checking once we found a running server
-                    }
+                    rconService.Dispose(); // Attempt to properly close the connection
                 }
                 catch (Exception ex)
                 {
-                    // This catch block can handle exceptions due to accessing process.MainModule which may require administrative privileges
-                    Logger.LogInfoToDiscord($"Error checking process: {ex.Message}");
+                    Logger.LogInfoToDiscord($"Error disposing RCON service for server {serverConfig.ServerName}: {ex.Message}");
                 }
             }
-
-            return isServerRunning; // Return the flag indicating whether the server is running
         }
+
+
 
         public async Task InitializeAsync(BotSettings settings)
         {
@@ -465,7 +662,7 @@ namespace Ark_Ascended_Manager.Services
                         .WithButton("Start", $"start_id:{serverConfig.ServerName}", ButtonStyle.Primary, disabled: false)
                         .WithButton("Shutdown", $"shutdown_id:{serverConfig.ServerName}", ButtonStyle.Danger)
                         .WithButton("Save World", $"save_world_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: false)
-                        .WithButton("Update", $"update_id:{serverConfig.ServerName}", ButtonStyle.Success, disabled: true)
+                        .WithButton("Update", $"update_id:{serverConfig.ServerName}", ButtonStyle.Success, disabled: false)
                         .WithButton("Manage", $"manage_id:{serverConfig.ServerName}", ButtonStyle.Secondary, disabled: true)
                         .Build();
 
@@ -603,6 +800,106 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
+        private Process GetServerProcess(string serverPath, string primaryExecutableName, string secondaryExecutableName)
+        {
+            Logger.LogInfoToDiscord($"Looking for server process with primary name: {primaryExecutableName} or secondary name: {secondaryExecutableName}");
+
+            Process process = null;
+
+            // Attempt to find the primary process
+            process = FindProcessByExecutableName(primaryExecutableName);
+            if (process != null)
+            {
+                return process;
+            }
+
+            // If not found, attempt to find the secondary process
+            process = FindProcessByExecutableName(secondaryExecutableName);
+            if (process != null)
+            {
+                return process;
+            }
+
+            Logger.LogInfoToDiscord("No matching server process found.");
+            return null;
+        }
+
+        private Process FindProcessByExecutableName(string executableName)
+        {
+            foreach (var process in Process.GetProcesses())
+            {
+                try
+                {
+                    if (string.Equals(Path.GetFileName(process.MainModule.FileName), executableName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Logger.LogInfoToDiscord($"Found process for server: {process.ProcessName}");
+                        return process;
+                    }
+                }
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 5) // Access denied
+                {
+                    if (process.ProcessName.Equals(executableName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Logger.LogInfoToDiscord($"Found process by name (without path due to access restrictions): {process.ProcessName}");
+                        return process;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInfoToDiscord($"Exception when accessing process {process.ProcessName}: {ex.Message}");
+                }
+            }
+
+            return null; // If not found
+        }
+
+
+        private long GetProcessMemoryUsage(Process process)
+        {
+            if (process != null)
+            {
+                try
+                {
+                    process.Refresh(); // Refresh to get the latest info
+                    return process.WorkingSet64 / 1024 / 1024; // Convert bytes to MB
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogInfoToDiscord($"Error getting memory usage: {ex.Message}");
+                }
+            }
+            return -1;
+        }
+
+        private double GetCpuUsageForProcess(Process process)
+        {
+            try
+            {
+                if (process == null)
+                    return 0;
+
+                var startTime = DateTime.UtcNow;
+                var startCpuUsage = process.TotalProcessorTime;
+                Thread.Sleep(500); // Wait time to measure CPU usage over
+
+                var endTime = DateTime.UtcNow;
+                var endCpuUsage = process.TotalProcessorTime;
+                var cpuUsedMs = (endCpuUsage - startCpuUsage).TotalMilliseconds;
+                var totalMsPassed = (endTime - startTime).TotalMilliseconds;
+
+                var cpuUsageTotal = cpuUsedMs / (Environment.ProcessorCount * totalMsPassed);
+
+                return cpuUsageTotal * 100; // Convert to percentage
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInfoToDiscord($"Error calculating CPU usage: {ex.Message}");
+                return 0;
+            }
+        }
+
+
+
 
 
 
@@ -613,54 +910,78 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task<Embed> CreateServerEmbed(DiscordServerConfig serverConfig)
         {
+            Process process = null;
             try
             {
+                string primaryExecutableName = "ArkAscendedServer.exe";
+                string secondaryExecutableName = "AsaApiLoader.exe";
+                string serverExecutablePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", primaryExecutableName);
+
+                Process serverProcess = GetServerProcess(serverExecutablePath, primaryExecutableName, secondaryExecutableName);
                 var playerCount = await GetCurrentPlayerCount(serverConfig);
+                var maxPlayers = serverConfig.MaxPlayerCount; // Assuming this is populated correctly
                 var isOnline = playerCount != "Offline";
-                Logger.LogInfoToDiscord($"Creating embed for {serverConfig.ServerName} - Status: {isOnline} - Players: {playerCount}");
+
+                // Fetch total physical memory (RAM)
+                var totalRam = GetTotalPhysicalMemory();
+
+                long ramUsage = GetProcessMemoryUsage(serverProcess);
+                double cpuUsage = GetCpuUsageForProcess(process);
+
+                long ramUsageMB = GetProcessMemoryUsage(serverProcess);
+                double ramUsageGB = ramUsageMB / 1024.0; // Convert MB to GB
+
+                ulong totalRamMB = GetTotalPhysicalMemory();
+                double totalRamGB = totalRamMB / 1024.0 / 1024.0;
+
                 var embed = new EmbedBuilder()
                     .WithTitle(serverConfig.ServerName)
                     .WithColor(isOnline ? Color.Green : Color.Red)
                     .AddField("Status", isOnline ? "Online" : "Offline", true)
                     .AddField("Map", serverConfig.MapName, true)
-                    .AddField("Server IP", serverConfig.ServerIP)
-                    .AddField("Players", $"{playerCount}/{serverConfig.MaxPlayerCount}", true)
-                    .WithThumbnailUrl($"{serverConfig.ServerIcon}")
+                    .AddField("Server IP", serverConfig.ServerIP, true)
+                    .AddField("Players", $"{playerCount}/{maxPlayers}", true)
+                    .AddField("RAM Usage", $"{ramUsageGB:N2} GB / {totalRamGB:N2} GB", true)
+                    .AddField("CPU Usage", $"{cpuUsage:N2}%", true)  // Display CPU usage
+                    .WithThumbnailUrl(serverConfig.ServerIcon)
                     .Build();
+
                 return embed;
             }
             catch (Exception ex)
             {
-                // If there is an RCON failure, we catch it here
-                Logger.LogInfoToDiscord($"RCON failure when getting player count for {serverConfig.ServerName}: {ex.Message}");
-
-                // Update the server status to offline due to RCON failure
-                serverConfig.ServerStatus = "Offline";
-                serverConfig.IsRunning = false;
-
-                // Now create an embed reflecting the offline status
-                var embed = new EmbedBuilder()
-                    .WithTitle(serverConfig.ServerName)
+                Logger.LogInfoToDiscord($"Error when creating server embed for {serverConfig.ServerName}: {ex.Message}");
+                return new EmbedBuilder()
+                    .WithTitle("Error")
+                    .WithDescription($"Failed to create embed for {serverConfig.ServerName}")
                     .WithColor(Color.Red)
-                    .AddField("Status", "Offline", true)
-                    .AddField("Map", serverConfig.MapName, true)
-                    .AddField("Server IP", serverConfig.ServerIP)
-                    .AddField("Players", $"0/{serverConfig.MaxPlayerCount}", true)
-                    .WithThumbnailUrl($"{serverConfig.ServerIcon}")
                     .Build();
-                return embed;
-
             }
         }
 
+      
+        
+            private static ulong GetTotalPhysicalMemory()
+                {
+                    ComputerInfo CI = new ComputerInfo();
+                    ulong totalPhysicalMemory = CI.TotalPhysicalMemory;
+                    return totalPhysicalMemory;
+                }
 
 
 
 
 
 
-    }
-    public class DiscordServerConfig
+
+
+
+
+
+
+
+}
+public class DiscordServerConfig
     {
         public string ChangeNumberStatus { get; set; }
         public bool IsMapNameOverridden { get; set; }
