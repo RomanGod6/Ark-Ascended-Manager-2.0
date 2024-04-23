@@ -62,6 +62,7 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<AddModToServerPage>();
                 services.AddTransient<PluginManagementAutoInstallPage>();
                 services.AddSingleton<ISettingsService, SettingsService>();
+                services.AddHostedService<ServerMonitoringService>();
 
 
 

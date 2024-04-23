@@ -48,14 +48,14 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             StopServerCommand = new RelayCommand<ServerConfig>(StopServer);
             UpdateServerCommand = new RelayCommand<ServerConfig>(UpdateServer);
             _statusUpdateTimer = new DispatcherTimer();
-            _statusUpdateTimer.Interval = TimeSpan.FromSeconds(5); // Set the desired interval
+            _statusUpdateTimer.Interval = TimeSpan.FromSeconds(1); // Set the desired interval
             _statusUpdateTimer.Tick += ServerStatusTimer_Tick;
             _statusUpdateTimer.Start();
             UpdateAllServersCommand = new RelayCommand(UpdateAllServers);
             StopAllServersCommand = new RelayCommand(StopAllServers);
             StartAllServersCommand = new RelayCommand(StartAllServers);
         }
-        private void ServerStatusTimer_Tick(object sender, EventArgs e)
+        public void ServerStatusTimer_Tick(object sender, EventArgs e)
         {
             var servers = LoadServerConfigs();
             bool anyServerStatusChanged = false;
