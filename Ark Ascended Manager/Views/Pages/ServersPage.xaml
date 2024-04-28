@@ -93,8 +93,15 @@
                                         <ToolTip Content="Start Server" />
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/play-solid.png" Width="20" Height="20"/>
-                            </Button>
-                            <Button Command="{Binding DataContext.StopServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
+                                </Button>
+                                <Button Command="{Binding DataContext.RestartServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
+                    CommandParameter="{Binding}" Margin="5">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Restart Server" />
+                                    </Button.ToolTip>
+                                    <Image Source="pack://application:,,,/Assets/restart.png" Width="20" Height="20"/>
+                                </Button>
+                                <Button Command="{Binding DataContext.StopServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
                                         <ToolTip Content="Stop Server" />

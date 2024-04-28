@@ -27,6 +27,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand SaveServerProfileCommand { get; }
         public ICommand StartServerCommand { get; private set; }
         public ICommand StopServerCommand { get; private set; }
+
+        public ICommand RestartServerCommand { get; private set; }
         public ICommand UpdateServerCommand { get; private set; }
         private DispatcherTimer _statusUpdateTimer;
         private ServerConfig _currentServerInfo;
@@ -46,6 +48,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             SaveServerProfileCommand = new RelayCommand<ServerConfig>(SaveServerProfileAndNavigate);
             StartServerCommand = new RelayCommand<ServerConfig>(StartServer);
             StopServerCommand = new RelayCommand<ServerConfig>(StopServer);
+            RestartServerCommand = new RelayCommand<ServerConfig>(RestartServer);
             UpdateServerCommand = new RelayCommand<ServerConfig>(UpdateServer);
             _statusUpdateTimer = new DispatcherTimer();
             _statusUpdateTimer.Interval = TimeSpan.FromSeconds(1); // Set the desired interval
@@ -197,6 +200,78 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                 // Optionally, disconnect after command execution
                 rconService.Dispose();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to shutdown server: {ex.Message}");
+            }
+        }
+
+        private async void RestartServer(ServerConfig serverConfig)
+        {
+            if (serverConfig == null)
+            {
+                System.Windows.MessageBox.Show("Server configuration is not provided.");
+                return;
+            }
+            if (!IsServerRunning(serverConfig))
+            {
+                System.Windows.MessageBox.Show("The server is not currently running.");
+                return;
+            }
+            await RemoveServerFromMonitoringAsync(serverConfig.ServerPath);
+
+            // Prompt the user for the countdown time
+            string timeInput = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the countdown time in minutes for shutdown:",
+                "Shutdown Timer",
+                "10"
+            );
+
+            if (!int.TryParse(timeInput, out int countdownMinutes))
+            {
+                System.Windows.MessageBox.Show("Invalid input for countdown timer.");
+                return;
+            }
+
+            // Prompt the user for the reason for shutdown
+            string reason = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter the reason for the shutdown:",
+                "Shutdown Reason",
+                "Maintenance"
+            );
+
+            if (string.IsNullOrEmpty(reason))
+            {
+                System.Windows.MessageBox.Show("No reason for shutdown provided.");
+                return;
+            }
+
+            try
+            {
+                // Display the server information in a MessageBox for debugging
+                string serverInfo = $"Server Name: {serverConfig.ServerName}\n" +
+                                    $"Server IP: {serverConfig.ServerIP}\n" +
+                                    $"RCON Port: {serverConfig.RCONPort}\n" +
+                                    $"Admin Password: {serverConfig.AdminPassword}";
+                System.Windows.MessageBox.Show(serverInfo, "Server Information");
+
+                // Create an instance of ArkRCONService using server details
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+
+                // Connect to RCON
+                await rconService.ConnectAsync();
+
+                // Initiate server shutdown with the user-defined countdown and reason
+                await rconService.ShutdownServerAsync(countdownMinutes, reason);
+
+                // Optionally, disconnect after command execution
+                rconService.Dispose();
+
+
+                Thread.Sleep(20000);
+
+                StartServer(serverConfig);
             }
             catch (Exception ex)
             {
