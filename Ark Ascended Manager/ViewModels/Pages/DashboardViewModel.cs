@@ -1,18 +1,15 @@
-﻿using Ark_Ascended_Manager.Models; // Make sure to use the correct namespace where ServerProfile is defined
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
+using Ark_Ascended_Manager.Resources;
 
 public class DashboardViewModel
 {
-    public ObservableCollection<ServerProfile> ServerProfiles { get; set; } // Use ServerProfile type
+    public Visibility AdminWarningVisibility { get; private set; }
+    public Visibility AdminButtonVisibility { get; private set; }
 
     public DashboardViewModel()
     {
-      
+        bool isAdmin = AppAdminChecker.IsRunningAsAdministrator();
+        AdminWarningVisibility = isAdmin ? Visibility.Collapsed : Visibility.Visible;
+        AdminButtonVisibility = isAdmin ? Visibility.Collapsed : Visibility.Visible;
     }
-
-    
-
 }

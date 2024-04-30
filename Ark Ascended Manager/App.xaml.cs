@@ -15,6 +15,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using Ark_Ascended_Manager.Services;
+using Ark_Ascended_Manager.Resources;
+using System.Diagnostics;
 
 namespace Ark_Ascended_Manager
 {
@@ -97,6 +99,20 @@ namespace Ark_Ascended_Manager
         /// </summary>
         private void OnStartup(object sender, StartupEventArgs e)
         {
+            if (!AppAdminChecker.IsRunningAsAdministrator())
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "This application requires administrative privileges to function correctly. " +
+                    "Would you like to restart as an administrator?",
+                    "Restart as Administrator?",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    RestartAsAdministrator();
+                }
+            }
             _host.Start();
             var settingsService = _host.Services.GetService<ISettingsService>();
             settingsService?.LoadSettings();
@@ -115,6 +131,26 @@ namespace Ark_Ascended_Manager
             // Retrieve the ServerManager instance and start it
             // If ServerManager has a start method, call it here
             // serverManager.Start();
+        }
+
+        private void RestartAsAdministrator()
+        {
+            var exePath = System.IO.Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe");
+            var startInfo = new ProcessStartInfo(exePath)
+            {
+                Verb = "runas",
+                UseShellExecute = true
+            };
+
+            try
+            {
+                Process.Start(startInfo);
+                Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to restart as administrator: " + ex.Message);
+            }
         }
 
 
