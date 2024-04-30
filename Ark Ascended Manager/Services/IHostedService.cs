@@ -102,10 +102,42 @@ namespace Ark_Ascended_Manager.Services
             string serverExeName = Path.GetFileNameWithoutExtension("ArkAscendedServer.exe");
             string serverExePath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkAscendedServer.exe");
 
-            var allProcesses = Process.GetProcesses();
-            return allProcesses.Any(process => process.ProcessName.Equals(serverExeName, StringComparison.OrdinalIgnoreCase) &&
-                                               process.MainModule.FileName.Equals(serverExePath, StringComparison.OrdinalIgnoreCase));
+            Logger.Log($"Checking if server is running: {serverExePath}");
+
+            try
+            {
+                var matchingProcesses = Process.GetProcessesByName(serverExeName);
+                if (matchingProcesses.Length == 0)
+                {
+                    Logger.Log($"No processes found with the name {serverExeName}.");
+                }
+
+                return matchingProcesses.Any(process =>
+                {
+                    try
+                    {
+                        bool isMatch = process.MainModule.FileName.Equals(serverExePath, StringComparison.OrdinalIgnoreCase);
+                        if (isMatch)
+                        {
+                            Logger.Log($"Found running server process at {process.MainModule.FileName}");
+                        }
+                        return isMatch;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log specific details about the process that caused the exception, if accessible
+                        Logger.Log($"Failed to access main module for process {process.Id}: {ex.Message}");
+                        return false; // Assume not the right process if we can't access the main module
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error retrieving processes by name '{serverExeName}': {ex.Message}");
+                return false; // If there's an error in getting processes, assume not running
+            }
         }
+
 
         private void SaveServerConfigs(List<ServerConfig> servers)
         {
