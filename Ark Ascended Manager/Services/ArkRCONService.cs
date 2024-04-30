@@ -15,12 +15,11 @@ namespace Ark_Ascended_Manager.Services
         private bool _isConnected = false;
         private readonly bool _tryLocalhostFirst;
 
-        public ArkRCONService(string ip, ushort port, string password, bool tryLocalhostFirst)
+        public ArkRCONService(string ip, ushort port, string password, bool tryLocalhostFirst = true)
         {
             _serverIP = IPAddress.Parse(ip);
             _serverPort = port;
             _password = password;
-            _tryLocalhostFirst = tryLocalhostFirst;
             _tryLocalhostFirst = tryLocalhostFirst;
         }
 

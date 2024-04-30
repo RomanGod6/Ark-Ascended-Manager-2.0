@@ -383,13 +383,22 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
         private void SaveAllSettings()
         {
+            if (CurrentServerConfig.ServerStatus == "Online")
+            {
+                // If the server is online, inform the user that settings cannot be saved
+                System.Windows.MessageBox.Show("Cannot save settings while the server is online. Please shut the server down and then resave.", "Save Aborted", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return; // Exit the method without saving settings
+            }
+
+            // Proceed with saving settings if the server is not online
             SaveGameIniSettings();
             SaveGameUserSettings();
             UpdateCurrentServerAdminPassword();
-          
-            // Display a message box to inform the user that the settings have been saved
+
+            // Display a message box to inform the user that the settings have been saved successfully
             System.Windows.MessageBox.Show("Settings have been saved successfully.", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
 
         public async Task UpdateCurrentServerIPAddress()
         {
