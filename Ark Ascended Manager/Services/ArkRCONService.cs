@@ -13,40 +13,47 @@ namespace Ark_Ascended_Manager.Services
         private readonly ushort _serverPort;
         private readonly string _password;
         private bool _isConnected = false;
+        private readonly bool _tryLocalhostFirst;
 
-        public ArkRCONService(string ip, ushort port, string password)
+        public ArkRCONService(string ip, ushort port, string password, bool tryLocalhostFirst)
         {
             _serverIP = IPAddress.Parse(ip);
             _serverPort = port;
             _password = password;
+            _tryLocalhostFirst = tryLocalhostFirst;
+            _tryLocalhostFirst = tryLocalhostFirst;
         }
 
         public async Task ConnectAsync()
         {
             if (_isConnected) return;
 
-            // Attempt to connect using both localhost and the provided IP
-            IPAddress[] addressesToTry = { IPAddress.Parse("127.0.0.1"), _serverIP };
+            IPAddress[] addressesToTry = _tryLocalhostFirst
+                ? new[] { IPAddress.Parse("127.0.0.1"), _serverIP }
+                : new[] { _serverIP, IPAddress.Parse("127.0.0.1") };
 
             foreach (var address in addressesToTry)
             {
+                Logger.LogInfoToDiscord($"Attempting RCON connection to {address}:{_serverPort}");
+
                 _rconClient = new RCON(address, _serverPort, _password);
                 try
                 {
                     await _rconClient.ConnectAsync();
-                    // Perform a simple command to check if connection is truly established
                     await _rconClient.SendCommandAsync("listplayers");
                     _isConnected = true;
-                    return; // Exit the loop and method if connection is successful
+                    Logger.LogInfoToDiscord($"Successfully connected to RCON on {address}:{_serverPort}");
+                    return;
                 }
                 catch (Exception ex)
                 {
+                    Logger.LogInfoToDiscord($"Failed to connect to {address}:{_serverPort} - {ex.GetType().Name}: {ex.Message}");
                     _rconClient?.Dispose(); // Dispose before the next attempt
                 }
             }
 
-            // If this point is reached, all connection attempts have failed
             _isConnected = false;
+            Logger.LogInfoToDiscord("Could not connect to RCON server on any address.");
             throw new InvalidOperationException("Could not connect to RCON server on any address.");
         }
 
