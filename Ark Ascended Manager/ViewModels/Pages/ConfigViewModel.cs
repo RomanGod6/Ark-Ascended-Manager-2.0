@@ -2606,8 +2606,12 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             get { return _dinoCountMultiplier; }
             set
             {
-                _dinoCountMultiplier = value;
-                OnPropertyChanged(nameof(DinoCountMultiplier)); // Notify the UI of the change
+                if (_dinoCountMultiplier != value)
+                {
+                    Logger.Log($"DinoCountMultiplier changed from {_dinoCountMultiplier} to {value} by {Environment.UserName} at {DateTime.Now}.");
+                    _dinoCountMultiplier = value;
+                    OnPropertyChanged(nameof(DinoCountMultiplier)); 
+                }
             }
         }
         private string _dayTimeSpeedScale;
