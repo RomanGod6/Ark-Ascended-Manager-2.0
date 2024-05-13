@@ -190,7 +190,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show(serverInfo, "Server Information");
 
                 // Create an instance of ArkRCONService using server details
-                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
 
                 // Connect to RCON
                 await rconService.ConnectAsync();
@@ -257,7 +257,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show(serverInfo, "Server Information");
 
                 // Create an instance of ArkRCONService using server details
-                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
 
                 // Connect to RCON
                 await rconService.ConnectAsync();

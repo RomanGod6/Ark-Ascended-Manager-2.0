@@ -90,8 +90,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 if (_gameiniContent != value)
                 {
+                    Logger.Log($"Updating GameIniContent. Old Value: {_gameiniContent}, New Value: {value}");
                     _gameiniContent = value;
                     OnPropertyChanged(nameof(GameIniContent));
+                    Logger.Log("GameIniContent updated.");
                 }
             }
         }
@@ -357,15 +359,28 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public string Server { get; set; }
         }
 
-        private void LoadCustomGAMEIniFile()
+        public void LoadCustomGAMEIniFile()
         {
-            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
-            string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
-            if (File.Exists(filePath))
+            Logger.Log("Loading GAME INI file.");
+            try
             {
-                GameIniContent = File.ReadAllText(filePath);
+                string filePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
+                if (File.Exists(filePath))
+                {
+                    GameIniContent = File.ReadAllText(filePath);
+                    Logger.Log("GAME INI file loaded successfully.");
+                }
+                else
+                {
+                    Logger.Log("GAME INI file not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error loading GAME INI file: {ex.Message}");
             }
         }
+
 
 
         public void LoadJsonForSelectedPlugin(string selectedPlugin)
@@ -693,15 +708,22 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 IniContent = File.ReadAllText(filePath);
             }
         }
-        private void SaveCustomGUSIniFile()
+        public void SaveCustomGUSIniFile()
         {
-            // Save the IniContent back to the file
-            string serverPath = CurrentServerConfig.ServerPath; // Assuming ServerPath is the correct property
+            Logger.Log("Saving custom GUS INI file.");
+            string serverPath = CurrentServerConfig.ServerPath;
             string filePath = Path.Combine(serverPath, "ShooterGame", "Saved", "Config", "WindowsServer", "GameUserSettings.ini");
-            File.WriteAllText(filePath, IniContent);
-            System.Windows.MessageBox.Show("GUS file saved successfully.");
-
+            try
+            {
+                File.WriteAllText(filePath, IniContent);
+                Logger.Log("GUS INI file saved successfully at " + filePath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Failed to save GUS INI file: {ex.Message}");
+            }
         }
+
         private void DeleteServer()
         {
             // Show confirmation dialog and get the user input
@@ -780,20 +802,18 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private void LoadServerProfile()
         {
-            // Define the path where the JSON is saved
+            Logger.Log("Loading server profile.");
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "currentServerConfig.json");
-
-            // Check if the file exists
             if (File.Exists(filePath))
             {
-                // Read the JSON from the file
+                Logger.Log($"Reading server profile from {filePath}");
                 string json = File.ReadAllText(filePath);
-
-                // Deserialize the JSON to a ServerConfig object
                 CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
-                
-
-               
+                Logger.Log($"Loaded server profile for {CurrentServerConfig.ServerName}");
+            }
+            else
+            {
+                Logger.Log("Server profile file not found.");
             }
             LoadIniFile();
             LoadGameIniFile();
@@ -903,6 +923,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public async Task InitiateServerShutdownAsync()
         {
+
             if (CurrentServerConfig == null)
             {
                 System.Windows.MessageBox.Show("Server configuration is not provided.");
@@ -940,6 +961,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show("No reason for shutdown provided.");
                 return;
             }
+            Logger.Log("Initiating server shutdown.");
 
             try
             {
@@ -951,7 +973,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show(serverInfo, "Server Information");
 
                 // Create an instance of ArkRCONService using server details
-                var rconService = new ArkRCONService(CurrentServerConfig.ServerIP, (ushort)CurrentServerConfig.RCONPort, CurrentServerConfig.AdminPassword);
+                var rconService = new ArkRCONService(CurrentServerConfig.ServerIP, (ushort)CurrentServerConfig.RCONPort, CurrentServerConfig.AdminPassword, CurrentServerConfig.ServerPath);
 
                 // Connect to RCON
                 await rconService.ConnectAsync();
@@ -961,10 +983,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
                 // Optionally, disconnect after command execution
                 rconService.Dispose();
+                Logger.Log("Server shutdown initiated successfully.");
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"Failed to shutdown server: {ex.Message}");
+                Logger.Log($"Failed to initiate server shutdown: {ex.Message}");
             }
         }
 
@@ -1018,7 +1042,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 System.Windows.MessageBox.Show(serverInfo, "Server Information");
 
                 // Create an instance of ArkRCONService using server details
-                var rconService = new ArkRCONService(CurrentServerConfig.ServerIP, (ushort)CurrentServerConfig.RCONPort, CurrentServerConfig.AdminPassword);
+                var rconService = new ArkRCONService(CurrentServerConfig.ServerIP, (ushort)CurrentServerConfig.RCONPort, CurrentServerConfig.AdminPassword, CurrentServerConfig.ServerPath);
 
                 // Connect to RCON
                 await rconService.ConnectAsync();
@@ -2413,15 +2437,15 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             var lines = File.ReadAllLines(iniFilePath).ToList();
 
             // Update specific lines
-            UpdateLine(ref lines, "ServerSettings", "HarvestAmountMultiplier", HarvestAmountMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "DayTimeSpeedScale", DayTimeSpeedScale);
-            UpdateLine(ref lines, "ServerSettings", "DayCycleSpeedScale", DayCycleSpeedScale);
-            UpdateLine(ref lines, "ServerSettings", "NightTimeSpeedScale", NightTimeSpeedScale);
-            UpdateLine(ref lines, "ServerSettings", "DinoCountMultiplier", DinoCountMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "BaseTemperatureMultiplier", BaseTemperatureMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "HarvestHealthMultiplier", HarvestHealthMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "HarvestAmountMultiplier", HarvestAmountMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DayTimeSpeedScale", DayTimeSpeedScale ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DayCycleSpeedScale", DayCycleSpeedScale ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "NightTimeSpeedScale", NightTimeSpeedScale ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DinoCountMultiplier", DinoCountMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "BaseTemperatureMultiplier", BaseTemperatureMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "HarvestHealthMultiplier", HarvestHealthMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "AllowThirdPersonPlayer", AllowThirdPersonPlayer.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvE", AllowCaveBuildingPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvP", AllowCaveBuildingPvP.ToString());
@@ -2450,13 +2474,13 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "ServerPvE", ServerPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
             UpdateLine(ref lines, "ServerSettings", "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "DinoResistanceMultiplier", DinoResistanceMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "DinoDamageMultiplier", DinoDamageMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoResistanceMultiplier", DinoResistanceMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DinoDamageMultiplier", DinoDamageMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "TamedDinoResistanceMultiplier", TamedDinoResistanceMultiplier);
             UpdateLine(ref lines, "ServerSettings", "TamingSpeedMultiplier", TamingSpeedMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "XPMultiplier", XPMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "DinoCharacterHealthRecoveryMultiplier", DinoCharacterHealthRecoveryMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "DinoCharacterHealthRecoveryMultiplier", DinoCharacterHealthRecoveryMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "EnablePVPGamma", EnablePVPGamma.ToString());
             UpdateLine(ref lines, "ServerSettings", "EnablePVEGamma", EnablePVEGamma.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
@@ -2483,8 +2507,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "PerPlatformMaxStructuresMultiplier", PerPlatformMaxStructuresMultiplier);
             UpdateLine(ref lines, "ServerSettings", "ForceAllStructureLocking", ForceAllStructureLocking.ToString());
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier);
+            UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyStructures", AutoDestroyStructures.ToString());
             UpdateLine(ref lines, "ServerSettings", "UseVSync", UseVSync.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventSpawnAnimations", PreventSpawnAnimations.ToString());
@@ -2550,48 +2574,42 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             }
         }
 
-        private void UpdateLine(ref List<string> lines, string header, string key, string newValue)
+        private void UpdateLine(ref List<string> lines, string header, string key, string value)
         {
-            // Null checks to prevent NullReferenceException
-            if (lines == null) throw new ArgumentNullException(nameof(lines));
-            if (header == null) throw new ArgumentNullException(nameof(header));
-            if (key == null) throw new ArgumentNullException(nameof(key));
+            // Convert empty strings to null to ensure the default is applied
+            string newValue = string.IsNullOrEmpty(value) ? "1.0" : value;
 
-            // Ensure that the new value is not null, if it is null replace with empty string
-            newValue ??= "";
+            if (string.IsNullOrEmpty(value))  // Log if default is being applied
+            {
+                Logger.Log($"Default value '1.0' applied for {key} under {header} because provided value was '{value}'.");
+            }
 
-            // Ensure the header is formatted correctly
             string formattedHeader = $"[{header}]";
-
-            // Find the index of the header, if it doesn't exist, add it
             int headerIndex = lines.FindIndex(line => line.Trim().Equals(formattedHeader, StringComparison.OrdinalIgnoreCase));
             if (headerIndex == -1)
             {
-                // Append the new section at the end of the file
                 lines.Add(formattedHeader);
                 lines.Add($"{key}={newValue}");
+                Logger.Log($"Added new section [{header}] with {key}={newValue}.");
                 return;
             }
 
-            // Calculate the range of lines under this header
             int sectionStart = headerIndex + 1;
             int sectionEnd = lines.FindIndex(sectionStart, line => line.Trim().StartsWith("[") && line.Trim().EndsWith("]"));
             sectionEnd = (sectionEnd == -1) ? lines.Count : sectionEnd;
 
-            // Find the index of the key within the section
             int keyIndex = lines.FindIndex(sectionStart, sectionEnd - sectionStart, line => line.Trim().StartsWith($"{key}=", StringComparison.OrdinalIgnoreCase));
-
             if (keyIndex != -1)
             {
-                // If the key exists, update it
                 lines[keyIndex] = $"{key}={newValue}";
             }
             else
             {
-                // If the key doesn't exist, add it at the end of the section
                 lines.Insert(sectionEnd, $"{key}={newValue}");
+                Logger.Log($"Added new key {key} with value {newValue} under section [{header}].");
             }
         }
+
 
 
 
@@ -4484,16 +4502,16 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "HarvestXPMultiplier", HarvestXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftXPMultiplier", CraftXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier ?? "1.0");
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoTorporDrainMultiplier", TamedDinoTorporDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedDinoCharacterFoodDrainMultiplier", TamedDinoCharacterFoodDrainMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoCharacterFoodDrainMultiplier", WildDinoCharacterFoodDrainMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerResistanceMultiplier", PlayerResistanceMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SpecialXPMultiplier", SpecialXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FuelConsumptionIntervalMultiplier", FuelConsumptionIntervalMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PhotoModeRangeLimit", PhotoModeRangeLimit);

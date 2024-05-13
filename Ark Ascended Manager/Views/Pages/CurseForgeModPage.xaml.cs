@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace Ark_Ascended_Manager.Views.Pages
@@ -28,6 +29,21 @@ namespace Ark_Ascended_Manager.Views.Pages
             DataContext = this;
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             FetchModsAsync(); // Load mods when the page is initialized
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                {
+                    RoutedEvent = UIElement.MouseWheelEvent,
+                    Source = sender
+                };
+                var parent = ((System.Windows.Controls.Control)sender).Parent as UIElement;
+                parent?.RaiseEvent(eventArg);
+            }
         }
 
         private async Task FetchModsAsync(string searchFilter = "")

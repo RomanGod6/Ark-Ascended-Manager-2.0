@@ -9,8 +9,7 @@
     xmlns:models="clr-namespace:Ark_Ascended_Manager.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="ServersPage"
-    d:DataContext="{d:DesignInstance local:ServersPage,
-                                     IsDesignTimeCreatable=False}"
+    d:DataContext="{d:DesignInstance local:ServersPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -18,111 +17,67 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="True"
     mc:Ignorable="d">
-    
 
     <Grid>
- 
-
-        <!-- Create Server Button -->
-        <Button Content="Create Server"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="0,10,115,0"
-            Click="CreateServer_Click" />
-
-        <!-- Sync Servers Button -->
-        <Button Content="Sync Servers"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="10"
-            Click="SyncServers_Click" />
-
-        <!-- Import Servers Button -->
-        <Button Content="Import Server"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="0,10,226,0"
-            Click="ImportServers_Click" />
-
-
-        <Button Content="Update All Servers"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Top"
-        Margin="0,10,339,0"
-        Command="{Binding UpdateAllServersCommand}" />
-
-
-
-        <Button Content="Stop All Servers"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Top"
-        Margin="0,10,481,0"
-        Command="{Binding StopAllServersCommand}" />
-
-        <Button Content="Start All Servers"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Top"
-        Margin="0,10,606,0"
-        Command="{Binding StartAllServersCommand}" />
-
-
-
-
-
-        <!-- Servers list -->
-        <!-- Servers list -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="2" Margin="10,56,0,0">
-            <ItemsControl ItemsSource="{Binding ServerConfigs}" Height="Auto">
+        <!-- Main ScrollViewer covering entire Grid except top 50 pixels for buttons -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="2" Margin="0,50,0,0"  PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+            <ItemsControl ItemsSource="{Binding ServerConfigs}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <WrapPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="10">
-                            
+                        <StackPanel Margin="10"  PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                             <Button Command="{Binding DataContext.SaveServerProfileCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
-                            CommandParameter="{Binding}">
+                CommandParameter="{Binding}">
                                 <controls:ServerCard Margin="5"/>
                             </Button>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1,0,0">
                                 <Button Command="{Binding DataContext.StartServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Start Server" />
+                                        <ToolTip Content="Start Server"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/play-solid.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.RestartServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Restart Server" />
+                                        <ToolTip Content="Restart Server"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/restart.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.StopServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Stop Server" />
+                                        <ToolTip Content="Stop Server"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/stop-solid.png" Width="20" Height="20"/>
-                            </Button>
-                            <Button Command="{Binding DataContext.UpdateServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
+                                </Button>
+                                <Button Command="{Binding DataContext.UpdateServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Update Server" />
+                                        <ToolTip Content="Update Server"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/circle-update-solid.png" Width="20" Height="20"/>
-                            </Button>
-                                
-                        </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
 
-
+        <!-- Buttons at the top -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10,10,0"  PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+            <Button Content="Create Server" Margin="5,0" Click="CreateServer_Click" />
+            <Button Content="Sync Servers" Margin="5,0" Click="SyncServers_Click" />
+            <Button Content="Import Server" Margin="5,0" Click="ImportServers_Click" />
+            <Button Content="Update All Servers" Margin="5,0" Command="{Binding UpdateAllServersCommand}" />
+            <Button Content="Stop All Servers" Margin="5,0" Command="{Binding StopAllServersCommand}" />
+            <Button Content="Start All Servers" Margin="5,0" Command="{Binding StartAllServersCommand}" />
+        </StackPanel>
     </Grid>
 </Page>

@@ -27,8 +27,8 @@
             <Button Content="Previous" Click="PreviousButton_Click" Margin="10"/>
             <Button Content="Next" Click="NextButton_Click" Margin="10"/>
         </StackPanel>
-
-        <!-- Mods ListView -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="2" Margin="0,50,0,0"  PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+            <!-- Mods ListView -->
         <ListView Grid.Row="1" ItemsSource="{Binding Mods}" Margin="10" SelectionChanged="ModListView_SelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -44,6 +44,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        </ScrollViewer>
 
     </Grid>
 </Page>

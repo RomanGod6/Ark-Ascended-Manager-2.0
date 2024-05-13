@@ -177,7 +177,7 @@ namespace Ark_Ascended_Manager.Services
 
         public async Task<bool> NotifyServerUpdateAndCheckOnline(ServerConfig serverConfig)
         {
-            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
             try
             {
                 await rconService.ConnectAsync();
@@ -330,7 +330,7 @@ namespace Ark_Ascended_Manager.Services
 
         private async Task StopServer(DiscordServerConfig serverConfig)
         {
-            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
             try
             {
                 await rconService.ConnectAsync();
@@ -363,7 +363,7 @@ namespace Ark_Ascended_Manager.Services
 
             try
             {
-                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
                 await rconService.ConnectAsync();
                 await rconService.SaveWorldAsync();
                 await component.FollowupAsync($"World save initiated for {serverName}.");
@@ -471,7 +471,7 @@ namespace Ark_Ascended_Manager.Services
             try
             {
                 var serverConfig = ConvertToServerConfig(discordServerConfig);
-                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+                var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
                 await rconService.ConnectAsync();
 
                 // Inform about the initiation of the countdown
@@ -511,7 +511,7 @@ namespace Ark_Ascended_Manager.Services
 
         public async Task<bool> IsServerOnlineUsingRCON(ServerConfig serverConfig)
         {
-            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
             try
             {
                 await rconService.ConnectAsync();
@@ -824,7 +824,7 @@ namespace Ark_Ascended_Manager.Services
             }
 
             // If the status is not known, try to connect and get the player count.
-            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword);
+            var rconService = new ArkRCONService(serverConfig.ServerIP, (ushort)serverConfig.RCONPort, serverConfig.AdminPassword, serverConfig.ServerPath);
             try
             {
                 await rconService.ConnectAsync();

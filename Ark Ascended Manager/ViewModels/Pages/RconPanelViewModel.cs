@@ -99,7 +99,28 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
-        
+        private bool isConnected = false;
+        private async Task EnsureRconConnection(ServerProfile profile)
+        {
+            if (rcon == null || !isConnected)
+            {
+                try
+                {
+                    rcon = new CoreRCON.RCON(IPAddress.Parse(profile.ServerIP), (ushort)profile.RCONPort, profile.AdminPassword);
+                    await rcon.ConnectAsync();
+                    isConnected = true;
+                    RconStatus = "Online";
+                }
+                catch (Exception ex)
+                {
+                    isConnected = false;
+                    RconStatus = "Offline";
+                    Ark_Ascended_Manager.Services.Logger.Log($"Failed to initialize RCON connection: {ex.Message}");
+                    throw; // Consider re-throwing to allow upper layers to handle connection failures
+                }
+            }
+        }
+
 
         private void CopySelectedPlayerIdToClipboard(object parameter)
         {
@@ -305,34 +326,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private async Task UpdatePlayerList()
         {
-            if (_selectedServerProfile == null)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    RconStatus = "Disconnected";
-                    ConnectedPlayers.Clear();
-                });
-                _updateTimer.Stop();
-                return;
-            }
-
             try
             {
                 var playersList = await SendRconCommandAsync(_selectedServerProfile, "ListPlayers");
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // Here, we assume that if the command is sent successfully, the server is online.
-                    RconStatus = "Online"; // Set the status to Online by default.
-
-                    if (playersList.Count == 0)
-                    {
-                        RconStatus = "No Players Connected"; // Now this indicates no players, but server is online.
-                        ConnectedPlayers.Clear();
-                    }
-                    else
-                    {
-                        ConnectedPlayers = new ObservableCollection<string>(playersList);
-                    }
+                    ConnectedPlayers = new ObservableCollection<string>(playersList);
                 });
             }
             catch
@@ -344,6 +343,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 });
             }
         }
+
+
 
 
 
@@ -397,9 +398,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void Dispose()
         {
+            if (rcon != null)
+            {
+                rcon.Dispose();  // This will trigger the internal disconnection logic.
+                isConnected = false;
+                rcon = null;
+            }
             _updateTimer?.Dispose();
             _chatUpdateTimer?.Dispose();
+            _connectionCheckTimer?.Dispose();
         }
+
+
+
+
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -423,6 +435,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             public string ServerName { get; set; }
             public int RCONPort { get; set; }
+            public string ServerIP { get; set; }
             public string AdminPassword { get; set; }
             // Other properties...
         }
@@ -471,39 +484,35 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                Ark_Ascended_Manager.Services.Logger.Log($"Attempting to send RCON command to server: {profile.ServerName}, Command: {command}");
+                await EnsureRconConnection(profile);
 
-                if (rcon == null)
-                {
-                    await InitializeRconConnection(profile);
-                }
-
-                Ark_Ascended_Manager.Services.Logger.Log("Sending RCON command...");
                 string output = await rcon.SendCommandAsync(command);
-                Ark_Ascended_Manager.Services.Logger.Log($"RCON command sent. Output: {output}");
-
-                // Check if the response is empty or contains any error messages
-                if (string.IsNullOrWhiteSpace(output))
-                {
-                    Ark_Ascended_Manager.Services.Logger.Log("RCON response is empty.");
-                    result.Add("RCON response is empty.");
-                }
-                else
-                {
-                    // Process the output if needed
-                    // ...
-
-                    // Add the response lines to the result
-                    result.AddRange(output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
-                }
+                result.AddRange(ParseCommandOutput(output));
             }
             catch (Exception ex)
             {
+                result.Add($"Error sending command: {ex.Message}");
                 Ark_Ascended_Manager.Services.Logger.Log($"Exception sending RCON command: {ex}");
-                result.Add("Error sending command: " + ex.Message);
             }
 
             return result;
+        }
+
+        private List<string> ParseCommandOutput(string output)
+        {
+            if (string.IsNullOrWhiteSpace(output))
+            {
+                return new List<string> { "RCON response is empty." };
+            }
+
+            return output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        }
+
+
+        public void Disconnect()
+        {
+            Dispose();
+            RconStatus = "Offline";
         }
 
 
