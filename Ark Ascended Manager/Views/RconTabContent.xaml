@@ -83,13 +83,68 @@
                              BorderThickness="0" 
                              Padding="10"/>
                 </TabItem>
+                <TabItem Header="Commands">
+                    <StackPanel Margin="10">
+                        <ListView ItemsSource="{Binding Commands}" SelectedItem="{Binding SelectedCommand}" Margin="0,10,0,0" Background="#3C3F41" Foreground="White" BorderThickness="0">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Display" DisplayMemberBinding="{Binding Display}" Width="150"/>
+                                    <GridViewColumn Header="Command" DisplayMemberBinding="{Binding Command}" Width="200"/>
+                                    <GridViewColumn Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Delete" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBox x:Name="CommandDisplayTextBox" 
+                                     Text="{Binding NewCommandDisplay, UpdateSourceTrigger=PropertyChanged}" 
+                                     Width="150" 
+                                     Margin="0,0,10,0" 
+                                     Background="#1E1E1E" 
+                                     Foreground="White" 
+                                     BorderBrush="#555" 
+                                     BorderThickness="1" 
+                                     Padding="5"/>
+                            <TextBox x:Name="CommandTextBox" 
+                                     Text="{Binding NewCommand, UpdateSourceTrigger=PropertyChanged}" 
+                                     Width="300" 
+                                     Margin="0,0,10,0" 
+                                     Background="#1E1E1E" 
+                                     Foreground="White" 
+                                     BorderBrush="#555" 
+                                     BorderThickness="1" 
+                                     Padding="5"/>
+                            <Button Content="Add" Command="{Binding AddCommand}" Width="100" Height="30" Background="#007ACC" Foreground="White" BorderBrush="#007ACC" BorderThickness="0" Padding="5" Cursor="Hand"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
             </TabControl>
         </Border>
 
         <!-- Bottom Command Section -->
         <Border Grid.Row="2" Grid.ColumnSpan="2" Background="#3C3F41" Margin="5" BorderThickness="1" BorderBrush="#555" Padding="10" CornerRadius="5">
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" Width="600" Height="30" Margin="0,0,10,0" Background="#1E1E1E" Foreground="White" BorderBrush="#555" BorderThickness="1" Padding="5"/>
+                <ComboBox ItemsSource="{Binding Commands}" 
+                          DisplayMemberPath="Display" 
+                          SelectedItem="{Binding SelectedCommand}" 
+                          Width="150" 
+                          Margin="0,0,10,0" 
+                          Background="#1E1E1E" 
+                          Foreground="White"/>
+                <TextBox Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="600" 
+                         Height="30" 
+                         Margin="0,0,10,0" 
+                         Background="#1E1E1E" 
+                         Foreground="White" 
+                         BorderBrush="#555" 
+                         BorderThickness="1" 
+                         Padding="5"/>
                 <Button Content="Send" Command="{Binding SendCommand}" Width="100" Height="30" Background="#007ACC" Foreground="White" BorderBrush="#007ACC" BorderThickness="0" Padding="5" Cursor="Hand"/>
             </StackPanel>
         </Border>

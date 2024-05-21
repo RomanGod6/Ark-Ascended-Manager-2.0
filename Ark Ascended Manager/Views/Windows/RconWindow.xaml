@@ -5,9 +5,11 @@
         Background="#1E1E1E"
         Foreground="White">
     <Window.Resources>
-        <!-- TabItem Style -->
-        <Style TargetType="TabItem">
+        <!-- Modern TabItem Style -->
+        <Style x:Key="ClosableTabItemStyle" TargetType="TabItem">
             <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="Padding" Value="5,0,5,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -16,13 +18,17 @@
                                 CornerRadius="10,10,0,0"
                                 BorderBrush="Transparent"
                                 BorderThickness="0,0,1,0"
-                                Padding="10,5">
+                                Padding="5,0">
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
                                 <ContentPresenter x:Name="ContentSite"
                                                   VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"
+                                                  HorizontalAlignment="Left"
                                                   ContentSource="Header"
-                                                  Margin="12,2"/>
+                                                  Margin="10,0"/>
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -41,6 +47,34 @@
             <Setter Property="Background" Value="#3C3F41"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Close Button Style -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent"
+                                CornerRadius="0">
+                            <TextBlock Text="X"
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextBlock.Foreground" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
         </Style>
 
         <!-- TabControl Style -->

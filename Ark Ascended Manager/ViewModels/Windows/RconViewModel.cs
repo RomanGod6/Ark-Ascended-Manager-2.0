@@ -8,6 +8,7 @@ using System.Timers;
 using System.Windows.Input;
 using Ark_Ascended_Manager.Services;
 using CommunityToolkit.Mvvm.Input;
+using Newtonsoft.Json;
 
 namespace Ark_Ascended_Manager.ViewModels.Windows
 {
@@ -18,23 +19,42 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
         public string SteamID { get; set; }
     }
 
+    public class CommandMapping
+    {
+        public string Display { get; set; }
+        public string Command { get; set; }
+    }
+
+    public class CommandConfig
+    {
+        public ObservableCollection<CommandMapping> Commands { get; set; }
+    }
+
     public class RconViewModel : INotifyPropertyChanged
     {
         private string _serverPath;
         private string _adminPassword;
         private int _rconPort;
         private FileSystemWatcher _logFileWatcher;
+        private FileSystemWatcher _debugLogWatcher;
         private string _serverIP;
         private string _serverName;
         private string _chatLog;
         private string _logFileContent;
+        private string _debugLogContent;
         private string _commandInput;
+        private string _newCommandDisplay;
+        private string _newCommand;
         private ArkRCONService _rconService;
         private ObservableCollection<Player> _players;
         private System.Timers.Timer _chatTimer;
         private HashSet<string> _receivedMessages;
         private string _selectedLogFile;
         private ObservableCollection<string> _logFiles;
+
+        private ObservableCollection<CommandMapping> _commands;
+        private CommandMapping _selectedCommand;
+        private static readonly string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "commands.json");
 
         public bool NoPlayersConnected => Players.Count == 0;
 
@@ -43,9 +63,13 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             _players = new ObservableCollection<Player>();
             _receivedMessages = new HashSet<string>();
             _logFiles = new ObservableCollection<string>();
+            _commands = new ObservableCollection<CommandMapping>();
+            InitializeCommands();
             SendCommand = new RelayCommand(async () => await ExecuteSendCommand(), CanExecuteSendCommand);
             FetchPlayersCommand = new RelayCommand(async () => await FetchPlayers());
-            DebugLog("RconViewModel instantiated.");
+            AddCommand = new RelayCommand(AddNewCommand);
+            SaveCommandsCommand = new RelayCommand(SaveCommands);
+            DeleteCommand = new RelayCommand<CommandMapping>(DeleteSelectedCommand);
         }
 
         public ObservableCollection<string> LogFiles
@@ -79,13 +103,22 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
         }
 
+        public string DebugLogContent
+        {
+            get => _debugLogContent;
+            set
+            {
+                _debugLogContent = value;
+                OnPropertyChanged(nameof(DebugLogContent));
+            }
+        }
+
         public string ServerPath
         {
             get => _serverPath;
             set
             {
                 _serverPath = value;
-                DebugLog($"ServerPath set to: {_serverPath}");
                 OnPropertyChanged(nameof(ServerPath));
                 LoadLogFiles();
             }
@@ -108,7 +141,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             set
             {
                 _serverName = value;
-                DebugLog($"ServerName set to: {_serverName}");
                 OnPropertyChanged(nameof(ServerName));
             }
         }
@@ -119,7 +151,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             set
             {
                 _adminPassword = value;
-                DebugLog($"AdminPassword set to: {new string('*', _adminPassword.Length)}");
                 OnPropertyChanged(nameof(AdminPassword));
             }
         }
@@ -130,7 +161,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             set
             {
                 _rconPort = value;
-                DebugLog($"RCONPort set to: {_rconPort}");
                 OnPropertyChanged(nameof(RCONPort));
             }
         }
@@ -141,7 +171,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             set
             {
                 _serverIP = value;
-                DebugLog($"ServerIP set to: {_serverIP}");
                 OnPropertyChanged(nameof(ServerIP));
             }
         }
@@ -167,8 +196,52 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
         }
 
+        public string NewCommandDisplay
+        {
+            get => _newCommandDisplay;
+            set
+            {
+                _newCommandDisplay = value;
+                OnPropertyChanged(nameof(NewCommandDisplay));
+            }
+        }
+
+        public string NewCommand
+        {
+            get => _newCommand;
+            set
+            {
+                _newCommand = value;
+                OnPropertyChanged(nameof(NewCommand));
+            }
+        }
+
+        public ObservableCollection<CommandMapping> Commands
+        {
+            get => _commands;
+            set
+            {
+                _commands = value;
+                OnPropertyChanged(nameof(Commands));
+            }
+        }
+
+        public CommandMapping SelectedCommand
+        {
+            get => _selectedCommand;
+            set
+            {
+                _selectedCommand = value;
+                OnPropertyChanged(nameof(SelectedCommand));
+                OnSelectedCommandChanged();
+            }
+        }
+
         public ICommand SendCommand { get; }
         public ICommand FetchPlayersCommand { get; }
+        public ICommand AddCommand { get; }
+        public ICommand SaveCommandsCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         private bool CanExecuteSendCommand()
         {
@@ -179,41 +252,28 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
         {
             if (string.IsNullOrEmpty(_serverPath))
             {
-                DebugLog("Server path is not set. Cannot load log files.");
                 return;
             }
 
             string logDirectory = Path.Combine(_serverPath, "ShooterGame", "Saved", "Logs");
             if (!Directory.Exists(logDirectory))
             {
-                DebugLog($"Log directory not found at: {logDirectory}");
                 return;
             }
-
-            DebugLog($"Loading log files from directory: {logDirectory}");
-            var allFiles = Directory.GetFiles(logDirectory);
-            DebugLog($"All files in directory: {string.Join(", ", allFiles)}");
 
             var logFiles = Directory.GetFiles(logDirectory, "ServerGame*.log")
                 .Concat(Directory.GetFiles(logDirectory, "ShooterGame*.log"))
                 .ToList();
-            DebugLog($"Matched log files: {string.Join(", ", logFiles)}");
 
             LogFiles.Clear();
             foreach (var logFile in logFiles)
             {
-                DebugLog($"Adding log file to collection: {logFile}");
                 LogFiles.Add(logFile);
             }
 
             if (LogFiles.Count > 0)
             {
-                DebugLog($"Setting selected log file to the first one found: {LogFiles.First()}");
                 SelectedLogFile = LogFiles.First();
-            }
-            else
-            {
-                DebugLog("No log files found.");
             }
         }
 
@@ -227,13 +287,10 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
 
             try
             {
-                DebugLog($"Loading log content from: {SelectedLogFile}");
                 LogFileContent = File.ReadAllText(SelectedLogFile);
-                DebugLog("Log content loaded.");
             }
             catch (Exception ex)
             {
-                DebugLog($"Exception during loading log content: {ex.Message}");
                 LogFileContent = $"Error loading log content: {ex.Message}";
             }
         }
@@ -244,7 +301,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 try
                 {
-                    DebugLog($"Sending command: {CommandInput}");
                     var response = await _rconService.SendCommandAsync(CommandInput);
                     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     ChatLog += $"[{timestamp}] Command Sent: {CommandInput}" + Environment.NewLine;
@@ -253,7 +309,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 }
                 catch (Exception ex)
                 {
-                    DebugLog($"Exception during sending command: {ex.Message}");
                     ChatLog += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Error: {ex.Message}" + Environment.NewLine;
                 }
             }
@@ -265,7 +320,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 try
                 {
-                    DebugLog("Fetching players...");
                     var response = await _rconService.SendCommandAsync("listplayers");
                     var lines = response.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -284,54 +338,43 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                         }
                     }
                     OnPropertyChanged(nameof(NoPlayersConnected)); // Notify that NoPlayersConnected has changed
-                    DebugLog("Players fetched and parsed.");
                 }
                 catch (Exception ex)
                 {
-                    DebugLog($"Exception during fetching players: {ex.Message}");
+                    // Handle exceptions
                 }
             }
         }
 
         public void InitializeRconService()
         {
-            DebugLog("Initializing RconService...");
-
             if (string.IsNullOrEmpty(_serverPath))
             {
-                DebugLog("Server path is null or empty.");
                 throw new ArgumentNullException(nameof(ServerPath), "Server path cannot be null or empty.");
             }
 
             if (string.IsNullOrEmpty(_serverIP))
             {
-                DebugLog("Server IP is null or empty.");
                 throw new ArgumentNullException(nameof(ServerIP), "Server IP cannot be null or empty.");
             }
 
             if (string.IsNullOrEmpty(_adminPassword))
             {
-                DebugLog("Admin password is null or empty.");
                 throw new ArgumentNullException(nameof(AdminPassword), "Admin password cannot be null or empty.");
             }
 
             if (_rconPort <= 0)
             {
-                DebugLog("RCON port is less than or equal to zero.");
                 throw new ArgumentOutOfRangeException(nameof(RCONPort), "RCON port must be greater than zero.");
             }
 
             try
             {
-                DebugLog($"Attempting to connect with ServerIP: {_serverIP}, RCONPort: {_rconPort}, AdminPassword: {new string('*', _adminPassword.Length)}");
-
                 _rconService = new ArkRCONService(_serverIP, (ushort)_rconPort, _adminPassword, _serverPath);
-                DebugLog("RconService initialized successfully.");
                 StartChatTimer();
             }
             catch (Exception ex)
             {
-                DebugLog($"Exception during RconService initialization: {ex.Message}");
                 throw;
             }
         }
@@ -341,7 +384,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             _chatTimer = new System.Timers.Timer(5000);
             _chatTimer.Elapsed += async (sender, e) => await FetchChatLog();
             _chatTimer.Start();
-            DebugLog("Chat timer started.");
         }
 
         private async Task FetchChatLog()
@@ -350,14 +392,10 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 if (_rconService == null)
                 {
-                    DebugLog("RconService is null.");
                     return;
                 }
 
-                DebugLog("Fetching chat log...");
                 var newChatLog = await _rconService.GetServerChatAsync();
-                DebugLog("Chat log fetched.");
-
                 var newMessages = newChatLog?.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Where(msg => !_receivedMessages.Contains(msg) && (msg.Contains("SERVER") || msg.Contains("USER")));
 
@@ -370,11 +408,9 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                         ChatLog += $"[{timestamp}] {message}" + Environment.NewLine;
                     }
                 }
-                DebugLog("Chat log updated.");
             }
             catch (System.Net.Sockets.SocketException ex)
             {
-                DebugLog($"SocketException during chat log fetch: {ex.Message}");
                 if (ChatLog?.Contains("Attempting to connect to server... Please stand by.") == true)
                 {
                     ChatLog = "Failed to connect to the server: The target machine actively refused the connection. Please check if the RCON server is running and the IP and port are correct.";
@@ -382,7 +418,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
             catch (TimeoutException ex)
             {
-                DebugLog($"TimeoutException during chat log fetch: {ex.Message}");
                 if (ChatLog?.Contains("Attempting to connect to server... Please stand by.") == true)
                 {
                     ChatLog = "Failed to connect to the server: Timeout while waiting for authentication response. Please check the server and try again.";
@@ -390,7 +425,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
             catch (InvalidOperationException ex)
             {
-                DebugLog($"InvalidOperationException during chat log fetch: {ex.Message}");
                 if (ChatLog?.Contains("Attempting to connect to server... Please stand by.") == true)
                 {
                     ChatLog = "Could not connect to the RCON server. Please ensure the server details are correct and the server is running.";
@@ -398,7 +432,6 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
             catch (Exception ex)
             {
-                DebugLog($"Exception during chat log fetch: {ex.Message}");
                 if (ChatLog.Contains("Attempting to connect to server... Please stand by."))
                 {
                     ChatLog = $"An unexpected error occurred: {ex.Message}";
@@ -406,15 +439,72 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             }
         }
 
+        private void OnSelectedCommandChanged()
+        {
+            if (SelectedCommand != null)
+            {
+                CommandInput = SelectedCommand.Command;
+            }
+        }
+
+        private void InitializeCommands()
+        {
+            LoadCommands();
+            if (Commands.Count == 0)
+            {
+                Commands.Add(new CommandMapping { Display = "/save", Command = "saveworld" });
+                SaveCommands();
+            }
+        }
+
+        private void LoadCommands()
+        {
+            if (File.Exists(ConfigFilePath))
+            {
+                var json = File.ReadAllText(ConfigFilePath);
+                var config = JsonConvert.DeserializeObject<CommandConfig>(json);
+                if (config != null)
+                {
+                    Commands = new ObservableCollection<CommandMapping>(config.Commands);
+                }
+            }
+            else
+            {
+                Commands = new ObservableCollection<CommandMapping>();
+            }
+        }
+
+        private void SaveCommands()
+        {
+            var config = new CommandConfig { Commands = Commands };
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            File.WriteAllText(ConfigFilePath, json);
+        }
+
+        private void AddNewCommand()
+        {
+            if (!string.IsNullOrWhiteSpace(NewCommandDisplay) && !string.IsNullOrWhiteSpace(NewCommand))
+            {
+                Commands.Add(new CommandMapping { Display = NewCommandDisplay, Command = NewCommand });
+                SaveCommands();
+                NewCommandDisplay = string.Empty;
+                NewCommand = string.Empty;
+            }
+        }
+
+        private void DeleteSelectedCommand(CommandMapping commandMapping)
+        {
+            if (commandMapping != null && Commands.Contains(commandMapping))
+            {
+                Commands.Remove(commandMapping);
+                SaveCommands();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void DebugLog(string message)
-        {
-            System.Diagnostics.Debug.WriteLine($"[RconViewModel] {message}");
         }
     }
 }
