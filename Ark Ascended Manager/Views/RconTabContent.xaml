@@ -53,16 +53,24 @@
         <!-- Right Section -->
         <Border Grid.Row="1" Grid.Column="1" Background="#2D2D30" Margin="5" BorderThickness="1" BorderBrush="#555" CornerRadius="5">
             <TabControl Background="#3C3F41" Foreground="White" BorderThickness="0">
-                <TabItem Header="Log">
-                    <TextBox Text="battleWarden initialized. Network module: solicus.network battleWarden:Spy (V. 0.1) initialized." 
-                             TextWrapping="Wrap" 
-                             IsReadOnly="True" 
-                             AcceptsReturn="True" 
-                             VerticalScrollBarVisibility="Auto" 
-                             Background="#1E1E1E" 
-                             Foreground="White" 
-                             BorderThickness="0" 
-                             Padding="10"/>
+                <TabItem Header="Logs">
+                    <StackPanel>
+                        <ComboBox ItemsSource="{Binding LogFiles}" 
+                                  SelectedItem="{Binding SelectedLogFile}" 
+                                  Margin="10" 
+                                  Background="#1E1E1E" 
+                                  Foreground="White"/>
+                        <TextBox Text="{Binding LogFileContent}" 
+                                 TextWrapping="Wrap" 
+                                 IsReadOnly="True" 
+                                 AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 Background="#1E1E1E" 
+                                 Foreground="White" 
+                                 BorderThickness="0" 
+                                 Padding="10" 
+                                 Margin="10" Height="188"/>
+                    </StackPanel>
                 </TabItem>
                 <TabItem Header="Chat">
                     <TextBox x:Name="ChatLogTextBox" Text="{Binding ChatLog, UpdateSourceTrigger=PropertyChanged}" 

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
@@ -24,23 +23,60 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
         private string _serverPath;
         private string _adminPassword;
         private int _rconPort;
+        private FileSystemWatcher _logFileWatcher;
         private string _serverIP;
         private string _serverName;
         private string _chatLog;
+        private string _logFileContent;
         private string _commandInput;
         private ArkRCONService _rconService;
         private ObservableCollection<Player> _players;
         private System.Timers.Timer _chatTimer;
         private HashSet<string> _receivedMessages;
+        private string _selectedLogFile;
+        private ObservableCollection<string> _logFiles;
+
         public bool NoPlayersConnected => Players.Count == 0;
 
         public RconViewModel()
         {
             _players = new ObservableCollection<Player>();
             _receivedMessages = new HashSet<string>();
+            _logFiles = new ObservableCollection<string>();
             SendCommand = new RelayCommand(async () => await ExecuteSendCommand(), CanExecuteSendCommand);
             FetchPlayersCommand = new RelayCommand(async () => await FetchPlayers());
             DebugLog("RconViewModel instantiated.");
+        }
+
+        public ObservableCollection<string> LogFiles
+        {
+            get => _logFiles;
+            set
+            {
+                _logFiles = value;
+                OnPropertyChanged(nameof(LogFiles));
+            }
+        }
+
+        public string SelectedLogFile
+        {
+            get => _selectedLogFile;
+            set
+            {
+                _selectedLogFile = value;
+                OnPropertyChanged(nameof(SelectedLogFile));
+                LoadSelectedLogFileContent();
+            }
+        }
+
+        public string LogFileContent
+        {
+            get => _logFileContent;
+            set
+            {
+                _logFileContent = value;
+                OnPropertyChanged(nameof(LogFileContent));
+            }
         }
 
         public string ServerPath
@@ -51,6 +87,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 _serverPath = value;
                 DebugLog($"ServerPath set to: {_serverPath}");
                 OnPropertyChanged(nameof(ServerPath));
+                LoadLogFiles();
             }
         }
 
@@ -136,6 +173,69 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
         private bool CanExecuteSendCommand()
         {
             return !string.IsNullOrWhiteSpace(CommandInput);
+        }
+
+        private void LoadLogFiles()
+        {
+            if (string.IsNullOrEmpty(_serverPath))
+            {
+                DebugLog("Server path is not set. Cannot load log files.");
+                return;
+            }
+
+            string logDirectory = Path.Combine(_serverPath, "ShooterGame", "Saved", "Logs");
+            if (!Directory.Exists(logDirectory))
+            {
+                DebugLog($"Log directory not found at: {logDirectory}");
+                return;
+            }
+
+            DebugLog($"Loading log files from directory: {logDirectory}");
+            var allFiles = Directory.GetFiles(logDirectory);
+            DebugLog($"All files in directory: {string.Join(", ", allFiles)}");
+
+            var logFiles = Directory.GetFiles(logDirectory, "ServerGame*.log")
+                .Concat(Directory.GetFiles(logDirectory, "ShooterGame*.log"))
+                .ToList();
+            DebugLog($"Matched log files: {string.Join(", ", logFiles)}");
+
+            LogFiles.Clear();
+            foreach (var logFile in logFiles)
+            {
+                DebugLog($"Adding log file to collection: {logFile}");
+                LogFiles.Add(logFile);
+            }
+
+            if (LogFiles.Count > 0)
+            {
+                DebugLog($"Setting selected log file to the first one found: {LogFiles.First()}");
+                SelectedLogFile = LogFiles.First();
+            }
+            else
+            {
+                DebugLog("No log files found.");
+            }
+        }
+
+        private void LoadSelectedLogFileContent()
+        {
+            if (string.IsNullOrEmpty(SelectedLogFile))
+            {
+                LogFileContent = string.Empty;
+                return;
+            }
+
+            try
+            {
+                DebugLog($"Loading log content from: {SelectedLogFile}");
+                LogFileContent = File.ReadAllText(SelectedLogFile);
+                DebugLog("Log content loaded.");
+            }
+            catch (Exception ex)
+            {
+                DebugLog($"Exception during loading log content: {ex.Message}");
+                LogFileContent = $"Error loading log content: {ex.Message}";
+            }
         }
 
         private async Task ExecuteSendCommand()
