@@ -49,7 +49,6 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<BackupService>();
                 services.AddSingleton<AutoUpdateService>();
                /* services.AddSingleton<CrashDetection>() Removed for now - I will refactor this later to many bugs*/;
-                services.AddSingleton<RconPanelPage>();
                 services.AddSingleton<SyncConfigPage>();
                 services.AddSingleton<ImportServersPage>();
                 services.AddSingleton<IssueReportForm>();
@@ -65,8 +64,8 @@ namespace Ark_Ascended_Manager
                 services.AddTransient<PluginManagementAutoInstallPage>();
                 services.AddSingleton<ISettingsService, SettingsService>();
                 services.AddHostedService<ServerMonitoringService>();
-
-
+             /*   services.AddSingleton<RconWindow>(); */
+                services.AddSingleton<RconWindowManager>();
 
 
                 services.AddSingleton<DashboardPage>();
@@ -77,10 +76,10 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<SettingsViewModel>();
                 services.AddTransient<CreateServersPageViewModel>();
                 services.AddTransient<ConfigPageViewModel>();
-                services.AddSingleton<RconPanelViewModel>();
                 services.AddSingleton<SyncConfigViewModel>();
                 services.AddSingleton<ImportServersPageViewModel>();
                 services.AddSingleton<IntegrationsViewModel>();
+             /*   services.AddSingleton<RconViewModel>(); */
             }).Build();
 
         /// <summary>

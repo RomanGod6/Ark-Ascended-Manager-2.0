@@ -3,6 +3,8 @@ using Ark_Ascended_Manager.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using System.IO;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -56,6 +58,34 @@ namespace Ark_Ascended_Manager.Views.Pages
                 System.Windows.MessageBox.Show("Unable to load settings. Please check your configuration.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            // Regular expression to match numeric input
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void TextBox_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsTextAllowed(text))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private bool IsTextAllowed(string text)
+        {
+            Regex regex = new Regex("[^0-9]+"); //regex that matches disallowed text
+            return !regex.IsMatch(text);
+        }
+
 
 
         public string[] GetIgnoredPatterns()

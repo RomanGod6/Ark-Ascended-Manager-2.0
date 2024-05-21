@@ -27,12 +27,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 TargetPageType = typeof(Views.Pages.ServersPage)
             },
              new NavigationViewItem()
-            {
-                Content = "RCON",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.VirtualNetwork20 },
-                TargetPageType = typeof(Views.Pages.RconPanelPage)
-            },
-               new NavigationViewItem()
+
             {
                 Content = "Integrations",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Power20 },

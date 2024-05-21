@@ -17,6 +17,9 @@ using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Windows.Threading;
+using Ark_Ascended_Manager.Views.Windows;
+using Ark_Ascended_Manager.ViewModels.Windows;
+using Ark_Ascended_Manager.Services;
 
 
 
@@ -31,6 +34,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         private List<SpawnClassEntry> spawnClassEntries;
         private List<CreatureIdEntry> creatureIdEntries;
         private ObservableCollection<string> _headers = new ObservableCollection<string>();
+        private readonly RconWindowManager _rconWindowManager;
         // Inside your ConfigPageViewModel class
         public ObservableCollection<StackSizeOverride> StackSizeOverrides { get; set; } = new ObservableCollection<StackSizeOverride>();
 
@@ -39,10 +43,11 @@ namespace Ark_Ascended_Manager.Views.Pages
         private readonly INavigationService _navigationService;
         // Constructor injects the ViewModel and sets it to the DataContext.
         private string fullPathToJson;
-        public ConfigPage(ConfigPageViewModel viewModel, INavigationService navigationService)
+        public ConfigPage(ConfigPageViewModel viewModel, INavigationService navigationService, RconWindowManager rconWindowManager)
         {
             InitializeComponent();
             ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            _rconWindowManager = rconWindowManager;
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             stackOverridesPath = Path.Combine(viewModel.CurrentServerConfig.ServerPath, "overrides", "stacking.json");
             // Using System.IO and System.Environment to construct the path
@@ -141,6 +146,57 @@ namespace Ark_Ascended_Manager.Views.Pages
             public string Id { get; set; }
         }
 
+        private void OpenRCON_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Open Rcon Button Clicked");
+            var serverData = (sender as Wpf.Ui.Controls.Button)?.DataContext as ServerViewModel;
+            if (ViewModel.CurrentServerConfig != null)
+            {
+                Debug.WriteLine("Serverdata is not null");
+                var rconViewModel = new RconViewModel
+                {
+                    ServerPath = ViewModel.CurrentServerConfig.ServerPath,
+                    AdminPassword = ViewModel.CurrentServerConfig.AdminPassword,
+                    RCONPort = ViewModel.CurrentServerConfig.RCONPort,
+                    ServerIP = ViewModel.CurrentServerConfig.ServerIP,
+                    ServerName = ViewModel.CurrentServerConfig.ServerName,
+                };
+
+                try
+                {
+                    // Ensure the RCON service is initialized
+                    rconViewModel.InitializeRconService();
+                    Debug.WriteLine("RconService initialized successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Exception during RconService initialization: {ex.Message}");
+                    // Handle or display the error as needed
+                    return;
+                }
+
+                _rconWindowManager.OpenRcon(rconViewModel);
+
+                Debug.WriteLine($"Number of open tabs: {_rconWindowManager.GetOpenTabsCount()}");
+            }
+            else
+            {
+                Debug.WriteLine("Serverdata is null");
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -184,8 +240,8 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             // Load the game.ini file
             string gameIniPath = Path.Combine(ViewModel.CurrentServerConfig.ServerPath,
+        
                                               "ShooterGame", "Saved", "Config", "WindowsServer", "Game.ini");
-
             if (File.Exists(gameIniPath))
             {
                 var gameIniContents = File.ReadAllLines(gameIniPath);
@@ -984,7 +1040,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void RestoreBackUpButton_Click(object sender, RoutedEventArgs e)
         {
             // Assuming ServerConfig is a class that represents your server configuration
-            ServerConfig serverConfig = new ServerConfig
+            Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig serverConfig = new Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig
             {
                 ProfileName = ViewModel.CurrentServerConfig.ProfileName, // Replace with actual data
                 ServerPath = ViewModel.CurrentServerConfig.ServerPath,
@@ -994,7 +1050,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             SaveServerConfigToJson(serverConfig);
         }
 
-        private void SaveServerConfigToJson(ServerConfig serverConfig) 
+        private void SaveServerConfigToJson(Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig serverConfig) 
         {
             Debug.WriteLine($"Saving ServerConfig with MapName: {serverConfig.MapName ?? "null"}");
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -1019,7 +1075,7 @@ namespace Ark_Ascended_Manager.Views.Pages
         {
             
             Console.WriteLine("OnNavigatedTo called in ConfigPage.");
-            if (parameter is ServerConfig serverConfig)
+            if (parameter is Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig serverConfig)
             {
                 Console.WriteLine($"ServerConfig received: {serverConfig.ProfileName}");
                 ViewModel.LoadConfig(serverConfig);
@@ -1165,7 +1221,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             if (File.Exists(serversFilePath))
             {
                 string json = File.ReadAllText(serversFilePath);
-                var servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+                var servers = JsonConvert.DeserializeObject<List<Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig>>(json);
                 return servers.Select(s => s.ServerPath).ToList();
             }
             return new List<string>();

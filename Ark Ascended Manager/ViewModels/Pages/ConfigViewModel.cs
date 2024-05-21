@@ -29,13 +29,14 @@ using Logger = Ark_Ascended_Manager.Services.Logger;
 using System.Net.Http;
 using Ark_Ascended_Manager.Services;
 using ServerConfig = Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig;
+using Ark_Ascended_Manager.ViewModels.Windows;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
 
     public class ConfigPageViewModel : ObservableObject
     {
-       
+   
 
         private ObservableCollection<ScheduleTask> _scheduleTasks;
         private string _currentServer;
@@ -170,6 +171,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public ConfigPageViewModel(INavigationService navigationService)
         {
+      
             {
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             }
@@ -230,6 +232,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
 
         }
+
         public void LoadStackSizeOverrides(string iniFilePath)
         {
             // Read the Game.ini file

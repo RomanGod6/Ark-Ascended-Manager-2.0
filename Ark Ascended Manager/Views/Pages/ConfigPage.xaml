@@ -76,6 +76,8 @@
             <Button Content="Add New Schedule" Click="AddNewScheduleButton_Click"/>
             <Button Content="Restore Backup" Click="RestoreBackUpButton_Click"/>
             <Button Content="Open Server Folder" Click="OpenServerFolderButton_Click"/>
+            <Button Content="Open RCON" Click="OpenRCON_Click" DataContext="{Binding SelectedServerViewModel}" />
+
 
 
         </StackPanel>

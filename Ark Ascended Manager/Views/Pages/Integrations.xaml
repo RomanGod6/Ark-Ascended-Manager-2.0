@@ -33,12 +33,16 @@
 
                     <Label Content="Logger Discord Webhook URL:" HorizontalAlignment="Left"/>
                     <TextBox x:Name="LoggerWebhookUrlTextBox" Margin="0,5"/>
-
                     <Label Content="Guild ID:" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="GuildIdTextBox" Margin="0,5"/>
+                    <TextBox x:Name="GuildIdTextBox" Margin="0,5"
+                     PreviewTextInput="NumberValidationTextBox"
+                     DataObject.Pasting="TextBox_Pasting"/>
 
-                    <Label Content="What Role Can Use this Bot:" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="AuthorizedRolesTextBox" Margin="0,5"/>
+                                <Label Content="What Role Can Use this Bot:" HorizontalAlignment="Left"/>
+                                <TextBox x:Name="AuthorizedRolesTextBox" Margin="0,5"
+                     PreviewTextInput="NumberValidationTextBox"
+                     DataObject.Pasting="TextBox_Pasting"/>
+
 
                     <Label Content="CrossChat Webhook:" HorizontalAlignment="Left"/>
                     <TextBox x:Name="WebhookUrlTextBox" Margin="0,5"/>
