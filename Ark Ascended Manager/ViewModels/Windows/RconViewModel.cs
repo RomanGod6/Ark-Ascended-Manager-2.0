@@ -28,6 +28,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
     public class CommandConfig
     {
         public ObservableCollection<CommandMapping> Commands { get; set; }
+      
     }
 
     public class RconViewModel : INotifyPropertyChanged
@@ -58,6 +59,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
 
         public bool NoPlayersConnected => Players.Count == 0;
 
+
         public RconViewModel()
         {
             _players = new ObservableCollection<Player>();
@@ -71,6 +73,18 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             SaveCommandsCommand = new RelayCommand(SaveCommands);
             DeleteCommand = new RelayCommand<CommandMapping>(DeleteSelectedCommand);
         }
+
+        public ObservableCollection<string> CommandNames
+        {
+            get => new ObservableCollection<string>(Commands.Select(c => c.Display));
+        }
+
+        private void OnCommandsChanged()
+        {
+            OnPropertyChanged(nameof(CommandNames));
+            DebugLog($"Commands updated: {string.Join(", ", Commands.Select(c => $"{c.Display} - {c.Command}"))}");
+        }
+
 
         public ObservableCollection<string> LogFiles
         {
@@ -203,6 +217,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 _newCommandDisplay = value;
                 OnPropertyChanged(nameof(NewCommandDisplay));
+                DebugLog($"NewCommandDisplay set to: {_newCommandDisplay}");
             }
         }
 
@@ -213,6 +228,7 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 _newCommand = value;
                 OnPropertyChanged(nameof(NewCommand));
+                DebugLog($"NewCommand set to: {_newCommand}");
             }
         }
 
@@ -455,6 +471,24 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 Commands.Add(new CommandMapping { Display = "/save", Command = "saveworld" });
                 SaveCommands();
             }
+            OnCommandsChanged();  // Notify that CommandNames has changed
+        }
+
+        private void AddNewCommand()
+        {
+            if (!string.IsNullOrWhiteSpace(NewCommandDisplay) && !string.IsNullOrWhiteSpace(NewCommand))
+            {
+                Commands.Add(new CommandMapping { Display = NewCommandDisplay, Command = NewCommand });
+                SaveCommands();
+                DebugLog($"Added new command: Display={NewCommandDisplay}, Command={NewCommand}");
+                NewCommandDisplay = string.Empty;
+                NewCommand = string.Empty;
+                OnCommandsChanged();  // Notify that CommandNames has changed
+            }
+            else
+            {
+                DebugLog("New command input fields are empty.");
+            }
         }
 
         private void LoadCommands()
@@ -466,30 +500,27 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 if (config != null)
                 {
                     Commands = new ObservableCollection<CommandMapping>(config.Commands);
+                    DebugLog($"Loaded commands: {string.Join(", ", config.Commands.Select(c => $"{c.Display} - {c.Command}"))}");
                 }
             }
             else
             {
                 Commands = new ObservableCollection<CommandMapping>();
+                DebugLog("No commands found. Initialized with empty collection.");
             }
+            OnCommandsChanged();  // Notify that CommandNames has changed
         }
+
+
+
 
         private void SaveCommands()
         {
             var config = new CommandConfig { Commands = Commands };
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             File.WriteAllText(ConfigFilePath, json);
-        }
-
-        private void AddNewCommand()
-        {
-            if (!string.IsNullOrWhiteSpace(NewCommandDisplay) && !string.IsNullOrWhiteSpace(NewCommand))
-            {
-                Commands.Add(new CommandMapping { Display = NewCommandDisplay, Command = NewCommand });
-                SaveCommands();
-                NewCommandDisplay = string.Empty;
-                NewCommand = string.Empty;
-            }
+            DebugLog("Commands saved to file.");
+            OnCommandsChanged();  // Notify that CommandNames has changed
         }
 
         private void DeleteSelectedCommand(CommandMapping commandMapping)
@@ -498,6 +529,8 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
             {
                 Commands.Remove(commandMapping);
                 SaveCommands();
+                DebugLog($"Deleted command: {commandMapping.Display}");
+                OnCommandsChanged();  // Notify that CommandNames has changed
             }
         }
 
@@ -505,6 +538,10 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private void DebugLog(string message)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RconViewModel] {message}");
         }
     }
 }
