@@ -337,30 +337,42 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 try
                 {
                     var response = await _rconService.SendCommandAsync("listplayers");
+                    DebugLog($"Raw response from listplayers command: {response}");
+
                     var lines = response.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    DebugLog($"Parsed response lines count: {lines.Length}");
 
                     Players.Clear();
-                    foreach (var line in lines.Skip(1))
+                    foreach (var line in lines.Skip(1)) // Skipping the first line assuming it's a header or blank
                     {
-                        var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (parts.Length >= 3)
+                        var parts = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        DebugLog($"Parsed line into parts: {string.Join(", ", parts)}");
+
+                        if (parts.Length >= 2) // Adjust based on the actual structure of the response
                         {
                             Players.Add(new Player
                             {
                                 ID = int.Parse(parts[0]),
-                                Name = parts[1],
-                                SteamID = parts[2]
+                                Name = parts[1].Trim(),
+                                SteamID = parts.Length > 2 ? parts[2].Trim() : string.Empty
                             });
+                            DebugLog($"Added player: ID={parts[0]}, Name={parts[1]}, SteamID={(parts.Length > 2 ? parts[2] : "N/A")}");
+                        }
+                        else
+                        {
+                            DebugLog($"Invalid player line format: {line}");
                         }
                     }
                     OnPropertyChanged(nameof(NoPlayersConnected)); // Notify that NoPlayersConnected has changed
                 }
                 catch (Exception ex)
                 {
+                    DebugLog($"Error fetching players: {ex.Message}");
                     // Handle exceptions
                 }
             }
         }
+
 
         public void InitializeRconService()
         {

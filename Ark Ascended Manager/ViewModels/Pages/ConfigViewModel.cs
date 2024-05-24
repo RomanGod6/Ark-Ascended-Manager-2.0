@@ -2488,7 +2488,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "EnablePVEGamma", EnablePVEGamma.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowFlyingStaminaRecovery", AllowFlyingStaminaRecovery.ToString());
             UpdateLine(ref lines, "ServerSettings", "SpectatorPassword", SpectatorPassword);
-            UpdateLine(ref lines, "ServerSettings", "ServerPassword", ServerPassword);
+            UpdateLine(ref lines, "ServerSettings", "ServerPassword", ServerPassword ?? "");
             UpdateLine(ref lines, "ServerSettings", "AdminPassword", AdminPassword);
             UpdateLine(ref lines, "ServerSettings", "DifficultyOffset", DifficultyOffset);
             UpdateLine(ref lines, "ServerSettings", "PvEStructureDecayPeriodMultiplier ", PvEStructureDecayPeriodMultiplier);
@@ -2579,12 +2579,22 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
 
         private void UpdateLine(ref List<string> lines, string header, string key, string value)
         {
-            // Convert empty strings to null to ensure the default is applied
-            string newValue = string.IsNullOrEmpty(value) ? "1.0" : value;
+            // Determine the appropriate default value based on the key
+            string defaultValue;
+            if (key == "ServerPassword" || key == "AdminPassword" || key == "SpectatorPassword")
+            {
+                defaultValue = ""; // Use an empty string as the default value for password fields
+            }
+            else
+            {
+                defaultValue = "1.0"; // Default value for most other settings
+            }
+
+            string newValue = string.IsNullOrEmpty(value) ? defaultValue : value;
 
             if (string.IsNullOrEmpty(value))  // Log if default is being applied
             {
-                Logger.Log($"Default value '1.0' applied for {key} under {header} because provided value was '{value}'.");
+                Logger.Log($"Default value '{defaultValue}' applied for {key} under {header} because provided value was '{value}'.");
             }
 
             string formattedHeader = $"[{header}]";
@@ -2612,6 +2622,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 Logger.Log($"Added new key {key} with value {newValue} under section [{header}].");
             }
         }
+
 
 
 

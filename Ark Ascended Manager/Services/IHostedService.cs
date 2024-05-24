@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Ark_Ascended_Manager.Services
 {
     public class ServerMonitoringService : IHostedService, IDisposable
     {
         private Timer _timer;
+        private static readonly object fileLock = new object();
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // Setup the timer to tick every 5 seconds
+            // Setup the timer to tick every 1 second
             _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-
             return Task.CompletedTask;
         }
 
@@ -72,12 +74,15 @@ namespace Ark_Ascended_Manager.Services
         private List<ServerConfig> LoadServerConfigs()
         {
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-            if (File.Exists(filePath))
+            lock (fileLock)
             {
-                string json = File.ReadAllText(filePath);
-                return JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
+                }
+                return new List<ServerConfig>();
             }
-            return new List<ServerConfig>();
         }
 
         private int LoadSanitizedChangeNumber(ServerConfig serverConfig)
@@ -125,25 +130,39 @@ namespace Ark_Ascended_Manager.Services
                     }
                     catch (Exception ex)
                     {
-                        // Log specific details about the process that caused the exception, if accessible
                         Logger.Log($"Failed to access main module for process {process.Id}: {ex.Message}");
-                        return false; // Assume not the right process if we can't access the main module
+                        return false;
                     }
                 });
             }
             catch (Exception ex)
             {
                 Logger.Log($"Error retrieving processes by name '{serverExeName}': {ex.Message}");
-                return false; // If there's an error in getting processes, assume not running
+                return false;
             }
         }
 
-
-        private void SaveServerConfigs(List<ServerConfig> servers)
+        private void SaveServerConfigs(List<ServerConfig> configs)
         {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-            string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+            try
+            {
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string applicationFolderPath = Path.Combine(appDataPath, "Ark Ascended Manager");
+                Directory.CreateDirectory(applicationFolderPath);
+                string serversFilePath = Path.Combine(applicationFolderPath, "servers.json");
+
+                lock (fileLock)
+                {
+                    string updatedJson = System.Text.Json.JsonSerializer.Serialize(configs, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(serversFilePath, updatedJson);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to save server configuration: {ex.Message}");
+            }
         }
     }
+
+
 }
