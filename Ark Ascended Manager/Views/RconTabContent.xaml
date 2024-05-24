@@ -85,7 +85,8 @@
                 </TabItem>
                 <TabItem Header="Commands">
                     <StackPanel Margin="10">
-                        <ListBox ItemsSource="{Binding Commands}" DisplayMemberPath="Display" Background="#3C3F41" Foreground="White" BorderThickness="0" Margin="0,10,0,0"/>
+                        <ListBox ItemsSource="{Binding Commands}" DisplayMemberPath="Display" Background="#3C3F41" Foreground="White" BorderThickness="0" Margin="0,10,0,0" MouseDoubleClick="ListBox_MouseDoubleClick"/>
+                        <TextBox Text="{Binding SelectedCommand.Command}" Background="#3C3F41" Foreground="White" BorderThickness="0" IsReadOnly="True"/>
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <TextBox x:Name="CommandDisplayTextBox" 
                                      Text="{Binding NewCommandDisplay, UpdateSourceTrigger=PropertyChanged}" 
@@ -109,19 +110,19 @@
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
-
             </TabControl>
         </Border>
 
         <!-- Bottom Command Section -->
         <Border Grid.Row="2" Grid.ColumnSpan="2" Background="#3C3F41" Margin="5" BorderThickness="1" BorderBrush="#555" Padding="10" CornerRadius="5">
             <StackPanel Orientation="Horizontal">
-                <ComboBox ItemsSource="{Binding CommandNames}" 
-                          SelectedItem="{Binding SelectedCommand}" 
-                          Width="150" 
-                          Margin="0,0,10,0" 
-                          Background="#1E1E1E" 
-                          Foreground="White"/>
+                <ComboBox ItemsSource="{Binding Commands}" 
+          SelectedItem="{Binding SelectedCommand}" 
+          DisplayMemberPath="Display" 
+          Width="150" 
+          Margin="0,0,10,0" 
+          Background="#1E1E1E" 
+          Foreground="White"/>
                 <TextBox Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
                          Width="600" 
                          Height="30" 
