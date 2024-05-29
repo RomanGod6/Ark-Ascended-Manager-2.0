@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ark_Ascended_Manager.Views.Pages;
@@ -45,62 +46,65 @@ namespace Ark_Ascended_Manager.Services
 
         public async Task CheckAndUpdateServers()
         {
-            // Load global settings to determine if auto-update is enabled
-            var globalSettings = LoadGlobalSettings(); // Assume this method now also loads the UpdateCountdownTimer
+            var globalSettings = LoadGlobalSettings();
             if (!globalSettings.AutoUpdateServersWhenNewUpdateAvailable)
             {
                 Debug.WriteLine("Auto-update is disabled.");
                 return;
             }
 
-            // Load server profiles
             var servers = LoadServerProfiles(_serversConfigPath);
             bool updatesMade = false;
 
-            // Convert UpdateCountdownTimer from string to int
             if (!int.TryParse(globalSettings.UpdateCountdownTimer, out int countdownStart))
             {
                 Debug.WriteLine("Invalid UpdateCountdownTimer value. Defaulting to 10 minutes.");
-                countdownStart = 10; // Default value in case of parsing failure
+                countdownStart = 10;
             }
 
             foreach (var server in servers)
             {
-                // Check if the server is online
-                if (IsServerOnline(server))
+                try
                 {
-                    var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
-                    await rcon.ConnectAsync();
-
-                    // Send countdown messages starting from the UpdateCountdownTimer value
-                    for (int i = countdownStart; i > 0; i--)
+                    if (IsServerOnline(server))
                     {
-                        Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
-                        await rcon.SendCommandAsync($"Broadcast Server will shut down in {i} minute(s)...New Update Detected");
-                        await Task.Delay(60000); // Wait for 1 minute between each notification
+                        var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
+                        await rcon.ConnectAsync();
+
+                        for (int i = countdownStart; i > 0; i--)
+                        {
+                            Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
+                            await rcon.SendCommandAsync($"Broadcast Server will shut down in {i} minute(s)...New Update Detected");
+                            await Task.Delay(60000);
+                        }
+
+                        Debug.WriteLine("Sending RCON shutdown command.");
+                        await rcon.SendCommandAsync("doexit");
+                        Debug.WriteLine("RCON shutdown command sent successfully.");
                     }
 
-                    // Shutdown command
-                    Debug.WriteLine("Sending RCON shutdown command.");
-                    await rcon.SendCommandAsync("doexit");
-                    Debug.WriteLine("RCON shutdown command sent successfully.");
-                    continue;
+                    var updateNeeded = await UpdateServerIfNecessary(server);
+                    if (updateNeeded)
+                    {
+                        updatesMade = true;
+                    }
                 }
-
-                // Check for updates and update server if necessary
-                var updateNeeded = await UpdateServerIfNecessary(server);
-                if (updateNeeded)
+                catch (SocketException ex)
                 {
-                    updatesMade = true;
+                    Debug.WriteLine($"SocketException: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Exception: {ex.Message}");
                 }
             }
 
-            // If any updates were made, save the updated server configurations
             if (updatesMade)
             {
                 SaveServerConfiguration(servers);
             }
         }
+
         public class GlobalSettings
         {
             public bool AutoUpdateServersOnReboot { get; set; }

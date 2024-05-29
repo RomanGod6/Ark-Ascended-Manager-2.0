@@ -22,7 +22,6 @@ namespace Ark_Ascended_Manager.Services
             SetupFileWatchers();
             InitializeRefreshTimer();
         }
-        
 
         private void LoadServers()
         {
@@ -33,7 +32,7 @@ namespace Ark_Ascended_Manager.Services
             if (File.Exists(serversFilePath))
             {
                 string serversJson = File.ReadAllText(serversFilePath);
-                servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
+                servers = JsonConvert.DeserializeObject<List<Server>>(serversJson) ?? new List<Server>();
                 Logger.Log($"Loaded {servers.Count} servers from {serversFilePath}.");
             }
             else
@@ -44,68 +43,50 @@ namespace Ark_Ascended_Manager.Services
 
         private void SetupFileWatchers()
         {
-            try
+            Logger.Log("Setting up file watchers...");
+
+            // Dispose existing watchers
+            foreach (var watcher in watchers)
             {
-                if (watchers == null)
-                {
-                    Logger.Log("Watchers list is null.");
-                    return;
-                }
-
-                Logger.Log("Setting up file watchers...");
-
-                // Dispose existing watchers
-                foreach (var watcher in watchers)
-                {
-                    watcher.Dispose();
-                }
-                watchers.Clear();
-
-                // Ensure servers collection is not null
-                if (servers == null)
-                {
-                    Logger.Log("Servers collection is null.");
-                    return;
-                }
-
-                foreach (var server in servers)
-                {
-                    string saveFilePath = Path.Combine(server.ServerPath, "ShooterGame", "Saved", "SavedArks", "TheIsland_WP", "TheIsland_WP.ark");
-                    if (File.Exists(saveFilePath))
-                    {
-                        var watcher = new FileSystemWatcher
-                        {
-                            Path = Path.GetDirectoryName(saveFilePath),
-                            Filter = Path.GetFileName(saveFilePath),
-                            NotifyFilter = NotifyFilters.LastWrite
-                        };
-
-                        watcher.Changed += OnSaveFileChanged;
-                        watcher.EnableRaisingEvents = true;
-                        watchers.Add(watcher);
-                        Logger.Log($"File watcher set for {saveFilePath}");
-                    }
-                    else
-                    {
-                        Logger.Log($"Save file not found for server at path: {saveFilePath}");
-                        
-                    }
-                }
+                watcher.Dispose();
             }
-            catch (Exception ex)
+            watchers.Clear();
+
+            // Ensure servers collection is not null
+            if (servers == null || !servers.Any())
             {
-                Logger.Log($"An error occurred while setting up file watchers: {ex.Message}");
-                // Optionally, you can throw the exception further if you want to handle it at a higher level
-                // throw;
+                Logger.Log("Servers collection is null or empty.");
+                return;
+            }
+
+            foreach (var server in servers)
+            {
+                string saveFilePath = Path.Combine(server.ServerPath, "ShooterGame", "Saved", "SavedArks", "TheIsland_WP", "TheIsland_WP.ark");
+                if (File.Exists(saveFilePath))
+                {
+                    var watcher = new FileSystemWatcher
+                    {
+                        Path = Path.GetDirectoryName(saveFilePath),
+                        Filter = Path.GetFileName(saveFilePath),
+                        NotifyFilter = NotifyFilters.LastWrite
+                    };
+
+                    watcher.Changed += OnSaveFileChanged;
+                    watcher.EnableRaisingEvents = true;
+                    watchers.Add(watcher);
+                    Logger.Log($"File watcher set for {saveFilePath}");
+                }
+                else
+                {
+                    Logger.Log($"Save file not found for server at path: {saveFilePath}");
+                }
             }
         }
-
-
 
         private void OnSaveFileChanged(object sender, FileSystemEventArgs e)
         {
             Logger.Log($"Detected change in file: {e.FullPath}");
-            string backupFileName = $"{Path.GetFileNameWithoutExtension(e.Name)}_{DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss")}{Path.GetExtension(e.Name)}";
+            string backupFileName = $"{Path.GetFileNameWithoutExtension(e.Name)}_{DateTime.Now:dd.MM.yyyy_HH.mm.ss}{Path.GetExtension(e.Name)}";
             string backupFilePath = Path.Combine(Path.GetDirectoryName(e.FullPath), backupFileName);
 
             try
@@ -136,7 +117,7 @@ namespace Ark_Ascended_Manager.Services
         }
     }
 
-    public class server
+    public class Server
     {
         // Define properties as in your JSON structure
         public string ServerPath { get; set; }
