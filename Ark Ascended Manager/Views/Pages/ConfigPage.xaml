@@ -356,7 +356,7 @@
                                     <Label Content="Max Fall Speed Multiplier:" ToolTip="Set the multiplier for the maximum fall speed."/>
                                     <TextBox Text="{Binding MaxFallSpeedMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for the maximum fall speed."/>
                                     <Label Content="Player Character Health Recovery Multiplier:" ToolTip="Set the multiplier for player character health recovery rate."/>
-                                    <TextBox Text="{Binding PlayerCharacterHealthRecoveryMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for player character health recovery rate."/>
+                                    <TextBox Text="{Binding PlayerHealthRecoveryMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for player character health recovery rate."/>
                                     <Label Content="Allow Flyer Carry PvE:" ToolTip="Toggle to allow or disallow flyer carry in PvE mode."/>
                                     <CheckBox IsChecked="{Binding AllowFlyerCarryPvE, Mode=TwoWay}" ToolTip="Toggle to allow or disallow flyer carry in PvE mode."/>
                                     <Label Content="Player Harvesting Damage Multiplier:" ToolTip="Set the multiplier for player harvesting damage."/>

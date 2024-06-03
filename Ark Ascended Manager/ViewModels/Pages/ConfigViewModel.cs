@@ -4230,7 +4230,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             MaxFallSpeedMultiplier = value;
                             break;
                         case "PlayerCharacterHealthRecoveryMultiplier":
-                            PlayerCharacterHealthRecoveryMultiplier = value;
+                            PlayerHealthRecoveryMultiplier = value;
                             break;
                         case "PlayerCharacterStaminaDrainMultiplier":
                             PlayerCharacterStaminaDrainMultiplier = value;
@@ -4518,7 +4518,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "GenericXPMultiplier", GenericXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerDamageMultiplier", PlayerDamageMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxFallSpeedMultiplier", MaxFallSpeedMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerCharacterHealthRecoveryMultiplier ?? "1.0");
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterHealthRecoveryMultiplier", PlayerHealthRecoveryMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PlayerCharacterStaminaDrainMultiplier", PlayerCharacterStaminaDrainMultiplier ?? "1.0");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveTameIntervalMultiplier", PassiveTameIntervalMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildDinoTorporDrainMultiplier", WildDinoTorporDrainMultiplier);
@@ -5576,14 +5576,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(MaxFallSpeedMultiplier));
             }
         }
-        private string _playerCharacterHealthRecoveryMultiplier;
-        public string PlayerCharacterHealthRecoveryMultiplier
+        private string _playerHealthRecoveryMultiplier;
+        public string PlayerHealthRecoveryMultiplier
         {
-            get { return _playerCharacterHealthRecoveryMultiplier; }
+            get { return _playerHealthRecoveryMultiplier; }
             set
             {
-                _playerCharacterHealthRecoveryMultiplier = value;
-                OnPropertyChanged(nameof(PlayerCharacterHealthRecoveryMultiplier));
+                _playerHealthRecoveryMultiplier = value;
+                OnPropertyChanged(nameof(PlayerHealthRecoveryMultiplier));
             }
         }
         private string _tamedDinoCharacterFoodDrainMultiplier;

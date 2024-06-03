@@ -1,0 +1,233 @@
+[
+  {
+    "File": "Game.ini",
+    "Sections": [
+      {
+        "SectionName": "/script/shootergame.shootergamemode",
+        "Settings": [
+          {
+            "Key": "bDisablePhotoMode",
+            "Value": "FALSE",
+            "Header": "Disable Photo Mode",
+            "Tooltip": "If True, disables PvP and enables PvE",
+            "XamlPlacement": "Administration"
+          }
+          // ... more settings
+        ]
+      }
+      // ... more sections
+    ]
+  },
+  {
+    "File": "GameUserSettings.ini",
+    "Sections": [
+      {
+        "SectionName": "ServerSettings",
+        "Settings": [
+          {
+            "Key": "SessionName",
+            "Value": "Server Name Goes here",
+            "Header": "Session Name",
+            "Tooltip": "The name of the server session.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "AdminPassword",
+            "Value": "ServerAdminPasswordGoeshere",
+            "Header": "Server Admin Password",
+            "Tooltip": "The password to become admin of the server",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "ServerPassword",
+            "Value": "",
+            "Header": "Server Password",
+            "Tooltip": "Password to join the server. Leave blank for no password",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "Banlist",
+            "Value": "",
+            "Header": "Ban List",
+            "Tooltip": "List of Banned player IDS",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "CosmeticWhitelistOverride",
+            "Value": "",
+            "Header": "Cosemtic Whitelist Override",
+            "Tooltip": "A list of cosmetics that are allowed to be used.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "SpectatorPassword",
+            "Value": "",
+            "Header": "Spectator Password",
+            "Tooltip": "Password to join spectator",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "AdminLogging",
+            "Value": "FALSE",
+            "Header": "Enabled Admin Logging",
+            "Tooltip": "Log Admin Commands",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "AutoSavePeriodMinutes",
+            "Value": "15",
+            "Header": "Auto Save Period Minutes",
+            "Tooltip": "Time in minutes before each auto save",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "DisableStructureDecayPvE",
+            "Value": "FALSE",
+            "Header": "Disabled Structure Decay PVE",
+            "Tooltip": "Disbaled strucure decay in pve",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "ItemStackSizeMultiplier",
+            "Value": "1",
+            "Header": "Item Stack Size Multipler",
+            "Tooltip": "Stack Size override",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "ServerAutoForceRespawnWildDinosInterval",
+            "Value": "0.0",
+            "Header": "Wild Dino Wipe Interval",
+            "Tooltip": "Dinos will auto wipe ever value.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "NPCNetworkStasisRangeScalePlayerCountStart",
+            "Value": "0",
+            "Header": "NPCNetworkStasisRangeScalePlayerCountStart",
+            "Tooltip": "Minimum number of online players when the NPC Network Stasis Range Scale override is enabled (requires inputting into INI, not command line). Used to override the NPC Network Stasis Range Scale (to scale server performance for more player), on default is set to 0, disabling it. Official set it to 24.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "NPCNetworkStasisRangeScalePlayerCountEnd",
+            "Value": "0",
+            "Header": "NPCNetworkStasisRangeScalePlayerCountEnd",
+            "Tooltip": "Maximum number of online players when NPCNetworkStasisRangeScalePercentEnd is reached (requires inputting into INI, not command line). Used to override the NPC Network Stasis Range Scale (to scale server performance for more player), on default is set to 0, disabling it. Official set it to 70",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "NPCNetworkStasisRangeScalePercentEnd",
+            "Value": "0.55000001",
+            "Header": "NPCNetworkStasisRangeScalePercentEnd",
+            "Tooltip": "The Maximum scale percentage used when NPCNetworkStasisRangeScalePlayerCountEnd is reached (requires inputting into INI, not command line). Used to override the NPC Network Stasis Range Scale (to scale server performance for more player). Official set it to 0.5.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "ForceFlyerExplosives",
+            "Value": "FALSE",
+            "Header": "Force Flyer Explosives",
+            "Tooltip": "If True, allowed flyers (except Quetzal and Wyvern) to fly with C4 attached to it. ",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "EnableExtraStructurePreventionVolumes",
+            "Value": "FALSE",
+            "Header": "Enable Extra Structure Prevention Volumes",
+            "Tooltip": "If True, disables building in specific resource-rich areas, in particular setup on The Island around the major mountains.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "ShowFloatingDamageText",
+            "Value": "FALSE",
+            "Header": "Show Floating Damage Text",
+            "Tooltip": "If True, enables RPG-style popup damage text mode.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "AllowHitMarkers",
+            "Value": "TRUE",
+            "Header": "Allow Hit Markers",
+            "Tooltip": "If False, disables optional markers for ranged attacks.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "serverPVE",
+            "Value": "FALSE",
+            "Header": "Enable Server PVE",
+            "Tooltip": "If True, disables PvP and enables PvE",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "PreventSpawnAnimations",
+            "Value": "FALSE",
+            "Header": "Prevent Spawn Animations",
+            "Tooltip": "If True, player characters (re)spawn without the wake-up animation.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "DisableCryopodEnemyCheck ",
+            "Value": "FALSE",
+            "Header": "Disable Cryopod Enemy Check ",
+            "Tooltip": "If True, allows cryopods to be used while enemies are nearby.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "DisableCryopodFridgeRequirement",
+            "Value": "FALSE",
+            "Header": "Disable Cryopod Fridge Requirement",
+            "Tooltip": "If True, allows cryopods to be used without needing to be in range of a powered cryofridge.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "AllowCryoFridgeOnSaddle",
+            "Value": "FALSE",
+            "Header": "Allow Cryo Fridge On Saddle",
+            "Tooltip": "If True, allows cryofridges to be built on platform saddles and rafts.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "DestroyTamesOverTheSoftTameLimit",
+            "Value": "FALSE",
+            "Header": "Destroy Tames Over The Soft Tame Limit",
+            "Tooltip": "Dinos above the Soft Tame Server Limit will be marked �For Cryo� and display an icon and a timer indicating how soon they need to be cryopodded before they are automatically destroyed. Dinos marked and dinos destroyed by this system will be logged in the tribe log. This differs from the standard tame limit, as it still allows new players to join servers and tame creatures above the 5000 limit, whereas previously, they would not have been able to tame or breed creatures at the server cap. You can define the soft tame limit with MaxTamedDinos_SoftTameLimit. You can define the time (in seconds) before tame's autodestruction with MaxTamedDinos_SoftTameLimit_CountdownForDeletionDuration.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "MaxTamedDinos_SoftTameLimit",
+            "Value": "5000",
+            "Header": "Max Tamed Dinos Soft Tame Limit",
+            "Tooltip": "Defines the server-wide soft tame limit. See DestroyTamesOverTheSoftTameLimit for more info.",
+            "XamlPlacement": "Administration"
+          },
+          {
+            "Key": "MaxTamedDinos_SoftTameLimit_CountdownForDeletionDuration",
+            "Value": "604800",
+            "Header": "Max Tamed Dinos Soft Tame Limit Countdown For Deletion Duration",
+            "Tooltip": "Defines the time (in seconds) for tame to get destroyed. See DestroyTamesOverTheSoftTameLimit for more info.",
+            "XamlPlacement": "Administration"
+          }
+
+
+
+
+        ]
+      },
+      
+      {
+        "SectionName": "MessageOfTheDay",
+        "Settings": [
+          {
+            "Key": "Message",
+            "Value": "ServerMessageGoesHere",
+            "Header": "Message of the Day",
+            "Tooltip": "The message displayed to players when they join the server.",
+            "XamlPlacement": "Administration"
+          }
+          // ... more settings
+        ]
+      }
+      // ... more sections
+    ]
+  }
+  // ... possibly other files
+]

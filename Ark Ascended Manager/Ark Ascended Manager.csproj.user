@@ -19,6 +19,15 @@
     <Compile Update="Views\Pages\RestorePage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\RconTabContent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\EditCommandWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\RconWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="ServerCard.xaml">
@@ -30,12 +39,6 @@
     <Page Update="Views\Pages\CreateSchedulePage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Pages\PluginInstallPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Pages\PluginsPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\Pages\Integrations.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -43,9 +46,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\IssueReportForm.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Pages\RconPanel.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\DashboardPage.xaml">
@@ -60,7 +60,16 @@
     <Page Update="Views\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\RconTabContent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Windows\EditCommandWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Windows\MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Windows\RconWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
