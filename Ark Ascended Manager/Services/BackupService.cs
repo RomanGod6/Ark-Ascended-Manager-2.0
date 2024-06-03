@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Timers;
 using Newtonsoft.Json;
 
@@ -61,6 +62,12 @@ namespace Ark_Ascended_Manager.Services
 
             foreach (var server in servers)
             {
+                if (string.IsNullOrEmpty(server.ServerPath))
+                {
+                    Logger.Log($"ServerPath is null or empty for server: {server.ProfileName}");
+                    continue;
+                }
+
                 string saveFilePath = Path.Combine(server.ServerPath, "ShooterGame", "Saved", "SavedArks", "TheIsland_WP", "TheIsland_WP.ark");
                 if (File.Exists(saveFilePath))
                 {
@@ -81,6 +88,7 @@ namespace Ark_Ascended_Manager.Services
                     Logger.Log($"Save file not found for server at path: {saveFilePath}");
                 }
             }
+
         }
 
         private void OnSaveFileChanged(object sender, FileSystemEventArgs e)
@@ -120,7 +128,25 @@ namespace Ark_Ascended_Manager.Services
     public class Server
     {
         // Define properties as in your JSON structure
-        public string ServerPath { get; set; }
-        // ... other properties ...
+        public string ServerPath { get; }
+        public string ServerName { get; }
+
+        public string ServerIP { get; }
+        
+        public string ServerVersion { get; }
+
+        public string AdminPassword { get;  }
+
+        public int RCONPort { get; }
+
+        public string ProfileName { get; }
+
+        public string AppId { get; }
+
+       public string ChangeNumber { get; set; }
+        public bool IsServerRunning { get; set; }
+
+        public bool UpdateOnRestart { get; set; }
+
     }
 }

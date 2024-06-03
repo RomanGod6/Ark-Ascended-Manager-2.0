@@ -68,14 +68,34 @@ namespace Ark_Ascended_Manager.Services
                 }
 
                 string serversJson = File.ReadAllText(serversFilePath);
+                Debug.WriteLine($"servers.json content: {serversJson}");
+
                 servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
                 Debug.WriteLine($"Loaded {servers.Count} servers.");
+
+                foreach (var server in servers)
+                {
+                    Debug.WriteLine($"Loaded server with ServerPath: '{server?.ServerPath ?? "null"}'");
+                    if (server == null)
+                    {
+                        Debug.WriteLine("Deserialization produced a null Server object.");
+                    }
+                    else if (server.ServerPath == null)
+                    {
+                        Debug.WriteLine("ServerPath is null. Full server object:");
+                        Debug.WriteLine(JsonConvert.SerializeObject(server, Formatting.Indented));
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error loading servers: {ex.Message}");
             }
         }
+
+
+
+
 
 
 
@@ -146,24 +166,35 @@ namespace Ark_Ascended_Manager.Services
         {
             Debug.WriteLine($"Attempting to execute schedule: {schedule.Nickname}");
 
-            // Additional debug information to log the server names being compared
-            Debug.WriteLine($"Looking for server named '{schedule.Server.Trim()}' in the list of servers.");
+            if (servers == null || !servers.Any())
+            {
+                Debug.WriteLine("No servers loaded. Ensure servers.json is properly loaded and contains server entries.");
+                return;
+            }
 
-            var server = servers.FirstOrDefault(s => s.ProfileName.Trim() == schedule.Server.Trim());
+            Debug.WriteLine($"Looking for server with path '{schedule.Server.Trim()}' in the list of servers.");
+
+            foreach (var srv in servers)
+            {
+                Debug.WriteLine($"Server ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
+            }
+
+            var server = servers.FirstOrDefault(s => s.ServerPath?.Trim() == schedule.Server.Trim());
 
             if (server != null)
             {
-                Debug.WriteLine($"Found server for schedule '{schedule.Nickname}': {server.ProfileName}");
+                Debug.WriteLine($"Found server for schedule '{schedule.Nickname}': {server.ServerPath}");
+                var arkRCONService = new ArkRCONService(server.ServerIP, (ushort)server.RCONPort, server.AdminPassword, server.ServerPath);
                 switch (schedule.Action)
                 {
                     case "Restart":
-                        await RestartServer(server);
+                        await RestartServer(server, arkRCONService);
                         break;
                     case "Shutdown":
-                        await ShutdownServer(server);
+                        await ShutdownServer(server, arkRCONService);
                         break;
                     case "Custom RCON Command":
-                        await ExecuteCustomRCONCommand(server, schedule.RconCommand);
+                        await ExecuteCustomRCONCommand(arkRCONService, schedule.RconCommand);
                         break;
                         // Add other actions as needed
                 }
@@ -173,19 +204,22 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"No matching server found for schedule '{schedule.Nickname}'. Available servers are:");
                 foreach (var srv in servers)
                 {
-                    Debug.WriteLine($"Server ProfileName: '{srv.ProfileName.Trim()}'");
+                    Debug.WriteLine($"Server ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
                 }
             }
         }
 
-        private async Task ExecuteCustomRCONCommand(Server server, string command)
+
+
+
+
+
+        private async Task ExecuteCustomRCONCommand(ArkRCONService arkRCONService, string command)
         {
             try
             {
-                Debug.WriteLine($"Sending custom RCON command '{command}' to server {server.ProfileName}");
-                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
-                await rcon.ConnectAsync();
-                var response = await rcon.SendCommandAsync(command);
+                Debug.WriteLine($"Sending custom RCON command '{command}'");
+                var response = await arkRCONService.SendCommandAsync(command);
                 Debug.WriteLine($"Custom RCON command sent. Response: {response ?? "No response"}");
             }
             catch (Exception ex)
@@ -223,24 +257,22 @@ namespace Ark_Ascended_Manager.Services
             // Debounce or delay might be needed to handle multiple events
             LoadSchedules();
         }
-        private async Task RestartServer(Server server)
+        private async Task RestartServer(Server server, ArkRCONService arkRCONService)
         {
             try
             {
-                // Notify players of the impending shutdown via RCON
-                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
-                await rcon.ConnectAsync();
+                await arkRCONService.ConnectAsync();
 
                 // Send countdown messages
                 for (int i = 1; i > 0; i--)
                 {
-                    await rcon.SendCommandAsync($"ServerChat Server will restart in {i} minute(s)...");
+                    await arkRCONService.SendServerChatAsync($"Server will restart in {i} minute(s)...");
                     Debug.WriteLine($"Server restart notification sent: {i} minute(s) remaining.");
                     await Task.Delay(60000); // Wait for 1 minute between each notification
                 }
 
                 // Perform the shutdown
-                await rcon.SendCommandAsync("doexit");
+                await arkRCONService.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
 
                 // Wait for the server to shut down fully
@@ -261,28 +293,27 @@ namespace Ark_Ascended_Manager.Services
         }
 
 
-        private async Task ShutdownServer(Server server)
+
+        private async Task ShutdownServer(Server server, ArkRCONService arkRCONService)
         {
             try
             {
                 RemoveServerFromMonitoring(server.ServerPath);
                 Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
-                Debug.WriteLine($"Connecting to RCON at IP: 127.0.0.1, Port: {server.RCONPort}");
 
-                var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
-                await rcon.ConnectAsync();
+                await arkRCONService.ConnectAsync();
 
                 // Send countdown messages
                 for (int i = 10; i > 0; i--)
                 {
                     Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
-                    await rcon.SendCommandAsync($"ServerChat Server will shut down in {i} minute(s)...");
+                    await arkRCONService.SendServerChatAsync($"Server will shut down in {i} minute(s)...");
                     await Task.Delay(60000); // Wait for 1 minute between each notification
                 }
 
                 // Shutdown command
                 Debug.WriteLine("Sending RCON shutdown command.");
-                await rcon.SendCommandAsync("doexit");
+                await arkRCONService.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
 
                 ServerConfig serverConfig = ConvertToServerConfig(server);
@@ -293,6 +324,7 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"Error in RCON shutdown: {ex.Message}");
             }
         }
+
         private void RemoveServerFromMonitoring(string serverDirectory)
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -587,11 +619,6 @@ namespace Ark_Ascended_Manager.Services
         }
         }
 
-
-
-    }
-
-
     internal class Schedule
     {
         public string Nickname { get; set; }
@@ -600,32 +627,15 @@ namespace Ark_Ascended_Manager.Services
         public string Time { get; set; }
         public List<string> Days { get; set; }
         public string Server { get; set; }
+
     }
 
-    internal class Server
-    {
-    public string ChangeNumberStatus { get; set; }
-    public bool IsMapNameOverridden { get; set; }
-    public string ProfileName { get; set; }
-    public string ServerIP { get; set; }
-    public int? Pid { get; set; }
-    public string ServerStatus { get; set; }
-    public string ServerPath { get; set; }
-    public string MapName { get; set; }
-    public string AppId { get; set; }
-    public bool IsRunning { get; set; }
-    public int ChangeNumber { get; set; }
-    public string ServerName { get; set; }
-    public int ListenPort { get; set; } // Ports are typically integers
-    public int RCONPort { get; set; }   // Ports are typically integers
-    public List<string> Mods { get; set; } // Assuming Mods can be a list
-    public int MaxPlayerCount { get; set; }
-    public string AdminPassword { get; set; }
-    public string ServerPassword { get; set; }
-    public bool UseBattlEye { get; set; } // Use bool for checkboxes
-    public bool ForceRespawnDinos { get; set; } // Use bool for checkboxes
-    public bool PreventSpawnAnimation { get; set; } // Use bool for checkboxes
-    public bool IsServerRunning { get; set; }
-    public bool UpdateOnRestart { get; set; }
+
+
+
 }
+
+
+
+
 

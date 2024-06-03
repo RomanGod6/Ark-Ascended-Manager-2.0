@@ -1,13 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the MIT License.
-// If a copy of the MIT was not distributed with this file, You can obtain one at https://opensource.org/licenses/MIT.
-// Copyright (C) Leszek Pomianowski and WPF UI Contributors.
-// All Rights Reserved.
-
-using Ark_Ascended_Manager.Services;
-using Ark_Ascended_Manager.ViewModels.Pages;
-using Wpf.Ui.Controls;
-using System.IO;
-using System.Windows;
+﻿using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
@@ -16,6 +7,12 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Windows.Media;
+using System.Threading.Tasks;
+using System;
+using Ark_Ascended_Manager.Services;
+using Ark_Ascended_Manager.ViewModels.Pages;
+using System.IO;
+using Wpf.Ui.Controls;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -26,21 +23,21 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         public SettingsPage(SettingsViewModel viewModel)
         {
-            ViewModel = viewModel;
+            ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel)); // Ensure ViewModel is not null
             InitializeComponent();
-            DataContext = this;
+            DataContext = this; // Set DataContext to ViewModel
             this.uploadedFilesList.ItemsSource = UploadedFiles;
             Loaded += async (s, e) => await CheckAndUpdateVersionStatusAsync();
             Loaded += SettingsPage_Loaded;
             CheckForUpdatesAsync();
             LoadUploadedFilesList();
-
-           
         }
+
         private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.LoadReleaseNotes();
         }
+
         private void UploadJson_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -50,10 +47,24 @@ namespace Ark_Ascended_Manager.Views.Pages
                 string destinationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ark ascended manager", "Data", "Engrams", Path.GetFileName(openFileDialog.FileName));
                 File.Copy(openFileDialog.FileName, destinationPath, true);
                 LoadUploadedFilesList();
-
-                
             }
         }
+
+        private void OnLanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var selectedComboBoxItem = e.AddedItems[0] as ComboBoxItem;
+                if (selectedComboBoxItem != null)
+                {
+                    string selectedLanguage = selectedComboBoxItem.Tag.ToString();
+                    ViewModel.GlobalSettings.Language = selectedLanguage;
+                    ViewModel.ApplyLanguage(selectedLanguage);
+                    ViewModel.SaveSettings();
+                }
+            }
+        }
+
         private void OpenAppDataFolder_Click(object sender, RoutedEventArgs e)
         {
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -99,6 +110,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Navigate to IssueReportForm
             this.NavigationService.Navigate(new IssueReportForm());
         }
+
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -128,6 +140,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 System.Windows.MessageBox.Show($"An error occurred: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private const string GitHubApiLatestReleaseUrl = "https://api.github.com/repos/RomanGod6/Ark-Ascended-Manager-Updater/releases/latest";
 
         private async Task<string> GetLatestVersionTagAsync()
@@ -177,6 +190,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 UpdateApplicationButton.IsEnabled = true;
             }
         }
+
         private async Task CheckAndUpdateVersionStatusAsync()
         {
             string latestVersionTag = await GetLatestVersionTagAsync(); // Should return something like "v2.4.0"
@@ -208,7 +222,6 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
-
         private async Task DownloadAndInstallUpdateAsync(string versionTag)
         {
             string downloadUrl = $"https://github.com/RomanGod6/Ark-Ascended-Manager-Updater/archive/refs/tags/v{versionTag}.zip";
@@ -218,7 +231,6 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             using (var client = new HttpClient())
             {
-
                 // Download the ZIP file
                 try
                 {
@@ -280,8 +292,6 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
-
-
         private async Task CheckForUpdatesAsync()
         {
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -289,7 +299,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Ark-Ascended-Manager-Update-Check");
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "ArkAscendedManager-Update-Check");
 
                 var response = await httpClient.GetAsync(updateCheckUrl);
                 if (response.IsSuccessStatusCode)
@@ -316,11 +326,5 @@ namespace Ark_Ascended_Manager.Views.Pages
                 }
             }
         }
-
-
-
-
-
-
     }
 }

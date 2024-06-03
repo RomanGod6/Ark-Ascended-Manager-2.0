@@ -7,6 +7,11 @@ using System.Net.Http;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 using System.IO;
+using Ark_Ascended_Manager.Views.Windows;
+using System.Globalization;
+using System.Windows.Markup;
+using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 
@@ -110,6 +115,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
             public string UpdateCountdownTimer { get; set; }
             public string CurrentTheme { get; set; } = "Light";
+            public string Language { get; set; } = "en";
         }
 
         private AAMGlobalSettings _globalSettings;
@@ -124,6 +130,21 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
+        public string Language
+        {
+            get => GlobalSettings.Language;
+            set
+            {
+                if (GlobalSettings.Language != value)
+                {
+                    GlobalSettings.Language = value;
+                    OnPropertyChanged();
+                    ApplyLanguage(value);
+                    SaveSettings();
+                }
+            }
+        }
+
         private string SettingsFilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "AAMGlobalSettings.json");
 
         private void LoadSettings()
@@ -131,8 +152,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             if (File.Exists(SettingsFilePath))
             {
                 var json = File.ReadAllText(SettingsFilePath);
+                Debug.WriteLine(json);
                 GlobalSettings = JsonConvert.DeserializeObject<AAMGlobalSettings>(json) ?? new AAMGlobalSettings();
                 ApplyTheme(GlobalSettings.CurrentTheme); // Apply theme based on loaded setting
+                ApplyLanguage(GlobalSettings.Language);
             }
             else
             {
@@ -152,6 +175,26 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+
+        public void ApplyLanguage(string languageCode)
+        {
+            try
+            {
+                CultureInfo culture = new CultureInfo(languageCode);
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+
+                // Optionally refresh the main window to apply the new language
+                MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+                mainWindow.Language = XmlLanguage.GetLanguage(culture.IetfLanguageTag);
+            }
+            catch (CultureNotFoundException ex)
+            {
+                // Handle the exception if the culture is not found
+                Console.WriteLine($"Culture {languageCode} is not supported: {ex.Message}");
+            }
+        }
+
 
 
         public bool AutoUpdateServersWhenNewUpdateAvailable
@@ -174,10 +217,25 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             CurrentTheme = themeType;
         }
 
-        private void SaveSettings()
+        public void SaveSettings()
         {
             var json = JsonConvert.SerializeObject(GlobalSettings, Formatting.Indented);
             File.WriteAllText(SettingsFilePath, json);
+        }
+
+        private void OnLanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var selectedComboBoxItem = e.AddedItems[0] as ComboBoxItem;
+                if (selectedComboBoxItem != null)
+                {
+                    string selectedLanguage = selectedComboBoxItem.Tag.ToString();
+                    GlobalSettings.Language = selectedLanguage;
+                    ApplyLanguage(selectedLanguage);
+                    SaveSettings();
+                }
+            }
         }
 
 
