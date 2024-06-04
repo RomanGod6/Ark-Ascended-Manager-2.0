@@ -2153,7 +2153,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                         case "DifficultyOffset":
                             DifficultyOffset = value;
                             break;
-                        case "PvEStructureDecayPeriodMultiplier ":
+                        case "PvEStructureDecayPeriodMultiplier":
                             PvEStructureDecayPeriodMultiplier = value;
                             break;
                         case "Banlist":
@@ -2562,7 +2562,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "StructurePickupHoldDuration", StructurePickupHoldDuration);
             UpdateLine(ref lines, "ServerSettings", "StructurePickupTimeAfterPlacement", StructurePickupTimeAfterPlacement);
             UpdateLine(ref lines, "ServerSettings", "RaidDinoCharacterFoodDrainMultiplier", RaidDinoCharacterFoodDrainMultiplier);
-
+                
             // ... Repeat for other properties ...
 
             // Write the updated lines back to the file
@@ -2615,6 +2615,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             if (keyIndex != -1)
             {
                 lines[keyIndex] = $"{key}={newValue}";
+                Logger.Log($"Updated {key} under [{header}] to {newValue}.");
             }
             else
             {
@@ -2622,6 +2623,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 Logger.Log($"Added new key {key} with value {newValue} under section [{header}].");
             }
         }
+
+
 
 
 
@@ -4575,17 +4578,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowSpeedLeveling", AllowSpeedLeveling.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AllowFlyerSpeedLeveling", AllowFlyerSpeedLeveling.ToString());
 
-                // ... Continue for all other properties
-
                 // Write the updated lines back to the file
                 File.WriteAllLines(iniFilePath, lines);
+
+                Logger.Log("Game.ini settings saved successfully.");
             }
             catch (Exception ex)
             {
-                // Log the error
-                Logger.Log($"An error occurred while saving game settings: {ex.Message}");
-                // Optionally, log the stack trace or other details
-                Logger.Log(ex.StackTrace);
+                Logger.Log($"Error saving Game.ini settings: {ex.Message}");
             }
         }
         private string _babyImprintingStatScaleMultiplier;
