@@ -438,7 +438,7 @@
                                     <Label Content="Tamed Dino Damage Multiplier:" ToolTip="Set the multiplier for tamed dino damage."/>
                                     <TextBox Text="{Binding TamedDinoDamageMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino damage."/>
                                     <Label Content="Wild Dino Damage Multiplier:" ToolTip="Set the multiplier for wild dino damage."/>
-                                    <TextBox Text="{Binding DinoDamageMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dino damage."/>
+                                    <TextBox Text="{Binding DinoWildDamageMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for wild dino damage."/>
                                     <Label Content="Tamed Dino Resistance Multiplier:" ToolTip="Set the multiplier for tamed dino resistance to damage."/>
                                     <TextBox Text="{Binding TamedDinoResistanceMultiplier, Mode=TwoWay}" ToolTip="Enter the multiplier for tamed dino resistance to damage."/>
                                     <Label Content="Dino Resistance Multiplier:" ToolTip="Set the multiplier for wild dino resistance to damage."/>

@@ -179,6 +179,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
     {
         { "TheIsland_WP", "The Island" },
         { "ScorchedEarth_WP", "Scorched Earth" },
+                {"TheCenter_WP", "The Center" }
         // ... Add other maps as needed
     };
             LoadServerProfile();
@@ -2124,7 +2125,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                             DinoResistanceMultiplier = value;
                             break;
                         case "DinoDamageMultiplier":
-                            DinoDamageMultiplier = value;
+                            DinoWildDamageMultiplier = value;
                             break;
                         case "TamedDinoResistanceMultiplier":
                             TamedDinoResistanceMultiplier = value;
@@ -2478,7 +2479,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "ShowMapPlayerLocation", ShowMapPlayerLocation.ToString());
             UpdateLine(ref lines, "ServerSettings", "TamedDinoDamageMultiplier", TamedDinoDamageMultiplier);
             UpdateLine(ref lines, "ServerSettings", "DinoResistanceMultiplier", DinoResistanceMultiplier ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "DinoDamageMultiplier", DinoDamageMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DinoDamageMultiplier", DinoWildDamageMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "TamedDinoResistanceMultiplier", TamedDinoResistanceMultiplier);
             UpdateLine(ref lines, "ServerSettings", "TamingSpeedMultiplier", TamingSpeedMultiplier);
             UpdateLine(ref lines, "ServerSettings", "DinoCharacterStaminaDrainMultiplier", DinoCharacterStaminaDrainMultiplier ?? "1.0");
@@ -3056,14 +3057,14 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 OnPropertyChanged(nameof(DinoResistanceMultiplier)); // Notify the UI of the change
             }
         }
-        private string _dinoDamageMultiplier;
-        public string DinoDamageMultiplier
+        private string _dinoWildDamageMultiplier;
+        public string DinoWildDamageMultiplier
         {
-            get { return _dinoDamageMultiplier; }
+            get { return _dinoWildDamageMultiplier; }
             set
             {
-                _dinoDamageMultiplier = value;
-                OnPropertyChanged(nameof(DinoDamageMultiplier)); // Notify the UI of the change
+                _dinoWildDamageMultiplier = value;
+                OnPropertyChanged(nameof(DinoWildDamageMultiplier)); // Notify the UI of the change
             }
         }
 
