@@ -808,22 +808,62 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         {
             Logger.Log("Loading server profile.");
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "currentServerConfig.json");
+
             if (File.Exists(filePath))
             {
-                Logger.Log($"Reading server profile from {filePath}");
-                string json = File.ReadAllText(filePath);
-                CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
-                Logger.Log($"Loaded server profile for {CurrentServerConfig.ServerName}");
+                try
+                {
+                    Logger.Log($"Reading server profile from {filePath}");
+                    string json = File.ReadAllText(filePath);
+                    CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
+
+                    if (CurrentServerConfig == null)
+                    {
+                        Logger.Log("Failed to deserialize server profile. CurrentServerConfig is null.");
+                        return;
+                    }
+
+                    Logger.Log($"Loaded server profile for {CurrentServerConfig.ServerName}");
+                }
+                catch (Newtonsoft.Json.JsonException ex)
+                {
+                    Logger.Log($"JSON Exception occurred while reading server profile: {ex.Message}");
+                }
+                catch (IOException ex)
+                {
+                    Logger.Log($"IO Exception occurred while reading server profile: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Exception occurred while reading server profile: {ex.Message}");
+                }
             }
             else
             {
                 Logger.Log("Server profile file not found.");
             }
-            LoadIniFile();
-            LoadGameIniFile();
-            LoadLaunchServerSettings();
-           
+
+            // Ensure CurrentServerConfig is not null before proceeding
+            if (CurrentServerConfig != null)
+            {
+                try
+                {
+                    LoadIniFile();
+                    LoadGameIniFile();
+                    LoadLaunchServerSettings();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Exception occurred while loading server settings: {ex.Message}");
+                }
+            }
+            else
+            {
+                Logger.Log("CurrentServerConfig is null after deserialization.");
+            }
         }
+
+
         // Ensure this method is in the ConfigPageViewModel if that's where it's being called
 
 
@@ -1788,7 +1828,7 @@ set mods={Mods}
 set MultiHome={MultihomeIP}
 set customparameters={customLaunchOptionsArgument}
 set passivemod={passiveMod}
-set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -server -log{modsArgument} -passivemod=%passivemod%
+set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -NoHangDetection -server -log{modsArgument} -passivemod=%passivemod%
 
 start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
@@ -2441,15 +2481,15 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             var lines = File.ReadAllLines(iniFilePath).ToList();
 
             // Update specific lines
-            UpdateLine(ref lines, "ServerSettings", "HarvestAmountMultiplier", HarvestAmountMultiplier ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "HarvestAmountMultiplier", HarvestAmountMultiplier ?? "0.99");
+            UpdateLine(ref lines, "ServerSettings", "ResourcesRespawnPeriodMultiplier", ResourcesRespawnPeriodMultiplier ?? "0.99");
             UpdateLine(ref lines, "ServerSettings", "DayTimeSpeedScale", DayTimeSpeedScale ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "DayCycleSpeedScale", DayCycleSpeedScale ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "NightTimeSpeedScale", NightTimeSpeedScale ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "DinoCountMultiplier", DinoCountMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "DayCycleSpeedScale", DayCycleSpeedScale ?? "0.99");
+            UpdateLine(ref lines, "ServerSettings", "NightTimeSpeedScale", NightTimeSpeedScale ?? "0.99");
+            UpdateLine(ref lines, "ServerSettings", "DinoCountMultiplier", DinoCountMultiplier ?? "0.99");
             UpdateLine(ref lines, "ServerSettings", "HairGrowthSpeedMultiplier", HairGrowthSpeedMultiplier ?? "1.0");
             UpdateLine(ref lines, "ServerSettings", "BaseTemperatureMultiplier", BaseTemperatureMultiplier ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "HarvestHealthMultiplier", HarvestHealthMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "HarvestHealthMultiplier", HarvestHealthMultiplier ?? "0.99");
             UpdateLine(ref lines, "ServerSettings", "AllowThirdPersonPlayer", AllowThirdPersonPlayer.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvE", AllowCaveBuildingPvE.ToString());
             UpdateLine(ref lines, "ServerSettings", "AllowCaveBuildingPvP", AllowCaveBuildingPvP.ToString());
@@ -2511,8 +2551,8 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
             UpdateLine(ref lines, "ServerSettings", "PerPlatformMaxStructuresMultiplier", PerPlatformMaxStructuresMultiplier);
             UpdateLine(ref lines, "ServerSettings", "ForceAllStructureLocking", ForceAllStructureLocking.ToString());
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyOldStructuresMultiplier", AutoDestroyOldStructuresMultiplier);
-            UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier ?? "1.0");
-            UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier ?? "1.0");
+            UpdateLine(ref lines, "ServerSettings", "StructureDamageMultiplier", StructureDamageMultiplier ?? "0.99");
+            UpdateLine(ref lines, "ServerSettings", "StructureResistanceMultiplier", StructureResistanceMultiplier ?? "0.99");
             UpdateLine(ref lines, "ServerSettings", "AutoDestroyStructures", AutoDestroyStructures.ToString());
             UpdateLine(ref lines, "ServerSettings", "UseVSync", UseVSync.ToString());
             UpdateLine(ref lines, "ServerSettings", "PreventSpawnAnimations", PreventSpawnAnimations.ToString());
@@ -2598,6 +2638,36 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 Logger.Log($"Default value '{defaultValue}' applied for {key} under {header} because provided value was '{value}'.");
             }
 
+            // List of keys that should override 1.0 or 1 to 0.99
+            var keysToOverride = new HashSet<string>
+    {
+        "PlayerCharacterWaterDrainMultiplier",
+        "XPMultiplier",
+        "PlayerCharacterFoodDrainMultiplier",
+        "DinoDamageMultiplier",
+        "DinoResistanceMultiplier",
+        "PlayerCharacterHealthRecoveryMultiplier",
+        "PlayerCharacterStaminaDrainMultiplier",
+        "TamingSpeedMultiplier",
+        "HarvestAmountMultiplier",
+        "ResourcesRespawnPeriodMultiplier",
+        "DinoCountMultiplier",
+        "DayCycleSpeedScale",
+        "NightTimeSpeedScale",
+        "HarvestHealthMultiplier",
+        "ExplorerNoteXPMultiplier",
+        "UnclaimedKillXPMultiplier",
+        "StructureResistanceMultiplier",
+        "StructureDamageMultiplier"
+    };
+
+            // Override values of 1.0 or 1 to 0.99 for specific keys
+            if (keysToOverride.Contains(key) && (value == "1.0" || value == "1"))
+            {
+                newValue = "0.99";
+                Logger.Log($"Value for {key} under {header} overridden to 0.99.");
+            }
+
             string formattedHeader = $"[{header}]";
             int headerIndex = lines.FindIndex(line => line.Trim().Equals(formattedHeader, StringComparison.OrdinalIgnoreCase));
             if (headerIndex == -1)
@@ -2624,6 +2694,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 Logger.Log($"Added new key {key} with value {newValue} under section [{header}].");
             }
         }
+
 
 
 
@@ -4548,7 +4619,7 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PassiveDefensesDamageRiderlessDinos", PassiveDefensesDamageRiderlessDinos.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWar", PvEAllowTribeWar.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PvEAllowTribeWarCancel", PvEAllowTribeWarCancel.ToString());
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty.ToString(CultureInfo.InvariantCulture) ?? "");
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxDifficulty", MaxDifficulty ?? "");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseSingleplayerSettings", UseSingleplayerSettings.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UseCorpseLocator", UseCorpseLocator.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ShowCreativeMode", ShowCreativeMode.ToString());
@@ -4566,13 +4637,13 @@ start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconP
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "PreventMateBoost", PreventMateBoost.ToString());
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "OverrideMaxExperiencePointsDino", OverrideMaxExperiencePointsDino);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "MaxNumberOfPlayersInTribe", MaxNumberOfPlayersInTribe);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "ExplorerNoteXPMultiplier", ExplorerNoteXPMultiplier ?? "0.99") ;
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "BossKillXPMultiplier", BossKillXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "AlphaKillXPMultiplier", AlphaKillXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "WildKillXPMultiplier", WildKillXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CaveKillXPMultiplier", CaveKillXPMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "TamedKillXPMultiplier", TamedKillXPMultiplier);
-                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier);
+                UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "UnclaimedKillXPMultiplier", UnclaimedKillXPMultiplier ?? "0.99");
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "SupplyCrateLootQualityMultiplier", SupplyCrateLootQualityMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "FishingLootQualityMultiplier", FishingLootQualityMultiplier);
                 UpdateLine(ref lines, "/Script/ShooterGame.ShooterGameMode", "CraftingSkillBonusMultiplier", CraftingSkillBonusMultiplier);

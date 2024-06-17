@@ -114,6 +114,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             public bool AutoUpdateServersOnReboot { get; set; }
             public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
             public string UpdateCountdownTimer { get; set; }
+
+            public int UpdateCheckInterval { get; set; } = 10;
             public string CurrentTheme { get; set; } = "Light";
             public string Language { get; set; } = "en";
         }
@@ -172,6 +174,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     GlobalSettings.UpdateCountdownTimer = value;
                     OnPropertyChanged();
                     SaveSettings(); 
+                }
+            }
+        }
+
+        public int UpdateCheckInterval
+        {
+            get => GlobalSettings.UpdateCheckInterval;
+            set
+            {
+                if (GlobalSettings.UpdateCheckInterval != value)
+                {
+                    GlobalSettings.UpdateCheckInterval = value;
+                    OnPropertyChanged();
+                    SaveSettings();
                 }
             }
         }

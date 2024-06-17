@@ -6,13 +6,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Ark_Ascended_Manager.Views.Pages;
-using CoreRCON;
 using Newtonsoft.Json;
+using static Ark_Ascended_Manager.ViewModels.Pages.SettingsViewModel;
 
 namespace Ark_Ascended_Manager.Services
 {
-    internal class AutoUpdateService
+    public class AutoUpdateService
     {
         private readonly string _appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private readonly string _arkAscendedManagerFolder;
@@ -20,6 +19,7 @@ namespace Ark_Ascended_Manager.Services
         private readonly string _globalSettingsPath;
         private readonly string _crashDetectionPath;
         private System.Threading.Timer _updateCheckTimer;
+        private bool _isUpdating = false; // Flag to track if an update is in progress
 
         public AutoUpdateService()
         {
@@ -28,113 +28,143 @@ namespace Ark_Ascended_Manager.Services
             _globalSettingsPath = Path.Combine(_arkAscendedManagerFolder, "AAMGlobalSettings.json");
             _crashDetectionPath = Path.Combine(_arkAscendedManagerFolder, "crashdetection.json");
         }
+
         public void StartCheckingUpdates()
         {
-            // Set up the timer to trigger CheckAndUpdateServers method every 10 minutes
-            _updateCheckTimer = new System.Threading.Timer(async _ =>
-            {
-                await CheckAndUpdateServers();
-            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            UpdateTimerInterval();
         }
 
-        // Ensure you have a method to cleanly stop the timer if needed, for example on application exit
         public void StopCheckingUpdates()
         {
-            _updateCheckTimer?.Change(Timeout.Infinite, 0);
-            _updateCheckTimer?.Dispose();
+            if (_updateCheckTimer != null)
+            {
+                _updateCheckTimer.Change(Timeout.Infinite, 0);
+                _updateCheckTimer.Dispose();
+                _updateCheckTimer = null;
+            }
+        }
+
+        public void UpdateTimerInterval()
+        {
+            var globalSettings = LoadGlobalSettings();
+            TimeSpan interval = TimeSpan.FromMinutes(globalSettings.UpdateCheckInterval);
+
+            // Log the interval for checking updates
+            Debug.WriteLine($"Update check interval updated to {interval.TotalMinutes} minutes.");
+
+            StopCheckingUpdates(); // Stop the existing timer if it is running
+
+            _updateCheckTimer = new System.Threading.Timer(async _ =>
+            {
+                // Log each time the timer is triggered
+                Debug.WriteLine($"Update check timer triggered at {DateTime.Now}.");
+
+                if (!_isUpdating)
+                {
+                    Debug.WriteLine("Starting update check...");
+                    await CheckAndUpdateServers();
+                    Debug.WriteLine("Update check completed.");
+                }
+                else
+                {
+                    Debug.WriteLine("Update check skipped because an update is already in progress.");
+                }
+            }, null, TimeSpan.Zero, interval);
         }
 
         public async Task CheckAndUpdateServers()
         {
-            var globalSettings = LoadGlobalSettings();
-            if (!globalSettings.AutoUpdateServersWhenNewUpdateAvailable)
-            {
-                Debug.WriteLine("Auto-update is disabled.");
-                return;
-            }
+            _isUpdating = true; // Set the flag to indicate that an update is in progress
 
-            var servers = LoadServerProfiles(_serversConfigPath);
-            bool updatesMade = false;
-
-            if (!int.TryParse(globalSettings.UpdateCountdownTimer, out int countdownStart))
+            try
             {
-                Debug.WriteLine("Invalid UpdateCountdownTimer value. Defaulting to 10 minutes.");
-                countdownStart = 10;
-            }
-
-            foreach (var server in servers)
-            {
-                try
+                var globalSettings = LoadGlobalSettings();
+                if (globalSettings == null || !globalSettings.AutoUpdateServersWhenNewUpdateAvailable)
                 {
-                    if (IsServerOnline(server))
-                    {
-                        var rcon = new RCON(IPAddress.Parse("127.0.0.1"), (ushort)server.RCONPort, server.AdminPassword);
-                        await rcon.ConnectAsync();
+                    Debug.WriteLine("Auto-update is disabled or global settings could not be loaded.");
+                    return;
+                }
 
-                        for (int i = countdownStart; i > 0; i--)
+                var servers = LoadServerProfiles(_serversConfigPath);
+                if (servers == null || !servers.Any())
+                {
+                    Debug.WriteLine("No servers found or failed to load server profiles.");
+                    return;
+                }
+
+                bool updatesMade = false;
+
+                if (!int.TryParse(globalSettings.UpdateCountdownTimer, out int countdownStart))
+                {
+                    Debug.WriteLine("Invalid UpdateCountdownTimer value. Defaulting to 10 minutes.");
+                    countdownStart = 10;
+                }
+
+                foreach (var server in servers)
+                {
+                    try
+                    {
+                        if (IsServerOnline(server))
                         {
-                            Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
-                            await rcon.SendCommandAsync($"Broadcast Server will shut down in {i} minute(s)...New Update Detected");
-                            await Task.Delay(60000);
+                            using var arkRCONService = new ArkRCONService("127.0.0.1", (ushort)server.RCONPort, server.AdminPassword, server.ServerPath);
+                            await arkRCONService.ConnectAsync();
+
+                            for (int i = countdownStart; i > 0; i--)
+                            {
+                                Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
+                                await arkRCONService.SendServerChatAsync($"Server will shut down in {i} minute(s)...New Update Detected");
+                                await Task.Delay(TimeSpan.FromMinutes(1));
+                            }
+
+                            Debug.WriteLine("Sending RCON shutdown command.");
+                            await arkRCONService.SendCommandAsync("doexit");
+                            Debug.WriteLine("RCON shutdown command sent successfully.");
                         }
 
-                        Debug.WriteLine("Sending RCON shutdown command.");
-                        await rcon.SendCommandAsync("doexit");
-                        Debug.WriteLine("RCON shutdown command sent successfully.");
+                        var updateNeeded = await UpdateServerIfNecessary(server);
+                        if (updateNeeded)
+                        {
+                            updatesMade = true;
+                        }
                     }
-
-                    var updateNeeded = await UpdateServerIfNecessary(server);
-                    if (updateNeeded)
+                    catch (SocketException ex)
                     {
-                        updatesMade = true;
+                        Debug.WriteLine($"SocketException: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Exception: {ex.Message}");
                     }
                 }
-                catch (SocketException ex)
+
+                if (updatesMade)
                 {
-                    Debug.WriteLine($"SocketException: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Exception: {ex.Message}");
+                    SaveServerConfiguration(servers);
                 }
             }
-
-            if (updatesMade)
+            finally
             {
-                SaveServerConfiguration(servers);
+                _isUpdating = false; // Reset the flag to indicate that the update has finished
             }
         }
 
-        public class GlobalSettings
-        {
-            public bool AutoUpdateServersOnReboot { get; set; }
-            public bool AutoUpdateServersWhenNewUpdateAvailable { get; set; }
-            public string UpdateCountdownTimer { get; set; }
-        }
-
-
-        private GlobalSettings LoadGlobalSettings()
+        private AAMGlobalSettings LoadGlobalSettings()
         {
             try
             {
-                // Ensure the global settings file exists
                 if (!File.Exists(_globalSettingsPath))
                 {
                     Debug.WriteLine($"Global settings file not found at {_globalSettingsPath}.");
-                    return new GlobalSettings(); // Return default settings if file does not exist
+                    return new AAMGlobalSettings();
                 }
 
-                // Read the JSON content from the file
                 string jsonContent = File.ReadAllText(_globalSettingsPath);
+                var globalSettings = JsonConvert.DeserializeObject<AAMGlobalSettings>(jsonContent);
 
-                // Deserialize the JSON content to a GlobalSettings object
-                var globalSettings = JsonConvert.DeserializeObject<GlobalSettings>(jsonContent);
-
-                // Check if deserialization was successful
                 if (globalSettings == null)
                 {
                     Debug.WriteLine("Failed to deserialize the global settings. Returning default settings.");
-                    return new GlobalSettings(); // Return default settings if deserialization fails
+                    return new AAMGlobalSettings();
                 }
 
                 return globalSettings;
@@ -142,32 +172,40 @@ namespace Ark_Ascended_Manager.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"An error occurred while loading global settings: {ex.Message}");
-                return new GlobalSettings(); // Return default settings in case of an error
+                return new AAMGlobalSettings();
             }
         }
 
+        private void SaveGlobalSettings(AAMGlobalSettings settings)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                File.WriteAllText(_globalSettingsPath, json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An error occurred while saving global settings: {ex.Message}");
+            }
+        }
 
         private List<ServerConfig> LoadServerProfiles(string configPath)
         {
             if (!File.Exists(configPath))
             {
                 Debug.WriteLine($"Server configuration file not found at {configPath}.");
-                return new List<ServerConfig>(); // Return an empty list if the file does not exist
+                return new List<ServerConfig>();
             }
 
             try
             {
-                // Read the JSON content from the file
                 string jsonContent = File.ReadAllText(configPath);
-
-                // Deserialize the JSON content to a List<ServerConfig> object
                 var serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(jsonContent);
 
-                // Check if deserialization was successful
                 if (serverConfigs == null)
                 {
                     Debug.WriteLine("Failed to deserialize the server configurations. Returning an empty list.");
-                    return new List<ServerConfig>(); // Return an empty list if deserialization fails
+                    return new List<ServerConfig>();
                 }
 
                 return serverConfigs;
@@ -175,20 +213,17 @@ namespace Ark_Ascended_Manager.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"An error occurred while loading server profiles: {ex.Message}");
-                return new List<ServerConfig>(); // Return an empty list in case of an error
+                return new List<ServerConfig>();
             }
         }
 
-
         private bool IsServerOnline(ServerConfig server)
         {
-            // Original check based on IsRunning property
             if (server.IsRunning)
             {
                 return true;
             }
 
-            // Check if either ArkAscendedServer.exe or AsaApiLoader.exe is running for this server
             string exePath1 = Path.Combine(server.ServerPath, @"ShooterGame\Binaries\Win64\ArkAscendedServer.exe");
             string exePath2 = Path.Combine(server.ServerPath, @"ShooterGame\Binaries\Win64\AsaApiLoader.exe");
 
@@ -208,19 +243,16 @@ namespace Ark_Ascended_Manager.Services
                 }
                 catch
                 {
-                    // Ignore processes that we don't have access to
                 }
             }
             return false;
         }
-
 
         private async Task<bool> UpdateServerIfNecessary(ServerConfig server)
         {
             var sanitizedData = LoadSanitizedData(server.AppId);
             if (sanitizedData != null && server.ChangeNumber < sanitizedData.ChangeNumber)
             {
-                // Check if the server is currently online
                 if (IsServerOnline(server))
                 {
                     Debug.WriteLine($"Server {server.ProfileName} is online. Handling updates for online servers is not yet implemented.");
@@ -229,29 +261,30 @@ namespace Ark_Ascended_Manager.Services
 
                 Debug.WriteLine($"Updating server {server.ProfileName}...");
                 await UpdateServerWithSteamCMD(server);
-
-                // Update the server's ChangeNumber
                 server.ChangeNumber = sanitizedData.ChangeNumber;
-
-                // Indicate that an update was necessary and performed
                 return true;
             }
-            // No update was necessary
             return false;
         }
 
         private void SaveServerConfiguration(List<ServerConfig> servers)
         {
-            // Serialize the list to JSON and save it back to the servers.json file
-            string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
-            File.WriteAllText(_serversConfigPath, json);
-            Debug.WriteLine("Server configurations have been updated.");
+            try
+            {
+                string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
+                File.WriteAllText(_serversConfigPath, json);
+                Debug.WriteLine("Server configurations have been updated.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An error occurred while saving server configurations: {ex.Message}");
+            }
         }
+
         private async Task UpdateServerWithSteamCMD(ServerConfig server)
         {
             string scriptPath = CreateSteamCMDScript(server);
             RunSteamCMD(scriptPath);
-            // After the server is updated, you can delete the script file if needed.
         }
 
         private string CreateSteamCMDScript(ServerConfig server)
@@ -267,12 +300,13 @@ namespace Ark_Ascended_Manager.Services
             File.WriteAllText(scriptPath, scriptContent);
             return scriptPath;
         }
+
         private void RunSteamCMD(string scriptPath)
         {
             string steamCmdPath = FindSteamCmdPath();
             if (string.IsNullOrEmpty(steamCmdPath))
             {
-                // Handle the error: steamcmd.exe not found
+                Debug.WriteLine("SteamCMD path is not set or invalid.");
                 return;
             }
 
@@ -290,20 +324,18 @@ namespace Ark_Ascended_Manager.Services
                 process.WaitForExit();
             }
         }
+
         private string FindSteamCmdPath()
         {
-            // Define the JSON file path in the app data folder
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
             string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
 
-            // Check if the app data directory exists, if not, create it
             if (!Directory.Exists(appDataPath))
             {
                 Directory.CreateDirectory(appDataPath);
             }
 
-            // Try to read the path from the JSON file
             if (File.Exists(jsonFilePath))
             {
                 string json = File.ReadAllText(jsonFilePath);
@@ -315,7 +347,6 @@ namespace Ark_Ascended_Manager.Services
                 }
             }
 
-            // If the path is not found in the JSON file, prompt the user with OpenFileDialog
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Executable files (*.exe)|*.exe",
@@ -323,44 +354,51 @@ namespace Ark_Ascended_Manager.Services
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
-
             {
-                // Save the selected path to the JSON file
                 SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
                 return openFileDialog.FileName;
             }
 
-            return null; // or handle this case appropriately
+            return null;
         }
+
         private void SaveSteamCmdPath(string path, string jsonFilePath)
         {
-            var pathData = new { SteamCmdPath = path };
-            string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
-            File.WriteAllText(jsonFilePath, json);
+            try
+            {
+                var pathData = new { SteamCmdPath = path };
+                string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
+                File.WriteAllText(jsonFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An error occurred while saving SteamCMD path: {ex.Message}");
+            }
         }
+
         private SanitizedSteamData LoadSanitizedData(string appId)
         {
-            // Adjust the file path to include the AppId as a directory
             string filePath = Path.Combine(_arkAscendedManagerFolder, appId, $"sanitizedsteamdata_{appId}.json");
 
             if (File.Exists(filePath))
             {
-                string jsonContent = File.ReadAllText(filePath);
-                var sanitizedData = JsonConvert.DeserializeObject<SanitizedSteamData>(jsonContent);
-                return sanitizedData;
+                try
+                {
+                    string jsonContent = File.ReadAllText(filePath);
+                    var sanitizedData = JsonConvert.DeserializeObject<SanitizedSteamData>(jsonContent);
+                    return sanitizedData;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"An error occurred while loading sanitized data for AppId {appId}: {ex.Message}");
+                    return null;
+                }
             }
             else
             {
                 Debug.WriteLine($"Sanitized data file does not exist for AppId {appId} at path: {filePath}");
-                return null; // Return null if file doesn't exist or deserialization fails
+                return null;
             }
         }
-
-
-        // Reuse or adapt the existing methods you've described, such as LoadSanitizedData and UpdateServerWithSteamCMD
     }
-
-
-
-    // Define GlobalSettings, ServerConfig, and other necessary classes or structs if not already defined
 }

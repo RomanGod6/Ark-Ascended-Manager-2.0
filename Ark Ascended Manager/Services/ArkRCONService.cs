@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ark_Ascended_Manager.Services
 {
-    public class ArkRCONService
+    public class ArkRCONService : IDisposable
     {
         private RCON _rconClient;
         private readonly IPAddress _serverIP;
@@ -37,7 +37,6 @@ namespace Ark_Ascended_Manager.Services
                 Logger.Log("MultiHome not configured. Using default IP or provided IP.");
             }
         }
-
 
         private string GetMultiHomeIP()
         {
@@ -81,10 +80,6 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
-
-
-
-
         public async Task<string> SendCommandAsync(string command)
         {
             if (!_isConnected)
@@ -96,7 +91,6 @@ namespace Ark_Ascended_Manager.Services
             }
             catch (Exception)
             {
-                // Consider retrying the command a certain number of times before failing
                 _isConnected = false;
                 throw;
             }
@@ -112,7 +106,7 @@ namespace Ark_Ascended_Manager.Services
                 }
                 catch (Exception ex)
                 {
-                    _isConnected = false; // Assume connection might be lost on error
+                    _isConnected = false;
                     throw new InvalidOperationException("Failed to send RCON command: " + ex.Message);
                 }
             }
@@ -134,24 +128,20 @@ namespace Ark_Ascended_Manager.Services
 
                 for (int i = countdownMinutes; i > 0; i--)
                 {
-                    // Log the attempt to send the broadcast message
                     Debug.WriteLine($"Broadcasting shutdown message: {i} minute(s) remaining.");
                     await SendCommandAsync($"ServerChat Server shutting down in {i} minute(s) due to {reason}.");
-                    await Task.Delay(TimeSpan.FromMinutes(1)); // Consider using a CancellationToken here
+                    await Task.Delay(TimeSpan.FromMinutes(1));
                 }
 
-                // Log the attempt to send the shutdown command
                 Debug.WriteLine("Sending shutdown command to RCON server.");
                 await SendCommandAsync("doexit");
             }
             catch (Exception ex)
             {
-                // Log the exception and throw it to be handled further up the call stack if necessary
                 Debug.WriteLine($"An error occurred during shutdown: {ex.Message}");
                 throw;
             }
         }
-
 
         public async Task SaveWorldAsync()
         {

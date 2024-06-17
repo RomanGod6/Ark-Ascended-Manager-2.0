@@ -77,6 +77,12 @@
 
                     <!-- TextBox for displaying Update Countdown Timer -->
                     <TextBox Margin="5" Text="{Binding ViewModel.UpdateCountdownTimer, Mode=TwoWay}" IsReadOnly="False"/>
+
+                    <!-- Label for Update Interval Timer -->
+                    <TextBlock Text="Interval To Check For Updates In Minutes - Restart of AAM Required For Change to Implement" Margin="5" VerticalAlignment="Center"/>
+
+                    <!-- TextBox for displaying Update Interval Timer -->
+                    <TextBox Margin="5" Text="{Binding ViewModel.UpdateCheckInterval, Mode=TwoWay}" IsReadOnly="False"/>
                 </StackPanel>
             </GroupBox>
 

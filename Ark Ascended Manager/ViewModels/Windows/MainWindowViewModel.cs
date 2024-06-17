@@ -39,6 +39,13 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Wrench20},
                 TargetPageType = typeof(Views.Pages.CurseForgeModPage)
             },
+                    new NavigationViewItem()
+            {
+                Content = "Tasks",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Timer12},
+                TargetPageType = typeof(Views.Pages.CreateSchedulePage)
+            },
+
 
 
         };

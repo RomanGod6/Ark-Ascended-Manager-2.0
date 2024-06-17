@@ -20,16 +20,26 @@
             <ComboBox x:Name="actionComboBox" Margin="0,5" SelectionChanged="ActionComboBox_SelectionChanged">
                 <ComboBoxItem Content="Shutdown"/>
                 <ComboBoxItem Content="Restart"/>
+                <ComboBoxItem Content="Dino Wipe"/>
                 <ComboBoxItem Content="Custom RCON Command"/>
                 <!-- Additional actions here -->
             </ComboBox>
 
-
             <TextBox x:Name="rconCommandTextBox" Margin="0,5" Visibility="Collapsed" />
 
+            <!-- Server Selection -->
+            <Label Content="Select Server:"/>
+            <ComboBox x:Name="serverComboBox" Margin="0,5"/>
+
             <!-- Time and Day(s) Selection -->
-            <Label Content="Select Time:"/>
-            <xctk:TimePicker x:Name="timePicker" Margin="0,5" HorizontalAlignment="Left" Height="22" Width="100" />
+            <Label Content="Select Times:"/>
+            <ListBox x:Name="timePickerListBox" Margin="0,5">
+                <ListBoxItem>
+                    <xctk:TimePicker x:Name="timePicker1" HorizontalAlignment="Left" Height="22" Width="100" />
+                </ListBoxItem>
+            </ListBox>
+            <Button Content="Add Time" Width="100" Margin="0,5" Click="AddTimeButton_Click" HorizontalAlignment="Left"/>
+
             <Label Content="Select Days:"/>
             <StackPanel x:Name="daysPanel" Orientation="Horizontal" Margin="0,5">
                 <CheckBox Content="Monday"/>
@@ -39,7 +49,6 @@
                 <CheckBox Content="Friday"/>
                 <CheckBox Content="Saturday"/>
                 <CheckBox Content="Sunday"/>
-                <!-- Repeat for other days -->
             </StackPanel>
 
             <!-- Reoccurrence Interval -->
@@ -48,13 +57,9 @@
                 <ComboBox x:Name="reoccurrenceIntervalTypeComboBox" Width="120" Margin="0,5">
                     <ComboBoxItem Content="Minutes"/>
                     <ComboBoxItem Content="Hours"/>
-                    <!-- Additional interval types here -->
                 </ComboBox>
                 <TextBox x:Name="reoccurrenceIntervalTextBox" Width="50" Margin="0,5"/>
             </StackPanel>
-
-            <!-- Button to Add Another Action -->
-
 
             <!-- Buttons for Save and Cancel -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">

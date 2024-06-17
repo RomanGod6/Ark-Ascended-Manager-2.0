@@ -127,26 +127,29 @@ namespace Ark_Ascended_Manager.Services
 
     public class Server
     {
-        // Define properties as in your JSON structure
-        public string ServerPath { get; }
-        public string ServerName { get; }
-
-        public string ServerIP { get; }
-        
-        public string ServerVersion { get; }
-
-        public string AdminPassword { get;  }
-
-        public int RCONPort { get; }
-
-        public string ProfileName { get; }
-
-        public string AppId { get; }
-
-       public string ChangeNumber { get; set; }
+        public string ProfileName { get; set; }
+        public string ServerStatus { get; set; }
+        public string ServerPath { get; set; }
+        public string MapName { get; set; }
+        public string AppId { get; set; }
+        public string ServerIP { get; set; }
+        public bool IsRunning { get; set; }
+        public string ServerName { get; set; }
+        public int ListenPort { get; set; }
+        public int RCONPort { get; set; }
+        public List<string> Mods { get; set; }
+        public int MaxPlayerCount { get; set; }
+        public string AdminPassword { get; set; }
+        public string ServerIcon { get; set; }
+        public string ServerPassword { get; set; }
+        public bool UseBattlEye { get; set; }
+        public bool ForceRespawnDinos { get; set; }
+        public bool PreventSpawnAnimation { get; set; }
+        public int ChangeNumber { get; set; }
+        public string ChangeNumberStatus { get; set; }
         public bool IsServerRunning { get; set; }
 
         public bool UpdateOnRestart { get; set; }
-
     }
+
 }

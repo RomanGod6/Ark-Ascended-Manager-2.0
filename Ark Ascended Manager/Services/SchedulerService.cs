@@ -3,13 +3,15 @@ using CoreRCON.Parsers.Standard;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Timers; // This is for System.Timers.Timer
+using System.Timers;
 using System.Windows.Forms;
+using System.Management;
 
 namespace Ark_Ascended_Manager.Services
 {
@@ -17,42 +19,104 @@ namespace Ark_Ascended_Manager.Services
     {
         private List<Schedule> schedules;
         private List<Server> servers;
-        private System.Timers.Timer timer; 
+        private System.Timers.Timer actionTimer;
+        private System.Timers.Timer reloadTimer;
+        private const string DatabaseFileName = "schedules.db";
+        private bool isServerStarting = false;
 
         public SchedulerService()
         {
-            
+            InitializeDatabase();
             LoadSchedules();
             LoadServers();
             InitializeSchedulesWatcher();
-            // Initialize and configure the System.Timers.Timer
-            timer = new System.Timers.Timer(60000); // Set interval to 60,000 milliseconds (1 minute)
-            timer.Elapsed += Timer_Elapsed; // Subscribe to the Elapsed event
-            timer.AutoReset = true; // Enable AutoReset to continuously raise the event
-            timer.Start(); // Start the timer
 
+            // Timer for checking actions
+            actionTimer = new System.Timers.Timer(5000);
+            actionTimer.Elapsed += Timer_Elapsed;
+            actionTimer.AutoReset = true;
+            actionTimer.Start();
+            Debug.WriteLine("Scheduler action timer started.");
+
+            // Timer for reloading schedules
+            reloadTimer = new System.Timers.Timer(10000); // Reload schedules every 10 seconds
+            reloadTimer.Elapsed += ReloadTimer_Elapsed;
+            reloadTimer.AutoReset = true;
+            reloadTimer.Start();
+            Debug.WriteLine("Scheduler reload timer started.");
+        }
+
+        private void InitializeDatabase()
+        {
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager");
+            string dbPath = Path.Combine(folderPath, DatabaseFileName);
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            if (!File.Exists(dbPath))
+            {
+                SQLiteConnection.CreateFile(dbPath);
+            }
+
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            {
+                connection.Open();
+                string createTableQuery = @"
+                CREATE TABLE IF NOT EXISTS Schedules (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Nickname TEXT,
+                    Action TEXT,
+                    RconCommand TEXT,
+                    Times TEXT,
+                    Days TEXT,
+                    ReoccurrenceIntervalType TEXT,
+                    ReoccurrenceInterval INTEGER,
+                    Server TEXT
+                )";
+                using (var command = new SQLiteCommand(createTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         private void LoadSchedules()
         {
-            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string schedulesFilePath = Path.Combine(appDataFolder, "Ark Ascended Manager", "schedules.json");
+            schedules = new List<Schedule>();
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager");
+            string dbPath = Path.Combine(folderPath, DatabaseFileName);
+            Debug.WriteLine($"Database path: {dbPath}");
 
-            // Check if the file exists before trying to read it
-            if (File.Exists(schedulesFilePath))
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
             {
-                string schedulesJson = File.ReadAllText(schedulesFilePath);
-                schedules = JsonConvert.DeserializeObject<List<Schedule>>(schedulesJson);
-                Debug.WriteLine($"Loaded {schedules.Count} schedules.");
+                connection.Open();
+                string selectQuery = "SELECT * FROM Schedules";
+                using (var command = new SQLiteCommand(selectQuery, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var schedule = new Schedule
+                        {
+                            Nickname = reader["Nickname"].ToString(),
+                            Action = reader["Action"].ToString(),
+                            RconCommand = reader["RconCommand"].ToString(),
+                            Times = JsonConvert.DeserializeObject<List<TimeSpan>>(reader["Times"].ToString()),
+                            Days = JsonConvert.DeserializeObject<List<string>>(reader["Days"].ToString()),
+                            ReoccurrenceIntervalType = reader["ReoccurrenceIntervalType"].ToString(),
+                            ReoccurrenceInterval = Convert.ToInt32(reader["ReoccurrenceInterval"]),
+                            Server = reader["Server"].ToString()
+                        };
+                        Debug.WriteLine($"Loaded schedule: {schedule.Nickname} with times: {string.Join(", ", schedule.Times)}");
+                        schedules.Add(schedule);
+                    }
+                }
             }
-            else
-            {
-                // If the file doesn't exist, you could either create a new list or handle the case appropriately
-                schedules = new List<Schedule>();
-                Debug.WriteLine("No schedules.json file found. Loaded 0 schedules.");
-            }
+            Debug.WriteLine($"Total schedules loaded: {schedules.Count}");
         }
-
 
         private void LoadServers()
         {
@@ -71,18 +135,26 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"servers.json content: {serversJson}");
 
                 servers = JsonConvert.DeserializeObject<List<Server>>(serversJson);
+
+                if (servers == null || !servers.Any())
+                {
+                    Debug.WriteLine("No servers loaded or failed to deserialize servers.json.");
+                    return;
+                }
+
                 Debug.WriteLine($"Loaded {servers.Count} servers.");
 
                 foreach (var server in servers)
                 {
-                    Debug.WriteLine($"Loaded server with ServerPath: '{server?.ServerPath ?? "null"}'");
+                    Debug.WriteLine($"Loaded server with ProfileName: '{server?.ProfileName ?? "null"}', ServerPath: '{server?.ServerPath ?? "null"}'");
+
                     if (server == null)
                     {
                         Debug.WriteLine("Deserialization produced a null Server object.");
                     }
-                    else if (server.ServerPath == null)
+                    else if (server.ServerPath == null || server.ProfileName == null)
                     {
-                        Debug.WriteLine("ServerPath is null. Full server object:");
+                        Debug.WriteLine("ServerPath or ProfileName is null. Full server object:");
                         Debug.WriteLine(JsonConvert.SerializeObject(server, Formatting.Indented));
                     }
                 }
@@ -93,52 +165,58 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
-
-
-
-
-
-
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             var now = DateTime.Now;
+            Debug.WriteLine($"Timer elapsed at {now}");
             TimeSpan? nextActionTime = null;
 
-            // First, handle any regular scheduled tasks.
             foreach (var schedule in schedules)
             {
                 if (schedule.Days.Contains(now.DayOfWeek.ToString()))
                 {
-                    var scheduleTime = TimeSpan.Parse(schedule.Time);
-                    var timeUntilAction = scheduleTime - now.TimeOfDay;
-
-                    if (now.TimeOfDay <= scheduleTime &&
-                        (!nextActionTime.HasValue || timeUntilAction < nextActionTime))
+                    Debug.WriteLine($"Schedule {schedule.Nickname} is scheduled for today.");
+                    foreach (var scheduleTime in schedule.Times.ToList())
                     {
-                        nextActionTime = timeUntilAction;
-                    }
+                        TimeSpan timeUntilAction = scheduleTime - now.TimeOfDay;
+                        Debug.WriteLine($"Checking schedule time: {scheduleTime}, current time: {now.TimeOfDay}, time until action: {timeUntilAction.TotalMinutes} minutes");
 
-                    // Check if the current time is within a minute of the scheduled time
-                    if (Math.Abs(timeUntilAction.TotalMinutes) < 1)
-                    {
-                        Debug.WriteLine($"Executing scheduled task: {schedule.Nickname}");
-                        Task.Run(() => ExecuteSchedule(schedule));
+                        if (Math.Abs(timeUntilAction.TotalSeconds) < 5)  // Adjust the time precision if necessary
+                        {
+                            Debug.WriteLine($"Executing scheduled task: {schedule.Nickname} at {now}");
+                            Task.Run(() => ExecuteSchedule(schedule));
+
+                            if (schedule.ReoccurrenceInterval > 0)
+                            {
+                                TimeSpan newTime;
+                                switch (schedule.ReoccurrenceIntervalType)
+                                {
+                                    case "Minutes":
+                                        newTime = scheduleTime.Add(new TimeSpan(0, schedule.ReoccurrenceInterval, 0));
+                                        break;
+                                    case "Hours":
+                                        newTime = scheduleTime.Add(new TimeSpan(schedule.ReoccurrenceInterval, 0, 0));
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException("Invalid recurrence interval type.");
+                                }
+                                if (newTime.TotalDays < 1)
+                                {
+                                    schedule.Times.Add(newTime);
+                                    Debug.WriteLine($"Scheduled next occurrence of task '{schedule.Nickname}' at {newTime}");
+                                }
+                            }
+                            schedule.Times.Remove(scheduleTime);
+                        }
+
+                        if (timeUntilAction >= TimeSpan.Zero && (!nextActionTime.HasValue || timeUntilAction < nextActionTime))
+                        {
+                            nextActionTime = timeUntilAction;
+                        }
                     }
                 }
             }
 
-            // Next, check if there are any update-on-restart actions to be performed.
-            foreach (var server in servers)
-            {
-                if (server.UpdateOnRestart && !server.IsServerRunning)
-                {
-                    // You need to define the "IsServerOnline" method if not already present.
-                    Debug.WriteLine($"Server {server.ProfileName} is scheduled to be updated on restart.");
-                    Task.Run(() => UpdateServerIfNecessary(server));
-                }
-            }
-
-            // Log the countdown to the next action
             if (nextActionTime.HasValue)
             {
                 Debug.WriteLine($"Next action in {nextActionTime.Value.TotalMinutes} minutes.");
@@ -148,43 +226,86 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine("No upcoming actions today.");
             }
         }
-        private async Task UpdateServerIfNecessary(Server server)
-        {
-            if (!server.IsServerRunning)
-            {
-                // Perform update logic here
-                await UpdateServer(server);
-            }
-            else
-            {
-                Debug.WriteLine("Server is currently running. Consider scheduling the update for later.");
-            }
-        }
 
+        private void ReloadTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Debug.WriteLine("Reloading schedules from the database...");
+            LoadSchedules();
+        }
 
         private async Task ExecuteSchedule(Schedule schedule)
         {
-            Debug.WriteLine($"Attempting to execute schedule: {schedule.Nickname}");
+            Debug.WriteLine($"[INFO] Attempting to execute schedule: {schedule.Nickname} at {DateTime.Now}");
 
             if (servers == null || !servers.Any())
             {
-                Debug.WriteLine("No servers loaded. Ensure servers.json is properly loaded and contains server entries.");
+                Debug.WriteLine("[ERROR] No servers loaded. Ensure servers.json is properly loaded and contains server entries.");
                 return;
             }
 
-            Debug.WriteLine($"Looking for server with path '{schedule.Server.Trim()}' in the list of servers.");
+            string trimmedScheduleServer = schedule.Server?.Trim() ?? string.Empty;
+            Debug.WriteLine($"[INFO] Looking for server with profile name '{trimmedScheduleServer}' in the list of servers.");
 
-            foreach (var srv in servers)
-            {
-                Debug.WriteLine($"Server ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
-            }
-
-            var server = servers.FirstOrDefault(s => s.ServerPath?.Trim() == schedule.Server.Trim());
+            var server = servers.FirstOrDefault(s => s.ProfileName?.Trim().Equals(trimmedScheduleServer, StringComparison.OrdinalIgnoreCase) == true);
 
             if (server != null)
             {
-                Debug.WriteLine($"Found server for schedule '{schedule.Nickname}': {server.ServerPath}");
+                Debug.WriteLine($"[INFO] Found server for schedule '{schedule.Nickname}': {server.ProfileName}");
+
+                server.IsRunning = IsServerRunning(server); // Checking server status here
+                Debug.WriteLine($"[INFO] Server '{server.ProfileName}' running status: {server.IsRunning}");
+
+                if (!isServerStarting && !server.IsRunning)
+                {
+                    isServerStarting = true;
+                    Debug.WriteLine("[INFO] Server is offline. Starting the server...");
+
+                    string batFilePath = Path.Combine(server.ServerPath, "LaunchServer.bat");
+                    Process.Start(batFilePath);
+                    Debug.WriteLine($"[INFO] Server start process initiated for: {batFilePath}");
+
+                    // Check the server status every 5 seconds for a total duration of 5 minutes
+                    int maxRetries = 60; // 5 minutes (60 retries at 5 seconds each)
+                    bool serverStarted = false;
+
+                    for (int i = 0; i < maxRetries; i++)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        server.IsRunning = IsServerRunning(server);
+
+                        if (server.IsRunning)
+                        {
+                            serverStarted = true;
+                            break;
+                        }
+
+                        Debug.WriteLine($"[INFO] Checking server status... Attempt {i + 1}/{maxRetries}, running: {server.IsRunning}");
+                    }
+
+                    isServerStarting = false;
+
+                    if (serverStarted)
+                    {
+                        Debug.WriteLine($"[INFO] Server '{server.ProfileName}' is now running.");
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"[ERROR] Server '{server.ProfileName}' failed to start after multiple attempts.");
+                        return; // Exit if server failed to start
+                    }
+                }
+                else if (isServerStarting)
+                {
+                    Debug.WriteLine($"Server '{server.ProfileName}' is already in the process of starting.");
+                    return;
+                }
+                else if (server.IsRunning)
+                {
+                    Debug.WriteLine($"Server '{server.ProfileName}' is already running.");
+                }
+
                 var arkRCONService = new ArkRCONService(server.ServerIP, (ushort)server.RCONPort, server.AdminPassword, server.ServerPath);
+
                 switch (schedule.Action)
                 {
                     case "Restart":
@@ -196,15 +317,43 @@ namespace Ark_Ascended_Manager.Services
                     case "Custom RCON Command":
                         await ExecuteCustomRCONCommand(arkRCONService, schedule.RconCommand);
                         break;
-                        // Add other actions as needed
                 }
+
+                // Handle recurring schedules
+                if (schedule.ReoccurrenceInterval > 0)
+                {
+                    foreach (var time in schedule.Times.ToList())
+                    {
+                        TimeSpan newTime;
+
+                        switch (schedule.ReoccurrenceIntervalType)
+                        {
+                            case "Minutes":
+                                newTime = time.Add(new TimeSpan(0, schedule.ReoccurrenceInterval, 0));
+                                break;
+                            case "Hours":
+                                newTime = time.Add(new TimeSpan(schedule.ReoccurrenceInterval, 0, 0));
+                                break;
+                            default:
+                                throw new InvalidOperationException("Invalid recurrence interval type.");
+                        }
+
+                        if (newTime.TotalDays < 1)
+                        {
+                            schedule.Times.Add(newTime);
+                            Debug.WriteLine($"Scheduled next occurrence of task '{schedule.Nickname}' at {newTime}");
+                        }
+                    }
+                }
+
+                SaveSchedulesToDatabase();
             }
             else
             {
                 Debug.WriteLine($"No matching server found for schedule '{schedule.Nickname}'. Available servers are:");
                 foreach (var srv in servers)
                 {
-                    Debug.WriteLine($"Server ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
+                    Debug.WriteLine($"Server ProfileName: '{srv?.ProfileName ?? "null"}', ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
                 }
             }
         }
@@ -212,6 +361,34 @@ namespace Ark_Ascended_Manager.Services
 
 
 
+        private bool IsServerRunning(Server server)
+        {
+            try
+            {
+                string serverExePath = Path.Combine(server.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkAscendedServer.exe");
+                string serverProcessName = Path.GetFileNameWithoutExtension(serverExePath);
+
+                string query = $"SELECT ExecutablePath FROM Win32_Process WHERE Name = '{serverProcessName}.exe'";
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    foreach (ManagementObject result in results)
+                    {
+                        string executablePath = result["ExecutablePath"] as string;
+                        if (string.Equals(executablePath, serverExePath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
+            }
+        }
 
 
         private async Task ExecuteCustomRCONCommand(ArkRCONService arkRCONService, string command)
@@ -219,7 +396,14 @@ namespace Ark_Ascended_Manager.Services
             try
             {
                 Debug.WriteLine($"Sending custom RCON command '{command}'");
+
+                // Ensure RCON connection
+                await arkRCONService.ConnectAsync();
+
+                // Send the command and get the response
                 var response = await arkRCONService.SendCommandAsync(command);
+
+                // Log the response
                 Debug.WriteLine($"Custom RCON command sent. Response: {response ?? "No response"}");
             }
             catch (Exception ex)
@@ -229,9 +413,6 @@ namespace Ark_Ascended_Manager.Services
         }
 
 
-
-
-
         private FileSystemWatcher schedulesWatcher;
 
         private void InitializeSchedulesWatcher()
@@ -239,7 +420,6 @@ namespace Ark_Ascended_Manager.Services
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string schedulesFolderPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
 
-            // Ensure the directory exists
             Directory.CreateDirectory(schedulesFolderPath);
 
             schedulesWatcher = new FileSystemWatcher(schedulesFolderPath, "schedules.json")
@@ -251,48 +431,52 @@ namespace Ark_Ascended_Manager.Services
             schedulesWatcher.EnableRaisingEvents = true;
         }
 
-
         private void OnSchedulesFileChanged(object source, FileSystemEventArgs e)
         {
-            // Debounce or delay might be needed to handle multiple events
             LoadSchedules();
         }
+
         private async Task RestartServer(Server server, ArkRCONService arkRCONService)
         {
             try
             {
+                server.IsRunning = IsServerRunning(server);
+
+                if (!server.IsRunning)
+                {
+                    Debug.WriteLine("Server is offline. Starting the server...");
+                    string batFilePath = Path.Combine(server.ServerPath, "LaunchServer.bat");
+                    Process.Start(batFilePath);
+                    Debug.WriteLine($"Server start process initiated for: {batFilePath}");
+
+                    await Task.Delay(60000);
+                }
+
                 await arkRCONService.ConnectAsync();
 
-                // Send countdown messages
                 for (int i = 1; i > 0; i--)
                 {
                     await arkRCONService.SendServerChatAsync($"Server will restart in {i} minute(s)...");
                     Debug.WriteLine($"Server restart notification sent: {i} minute(s) remaining.");
-                    await Task.Delay(60000); // Wait for 1 minute between each notification
+                    await Task.Delay(60000);
                 }
 
-                // Perform the shutdown
                 await arkRCONService.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
 
-                // Wait for the server to shut down fully
-                await Task.Delay(30000); // 30 seconds delay to ensure the server has time to shut down
+                await Task.Delay(30000);
 
-                // Update the server before restarting
                 await UpdateServer(server);
 
-                // Start the server again
-                string batFilePath = Path.Combine(server.ServerPath, "LaunchServer.bat");
-                Process.Start(batFilePath);
-                Debug.WriteLine($"Server restart process started for: {batFilePath}");
+                string restartBatFilePath = Path.Combine(server.ServerPath, "LaunchServer.bat");
+                Process.Start(restartBatFilePath);
+                Debug.WriteLine($"Server restart process started for: {restartBatFilePath}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error restarting server: {ex.Message}");
             }
         }
-
-
 
         private async Task ShutdownServer(Server server, ArkRCONService arkRCONService)
         {
@@ -303,15 +487,13 @@ namespace Ark_Ascended_Manager.Services
 
                 await arkRCONService.ConnectAsync();
 
-                // Send countdown messages
                 for (int i = 10; i > 0; i--)
                 {
                     Debug.WriteLine($"Sending shutdown countdown message: {i} minute(s) remaining.");
                     await arkRCONService.SendServerChatAsync($"Server will shut down in {i} minute(s)...");
-                    await Task.Delay(60000); // Wait for 1 minute between each notification
+                    await Task.Delay(60000);
                 }
 
-                // Shutdown command
                 Debug.WriteLine("Sending RCON shutdown command.");
                 await arkRCONService.SendCommandAsync("doexit");
                 Debug.WriteLine("RCON shutdown command sent successfully.");
@@ -340,7 +522,6 @@ namespace Ark_Ascended_Manager.Services
                     monitoringInfos.RemoveAll(info => info.ServerDirectory.Equals(serverDirectory, StringComparison.OrdinalIgnoreCase));
                     json = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
                     File.WriteAllText(jsonFilePath, json);
- 
                 }
             }
         }
@@ -349,10 +530,8 @@ namespace Ark_Ascended_Manager.Services
         {
             return new ServerConfig
             {
-                // Map properties from Server to ServerConfig
                 ProfileName = server.ProfileName,
                 ServerPath = server.ServerPath,
-                // ... other properties ...
             };
         }
 
@@ -386,13 +565,11 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
-
         private void WriteAllServers(List<Server> servers)
         {
             Debug.WriteLine("WriteAllServers: Method called.");
 
-            // Optional: Debug print for verification
-            var serverForDebug = servers.FirstOrDefault(s => s.ProfileName == "YourServerProfileName"); // Replace with the actual profile name
+            var serverForDebug = servers.FirstOrDefault(s => s.ProfileName == "YourServerProfileName");
             if (serverForDebug != null)
             {
                 Debug.WriteLine($"WriteAllServers: Details for server '{serverForDebug.ProfileName}' will be written.");
@@ -422,17 +599,14 @@ namespace Ark_Ascended_Manager.Services
                 return;
             }
 
-            // Using 'selectedServer' to avoid shadowing
             var serverToUpdate = servers.FirstOrDefault(s => s.ProfileName == selectedServer.ProfileName);
 
-            // Check if the server is running before updating
             if (serverToUpdate != null && serverToUpdate.IsServerRunning)
             {
                 System.Windows.MessageBox.Show("The server is currently running. Please stop the server before updating.");
                 return;
             }
 
-            // Call the update method with the current server configuration
             if (serverToUpdate != null)
             {
                 UpdateServerBasedOnJson(serverToUpdate);
@@ -443,8 +617,6 @@ namespace Ark_Ascended_Manager.Services
             }
         }
 
-
-
         public void UpdateServerBasedOnJson(Server server)
         {
             if (server != null && !string.IsNullOrEmpty(server.AppId))
@@ -452,15 +624,14 @@ namespace Ark_Ascended_Manager.Services
                 string scriptPath = Path.Combine(Path.GetTempPath(), "steamcmd_update_script.txt");
                 File.WriteAllLines(scriptPath, new string[]
                 {
-            $"force_install_dir \"{server.ServerPath}\"",
-            "login anonymous",
-            $"app_update {server.AppId} validate",
-            "quit"
+                    $"force_install_dir \"{server.ServerPath}\"",
+                    "login anonymous",
+                    $"app_update {server.AppId} validate",
+                    "quit"
                 });
 
                 RunSteamCMD(scriptPath);
 
-                // After running SteamCMD, update the change number
                 UpdateChangeNumberFromJson(server);
             }
             else
@@ -474,7 +645,6 @@ namespace Ark_Ascended_Manager.Services
             string steamCmdPath = FindSteamCmdPath();
             if (string.IsNullOrEmpty(steamCmdPath))
             {
-                // Handle the error: steamcmd.exe not found
                 return;
             }
 
@@ -492,14 +662,13 @@ namespace Ark_Ascended_Manager.Services
                 process.WaitForExit();
             }
         }
+
         private string FindSteamCmdPath()
         {
-            // Define the JSON file path in the app data directory
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appDataPath = Path.Combine(appDataFolder, "Ark Ascended Manager");
             string jsonFilePath = Path.Combine(appDataPath, "SteamCmdPath.json");
 
-            // Try to read the path from the JSON file
             if (File.Exists(jsonFilePath))
             {
                 try
@@ -514,12 +683,9 @@ namespace Ark_Ascended_Manager.Services
                 }
                 catch (Exception ex)
                 {
-                    // Handle any exceptions that occur during reading and deserializing the JSON file
-                    // For example, log the exception and proceed to prompt the user
                 }
             }
 
-            // Prompt the user to locate steamcmd.exe if the path is not found or not valid
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Executable files (*.exe)|*.exe",
@@ -528,12 +694,10 @@ namespace Ark_Ascended_Manager.Services
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // Save the selected path to the JSON file for future use
                 SaveSteamCmdPath(openFileDialog.FileName, jsonFilePath);
                 return openFileDialog.FileName;
             }
 
-            // Return null if the path could not be found or the user cancelled the dialog
             return null;
         }
 
@@ -543,6 +707,7 @@ namespace Ark_Ascended_Manager.Services
             string json = JsonConvert.SerializeObject(pathData, Formatting.Indented);
             File.WriteAllText(jsonFilePath, json);
         }
+
         private void UpdateChangeNumberFromJson(Server server)
         {
             Debug.WriteLine("UpdateChangeNumberFromJson: Method called.");
@@ -576,9 +741,8 @@ namespace Ark_Ascended_Manager.Services
                 if (json != null && json.ChangeNumber != null)
                 {
                     Debug.WriteLine($"UpdateChangeNumberFromJson: JSON ChangeNumber found - {json.ChangeNumber}");
-                    server.ChangeNumber = json.ChangeNumber; // Update only the ChangeNumber
+                    server.ChangeNumber = json.ChangeNumber;
 
-                    // After updating the ChangeNumber, save the updated server info back to the file
                     SaveUpdatedServer(server);
                 }
                 else
@@ -597,19 +761,16 @@ namespace Ark_Ascended_Manager.Services
             Debug.WriteLine("SaveUpdatedServer: Method called.");
 
             var allServers = ReadAllServers();
-            // Find the index of the server to update
             var index = allServers.FindIndex(s => s.AppId == updatedServer.AppId && s.ProfileName.Equals(updatedServer.ProfileName, StringComparison.OrdinalIgnoreCase));
 
-            if (index != -1) // Check if the server is found
+            if (index != -1)
             {
                 Debug.WriteLine($"SaveUpdatedServer: Current ChangeNumber for server '{allServers[index].ProfileName}' is {allServers[index].ChangeNumber}");
 
-                // Update the ChangeNumber of the server
                 allServers[index].ChangeNumber = updatedServer.ChangeNumber;
 
                 Debug.WriteLine($"SaveUpdatedServer: New ChangeNumber to be set for server '{allServers[index].ProfileName}' is {updatedServer.ChangeNumber}");
 
-                // Write all servers back to storage
                 WriteAllServers(allServers);
             }
             else
@@ -617,25 +778,59 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine("SaveUpdatedServer: Server not found.");
             }
         }
+
+        private void SaveSchedulesToDatabase()
+        {
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager");
+            string dbPath = Path.Combine(folderPath, DatabaseFileName);
+
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    string deleteQuery = "DELETE FROM Schedules";
+                    using (var command = new SQLiteCommand(deleteQuery, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    string insertQuery = @"
+                    INSERT INTO Schedules (
+                        Nickname, Action, RconCommand, Times, Days, ReoccurrenceIntervalType, ReoccurrenceInterval, Server
+                    ) VALUES (
+                        @Nickname, @Action, @RconCommand, @Times, @Days, @ReoccurrenceIntervalType, @ReoccurrenceInterval, @Server
+                    )";
+                    foreach (var schedule in schedules)
+                    {
+                        using (var command = new SQLiteCommand(insertQuery, connection))
+                        {
+                            command.Parameters.AddWithValue("@Nickname", schedule.Nickname);
+                            command.Parameters.AddWithValue("@Action", schedule.Action);
+                            command.Parameters.AddWithValue("@RconCommand", schedule.RconCommand);
+                            command.Parameters.AddWithValue("@Times", JsonConvert.SerializeObject(schedule.Times));
+                            command.Parameters.AddWithValue("@Days", JsonConvert.SerializeObject(schedule.Days));
+                            command.Parameters.AddWithValue("@ReoccurrenceIntervalType", schedule.ReoccurrenceIntervalType);
+                            command.Parameters.AddWithValue("@ReoccurrenceInterval", schedule.ReoccurrenceInterval);
+                            command.Parameters.AddWithValue("@Server", schedule.Server);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    transaction.Commit();
+                }
+            }
         }
+    }
 
     internal class Schedule
     {
         public string Nickname { get; set; }
         public string Action { get; set; }
         public string RconCommand { get; set; }
-        public string Time { get; set; }
+        public List<TimeSpan> Times { get; set; } = new List<TimeSpan>();
         public List<string> Days { get; set; }
         public string Server { get; set; }
-
+        public string ReoccurrenceIntervalType { get; set; }
+        public int ReoccurrenceInterval { get; set; }
     }
-
-
-
-
 }
-
-
-
-
-
