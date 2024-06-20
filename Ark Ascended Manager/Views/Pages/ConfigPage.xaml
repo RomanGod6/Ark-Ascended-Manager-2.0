@@ -73,7 +73,6 @@
             <Button Content="Wipe Server" Command="{Binding WipeServerCommand}" Margin="5"/>
             <Button Content="Update Server" Command="{Binding UpdateServerCommand}" Margin="5"/>
             <Button Content="Delete Server" Command="{Binding DeleteServerCommand}" Margin="5"/>
-            <Button Content="Add New Schedule" Click="AddNewScheduleButton_Click"/>
             <Button Content="Restore Backup" Click="RestoreBackUpButton_Click"/>
             <Button Content="Open Server Folder" Click="OpenServerFolderButton_Click"/>
             <Button Content="Open RCON" Click="OpenRCON_Click" DataContext="{Binding SelectedServerViewModel}" />
@@ -1114,103 +1113,7 @@
                     <!-- Put the controls related to Launch Parameters here -->
                 </Grid>
             </TabItem>
-            <TabItem Header="Schedules">
-                <DataGrid ItemsSource="{Binding ScheduleTasks}"
-          AutoGenerateColumns="False"
-          FontFamily="Segoe UI" 
-          FontSize="14"
-          RowHeight="30"
-          AlternationCount="2"
-          AlternatingRowBackground="#F5F5F5"
-          GridLinesVisibility="Horizontal"
-          HorizontalGridLinesBrush="#E0E0E0"
-          VerticalGridLinesBrush="#E0E0E0"
-          CanUserAddRows="False"
-          CanUserDeleteRows="False"
-          CanUserResizeRows="False"
-          CanUserSortColumns="True"
-          SelectionMode="Single"
-          SelectionUnit="FullRow"
-          IsReadOnly="True">
-
-                    <DataGrid.Resources>
-                        <!-- Define adaptable brushes instead of colors -->
-                        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#F0F0F0"/>
-                        <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#000000"/>
-                        <SolidColorBrush x:Key="RowHoverBackgroundBrush" Color="#E8E8E8"/>
-                        <SolidColorBrush x:Key="AlternatingRowBackgroundBrush" Color="#FFFFFF"/>
-
-                        <!-- Header style -->
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource HeaderForegroundBrush}"/>
-                            <Setter Property="FontSize" Value="16"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Padding" Value="10"/>
-                            <Setter Property="Height" Value="40"/>
-                        </Style>
-
-                        <!-- Cell style -->
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="8"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-
-                        <!-- Row style -->
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource RowHoverBackgroundBrush}"/>
-                                </Trigger>
-                                <Trigger Property="AlternationIndex" Value="1">
-                                    <Setter Property="Background" Value="{StaticResource AlternatingRowBackgroundBrush}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.Resources>
-
-
-
-                    <!-- Column definitions -->
-                    <DataGrid.Columns>
-                        <!-- Your existing columns -->
-                        <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" />
-                        <DataGridTextColumn Header="Action" Binding="{Binding Action}" />
-                        <DataGridTextColumn Header="RCON Command" Binding="{Binding RconCommand}" />
-                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" />
-                        <DataGridTemplateColumn Header="Days">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Days, Converter={StaticResource ListToStringConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Reoccurrence Type" Binding="{Binding ReoccurrenceIntervalType}" />
-                        <DataGridTextColumn Header="Reoccurrence Interval" Binding="{Binding ReoccurrenceInterval}" />
-
-                        <!-- New column for Delete button -->
-                        <DataGridTemplateColumn Header="Delete" Width="100">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Delete" Command="{Binding DataContext.DeleteScheduleCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}">
-                                        <!-- CommandParameter is bound to the current row's DataContext -->
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-
-                </DataGrid>
-
-
-            </TabItem>
+          
 
 
             <TabItem Header="Plugin Management">

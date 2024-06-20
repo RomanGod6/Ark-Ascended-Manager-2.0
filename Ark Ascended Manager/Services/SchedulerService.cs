@@ -146,15 +146,15 @@ namespace Ark_Ascended_Manager.Services
 
                 foreach (var server in servers)
                 {
-                    Debug.WriteLine($"Loaded server with ProfileName: '{server?.ProfileName ?? "null"}', ServerPath: '{server?.ServerPath ?? "null"}'");
+                    Debug.WriteLine($"Loaded server with ServerName: '{server?.ServerName ?? "null"}', ServerPath: '{server?.ServerPath ?? "null"}'");
 
                     if (server == null)
                     {
                         Debug.WriteLine("Deserialization produced a null Server object.");
                     }
-                    else if (server.ServerPath == null || server.ProfileName == null)
+                    else if (server.ServerPath == null || server.ServerName == null)
                     {
-                        Debug.WriteLine("ServerPath or ProfileName is null. Full server object:");
+                        Debug.WriteLine("ServerPath or ServerName is null. Full server object:");
                         Debug.WriteLine(JsonConvert.SerializeObject(server, Formatting.Indented));
                     }
                 }
@@ -246,14 +246,14 @@ namespace Ark_Ascended_Manager.Services
             string trimmedScheduleServer = schedule.Server?.Trim() ?? string.Empty;
             Debug.WriteLine($"[INFO] Looking for server with profile name '{trimmedScheduleServer}' in the list of servers.");
 
-            var server = servers.FirstOrDefault(s => s.ProfileName?.Trim().Equals(trimmedScheduleServer, StringComparison.OrdinalIgnoreCase) == true);
+            var server = servers.FirstOrDefault(s => s.ServerName?.Trim().Equals(trimmedScheduleServer, StringComparison.OrdinalIgnoreCase) == true);
 
             if (server != null)
             {
-                Debug.WriteLine($"[INFO] Found server for schedule '{schedule.Nickname}': {server.ProfileName}");
+                Debug.WriteLine($"[INFO] Found server for schedule '{schedule.Nickname}': {server.ServerName}");
 
                 server.IsRunning = IsServerRunning(server); // Checking server status here
-                Debug.WriteLine($"[INFO] Server '{server.ProfileName}' running status: {server.IsRunning}");
+                Debug.WriteLine($"[INFO] Server '{server.ServerName}' running status: {server.IsRunning}");
 
                 if (!isServerStarting && !server.IsRunning)
                 {
@@ -286,22 +286,22 @@ namespace Ark_Ascended_Manager.Services
 
                     if (serverStarted)
                     {
-                        Debug.WriteLine($"[INFO] Server '{server.ProfileName}' is now running.");
+                        Debug.WriteLine($"[INFO] Server '{server.ServerName}' is now running.");
                     }
                     else
                     {
-                        Debug.WriteLine($"[ERROR] Server '{server.ProfileName}' failed to start after multiple attempts.");
+                        Debug.WriteLine($"[ERROR] Server '{server.ServerName}' failed to start after multiple attempts.");
                         return; // Exit if server failed to start
                     }
                 }
                 else if (isServerStarting)
                 {
-                    Debug.WriteLine($"Server '{server.ProfileName}' is already in the process of starting.");
+                    Debug.WriteLine($"Server '{server.ServerName}' is already in the process of starting.");
                     return;
                 }
                 else if (server.IsRunning)
                 {
-                    Debug.WriteLine($"Server '{server.ProfileName}' is already running.");
+                    Debug.WriteLine($"Server '{server.ServerName}' is already running.");
                 }
 
                 var arkRCONService = new ArkRCONService(server.ServerIP, (ushort)server.RCONPort, server.AdminPassword, server.ServerPath);
@@ -353,7 +353,7 @@ namespace Ark_Ascended_Manager.Services
                 Debug.WriteLine($"No matching server found for schedule '{schedule.Nickname}'. Available servers are:");
                 foreach (var srv in servers)
                 {
-                    Debug.WriteLine($"Server ProfileName: '{srv?.ProfileName ?? "null"}', ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
+                    Debug.WriteLine($"Server ServerName: '{srv?.ServerName ?? "null"}', ServerPath: '{srv?.ServerPath?.Trim() ?? "null"}'");
                 }
             }
         }
@@ -454,7 +454,7 @@ namespace Ark_Ascended_Manager.Services
 
                 await arkRCONService.ConnectAsync();
 
-                for (int i = 1; i > 0; i--)
+                for (int i = 5; i > 0; i--)
                 {
                     await arkRCONService.SendServerChatAsync($"Server will restart in {i} minute(s)...");
                     Debug.WriteLine($"Server restart notification sent: {i} minute(s) remaining.");
@@ -483,7 +483,7 @@ namespace Ark_Ascended_Manager.Services
             try
             {
                 RemoveServerFromMonitoring(server.ServerPath);
-                Debug.WriteLine($"Attempting to shutdown server: {server.ProfileName}");
+                Debug.WriteLine($"Attempting to shutdown server: {server.ServerName}");
 
                 await arkRCONService.ConnectAsync();
 
@@ -530,7 +530,7 @@ namespace Ark_Ascended_Manager.Services
         {
             return new ServerConfig
             {
-                ProfileName = server.ProfileName,
+                ServerName = server.ServerName,
                 ServerPath = server.ServerPath,
             };
         }
@@ -569,10 +569,10 @@ namespace Ark_Ascended_Manager.Services
         {
             Debug.WriteLine("WriteAllServers: Method called.");
 
-            var serverForDebug = servers.FirstOrDefault(s => s.ProfileName == "YourServerProfileName");
+            var serverForDebug = servers.FirstOrDefault(s => s.ServerName == "YourServerProfileName");
             if (serverForDebug != null)
             {
-                Debug.WriteLine($"WriteAllServers: Details for server '{serverForDebug.ProfileName}' will be written.");
+                Debug.WriteLine($"WriteAllServers: Details for server '{serverForDebug.ServerName}' will be written.");
             }
 
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -599,7 +599,7 @@ namespace Ark_Ascended_Manager.Services
                 return;
             }
 
-            var serverToUpdate = servers.FirstOrDefault(s => s.ProfileName == selectedServer.ProfileName);
+            var serverToUpdate = servers.FirstOrDefault(s => s.ServerName == selectedServer.ServerName);
 
             if (serverToUpdate != null && serverToUpdate.IsServerRunning)
             {
@@ -761,15 +761,15 @@ namespace Ark_Ascended_Manager.Services
             Debug.WriteLine("SaveUpdatedServer: Method called.");
 
             var allServers = ReadAllServers();
-            var index = allServers.FindIndex(s => s.AppId == updatedServer.AppId && s.ProfileName.Equals(updatedServer.ProfileName, StringComparison.OrdinalIgnoreCase));
+            var index = allServers.FindIndex(s => s.AppId == updatedServer.AppId && s.ServerName.Equals(updatedServer.ServerName, StringComparison.OrdinalIgnoreCase));
 
             if (index != -1)
             {
-                Debug.WriteLine($"SaveUpdatedServer: Current ChangeNumber for server '{allServers[index].ProfileName}' is {allServers[index].ChangeNumber}");
+                Debug.WriteLine($"SaveUpdatedServer: Current ChangeNumber for server '{allServers[index].ServerName}' is {allServers[index].ChangeNumber}");
 
                 allServers[index].ChangeNumber = updatedServer.ChangeNumber;
 
-                Debug.WriteLine($"SaveUpdatedServer: New ChangeNumber to be set for server '{allServers[index].ProfileName}' is {updatedServer.ChangeNumber}");
+                Debug.WriteLine($"SaveUpdatedServer: New ChangeNumber to be set for server '{allServers[index].ServerName}' is {updatedServer.ChangeNumber}");
 
                 WriteAllServers(allServers);
             }
