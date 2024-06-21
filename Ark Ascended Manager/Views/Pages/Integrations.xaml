@@ -2,6 +2,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers"
+      xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       Title="IntegrationsPage"
@@ -11,6 +12,9 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d">
 
+    <Page.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -26,46 +30,46 @@
         <!-- Main content -->
         <StackPanel Grid.Row="1">
             <!-- GroupBox for Discord Bot -->
-            <GroupBox Header="Discord Bot Settings" Margin="5" Padding="5">
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=DiscordBotSettings}" Margin="5" Padding="5">
                 <StackPanel>
-                    <Label Content="Discord Bot Token:" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=DiscordBotToken}" HorizontalAlignment="Left"/>
                     <TextBox x:Name="BotTokenTextBox" Margin="0,5"/>
 
-                    <Label Content="Logger Discord Webhook URL:" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=LoggerWebhookUrl}" HorizontalAlignment="Left"/>
                     <TextBox x:Name="LoggerWebhookUrlTextBox" Margin="0,5"/>
-                    <Label Content="Guild ID:" HorizontalAlignment="Left"/>
+
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=GuildID}" HorizontalAlignment="Left"/>
                     <TextBox x:Name="GuildIdTextBox" Margin="0,5"
                      PreviewTextInput="NumberValidationTextBox"
                      DataObject.Pasting="TextBox_Pasting"/>
 
-                                <Label Content="What Role Can Use this Bot:" HorizontalAlignment="Left"/>
-                                <TextBox x:Name="AuthorizedRolesTextBox" Margin="0,5"
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=AuthorizedRoles}" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="AuthorizedRolesTextBox" Margin="0,5"
                      PreviewTextInput="NumberValidationTextBox"
                      DataObject.Pasting="TextBox_Pasting"/>
 
-
-                    <Label Content="CrossChat Webhook:" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=CrossChatWebhook}" HorizontalAlignment="Left"/>
                     <TextBox x:Name="WebhookUrlTextBox" Margin="0,5"/>
 
-                    <Label Content="Ignore Messages Containing:" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=IgnoreMessages}" HorizontalAlignment="Left"/>
                     <TextBox x:Name="IgnoreMessagesTextBox" Height="100" Margin="0,5" TextWrapping="Wrap" AcceptsReturn="True"/>
 
-                    <Label Content="Enable Verbose Logging:" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Source={StaticResource Strings}, Path=EnableVerboseLogging}" HorizontalAlignment="Left"/>
                     <CheckBox x:Name="VerboseLoggingCheckBox" Margin="0,5"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- GroupBox for Discord Actions -->
-            <GroupBox Header="Discord Actions" Margin="5" Padding="5">
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=DiscordActions}" Margin="5" Padding="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="SaveTokenButton" Content="Save Discord Information" Margin="2,10" Width="200" Click="SaveTokenButton_Click"/>
-                    <Button x:Name="StartBotButton" Content="Start Bot" Margin="2,5" Width="200" Click="StartBotButton_Click"/>
-                    <Button x:Name="StopBotButton" Content="Stop Bot" Margin="2,5" Width="200" Click="StopBotButton_Click"/>
+                    <Button x:Name="SaveTokenButton" Content="{Binding Source={StaticResource Strings}, Path=SaveDiscordInfo}" Margin="2,10" Width="200" Click="SaveTokenButton_Click"/>
+                    <Button x:Name="StartBotButton" Content="{Binding Source={StaticResource Strings}, Path=StartBot}" Margin="2,5" Width="200" Click="StartBotButton_Click"/>
+                    <Button x:Name="StopBotButton" Content="{Binding Source={StaticResource Strings}, Path=StopBot}" Margin="2,5" Width="200" Click="StopBotButton_Click"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- Bot Status -->
-            <TextBlock x:Name="BotStatusTextBlock" Text="Bot Status: Disconnected" Margin="5"/>
+            <TextBlock x:Name="BotStatusTextBlock" Text="{Binding Source={StaticResource Strings}, Path=BotStatus}" Margin="5"/>
         </StackPanel>
     </Grid>
 </Page>

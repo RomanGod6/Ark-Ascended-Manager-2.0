@@ -1,7 +1,11 @@
 ﻿<Window x:Class="Ark_Ascended_Manager.Views.Windows.EditCommandWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Edit Command" Height="200" Width="400" Background="#2D2D30">
+        xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
+         Title="Edit Command" Height="200" Width="400" Background="#2D2D30">
+    <Window.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,14 +29,14 @@
                  BorderThickness="1" 
                  Padding="5"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
-            <Button Content="Cancel" 
+            <Button Content="{Binding Source={StaticResource Strings}, Path=Cancel}" 
                     Width="75" 
                     Margin="0,0,10,0" 
                     Background="#3C3F41" 
                     Foreground="White" 
                     BorderBrush="#3C3F41" 
                     Click="Cancel_Click"/>
-            <Button Content="Save" 
+            <Button Content="{Binding Source={StaticResource Strings}, Path=Save}" 
                     Width="75" 
                     Background="#007ACC" 
                     Foreground="White" 

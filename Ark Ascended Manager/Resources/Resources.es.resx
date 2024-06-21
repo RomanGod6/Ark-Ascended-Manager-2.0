@@ -129,4 +129,2208 @@
     <value>Ejecutar como administrador</value>
     <comment>Restart App as Admin</comment>
   </data>
+	<data name="StartServer" xml:space="preserve">
+    <value>Iniciar Servidor</value>
+    <comment>Button to start the server</comment>
+  </data>
+	<data name="StopServer" xml:space="preserve">
+    <value>Detener Servidor</value>
+    <comment>Button to stop the server</comment>
+  </data>
+	<data name="RestartServer" xml:space="preserve">
+    <value>Reiniciar Servidor</value>
+    <comment>Button to restart the server</comment>
+  </data>
+	<data name="WipeServer" xml:space="preserve">
+    <value>Borrar Servidor</value>
+    <comment>Button to wipe the server</comment>
+  </data>
+	<data name="UpdateServer" xml:space="preserve">
+    <value>Actualizar Servidor</value>
+    <comment>Button to update the server</comment>
+  </data>
+	<data name="DeleteServer" xml:space="preserve">
+    <value>Eliminar Servidor</value>
+    <comment>Button to delete the server</comment>
+  </data>
+	<data name="RestoreBackup" xml:space="preserve">
+    <value>Restaurar Copia de Seguridad</value>
+    <comment>Button to restore a backup</comment>
+  </data>
+	<data name="OpenServerFolder" xml:space="preserve">
+    <value>Abrir Carpeta del Servidor</value>
+    <comment>Button to open the server folder</comment>
+  </data>
+	<data name="OpenRCON" xml:space="preserve">
+    <value>Abrir RCON</value>
+    <comment>Button to open RCON</comment>
+  </data>
+	<data name="ConfigSettings" xml:space="preserve">
+  <value>Configuración</value>
+  <comment>TabItem header for configuration settings</comment>
+</data>
+	<data name="SaveConfigSettings" xml:space="preserve">
+  <value>Guardar Configuración</value>
+  <comment>Button to save configuration settings</comment>
+</data>
+	<data name="Search" xml:space="preserve">
+  <value>Buscar</value>
+  <comment>Button to search</comment>
+</data>
+	<data name="Administration" xml:space="preserve">
+  <value>Administración</value>
+  <comment>Expander header for administration settings</comment>
+</data>
+	<data name="ServerName" xml:space="preserve">
+  <value>Nombre del Servidor</value>
+  <comment>Label for server name</comment>
+</data>
+	<data name="AdminPassword" xml:space="preserve">
+  <value>Contraseña de Administrador</value>
+  <comment>Label for admin password</comment>
+</data>
+	<data name="MOTD" xml:space="preserve">
+  <value>MOTD</value>
+  <comment>Label for message of the day</comment>
+</data>
+	<data name="MOTDInGame" xml:space="preserve">
+  <value>MOTD en el Juego</value>
+  <comment>Label for MOTD duration in game</comment>
+</data>
+	<data name="MOTDDuration" xml:space="preserve">
+  <value>Duración del MOTD</value>
+  <comment>Label for MOTD duration</comment>
+</data>
+	<data name="ServerPassword" xml:space="preserve">
+  <value>Contraseña del Servidor</value>
+  <comment>Label for server password</comment>
+</data>
+	<data name="Banlist" xml:space="preserve">
+  <value>Lista de Prohibidos</value>
+  <comment>Label for list of banned players</comment>
+</data>
+	<data name="ServerIcon" xml:space="preserve">
+  <value>Icono del Servidor</value>
+  <comment>Label for server icon</comment>
+</data>
+	<data name="CosmeticWhitelistOverride" xml:space="preserve">
+  <value>Lista Blanca de Cosméticos</value>
+  <comment>Label for cosmetic whitelist override</comment>
+</data>
+	<data name="PhotoModeRangeLimit" xml:space="preserve">
+  <value>Límite de Rango del Modo Foto</value>
+  <comment>Label for photo mode range limit</comment>
+</data>
+	<data name="SpectatorPassword" xml:space="preserve">
+  <value>Contraseña de Espectador</value>
+  <comment>Label for spectator password</comment>
+</data>
+	<data name="AdminLogging" xml:space="preserve">
+  <value>Registro de Administradores</value>
+  <comment>Label for enabling admin logging</comment>
+</data>
+	<data name="AutoSavePeriodMinutes" xml:space="preserve">
+  <value>Período de Auto Guardado en Minutos</value>
+  <comment>Label for auto save period in minutes</comment>
+</data>
+	<data name="DisableStructureDecayPvE" xml:space="preserve">
+  <value>Deshabilitar Decadencia de Estructuras en PvE</value>
+  <comment>Label for disabling structure decay in PvE mode</comment>
+</data>
+	<data name="ItemStackSizeMultiplier" xml:space="preserve">
+  <value>Multiplicador del Tamaño de la Pila de Objetos</value>
+  <comment>Label for item stack size multiplier</comment>
+</data>
+	<data name="ServerAutoForceRespawnWildDinosInterval" xml:space="preserve">
+  <value>Intervalo de Reaparición Forzada Automática de Dinos Salvajes en el Servidor</value>
+  <comment>Label for server auto force respawn wild dinos interval</comment>
+</data>
+	<data name="NPCNetworkStasisRangeScalePlayerCountStart" xml:space="preserve">
+  <value>Inicio del Conteo de Jugadores para Escala del Rango de Estasis de Red de NPC</value>
+  <comment>Label for NPC network stasis range scale player count start</comment>
+</data>
+	<data name="NPCNetworkStasisRangeScalePlayerCountEnd" xml:space="preserve">
+  <value>Fin del Conteo de Jugadores para Escala del Rango de Estasis de Red de NPC</value>
+  <comment>Label for NPC network stasis range scale player count end</comment>
+</data>
+	<data name="NPCNetworkStasisRangeScalePercentEnd" xml:space="preserve">
+  <value>Fin del Porcentaje de Escala del Rango de Estasis de Red de NPC</value>
+  <comment>Label for NPC network stasis range scale percent end</comment>
+</data>
+	<data name="ForceFlyerExplosives" xml:space="preserve">
+  <value>Explosivos de Voladores Forzados</value>
+  <comment>Label for enabling/disabling flyer explosives</comment>
+</data>
+	<data name="EnableExtraStructurePreventionVolumes" xml:space="preserve">
+  <value>Habilitar Volúmenes de Prevención de Estructuras Adicionales</value>
+  <comment>Label for enabling/disabling extra structure prevention volumes</comment>
+</data>
+	<data name="ShowFloatingDamageText" xml:space="preserve">
+  <value>Mostrar Texto de Daño Flotante</value>
+  <comment>Label for showing/hiding floating damage text</comment>
+</data>
+	<data name="AllowHitMarkers" xml:space="preserve">
+  <value>Permitir Marcadores de Impacto</value>
+  <comment>Label for allowing/disallowing hit markers</comment>
+</data>
+	<data name="ServerPvE" xml:space="preserve">
+  <value>Servidor PvE</value>
+  <comment>Label for enabling/disabling server PvE mode</comment>
+</data>
+	<data name="DisablePhotoMode" xml:space="preserve">
+  <value>Deshabilitar Modo Foto</value>
+  <comment>Label for enabling/disabling photo mode</comment>
+</data>
+	<data name="PreventSpawnAnimations" xml:space="preserve">
+  <value>Prevenir Animaciones de Aparición</value>
+  <comment>Label for preventing spawn animations</comment>
+</data>
+	<data name="CryopodSettings" xml:space="preserve">
+  <value>Configuraciones de Cryopod</value>
+  <comment>Expander header for cryopod settings</comment>
+</data>
+	<data name="DisableCryopodEnemyCheck" xml:space="preserve">
+  <value>Deshabilitar Verificación de Enemigos en Cryopod</value>
+  <comment>Label for disabling cryopod enemy check</comment>
+</data>
+	<data name="DisableCryopodFridgeRequirement" xml:space="preserve">
+  <value>Deshabilitar Requisito de Cryofridge</value>
+  <comment>Label for disabling cryopod fridge requirement</comment>
+</data>
+	<data name="AllowCryoFridgeOnSaddle" xml:space="preserve">
+  <value>Permitir Cryofridge en Silla de Montar</value>
+  <comment>Label for allowing cryofridge on saddle</comment>
+</data>
+	<data name="DestroyTamesOverTheSoftTameLimit" xml:space="preserve">
+  <value>Destruir Tames Sobre el Límite de Tame Suave</value>
+  <comment>Label for destroying tames over the soft tame limit</comment>
+</data>
+	<data name="MaxTamedDinosSoftTameLimit" xml:space="preserve">
+  <value>Límite Máximo de Dinos Tameados Suaves</value>
+  <comment>Label for max tamed dinos soft tame limit</comment>
+</data>
+	<data name="MaxTamedDinosSoftTameLimitCountdownForDeletionDuration" xml:space="preserve">
+  <value>Duración de la Cuenta Regresiva para la Eliminación del Límite Máximo de Dinos Tameados Suaves</value>
+  <comment>Label for max tamed dinos soft tame limit countdown for deletion duration</comment>
+</data>
+	<data name="Rules" xml:space="preserve">
+  <value>Reglas</value>
+  <comment>Expander header for rules settings</comment>
+</data>
+	<data name="ClusterOptions" xml:space="preserve">
+  <value>Opciones de Clúster</value>
+  <comment>Expander header for cluster options settings</comment>
+</data>
+	<data name="NoTributeDownloads" xml:space="preserve">
+  <value>No Descargas de Tributo</value>
+  <comment>Label for no tribute downloads</comment>
+</data>
+	<data name="PreventDownloadSurvivors" xml:space="preserve">
+  <value>Prevenir Descarga de Sobrevivientes</value>
+  <comment>Label for prevent download survivors</comment>
+</data>
+	<data name="PreventDownloadItems" xml:space="preserve">
+  <value>Prevenir Descarga de Objetos</value>
+  <comment>Label for prevent download items</comment>
+</data>
+	<data name="PreventDownloadDinos" xml:space="preserve">
+  <value>Prevenir Descarga de Dinos</value>
+  <comment>Label for prevent download dinosaurs</comment>
+</data>
+	<data name="TributeCharacterExpirationSeconds" xml:space="preserve">
+  <value>Expiración del Personaje de Tributo en Segundos</value>
+  <comment>Label for tribute character expiration</comment>
+</data>
+	<data name="TributeDinoExpirationSeconds" xml:space="preserve">
+  <value>Expiración del Dino de Tributo en Segundos</value>
+  <comment>Label for tribute dino expiration</comment>
+</data>
+	<data name="TributeItemExpirationSeconds" xml:space="preserve">
+  <value>Expiración del Objeto de Tributo en Segundos</value>
+  <comment>Label for tribute item expiration</comment>
+</data>
+	<data name="EnableHardcoreMode" xml:space="preserve">
+  <value>Habilitar Modo Hardcore</value>
+  <comment>Label for enabling hardcore mode</comment>
+</data>
+	<data name="DisablePvPFriendlyFire" xml:space="preserve">
+  <value>Deshabilitar Fuego Amigo en PvP</value>
+  <comment>Label for disabling PvP friendly fire</comment>
+</data>
+	<data name="DisablePvEFriendlyFire" xml:space="preserve">
+  <value>Deshabilitar Fuego Amigo en PvE</value>
+  <comment>Label for disabling PvE friendly fire</comment>
+</data>
+	<data name="DisableLootCrates" xml:space="preserve">
+  <value>Deshabilitar Cajas de Botín</value>
+  <comment>Label for disabling loot crates</comment>
+</data>
+	<data name="AllowCaveBuildingPvE" xml:space="preserve">
+  <value>Permitir Construcción en Cuevas en PvE</value>
+  <comment>Label for allowing cave building in PvE mode</comment>
+</data>
+	<data name="AllowCaveBuildingPvP" xml:space="preserve">
+  <value>Permitir Construcción en Cuevas en PvP</value>
+  <comment>Label for allowing cave building in PvP mode</comment>
+</data>
+	<data name="EnableSingleplayerSettings" xml:space="preserve">
+  <value>Habilitar Configuraciones de Un Jugador</value>
+  <comment>Label for enabling singleplayer settings</comment>
+</data>
+	<data name="AllowCrateSpawnsOnTopOfStructures" xml:space="preserve">
+  <value>Permitir Aparición de Cajas Sobre Estructuras</value>
+  <comment>Label for allowing crate spawns on top of structures</comment>
+</data>
+	<data name="EnableCreativeMode" xml:space="preserve">
+  <value>Habilitar Modo Creativo</value>
+  <comment>Label for enabling creative mode</comment>
+</data>
+	<data name="EnableDiseases" xml:space="preserve">
+  <value>Habilitar Enfermedades</value>
+  <comment>Label for enabling diseases</comment>
+</data>
+	<data name="NonPermanentDiseases" xml:space="preserve">
+  <value>Enfermedades No Permanentes</value>
+  <comment>Label for making diseases non-permanent</comment>
+</data>
+	<data name="RandomSupplyCratePoints" xml:space="preserve">
+  <value>Puntos de Aparición de Cajas de Suministros Aleatorios</value>
+  <comment>Label for random supply crate points</comment>
+</data>
+	<data name="SupplyCrateLootQualityMultiplier" xml:space="preserve">
+  <value>Multiplicador de Calidad de Botín de Cajas de Suministros</value>
+  <comment>Label for supply crate loot quality multiplier</comment>
+</data>
+	<data name="FishingLootQualityMultiplier" xml:space="preserve">
+  <value>Multiplicador de Calidad de Botín de Pesca</value>
+  <comment>Label for fishing loot quality multiplier</comment>
+</data>
+	<data name="AllowUnlimitedRespec" xml:space="preserve">
+  <value>Permitir Reespecialización Ilimitada</value>
+  <comment>Label for allowing unlimited respec</comment>
+</data>
+	<data name="AllowPlatformSaddleMultiFloors" xml:space="preserve">
+  <value>Permitir Múltiples Pisos en Sillas de Montar con Plataforma</value>
+  <comment>Label for allowing multiple floors on platform saddles</comment>
+</data>
+	<data name="MaxPlatformSaddleStructureLimit" xml:space="preserve">
+  <value>Límite Máximo de Estructuras en Sillas de Montar con Plataforma</value>
+  <comment>Label for maximum platform saddle structure limit</comment>
+</data>
+	<data name="MaxDifficulty" xml:space="preserve">
+  <value>Dificultad Máxima</value>
+  <comment>Label for maximum difficulty</comment>
+</data>
+	<data name="IncreasePvPRespawnIntervalCheckPeriod" xml:space="preserve">
+  <value>Período de Comprobación del Intervalo de Reaparición en PvP</value>
+  <comment>Label for increasing PvP respawn interval check period</comment>
+</data>
+	<data name="IncreasePvPRespawnIntervalMultiplier" xml:space="preserve">
+  <value>Multiplicador del Intervalo de Reaparición en PvP</value>
+  <comment>Label for increasing PvP respawn interval multiplier</comment>
+</data>
+	<data name="IncreasePvPRespawnIntervalBaseAmount" xml:space="preserve">
+  <value>Cantidad Base del Intervalo de Reaparición en PvP</value>
+  <comment>Label for increasing PvP respawn interval base amount</comment>
+</data>
+	<data name="MaxAlliancesPerTribe" xml:space="preserve">
+  <value>Máximo de Alianzas por Tribu</value>
+  <comment>Label for maximum alliances per tribe</comment>
+</data>
+	<data name="MaxTribesPerAlliance" xml:space="preserve">
+  <value>Máximo de Tribus por Alianza</value>
+  <comment>Label for maximum tribes per alliance</comment>
+</data>
+	<data name="IncreasePvPRespawnInterval" xml:space="preserve">
+  <value>Aumentar Intervalo de Reaparición en PvP</value>
+  <comment>Label for increasing PvP respawn interval</comment>
+</data>
+	<data name="PreventOfflinePvPInterval" xml:space="preserve">
+  <value>Intervalo para Prevenir PvP Desconectado</value>
+  <comment>Label for preventing offline PvP interval</comment>
+</data>
+	<data name="PreventOfflinePvP" xml:space="preserve">
+  <value>Prevenir PvP Desconectado</value>
+  <comment>Label for preventing offline PvP</comment>
+</data>
+	<data name="AutoPvEStartTimeSeconds" xml:space="preserve">
+  <value>Inicio Automático de PvE en Segundos</value>
+  <comment>Label for AutoPvE start time in seconds</comment>
+</data>
+	<data name="AutoPvEStopTimeSeconds" xml:space="preserve">
+  <value>Detener Automático de PvE en Segundos</value>
+  <comment>Label for AutoPvE stop time in seconds</comment>
+</data>
+	<data name="MaxNumberOfPlayersInTribe" xml:space="preserve">
+  <value>Máximo Número de Jugadores en la Tribu</value>
+  <comment>Label for maximum number of players in a tribe</comment>
+</data>
+	<data name="TribeNameChangeCooldown" xml:space="preserve">
+  <value>Tiempo de Reutilización para Cambiar el Nombre de la Tribu</value>
+  <comment>Label for tribe name change cooldown</comment>
+</data>
+	<data name="TribeSlotReuseCooldown" xml:space="preserve">
+  <value>Tiempo de Reutilización para Reusar el Espacio de la Tribu</value>
+  <comment>Label for tribe slot reuse cooldown</comment>
+</data>
+	<data name="PvETribeWarfareOptions" xml:space="preserve">
+  <value>Opciones de Guerra entre Tribus en PvE</value>
+  <comment>Expander header for PvE tribe warfare options</comment>
+</data>
+	<data name="PvEAllowTribeWar" xml:space="preserve">
+  <value>Permitir Guerra entre Tribus en PvE</value>
+  <comment>Label for allowing tribe war in PvE</comment>
+</data>
+	<data name="PvEAllowTribeWarCancel" xml:space="preserve">
+  <value>Permitir Cancelar Guerra entre Tribus en PvE</value>
+  <comment>Label for allowing tribe war cancel in PvE</comment>
+</data>
+	<data name="AllowCustomRecipes" xml:space="preserve">
+  <value>Permitir Recetas Personalizadas</value>
+  <comment>Label for allowing custom recipes</comment>
+</data>
+	<data name="CustomRecipeEffectivenessMultiplier" xml:space="preserve">
+  <value>Multiplicador de Efectividad de Recetas Personalizadas</value>
+  <comment>Label for custom recipe effectiveness multiplier</comment>
+</data>
+	<data name="CustomRecipeSkillMultiplier" xml:space="preserve">
+  <value>Multiplicador de Habilidad de Recetas Personalizadas</value>
+  <comment>Label for custom recipe skill multiplier</comment>
+</data>
+	<data name="OxygenSwimSpeedStatMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Natación por Oxígeno</value>
+  <comment>Label for oxygen swim speed stat multiplier</comment>
+</data>
+	<data name="UseCorpseLocator" xml:space="preserve">
+  <value>Usar Localizador de Cadáveres</value>
+  <comment>Label for using corpse locator</comment>
+</data>
+	<data name="FuelConsumptionIntervalMultiplier" xml:space="preserve">
+  <value>Multiplicador del Intervalo de Consumo de Combustible</value>
+  <comment>Label for fuel consumption interval multiplier</comment>
+</data>
+	<data name="ChatAndNotifications" xml:space="preserve">
+  <value>Chat y Notificaciones</value>
+  <comment>Expander header for chat and notifications settings</comment>
+</data>
+	<data name="AlwaysNotifyPlayerJoined" xml:space="preserve">
+  <value>Notificar Siempre que un Jugador se Une</value>
+  <comment>Label for always notifying player joined</comment>
+</data>
+	<data name="AlwaysNotifyPlayerLeft" xml:space="preserve">
+  <value>Notificar Siempre que un Jugador se Va</value>
+  <comment>Label for always notifying player left</comment>
+</data>
+	<data name="GlobalVoiceChat" xml:space="preserve">
+  <value>Chat de Voz Global</value>
+  <comment>Label for global voice chat</comment>
+</data>
+	<data name="ProximityChat" xml:space="preserve">
+  <value>Chat de Proximidad</value>
+  <comment>Label for proximity chat</comment>
+</data>
+	<data name="HUDAndVisuals" xml:space="preserve">
+  <value>HUD y Visuales</value>
+  <comment>Expander header for HUD and visuals settings</comment>
+</data>
+	<data name="ServerCrosshair" xml:space="preserve">
+  <value>Cruz del Servidor</value>
+  <comment>Label for server crosshair</comment>
+</data>
+	<data name="ServerForceNoHud" xml:space="preserve">
+  <value>Forzar Sin HUD en el Servidor</value>
+  <comment>Label for server force no HUD</comment>
+</data>
+	<data name="ShowMapPlayerLocation" xml:space="preserve">
+  <value>Mostrar Ubicación del Jugador en el Mapa</value>
+  <comment>Label for showing map player location</comment>
+</data>
+	<data name="AllowThirdPersonPlayer" xml:space="preserve">
+  <value>Permitir Vista en Tercera Persona</value>
+  <comment>Label for allowing third-person player</comment>
+</data>
+	<data name="ShowFloatingDamageText" xml:space="preserve">
+  <value>Mostrar Texto de Daño Flotante</value>
+  <comment>Label for showing floating damage text</comment>
+</data>
+	<data name="AllowHitMarkers" xml:space="preserve">
+  <value>Permitir Marcadores de Golpe</value>
+  <comment>Label for allowing hit markers</comment>
+</data>
+	<data name="EnablePVPGamma" xml:space="preserve">
+  <value>Habilitar Gamma en PVP</value>
+  <comment>Label for enabling PVP gamma</comment>
+</data>
+	<data name="EnablePVEGamma" xml:space="preserve">
+  <value>Habilitar Gamma en PVE</value>
+  <comment>Label for enabling PVE gamma</comment>
+</data>
+	<data name="PlayerSettings" xml:space="preserve">
+  <value>Configuración de Jugador</value>
+  <comment>Expander header for player settings</comment>
+</data>
+	<data name="XPMultiplier" xml:space="preserve">
+  <value>Multiplicador de XP</value>
+  <comment>Label for XP multiplier</comment>
+</data>
+	<data name="GenericXPMultiplier" xml:space="preserve">
+  <value>Multiplicador de XP Genérico</value>
+  <comment>Label for generic XP multiplier</comment>
+</data>
+	<data name="PlayerDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño del Jugador</value>
+  <comment>Label for player damage multiplier</comment>
+</data>
+	<data name="PlayerResistanceMultiplier" xml:space="preserve">
+  <value>Multiplicador de Resistencia del Jugador</value>
+  <comment>Label for player resistance multiplier</comment>
+</data>
+	<data name="PlayerCharacterFoodDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Alimentos del Jugador</value>
+  <comment>Label for player character food drain multiplier</comment>
+</data>
+	<data name="PlayerCharacterWaterDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Agua del Jugador</value>
+  <comment>Label for player character water drain multiplier</comment>
+</data>
+	<data name="PlayerCharacterStaminaDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Resistencia del Jugador</value>
+  <comment>Label for player character stamina drain multiplier</comment>
+</data>
+	<data name="MaxFallSpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad Máxima de Caída</value>
+  <comment>Label for maximum fall speed multiplier</comment>
+</data>
+	<data name="PlayerHealthRecoveryMultiplier" xml:space="preserve">
+  <value>Multiplicador de Recuperación de Salud del Jugador</value>
+  <comment>Label for player character health recovery multiplier</comment>
+</data>
+	<data name="AllowFlyerCarryPvE" xml:space="preserve">
+  <value>Permitir Llevar Voladores en PvE</value>
+  <comment>Label for allowing flyer carry in PvE</comment>
+</data>
+	<data name="PlayerHarvestingDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño de Recolección del Jugador</value>
+  <comment>Label for player harvesting damage multiplier</comment>
+</data>
+	<data name="CraftingSkillBonusMultiplier" xml:space="preserve">
+  <value>Multiplicador de Bonificación de Habilidad de Artesanía</value>
+  <comment>Label for crafting skill bonus multiplier</comment>
+</data>
+	<data name="PlayerStatMultiplier" xml:space="preserve">
+  <value>Multiplicador de Estadísticas del Jugador</value>
+  <comment>Expander header for player stat multiplier</comment>
+</data>
+	<data name="PlayerBaseStatMultiplier" xml:space="preserve">
+  <value>Multiplicador de Estadísticas Base del Jugador</value>
+  <comment>Expander header for player base stat multiplier</comment>
+</data>
+	<data name="BaseStatMultiplier" xml:space="preserve">
+  <value>Multiplicador de Estadísticas Base</value>
+  <comment>Label for base stat multiplier</comment>
+</data>
+	<data name="PlayerBaseHealth" xml:space="preserve">
+  <value>Jugador Base[Salud]</value>
+  <comment>Label for player base health stat multiplier</comment>
+</data>
+	<data name="PlayerBaseStamina" xml:space="preserve">
+  <value>Jugador Base[Resistencia]</value>
+  <comment>Label for player base stamina stat multiplier</comment>
+</data>
+	<data name="PlayerBaseTorpor" xml:space="preserve">
+  <value>Jugador Base[Torpor]</value>
+  <comment>Label for player base torpor stat multiplier</comment>
+</data>
+	<data name="PlayerBaseOxygen" xml:space="preserve">
+  <value>Jugador Base[Oxígeno]</value>
+  <comment>Label for player base oxygen stat multiplier</comment>
+</data>
+	<data name="PlayerBaseFood" xml:space="preserve">
+  <value>Jugador Base[Alimentos]</value>
+  <comment>Label for player base food stat multiplier</comment>
+</data>
+	<data name="PlayerBaseWater" xml:space="preserve">
+  <value>Jugador Base[Agua]</value>
+  <comment>Label for player base water stat multiplier</comment>
+</data>
+	<data name="PlayerBaseTemperature" xml:space="preserve">
+  <value>Jugador Base[Temperatura]</value>
+  <comment>Label for player base temperature stat multiplier</comment>
+</data>
+	<data name="PlayerBaseWeight" xml:space="preserve">
+  <value>Jugador Base[Peso]</value>
+  <comment>Label for player base weight stat multiplier</comment>
+</data>
+	<data name="PerLevelStatMultiplier" xml:space="preserve">
+  <value>Multiplicador de Estadísticas por Nivel</value>
+  <comment>Expander header for per level stat multiplier</comment>
+</data>
+	<data name="PlayerHealth" xml:space="preserve">
+  <value>Jugador[Salud]</value>
+  <comment>Label for player health per-level stats</comment>
+</data>
+	<data name="PlayerStamina" xml:space="preserve">
+  <value>Jugador[Resistencia]</value>
+  <comment>Label for player stamina per-level stats</comment>
+</data>
+	<data name="PlayerTorpor" xml:space="preserve">
+  <value>Jugador[Torpor]</value>
+  <comment>Label for player torpor per-level stats</comment>
+</data>
+	<data name="PlayerOxygen" xml:space="preserve">
+  <value>Jugador[Oxígeno]</value>
+  <comment>Label for player oxygen per-level stats</comment>
+</data>
+	<data name="PlayerFood" xml:space="preserve">
+  <value>Jugador[Alimentos]</value>
+  <comment>Label for player food per-level stats</comment>
+</data>
+	<data name="PlayerWater" xml:space="preserve">
+  <value>Jugador[Agua]</value>
+  <comment>Label for player water per-level stats</comment>
+</data>
+	<data name="PlayerTemperature" xml:space="preserve">
+  <value>Jugador[Temperatura]</value>
+  <comment>Label for player temperature per-level stats</comment>
+</data>
+	<data name="PlayerWeight" xml:space="preserve">
+  <value>Jugador[Peso]</value>
+  <comment>Label for player weight per-level stats</comment>
+</data>
+	<data name="PlayerMeleeDamage" xml:space="preserve">
+  <value>Jugador[Daño de Melee]</value>
+  <comment>Label for player melee damage per-level stats</comment>
+</data>
+	<data name="PlayerMovementSpeed" xml:space="preserve">
+  <value>Jugador[Velocidad de Movimiento]</value>
+  <comment>Label for player movement speed per-level stats</comment>
+</data>
+	<data name="PlayerFortitude" xml:space="preserve">
+  <value>Jugador[Fortaleza]</value>
+  <comment>Label for player fortitude per-level stats</comment>
+</data>
+	<data name="PlayerCrafting" xml:space="preserve">
+  <value>Jugador[Artesanía]</value>
+  <comment>Label for player crafting per-level stats</comment>
+</data>
+	<data name="DinoSettings" xml:space="preserve">
+  <value>Configuración de Dinosaurios</value>
+  <comment>Expander header for dino settings</comment>
+</data>
+	<data name="MaxTamedDinos" xml:space="preserve">
+  <value>Máximo de Dinos Domesticados (Servidor)</value>
+  <comment>Label for maximum number of tamed dinos on the server</comment>
+</data>
+	<data name="MaxPersonalTamedDinos" xml:space="preserve">
+  <value>Máximo de Dinos Domesticados Personales (Tribu)</value>
+  <comment>Label for maximum number of personal tamed dinos per tribe</comment>
+</data>
+	<data name="TamedDinoDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño de Dinosaurio Domesticado</value>
+  <comment>Label for tamed dino damage multiplier</comment>
+</data>
+	<data name="DinoWildDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño de Dinosaurio Salvaje</value>
+  <comment>Label for wild dino damage multiplier</comment>
+</data>
+	<data name="TamedDinoResistanceMultiplier" xml:space="preserve">
+  <value>Multiplicador de Resistencia de Dinosaurio Domesticado</value>
+  <comment>Label for tamed dino resistance multiplier</comment>
+</data>
+	<data name="DinoResistanceMultiplier" xml:space="preserve">
+  <value>Multiplicador de Resistencia de Dinosaurio</value>
+  <comment>Label for wild dino resistance multiplier</comment>
+</data>
+	<data name="PersonalTamedDinosSaddleStructureCost" xml:space="preserve">
+  <value>Costo de Estructura de Silla de Dinosaurios Domesticados Personales</value>
+  <comment>Label for saddle structure cost multiplier for personal tamed dinos</comment>
+</data>
+	<data name="DinoHarvestingDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño de Recolección de Dinosaurio</value>
+  <comment>Label for dino harvesting damage multiplier</comment>
+</data>
+	<data name="DinoTurretDamageMultiplier" xml:space="preserve">
+  <value>Multiplicador de Daño de Torreta de Dinosaurio</value>
+  <comment>Label for dino turret damage multiplier</comment>
+</data>
+	<data name="RaidDinoCharacterFoodDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Comida de Dinosaurio de Incursión</value>
+  <comment>Label for raid dino character food drain multiplier</comment>
+</data>
+	<data name="DisableDinoDecayPvE" xml:space="preserve">
+  <value>Desactivar Decadencia de Dinosaurios en PvE</value>
+  <comment>Label for disabling dino decay in PvE</comment>
+</data>
+	<data name="AllowFlyingStaminaRecovery" xml:space="preserve">
+  <value>Permitir Recuperación de Resistencia de Dinosaurios Voladores</value>
+  <comment>Label for allowing flying dino stamina recovery</comment>
+</data>
+	<data name="AllowMultipleAttachedC4" xml:space="preserve">
+  <value>Permitir C4 Múltiples</value>
+  <comment>Label for allowing multiple attached C4</comment>
+</data>
+	<data name="BPvPDinoDecay" xml:space="preserve">
+  <value>Decadencia de Dinosaurios en PvP</value>
+  <comment>Label for enabling dino decay in PvP</comment>
+</data>
+	<data name="PvEDinoDecayPeriodMultiplier" xml:space="preserve">
+  <value>Multiplicador del Periodo de Decadencia de Dinosaurios en PvE</value>
+  <comment>Label for PvE dino decay period multiplier</comment>
+</data>
+	<data name="AllowFlyerSpeedLeveling" xml:space="preserve">
+  <value>Permitir Niveles de Velocidad de Voladores</value>
+  <comment>Label for allowing flyer speed leveling</comment>
+</data>
+	<data name="AutoDestroyDecayedDinos" xml:space="preserve">
+  <value>Destruir Automáticamente Dinosaurios Decaídos</value>
+  <comment>Label for auto-destroying decayed dinos</comment>
+</data>
+	<data name="DisableDinoTaming" xml:space="preserve">
+  <value>Desactivar Domesticación de Dinosaurios</value>
+  <comment>Label for disabling dino taming</comment>
+</data>
+	<data name="TamedDinoCharacterFoodDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Comida de Dinosaurio Domesticado</value>
+  <comment>Label for tamed dino food drain multiplier</comment>
+</data>
+	<data name="WildDinoCharacterFoodDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Comida de Dinosaurio Salvaje</value>
+  <comment>Label for wild dino food drain multiplier</comment>
+</data>
+	<data name="WildDinoTorporDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Torpor de Dinosaurio Salvaje</value>
+  <comment>Label for wild dino torpor drain multiplier</comment>
+</data>
+	<data name="TamedDinoTorporDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Torpor de Dinosaurio Domesticado</value>
+  <comment>Label for tamed dino torpor drain multiplier</comment>
+</data>
+	<data name="PassiveTameIntervalMultiplier" xml:space="preserve">
+  <value>Multiplicador de Intervalo de Domesticación Pasiva</value>
+  <comment>Label for passive tame interval multiplier</comment>
+</data>
+	<data name="DinoCharacterHealthRecoveryMultiplier" xml:space="preserve">
+  <value>Multiplicador de Recuperación de Salud de Dinosaurio</value>
+  <comment>Label for dino character health recovery multiplier</comment>
+</data>
+	<data name="DinoCharacterStaminaDrainMultiplier" xml:space="preserve">
+  <value>Multiplicador de Drenaje de Resistencia de Dinosaurio</value>
+  <comment>Label for dino character stamina drain multiplier</comment>
+</data>
+	<data name="ForceAllowCaveFlyers" xml:space="preserve">
+  <value>Permitir Voladores en Cuevas</value>
+  <comment>Label for force allowing cave flyers</comment>
+</data>
+	<data name="PreventMateBoost" xml:space="preserve">
+  <value>Prevenir Aumento de Compañeros</value>
+  <comment>Label for preventing mate boost for dinos</comment>
+</data>
+	<data name="AllowUnclaimDinos" xml:space="preserve">
+  <value>Permitir Deshacer Reclamo de Dinosaurios</value>
+  <comment>Label for allowing unclaiming dinos</comment>
+</data>
+	<data name="DisableDinoBreeding" xml:space="preserve">
+  <value>Desactivar Crianza de Dinosaurios</value>
+  <comment>Label for disabling dino breeding</comment>
+</data>
+	<data name="DisableDinoRiding" xml:space="preserve">
+  <value>Desactivar Montar Dinosaurios</value>
+  <comment>Label for disabling dino riding</comment>
+</data>
+	<data name="DinoStatMultipliers" xml:space="preserve">
+  <value>Multiplicadores de Estadísticas de Dinosaurios</value>
+  <comment>Expander header for dino stat multipliers</comment>
+</data>
+	<data name="DinoTamedStatMultipliers" xml:space="preserve">
+  <value>Multiplicadores de Estadísticas de Dinosaurios Domesticados</value>
+  <comment>Expander header for tamed dino stat multipliers</comment>
+</data>
+	<data name="DinoTamedHealth" xml:space="preserve">
+  <value>DinoTamed[Salud]</value>
+  <comment>Label for tamed dino health stat multiplier</comment>
+</data>
+	<data name="DinoTamedStamina" xml:space="preserve">
+  <value>DinoTamed[Resistencia]</value>
+  <comment>Label for tamed dino stamina stat multiplier</comment>
+</data>
+	<data name="DinoTamedTorpor" xml:space="preserve">
+  <value>DinoTamed[Torpor]</value>
+  <comment>Label for tamed dino torpor stat multiplier</comment>
+</data>
+	<data name="DinoTamedOxygen" xml:space="preserve">
+  <value>DinoTamed[Oxígeno]</value>
+  <comment>Label for tamed dino oxygen stat multiplier</comment>
+</data>
+	<data name="DinoTamedFood" xml:space="preserve">
+  <value>DinoTamed[Alimentos]</value>
+  <comment>Label for tamed dino food stat multiplier</comment>
+</data>
+	<data name="DinoTamedWeight" xml:space="preserve">
+  <value>DinoTamed[Peso]</value>
+  <comment>Label for tamed dino weight stat multiplier</comment>
+</data>
+	<data name="DinoTamedMeleeDamage" xml:space="preserve">
+  <value>DinoTamed[Daño de Melee]</value>
+  <comment>Label for tamed dino melee damage stat multiplier</comment>
+</data>
+	<data name="DinoTamedMovementSpeed" xml:space="preserve">
+  <value>DinoTamed[Velocidad de Movimiento]</value>
+  <comment>Label for tamed dino movement speed stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddStatMultipliers" xml:space="preserve">
+  <value>Multiplicadores de Estadísticas Adicionales de Dinosaurios Domesticados</value>
+  <comment>Expander header for additional tamed dino stat multipliers</comment>
+</data>
+	<data name="DinoTamedAddHealth" xml:space="preserve">
+  <value>DinoTamed_Add[Salud]</value>
+  <comment>Label for additional tamed dino health stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddStamina" xml:space="preserve">
+  <value>DinoTamed_Add[Resistencia]</value>
+  <comment>Label for additional tamed dino stamina stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddTorpor" xml:space="preserve">
+  <value>DinoTamed_Add[Torpor]</value>
+  <comment>Label for additional tamed dino torpor stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddOxygen" xml:space="preserve">
+  <value>DinoTamed_Add[Oxígeno]</value>
+  <comment>Label for additional tamed dino oxygen stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddFood" xml:space="preserve">
+  <value>DinoTamed_Add[Alimentos]</value>
+  <comment>Label for additional tamed dino food stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddWeight" xml:space="preserve">
+  <value>DinoTamed_Add[Peso]</value>
+  <comment>Label for additional tamed dino weight stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddMeleeDamage" xml:space="preserve">
+  <value>DinoTamed_Add[Daño de Melee]</value>
+  <comment>Label for additional tamed dino melee damage stat multiplier</comment>
+</data>
+	<data name="DinoTamedAddMovementSpeed" xml:space="preserve">
+  <value>DinoTamed_Add[Velocidad de Movimiento]</value>
+  <comment>Label for additional tamed dino movement speed stat multiplier</comment>
+</data>
+	<data name="DinoAffinityStatMultipliers" xml:space="preserve">
+  <value>Multiplicadores de Estadísticas de Afinidad de Dinosaurios</value>
+  <comment>Expander header for dino affinity stat multipliers</comment>
+</data>
+	<data name="DinoTamedAffinityHealth" xml:space="preserve">
+  <value>DinoTamed_Affinity[Salud]</value>
+  <comment>Label for tamed dinos with affinity health stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityStamina" xml:space="preserve">
+  <value>DinoTamed_Affinity[Resistencia]</value>
+  <comment>Label for tamed dinos with affinity stamina stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityTorpor" xml:space="preserve">
+  <value>DinoTamed_Affinity[Torpor]</value>
+  <comment>Label for tamed dinos with affinity torpor stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityOxygen" xml:space="preserve">
+  <value>DinoTamed_Affinity[Oxígeno]</value>
+  <comment>Label for tamed dinos with affinity oxygen stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityFood" xml:space="preserve">
+  <value>DinoTamed_Affinity[Alimentos]</value>
+  <comment>Label for tamed dinos with affinity food stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityWeight" xml:space="preserve">
+  <value>DinoTamed_Affinity[Peso]</value>
+  <comment>Label for tamed dinos with affinity weight stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityMeleeDamage" xml:space="preserve">
+  <value>DinoTamed_Affinity[Daño de Melee]</value>
+  <comment>Label for tamed dinos with affinity melee damage stat multiplier</comment>
+</data>
+	<data name="DinoTamedAffinityMovementSpeed" xml:space="preserve">
+  <value>DinoTamed_Affinity[Velocidad de Movimiento]</value>
+  <comment>Label for tamed dinos with affinity movement speed stat multiplier</comment>
+</data>
+	<data name="DinoWildStatMultipliers" xml:space="preserve">
+  <value>Multiplicadores de Estadísticas de Dinosaurios Salvajes</value>
+  <comment>Expander header for wild dino stat multipliers</comment>
+</data>
+	<data name="DinoWildHealth" xml:space="preserve">
+  <value>DinoWild[Salud]</value>
+  <comment>Label for wild dino health stat multiplier</comment>
+</data>
+	<data name="DinoWildStamina" xml:space="preserve">
+  <value>DinoWild[Resistencia]</value>
+  <comment>Label for wild dino stamina stat multiplier</comment>
+</data>
+	<data name="DinoWildTorpor" xml:space="preserve">
+  <value>DinoWild[Torpor]</value>
+  <comment>Label for wild dino torpor stat multiplier</comment>
+</data>
+	<data name="DinoWildOxygen" xml:space="preserve">
+  <value>DinoWild[Oxígeno]</value>
+  <comment>Label for wild dino oxygen stat multiplier</comment>
+</data>
+	<data name="DinoWildFood" xml:space="preserve">
+  <value>DinoWild[Alimentos]</value>
+  <comment>Label for wild dino food stat multiplier</comment>
+</data>
+	<data name="DinoWildWeight" xml:space="preserve">
+  <value>DinoWild[Peso]</value>
+  <comment>Label for wild dino weight stat multiplier</comment>
+</data>
+	<data name="DinoWildMeleeDamage" xml:space="preserve">
+  <value>DinoWild[Daño de Melee]</value>
+  <comment>Label for wild dino melee damage stat multiplier</comment>
+</data>
+	<data name="DinoWildMovementSpeed" xml:space="preserve">
+  <value>DinoWild[Velocidad de Movimiento]</value>
+  <comment>Label for wild dino movement speed stat multiplier</comment>
+</data>
+	<data name="DinoBreedingSettings" xml:space="preserve">
+  <value>Configuración de Cría de Dinosaurios</value>
+  <comment>Expander header for dino breeding settings</comment>
+</data>
+	<data name="MatingIntervalMultiplier" xml:space="preserve">
+  <value>Multiplicador del Intervalo de Apareamiento</value>
+  <comment>Label for mating interval multiplier</comment>
+</data>
+	<data name="EggHatchSpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Eclosión de Huevos</value>
+  <comment>Label for egg hatch speed multiplier</comment>
+</data>
+	<data name="MatingSpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Apareamiento</value>
+  <comment>Label for mating speed multiplier</comment>
+</data>
+	<data name="BabyImprintAmountMultiplier" xml:space="preserve">
+  <value>Multiplicador de Cantidad de Impronta de Bebé</value>
+  <comment>Label for baby imprint amount multiplier</comment>
+</data>
+	<data name="BabyMatureSpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Maduración de Bebé</value>
+  <comment>Label for baby mature speed multiplier</comment>
+</data>
+	<data name="BabyFoodConsumptionSpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Consumo de Alimentos de Bebé</value>
+  <comment>Label for baby food consumption speed multiplier</comment>
+</data>
+	<data name="DisableImprintDinoBuff" xml:space="preserve">
+  <value>Desactivar Buff de Impronta de Bebé</value>
+  <comment>Label for disabling baby dino imprint buff</comment>
+</data>
+	<data name="AllowAnyoneBabyImprintCuddle" xml:space="preserve">
+  <value>Permitir Que Cualquiera Acaricie e Impronta Bebés</value>
+  <comment>Label for allowing anyone to cuddle and imprint on baby dinos</comment>
+</data>
+	<data name="BabyImprintingStatScaleMultiplier" xml:space="preserve">
+  <value>Multiplicador de Escala de Estadísticas de Impronta de Bebé</value>
+  <comment>Label for baby imprinting stat scale multiplier</comment>
+</data>
+	<data name="BabyCuddleIntervalMultiplier" xml:space="preserve">
+  <value>Multiplicador del Intervalo de Acariciar de Bebé</value>
+  <comment>Label for baby cuddle interval multiplier</comment>
+</data>
+	<data name="BabyCuddleGracePeriodMultiplier" xml:space="preserve">
+  <value>Multiplicador del Periodo de Gracia para Acariciar de Bebé</value>
+  <comment>Label for baby cuddle grace period multiplier</comment>
+</data>
+	<data name="BabyCuddleLoseImprintQualitySpeedMultiplier" xml:space="preserve">
+  <value>Multiplicador de Velocidad de Pérdida de Calidad de Impronta al No Acariciar</value>
+  <comment>Label for speed at which baby dinos lose imprint quality when not cuddled</comment>
+</data>
+	<data name="Enviroment" xml:space="preserve">
+    <value>Entorno</value>
+    <comment>Expander header for environment settings</comment>
+</data>
+	<data name="TamingSpeedMultiplier" xml:space="preserve">
+    <value>Multiplicador de Velocidad de Domesticación:</value>
+    <comment>Label for taming speed multiplier</comment>
+</data>
+	<data name="TamingSpeedMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la velocidad de domesticación de criaturas.</value>
+    <comment>Tooltip for taming speed multiplier</comment>
+</data>
+	<data name="HarvestAmountMultiplier" xml:space="preserve">
+    <value>Multiplicador de Cantidad de Cosecha:</value>
+    <comment>Label for harvest amount multiplier</comment>
+</data>
+	<data name="HarvestAmountMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la cantidad de recursos cosechados de criaturas u objetos.</value>
+    <comment>Tooltip for harvest amount multiplier</comment>
+</data>
+	<data name="HairGrowthSpeedMultiplier" xml:space="preserve">
+    <value>Multiplicador de Velocidad de Crecimiento del Pelo:</value>
+    <comment>Label for hair growth speed multiplier</comment>
+</data>
+	<data name="HairGrowthSpeedMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la velocidad a la que crece el pelo en las criaturas.</value>
+    <comment>Tooltip for hair growth speed multiplier</comment>
+</data>
+	<data name="ResourcesRespawnPeriodMultiplier" xml:space="preserve">
+    <value>Multiplicador del Periodo de Reaparición de Recursos:</value>
+    <comment>Label for resources respawn period multiplier</comment>
+</data>
+	<data name="ResourcesRespawnPeriodMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el periodo de tiempo que tardan en reaparecer los recursos.</value>
+    <comment>Tooltip for resources respawn period multiplier</comment>
+</data>
+	<data name="DinoCountMultiplier" xml:space="preserve">
+    <value>Multiplicador de Conteo de Dinos:</value>
+    <comment>Label for dino count multiplier</comment>
+</data>
+	<data name="DinoCountMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el número de criaturas que aparecen en el mapa.</value>
+    <comment>Tooltip for dino count multiplier</comment>
+</data>
+	<data name="BaseTemperatureMultiplier" xml:space="preserve">
+    <value>Multiplicador de Temperatura Base:</value>
+    <comment>Label for base temperature multiplier</comment>
+</data>
+	<data name="BaseTemperatureMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la temperatura base en el mapa.</value>
+    <comment>Tooltip for base temperature multiplier</comment>
+</data>
+	<data name="DayCycleSpeedScale" xml:space="preserve">
+    <value>Escala de Velocidad del Ciclo de Día:</value>
+    <comment>Label for day cycle speed scale</comment>
+</data>
+	<data name="DayCycleSpeedScale_Tooltip" xml:space="preserve">
+    <value>Escala para la velocidad del ciclo día-noche.</value>
+    <comment>Tooltip for day cycle speed scale</comment>
+</data>
+	<data name="DayTimeSpeedScale" xml:space="preserve">
+    <value>Escala de Velocidad del Día:</value>
+    <comment>Label for day time speed scale</comment>
+</data>
+	<data name="DayTimeSpeedScale_Tooltip" xml:space="preserve">
+    <value>Escala para la velocidad del día.</value>
+    <comment>Tooltip for day time speed scale</comment>
+</data>
+	<data name="NightTimeSpeedScale" xml:space="preserve">
+    <value>Escala de Velocidad de la Noche:</value>
+    <comment>Label for night time speed scale</comment>
+</data>
+	<data name="NightTimeSpeedScale_Tooltip" xml:space="preserve">
+    <value>Escala para la velocidad de la noche.</value>
+    <comment>Tooltip for night time speed scale</comment>
+</data>
+	<data name="HarvestHealthMultiplier" xml:space="preserve">
+    <value>Multiplicador de Salud de Cosecha:</value>
+    <comment>Label for harvest health multiplier</comment>
+</data>
+	<data name="HarvestHealthMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la salud de criaturas u objetos durante la cosecha.</value>
+    <comment>Tooltip for harvest health multiplier</comment>
+</data>
+	<data name="ResourceNoReplenishRadiusPlayers" xml:space="preserve">
+    <value>Radio de No Reabastecimiento de Recursos Jugadores:</value>
+    <comment>Label for resource no replenish radius players</comment>
+</data>
+	<data name="ResourceNoReplenishRadiusPlayers_Tooltip" xml:space="preserve">
+    <value>Radio alrededor de los jugadores donde los recursos no se reabastecen.</value>
+    <comment>Tooltip for resource no replenish radius players</comment>
+</data>
+	<data name="ResourceNoReplenishRadiusStructures" xml:space="preserve">
+    <value>Radio de No Reabastecimiento de Recursos Estructuras:</value>
+    <comment>Label for resource no replenish radius structures</comment>
+</data>
+	<data name="ResourceNoReplenishRadiusStructures_Tooltip" xml:space="preserve">
+    <value>Radio alrededor de las estructuras donde los recursos no se reabastecen.</value>
+    <comment>Tooltip for resource no replenish radius structures</comment>
+</data>
+	<data name="UseOptimizedHarvestingHealth" xml:space="preserve">
+    <value>Usar Salud de Cosecha Optimizada:</value>
+    <comment>Label for use optimized harvesting health</comment>
+</data>
+	<data name="UseOptimizedHarvestingHealth_Tooltip" xml:space="preserve">
+    <value>Habilitar salud de cosecha optimizada.</value>
+    <comment>Tooltip for use optimized harvesting health</comment>
+</data>
+	<data name="ClampResourceHarvestDamage" xml:space="preserve">
+    <value>Limitar Daño de Cosecha de Recursos:</value>
+    <comment>Label for clamp resource harvest damage</comment>
+</data>
+	<data name="ClampResourceHarvestDamage_Tooltip" xml:space="preserve">
+    <value>Limitar el daño de cosecha de recursos a un valor máximo.</value>
+    <comment>Tooltip for clamp resource harvest damage</comment>
+</data>
+	<data name="DisableWeatherFog" xml:space="preserve">
+    <value>Deshabilitar Niebla Climática:</value>
+    <comment>Label for disable weather fog</comment>
+</data>
+	<data name="DisableWeatherFog_Tooltip" xml:space="preserve">
+    <value>Deshabilitar la niebla climática en el juego.</value>
+    <comment>Tooltip for disable weather fog</comment>
+</data>
+	<data name="GlobalSpoilingTimeMultiplier" xml:space="preserve">
+    <value>Multiplicador de Tiempo de Descomposición Global:</value>
+    <comment>Label for global spoiling time multiplier</comment>
+</data>
+	<data name="GlobalSpoilingTimeMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el tiempo de descomposición de los objetos en los inventarios.</value>
+    <comment>Tooltip for global spoiling time multiplier</comment>
+</data>
+	<data name="ClampItemSpoilingTimes" xml:space="preserve">
+    <value>Limitar Tiempos de Descomposición de Objetos:</value>
+    <comment>Label for clamp item spoiling times</comment>
+</data>
+	<data name="ClampItemSpoilingTimes_Tooltip" xml:space="preserve">
+    <value>Limitar los tiempos de descomposición de objetos a un valor máximo.</value>
+    <comment>Tooltip for clamp item spoiling times</comment>
+</data>
+	<data name="GlobalItemDecompositionTimeMultiplier" xml:space="preserve">
+    <value>Multiplicador de Tiempo de Descomposición de Objetos Global:</value>
+    <comment>Label for global item decomposition time multiplier</comment>
+</data>
+	<data name="GlobalItemDecompositionTimeMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el tiempo de descomposición de los objetos en los inventarios.</value>
+    <comment>Tooltip for global item decomposition time multiplier</comment>
+</data>
+	<data name="GlobalCorpseDecompositionTimeMultiplier" xml:space="preserve">
+    <value>Multiplicador de Tiempo de Descomposición de Cadáveres Global:</value>
+    <comment>Label for global corpse decomposition time multiplier</comment>
+</data>
+	<data name="GlobalCorpseDecompositionTimeMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el tiempo de descomposición de los cadáveres.</value>
+    <comment>Tooltip for global corpse decomposition time multiplier</comment>
+</data>
+	<data name="CropGrowthSpeedMultiplier" xml:space="preserve">
+    <value>Multiplicador de Velocidad de Crecimiento de Cultivos:</value>
+    <comment>Label for crop growth speed multiplier</comment>
+</data>
+	<data name="CropGrowthSpeedMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la velocidad a la que crecen los cultivos.</value>
+    <comment>Tooltip for crop growth speed multiplier</comment>
+</data>
+	<data name="CropDecaySpeedMultiplier" xml:space="preserve">
+    <value>Multiplicador de Velocidad de Decaimiento de Cultivos:</value>
+    <comment>Label for crop decay speed multiplier</comment>
+</data>
+	<data name="CropDecaySpeedMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la velocidad a la que decaen los cultivos.</value>
+    <comment>Tooltip for crop decay speed multiplier</comment>
+</data>
+	<data name="LayEggIntervalMultiplier" xml:space="preserve">
+    <value>Multiplicador de Intervalo de Puesta de Huevos:</value>
+    <comment>Label for lay egg interval multiplier</comment>
+</data>
+	<data name="LayEggIntervalMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el intervalo en el que las criaturas ponen huevos.</value>
+    <comment>Tooltip for lay egg interval multiplier</comment>
+</data>
+	<data name="PoopIntervalMultiplier" xml:space="preserve">
+    <value>Multiplicador de Intervalo de Defecación:</value>
+    <comment>Label for poop interval multiplier</comment>
+</data>
+	<data name="PoopIntervalMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el intervalo en el que las criaturas defecan.</value>
+    <comment>Tooltip for poop interval multiplier</comment>
+</data>
+	<data name="KillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar:</value>
+    <comment>Label for kill XP multiplier</comment>
+</data>
+	<data name="KillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas.</value>
+    <comment>Tooltip for kill XP multiplier</comment>
+</data>
+	<data name="HarvestXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Cosecha:</value>
+    <comment>Label for harvest XP multiplier</comment>
+</data>
+	<data name="HarvestXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al cosechar recursos.</value>
+    <comment>Tooltip for harvest XP multiplier</comment>
+</data>
+	<data name="CraftXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Fabricación:</value>
+    <comment>Label for craft XP multiplier</comment>
+</data>
+	<data name="CraftXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al fabricar objetos.</value>
+    <comment>Tooltip for craft XP multiplier</comment>
+</data>
+	<data name="SpecialXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP Especial:</value>
+    <comment>Label for special XP multiplier</comment>
+</data>
+	<data name="SpecialXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia especiales.</value>
+    <comment>Tooltip for special XP multiplier</comment>
+</data>
+	<data name="ExplorerNoteXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP de Notas de Explorador:</value>
+    <comment>Label for explorer note XP multiplier</comment>
+</data>
+	<data name="ExplorerNoteXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados de las notas de explorador.</value>
+    <comment>Tooltip for explorer note XP multiplier</comment>
+</data>
+	<data name="BossKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar Jefes:</value>
+    <comment>Label for boss kill XP multiplier</comment>
+</data>
+	<data name="BossKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar jefes.</value>
+    <comment>Tooltip for boss kill XP multiplier</comment>
+</data>
+	<data name="AlphaKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar Alfas:</value>
+    <comment>Label for alpha kill XP multiplier</comment>
+</data>
+	<data name="AlphaKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas alfa.</value>
+    <comment>Tooltip for alpha kill XP multiplier</comment>
+</data>
+	<data name="WildKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar Criaturas Salvajes:</value>
+    <comment>Label for wild kill XP multiplier</comment>
+</data>
+	<data name="WildKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas salvajes.</value>
+    <comment>Tooltip for wild kill XP multiplier</comment>
+</data>
+	<data name="CaveKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar en Cuevas:</value>
+    <comment>Label for cave kill XP multiplier</comment>
+</data>
+	<data name="CaveKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas en cuevas.</value>
+    <comment>Tooltip for cave kill XP multiplier</comment>
+</data>
+	<data name="TamedKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar Criaturas Domesticadas:</value>
+    <comment>Label for tamed kill XP multiplier</comment>
+</data>
+	<data name="TamedKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas domesticadas.</value>
+    <comment>Tooltip for tamed kill XP multiplier</comment>
+</data>
+	<data name="UnclaimedKillXPMultiplier" xml:space="preserve">
+    <value>Multiplicador de XP por Matar Criaturas No Reclamadas:</value>
+    <comment>Label for unclaimed kill XP multiplier</comment>
+</data>
+	<data name="UnclaimedKillXPMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para los puntos de experiencia ganados al matar criaturas no reclamadas.</value>
+    <comment>Tooltip for unclaimed kill XP multiplier</comment>
+</data>
+	<data name="Structures" xml:space="preserve">
+    <value>Estructuras</value>
+    <comment>Expander header for structure settings</comment>
+</data>
+	<data name="DisableStructurePlacementCollision" xml:space="preserve">
+    <value>Desactivar Colisión de Colocación de Estructuras:</value>
+    <comment>Label for disabling structure placement collision</comment>
+</data>
+	<data name="DisableStructurePlacementCollision_Tooltip" xml:space="preserve">
+    <value>Desactiva la verificación de colisión al colocar estructuras. Esto te permite colocar estructuras incluso si se intersectan con otros objetos.</value>
+    <comment>Tooltip for disabling structure placement collision</comment>
+</data>
+	<data name="StructureDamageRepairCooldown" xml:space="preserve">
+    <value>Tiempo de Enfriamiento de Reparación de Daños de Estructuras:</value>
+    <comment>Label for structure damage repair cooldown</comment>
+</data>
+	<data name="StructureDamageRepairCooldown_Tooltip" xml:space="preserve">
+    <value>Tiempo de enfriamiento (en segundos) para reparar estructuras dañadas.</value>
+    <comment>Tooltip for structure damage repair cooldown</comment>
+</data>
+	<data name="EnablePvPStructureDecay" xml:space="preserve">
+    <value>Habilitar Decaimiento de Estructuras en PvP:</value>
+    <comment>Label for enabling PvP structure decay</comment>
+</data>
+	<data name="EnablePvPStructureDecay_Tooltip" xml:space="preserve">
+    <value>Habilita o deshabilita el decaimiento de estructuras en modo PvP. Si está habilitado, las estructuras se degradarán gradualmente con el tiempo en modo PvP.</value>
+    <comment>Tooltip for enabling PvP structure decay</comment>
+</data>
+	<data name="PvPZoneStructureDamageMultiplier" xml:space="preserve">
+    <value>Multiplicador de Daño de Estructuras en Zona PvP:</value>
+    <comment>Label for PvP zone structure damage multiplier</comment>
+</data>
+	<data name="PvPZoneStructureDamageMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la cantidad de daño que las estructuras reciben en zonas PvP.</value>
+    <comment>Tooltip for PvP zone structure damage multiplier</comment>
+</data>
+	<data name="StructureResistanceMultiplier" xml:space="preserve">
+    <value>Multiplicador de Resistencia de Estructuras:</value>
+    <comment>Label for structure resistance multiplier</comment>
+</data>
+	<data name="StructureResistanceMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para la resistencia de las estructuras contra daños.</value>
+    <comment>Tooltip for structure resistance multiplier</comment>
+</data>
+	<data name="StructureDamageMultiplier" xml:space="preserve">
+    <value>Multiplicador de Daño de Estructuras:</value>
+    <comment>Label for structure damage multiplier</comment>
+</data>
+	<data name="StructureDamageMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el daño infligido a las estructuras.</value>
+    <comment>Tooltip for structure damage multiplier</comment>
+</data>
+	<data name="MaxStructuresInRange" xml:space="preserve">
+    <value>Máximo de Estructuras en Rango:</value>
+    <comment>Label for max structures in range</comment>
+</data>
+	<data name="MaxStructuresInRange_Tooltip" xml:space="preserve">
+    <value>Número máximo de estructuras permitidas en un cierto rango.</value>
+    <comment>Tooltip for max structures in range</comment>
+</data>
+	<data name="PerPlatformMaxStructuresMultiplier" xml:space="preserve">
+    <value>Multiplicador Máximo de Estructuras por Plataforma:</value>
+    <comment>Label for per platform max structures multiplier</comment>
+</data>
+	<data name="PerPlatformMaxStructuresMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el número máximo de estructuras permitidas en una montura de plataforma.</value>
+    <comment>Tooltip for per platform max structures multiplier</comment>
+</data>
+	<data name="OverrideStructurePlatformPrevention" xml:space="preserve">
+    <value>Ignorar Prevención de Colocación de Estructuras en Plataforma:</value>
+    <comment>Label for overriding structure platform prevention</comment>
+</data>
+	<data name="OverrideStructurePlatformPrevention_Tooltip" xml:space="preserve">
+    <value>Ignorar la prevención de colocación de estructuras en plataformas.</value>
+    <comment>Tooltip for overriding structure platform prevention</comment>
+</data>
+	<data name="FlyerPlatformAllowUnalignedDinoBasing" xml:space="preserve">
+    <value>Permitir Colocación de Dinos No Alineados en Plataforma de Voladores:</value>
+    <comment>Label for allowing unaligned dino basing on flyer platforms</comment>
+</data>
+	<data name="FlyerPlatformAllowUnalignedDinoBasing_Tooltip" xml:space="preserve">
+    <value>Permitir la colocación de dinosaurios no alineados en plataformas de voladores.</value>
+    <comment>Tooltip for allowing unaligned dino basing on flyer platforms</comment>
+</data>
+	<data name="PvEAllowStructuresAtSupplyDrops" xml:space="preserve">
+    <value>Permitir Estructuras en Suministros en PvE:</value>
+    <comment>Label for allowing structures at supply drops in PvE mode</comment>
+</data>
+	<data name="PvEAllowStructuresAtSupplyDrops_Tooltip" xml:space="preserve">
+    <value>Permitir la colocación de estructuras en ubicaciones de suministros en modo PvE.</value>
+    <comment>Tooltip for allowing structures at supply drops in PvE mode</comment>
+</data>
+	<data name="AutoDestroyStructures" xml:space="preserve">
+    <value>Destruir Estructuras Automáticamente:</value>
+    <comment>Label for auto destroying structures</comment>
+</data>
+	<data name="AutoDestroyStructures_Tooltip" xml:space="preserve">
+    <value>Destruir estructuras automáticamente bajo ciertas condiciones.</value>
+    <comment>Tooltip for auto destroying structures</comment>
+</data>
+	<data name="PvEStructureDecayPeriodMultiplier" xml:space="preserve">
+    <value>Multiplicador de Decaimiento de Estructuras en PvE:</value>
+    <comment>Label for PvE structure decay period multiplier</comment>
+</data>
+	<data name="PvEStructureDecayPeriodMultiplier_Tooltip" xml:space="preserve">
+    <value>Tiempo (en segundos) antes de que las estructuras comiencen a decaer en modo PvE.</value>
+    <comment>Tooltip for PvE structure decay period multiplier</comment>
+</data>
+	<data name="AutoDestroyOldStructuresMultiplier" xml:space="preserve">
+    <value>Multiplicador para Destruir Estructuras Antiguas Automáticamente:</value>
+    <comment>Label for auto destroying old structures multiplier</comment>
+</data>
+	<data name="AutoDestroyOldStructuresMultiplier_Tooltip" xml:space="preserve">
+    <value>Multiplicador para el tiempo que tarda en destruirse automáticamente las estructuras antiguas.</value>
+    <comment>Tooltip for auto destroying old structures multiplier</comment>
+</data>
+	<data name="ForceAllStructureLocking" xml:space="preserve">
+    <value>Forzar el Bloqueo de Todas las Estructuras:</value>
+    <comment>Label for forcing all structure locking</comment>
+</data>
+	<data name="ForceAllStructureLocking_Tooltip" xml:space="preserve">
+    <value>Forzar el bloqueo de todas las estructuras.</value>
+    <comment>Tooltip for forcing all structure locking</comment>
+</data>
+	<data name="PassiveDefensesDamageRiderlessDinos" xml:space="preserve">
+    <value>Defensas Pasivas Dañan Dinos Sin Jinete:</value>
+    <comment>Label for passive defenses damaging riderless dinos</comment>
+</data>
+	<data name="PassiveDefensesDamageRiderlessDinos_Tooltip" xml:space="preserve">
+    <value>Permitir que las defensas pasivas dañen a los dinosaurios sin jinete.</value>
+    <comment>Tooltip for passive defenses damaging riderless dinos</comment>
+</data>
+	<data name="HardLimitTurretsInRange" xml:space="preserve">
+    <value>Límite Máximo de Torres en Rango:</value>
+    <comment>Label for hard limit of turrets in range</comment>
+</data>
+	<data name="HardLimitTurretsInRange_Tooltip" xml:space="preserve">
+    <value>Límite máximo para el número de torretas en rango.</value>
+    <comment>Tooltip for hard limit of turrets in range</comment>
+</data>
+	<data name="LimitTurretsNum" xml:space="preserve">
+    <value>Límite de Número de Torres:</value>
+    <comment>Label for limiting turrets number</comment>
+</data>
+	<data name="LimitTurretsNum_Tooltip" xml:space="preserve">
+    <value>Limitar el número total de torretas que se pueden colocar.</value>
+    <comment>Tooltip for limiting turrets number</comment>
+</data>
+	<data name="LimitTurretsRange" xml:space="preserve">
+    <value>Límite de Torres en Rango:</value>
+    <comment>Label for limiting turrets in range</comment>
+</data>
+	<data name="LimitTurretsRange_Tooltip" xml:space="preserve">
+    <value>Limitar el número de torretas que pueden apuntar a un solo enemigo.</value>
+    <comment>Tooltip for limiting turrets in range</comment>
+</data>
+	<data name="AlwaysAllowStructurePickup" xml:space="preserve">
+    <value>Siempre Permitir Recoger Estructuras:</value>
+    <comment>Label for always allowing structure pickup</comment>
+</data>
+	<data name="AlwaysAllowStructurePickup_Tooltip" xml:space="preserve">
+    <value>Siempre permitir recoger estructuras después de colocarlas.</value>
+    <comment>Tooltip for always allowing structure pickup</comment>
+</data>
+	<data name="StructurePickupTimeAfterPlacement" xml:space="preserve">
+    <value>Tiempo para Recoger Estructuras Después de Colocarlas:</value>
+    <comment>Label for structure pickup time after placement</comment>
+</data>
+	<data name="StructurePickupTimeAfterPlacement_Tooltip" xml:space="preserve">
+    <value>Tiempo (en segundos) después de colocar una estructura antes de que pueda ser recogida.</value>
+    <comment>Tooltip for structure pickup time after placement</comment>
+</data>
+	<data name="StructurePickupHoldDuration" xml:space="preserve">
+    <value>Duración de la Retención para Recoger Estructuras:</value>
+    <comment>Label for structure pickup hold duration</comment>
+</data>
+	<data name="StructurePickupHoldDuration_Tooltip" xml:space="preserve">
+    <value>Tiempo (en segundos) que debes mantener presionada la tecla 'usar' para recoger una estructura.</value>
+    <comment>Tooltip for structure pickup hold duration</comment>
+</data>
+	<data name="Engrams" xml:space="preserve">
+    <value>Engramas</value>
+    <comment>Expander header for engrams</comment>
+</data>
+	<data name="SaveEngrams" xml:space="preserve">
+    <value>Guardar Engramas</value>
+    <comment>Button text for saving engrams</comment>
+</data>
+	<data name="EngramClassName" xml:space="preserve">
+    <value>Nombre de Clase de Engrama</value>
+    <comment>DataGrid column header for engram class name</comment>
+</data>
+	<data name="Hidden" xml:space="preserve">
+    <value>Oculto</value>
+    <comment>DataGrid column header for hidden engram</comment>
+</data>
+	<data name="PointsCost" xml:space="preserve">
+    <value>Costo de Puntos</value>
+    <comment>DataGrid column header for engram points cost</comment>
+</data>
+	<data name="LevelRequirement" xml:space="preserve">
+    <value>Requisito de Nivel</value>
+    <comment>DataGrid column header for engram level requirement</comment>
+</data>
+	<data name="AutoUnlock" xml:space="preserve">
+    <value>Desbloqueo Automático</value>
+    <comment>DataGrid column header for auto unlock</comment>
+</data>
+	<data name="LevelToAutoUnlock" xml:space="preserve">
+    <value>Nivel para Desbloqueo Automático</value>
+    <comment>DataGrid column header for level to auto unlock</comment>
+</data>
+	<data name="HostedFiles" xml:space="preserve">
+    <value>Archivos Alojados</value>
+    <comment>Expander header for hosted files</comment>
+</data>
+	<data name="StackSizeOverrides" xml:space="preserve">
+    <value>Sobrescritura de Tamaño de Pila</value>
+    <comment>Expander header for stack size overrides</comment>
+</data>
+	<data name="AddRow" xml:space="preserve">
+    <value>Añadir Fila</value>
+    <comment>Button text for adding a new row</comment>
+</data>
+	<data name="PasteItems" xml:space="preserve">
+    <value>Pegar Artículos</value>
+    <comment>Button text for pasting items</comment>
+</data>
+	<data name="SaveConfig" xml:space="preserve">
+    <value>Guardar Configuración</value>
+    <comment>Button text for saving configuration</comment>
+</data>
+	<data name="Remove" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>DataGrid column header for remove button</comment>
+</data>
+	<data name="ItemClassString" xml:space="preserve">
+    <value>Artículo</value>
+    <comment>DataGrid column header for item class string</comment>
+</data>
+	<data name="MaxItemQuantity" xml:space="preserve">
+    <value>Cantidad Máxima de Artículos</value>
+    <comment>DataGrid column header for max item quantity</comment>
+</data>
+	<data name="IgnoreMultiplier" xml:space="preserve">
+    <value>Ignorar Multiplicador</value>
+    <comment>DataGrid column header for ignore multiplier</comment>
+</data>
+	<data name="DinoOverrides" xml:space="preserve">
+    <value>Sobrescrituras de Dinosaurios</value>
+    <comment>Expander header for dino overrides</comment>
+</data>
+	<data name="AddDinoOverride" xml:space="preserve">
+    <value>Añadir Nueva Sobrescritura de Dinosaurio</value>
+    <comment>Button text for adding a new dino override</comment>
+</data>
+	<data name="CraftingOverrides" xml:space="preserve">
+    <value>Sobrescrituras de Creación</value>
+    <comment>Expander header for crafting overrides</comment>
+</data>
+	<data name="LootOverrides" xml:space="preserve">
+    <value>Sobrescrituras de Botín</value>
+    <comment>Expander header for loot overrides</comment>
+</data>
+	<data name="SOTFSettings" xml:space="preserve">
+    <value>Configuraciones de SOTF</value>
+    <comment>Expander header for SOTF settings</comment>
+</data>
+	<data name="BattleNumOfTribestoStartGame" xml:space="preserve">
+    <value>Número de Tribus para Empezar el Juego</value>
+    <comment>Label for battle number of tribes to start game</comment>
+</data>
+	<data name="TimeToCollapseROD" xml:space="preserve">
+    <value>Tiempo para Colapsar ROD</value>
+    <comment>Label for time to collapse ROD</comment>
+</data>
+	<data name="BattleAutoStartGameInterval" xml:space="preserve">
+    <value>Intervalo de Inicio Automático del Juego</value>
+    <comment>Label for battle auto start game interval</comment>
+</data>
+	<data name="BattleSuddenDeathInterval" xml:space="preserve">
+    <value>Intervalo de Muerte Súbita</value>
+    <comment>Label for battle sudden death interval</comment>
+</data>
+	<data name="KickIdlePlayersPeriod" xml:space="preserve">
+    <value>Período para Expulsar Jugadores Inactivos</value>
+    <comment>Label for kick idle players period</comment>
+</data>
+	<data name="CustomGameIni" xml:space="preserve">
+    <value>Configuración Personalizada Game.ini</value>
+    <comment>Tab header for custom Game.ini</comment>
+</data>
+	<data name="PasteGameIniContent" xml:space="preserve">
+    <value>Pegar Contenido de GAME INI</value>
+    <comment>TextBlock text for pasting GAME INI content</comment>
+</data>
+	<data name="SaveToGameIni" xml:space="preserve">
+    <value>Guardar en Game.ini</value>
+    <comment>Button text for saving to Game.ini</comment>
+</data>
+	<data name="CustomGameUserSettingsIni" xml:space="preserve">
+    <value>Configuración Personalizada GameUserSettings.ini</value>
+    <comment>Tab header for custom GameUserSettings.ini</comment>
+</data>
+	<data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Button text for saving</comment>
+</data>
+	<data name="LaunchParameters" xml:space="preserve">
+    <value>Parámetros de lanzamiento</value>
+    <comment>Tab header for launch parameters</comment>
+  </data>
+	<data name="SaveLaunchParameters" xml:space="preserve">
+    <value>Guardar parámetros de lanzamiento</value>
+    <comment>Button content for saving launch parameters</comment>
+  </data>
+	<data name="ServerPlatformSetting" xml:space="preserve">
+    <value>Configuración de la plataforma del servidor</value>
+    <comment>Label for server platform setting</comment>
+  </data>
+	<data name="ServerPlatformSettingTooltip" xml:space="preserve">
+    <value>Ingrese la(s) plataforma(s) del servidor separadas por comas. Opciones: PC, XSX, WINGDK, PS5, Todas.</value>
+    <comment>Tooltip for server platform setting</comment>
+  </data>
+	<data name="CommandLine" xml:space="preserve">
+    <value>Línea de comando</value>
+    <comment>Label for command line</comment>
+  </data>
+	<data name="OfficialMapSelection" xml:space="preserve">
+    <value>Selección de mapa oficial</value>
+    <comment>Label for official map selection</comment>
+  </data>
+	<data name="OverrideMapName" xml:space="preserve">
+    <value>Sobrescribir nombre del mapa</value>
+    <comment>CheckBox content for overriding map name</comment>
+  </data>
+	<data name="OverrideMapNameTooltip" xml:space="preserve">
+    <value>Actívelo para sobrescribir los mapas oficiales. Activarlo y no configurar nada hará que el juego no se inicie.</value>
+    <comment>Tooltip for overriding map name</comment>
+  </data>
+	<data name="OverrideMapNameInputTooltip" xml:space="preserve">
+    <value>Ingrese el nuevo nombre del mapa como TheIsland_WP. No incluya el ? al final.</value>
+    <comment>Tooltip for map name input</comment>
+  </data>
+	<data name="ListenPort" xml:space="preserve">
+    <value>Puerto de escucha</value>
+    <comment>Label for listen port</comment>
+  </data>
+	<data name="RCONPort" xml:space="preserve">
+    <value>Puerto Rcon</value>
+    <comment>Label for Rcon port</comment>
+  </data>
+	<data name="Mods" xml:space="preserve">
+    <value>Mods (separados por comas)</value>
+    <comment>Label for mods input</comment>
+  </data>
+	<data name="AddPassiveMod" xml:space="preserve">
+    <value>Agregar mod pasivo</value>
+    <comment>CheckBox content for adding a passive mod</comment>
+  </data>
+	<data name="AddPassiveModTooltip" xml:space="preserve">
+    <value>Actívelo si necesita un mod pasivo.</value>
+    <comment>Tooltip for adding a passive mod</comment>
+  </data>
+	<data name="OverridePassiveModTooltip" xml:space="preserve">
+    <value>Ingrese el mod que debe ser pasivo. Solo el ID del mod seguido de , si hay más de uno.</value>
+    <comment>Tooltip for passive mod input</comment>
+  </data>
+	<data name="MaxPlayerCount" xml:space="preserve">
+    <value>Máximo número de jugadores</value>
+    <comment>Label for max player count</comment>
+  </data>
+	<data name="UseBattleye" xml:space="preserve">
+    <value>Usar Battleye</value>
+    <comment>Label for using Battleye</comment>
+  </data>
+	<data name="UseOldConsole" xml:space="preserve">
+    <value>Usar consola antigua</value>
+    <comment>Label for using old console</comment>
+  </data>
+	<data name="UseOldConsoleTooltip" xml:space="preserve">
+    <value>Combina las dos consolas en una si está activado</value>
+    <comment>Tooltip for using old console</comment>
+  </data>
+	<data name="DisableCustomCosmetics" xml:space="preserve">
+    <value>Deshabilitar cosméticos personalizados</value>
+    <comment>Label for disabling custom cosmetics</comment>
+  </data>
+	<data name="DisableCustomCosmeticsTooltip" xml:space="preserve">
+    <value>Activar esto deshabilitará los cosméticos personalizados en este servidor.</value>
+    <comment>Tooltip for disabling custom cosmetics</comment>
+  </data>
+	<data name="AutoDestroyStructures" xml:space="preserve">
+    <value>Destruir estructuras antiguas automáticamente</value>
+    <comment>Label for auto destroying old structures</comment>
+  </data>
+	<data name="AutoDestroyStructuresTooltip" xml:space="preserve">
+    <value>Las estructuras antiguas se destruirán automáticamente</value>
+    <comment>Tooltip for auto destroying old structures</comment>
+  </data>
+	<data name="NotifyAdminCommandsInChat" xml:space="preserve">
+    <value>Notificar comandos de administrador en el juego</value>
+    <comment>Label for notifying admin commands in chat</comment>
+  </data>
+	<data name="NotifyAdminCommandsInChatTooltip" xml:space="preserve">
+    <value>Muestra los comandos de administrador en el juego cuando se usan</value>
+    <comment>Tooltip for notifying admin commands in chat</comment>
+  </data>
+	<data name="ForceRespawnDinos" xml:space="preserve">
+    <value>Forzar respawn de dinosaurios</value>
+    <comment>Label for forcing respawn of dinos</comment>
+  </data>
+	<data name="CustomLaunchOptions" xml:space="preserve">
+    <value>Opciones de lanzamiento personalizadas</value>
+    <comment>Label for custom launch options</comment>
+  </data>
+	<data name="CustomLaunchOptionsTooltip" xml:space="preserve">
+    <value>Ingrese parámetros de lanzamiento personalizados por -value, o déjelo en blanco.</value>
+    <comment>Tooltip for custom launch options</comment>
+  </data>
+	<data name="ClusterID" xml:space="preserve">
+    <value>ID del clúster</value>
+    <comment>Label for cluster ID</comment>
+  </data>
+	<data name="ClusterIDTooltip" xml:space="preserve">
+    <value>Ingrese el ID del clúster para su servidor.</value>
+    <comment>Tooltip for cluster ID</comment>
+  </data>
+	<data name="ClusterDirOverride" xml:space="preserve">
+    <value>Sobrescribir directorio del clúster</value>
+    <comment>Label for cluster directory override</comment>
+  </data>
+	<data name="ClusterDirOverrideTooltip" xml:space="preserve">
+    <value>Ingrese la ruta para sobrescribir el directorio del clúster.</value>
+    <comment>Tooltip for cluster directory override</comment>
+  </data>
+	<data name="EnablePlugins" xml:space="preserve">
+    <value>Habilitar complementos</value>
+    <comment>Label for enabling plugins</comment>
+  </data>
+	<data name="MultihomeIP" xml:space="preserve">
+    <value>IP de Multihome (IP del adaptador) - Déjelo en BLANCO si no se usa</value>
+    <comment>Label for multihome IP</comment>
+  </data>
+	<data name="MultihomeIPTooltip" xml:space="preserve">
+    <value>Ingrese la dirección IP del adaptador de red para vincular el servidor.</value>
+    <comment>Tooltip for multihome IP</comment>
+  </data>
+	<data name="ServerIP" xml:space="preserve">
+    <value>IP del servidor (IP pública) - Déjelo en BLANCO para que AAM lo detecte automáticamente</value>
+    <comment>Label for server IP</comment>
+  </data>
+	<data name="ServerIPTooltip" xml:space="preserve">
+    <value>Ingrese la dirección IP pública del servidor. Déjelo en blanco para la detección automática.</value>
+    <comment>Tooltip for server IP</comment>
+  </data>
+	<data name="CreateEditSchedule" xml:space="preserve">
+  <value>Crear/Editar Horario</value>
+  <comment>GroupBox header for creating or editing a schedule</comment>
+</data>
+	<data name="ScheduleNickname" xml:space="preserve">
+  <value>Apodo del Horario:</value>
+  <comment>Label for the schedule nickname text box</comment>
+</data>
+	<data name="Action" xml:space="preserve">
+  <value>Acción:</value>
+  <comment>Label for the action dropdown</comment>
+</data>
+	<data name="Shutdown" xml:space="preserve">
+  <value>Apagar</value>
+  <comment>ComboBox item for shutdown action</comment>
+</data>
+	<data name="Restart" xml:space="preserve">
+  <value>Reiniciar</value>
+  <comment>ComboBox item for restart action</comment>
+</data>
+	<data name="CustomRCONCommand" xml:space="preserve">
+  <value>Comando RCON Personalizado</value>
+  <comment>ComboBox item for custom RCON command action</comment>
+</data>
+	<data name="RCONCommand" xml:space="preserve">
+  <value>Comando RCON</value>
+  <comment>TextBox for RCON command</comment>
+</data>
+	<data name="SelectServer" xml:space="preserve">
+  <value>Seleccionar Servidor:</value>
+  <comment>Label for the server selection dropdown</comment>
+</data>
+	<data name="SelectTimes" xml:space="preserve">
+  <value>Seleccionar Horas:</value>
+  <comment>Label for the time selection</comment>
+</data>
+	<data name="AddTime" xml:space="preserve">
+  <value>Agregar Hora</value>
+  <comment>Button to add time</comment>
+</data>
+	<data name="ReoccursEvery" xml:space="preserve">
+  <value>Se Repite Cada:</value>
+  <comment>Label for reoccurrence interval</comment>
+</data>
+	<data name="Minutes" xml:space="preserve">
+  <value>Minutos</value>
+  <comment>ComboBox item for minutes</comment>
+</data>
+	<data name="Hours" xml:space="preserve">
+  <value>Horas</value>
+  <comment>ComboBox item for hours</comment>
+</data>
+	<data name="SelectDays" xml:space="preserve">
+  <value>Seleccionar Días:</value>
+  <comment>Label for selecting days of the week</comment>
+</data>
+	<data name="Monday" xml:space="preserve">
+  <value>Lunes</value>
+  <comment>Checkbox for Monday</comment>
+</data>
+	<data name="Tuesday" xml:space="preserve">
+  <value>Martes</value>
+  <comment>Checkbox for Tuesday</comment>
+</data>
+	<data name="Wednesday" xml:space="preserve">
+  <value>Miércoles</value>
+  <comment>Checkbox for Wednesday</comment>
+</data>
+	<data name="Thursday" xml:space="preserve">
+  <value>Jueves</value>
+  <comment>Checkbox for Thursday</comment>
+</data>
+	<data name="Friday" xml:space="preserve">
+  <value>Viernes</value>
+  <comment>Checkbox for Friday</comment>
+</data>
+	<data name="Saturday" xml:space="preserve">
+  <value>Sábado</value>
+  <comment>Checkbox for Saturday</comment>
+</data>
+	<data name="Sunday" xml:space="preserve">
+  <value>Domingo</value>
+  <comment>Checkbox for Sunday</comment>
+</data>
+	<data name="Save" xml:space="preserve">
+  <value>Guardar</value>
+  <comment>Button to save the selection</comment>
+</data>
+	<data name="ExistingSchedules" xml:space="preserve">
+  <value>Horarios Existentes</value>
+  <comment>GroupBox header for existing schedules</comment>
+</data>
+	<data name="SearchBar" xml:space="preserve">
+  <value>Barra de Búsqueda</value>
+  <comment>TextBox for searching schedules</comment>
+</data>
+	<data name="Id" xml:space="preserve">
+  <value>Id</value>
+  <comment>DataGrid column header for Id</comment>
+</data>
+	<data name="Nickname" xml:space="preserve">
+  <value>Apodo</value>
+  <comment>DataGrid column header for Nickname</comment>
+</data>
+	<data name="Action" xml:space="preserve">
+  <value>Acción</value>
+  <comment>DataGrid column header for Action</comment>
+</data>
+	<data name="RconCommand" xml:space="preserve">
+  <value>Comando Rcon</value>
+  <comment>DataGrid column header for RconCommand</comment>
+</data>
+	<data name="Times" xml:space="preserve">
+  <value>Veces</value>
+  <comment>DataGrid column header for Times</comment>
+</data>
+	<data name="Days" xml:space="preserve">
+  <value>Días</value>
+  <comment>DataGrid column header for Days</comment>
+</data>
+	<data name="ReoccurrenceIntervalType" xml:space="preserve">
+  <value>Tipo de Intervalo de Repetición</value>
+  <comment>DataGrid column header for ReoccurrenceIntervalType</comment>
+</data>
+	<data name="ReoccurrenceInterval" xml:space="preserve">
+  <value>Intervalo de Repetición</value>
+  <comment>DataGrid column header for ReoccurrenceInterval</comment>
+</data>
+	<data name="Server" xml:space="preserve">
+  <value>Servidor</value>
+  <comment>DataGrid column header for Server</comment>
+</data>
+	<data name="EditButton" xml:space="preserve">
+  <value>Editar</value>
+  <comment>Button text for editing schedules</comment>
+</data>
+	<data name="Delete" xml:space="preserve">
+  <value>Eliminar</value>
+  <comment>Button to delete the schedule</comment>
+</data>
+	<data name="Previous" xml:space="preserve">
+  <value>Anterior</value>
+  <comment>Button to go to the previous page</comment>
+</data>
+	<data name="Next" xml:space="preserve">
+  <value>Siguiente</value>
+  <comment>Button to go to the next page</comment>
+</data>
+	<data name="ProfileName" xml:space="preserve">
+  <value>Nombre del Perfil</value>
+  <comment>Label for profile name</comment>
+</data>
+	<data name="ServerPath" xml:space="preserve">
+  <value>Ruta del Servidor</value>
+  <comment>Label for server path</comment>
+</data>
+	<data name="Browse" xml:space="preserve">
+  <value>Examinar...</value>
+  <comment>Button to browse for server path</comment>
+</data>
+	<data name="ServerName" xml:space="preserve">
+  <value>Nombre del Servidor</value>
+  <comment>Label for server name</comment>
+</data>
+	<data name="SelectMap" xml:space="preserve">
+  <value>Seleccionar Mapa</value>
+  <comment>Label for selecting map</comment>
+</data>
+	<data name="ListenPort" xml:space="preserve">
+  <value>Puerto de Escucha</value>
+  <comment>Label for listen port</comment>
+</data>
+	<data name="Mods" xml:space="preserve">
+  <value>Mods (separados por comas)</value>
+  <comment>Label for mods</comment>
+</data>
+	<data name="AdminPassword" xml:space="preserve">
+  <value>Contraseña de Admin</value>
+  <comment>Label for admin password</comment>
+</data>
+	<data name="ServerPassword" xml:space="preserve">
+  <value>Contraseña del Servidor</value>
+  <comment>Label for server password</comment>
+</data>
+	<data name="MaxPlayerCount" xml:space="preserve">
+  <value>Máximo Número de Jugadores</value>
+  <comment>Label for max player count</comment>
+</data>
+	<data name="UseBattleye" xml:space="preserve">
+  <value>Usar Battleye</value>
+  <comment>Label for using Battleye</comment>
+</data>
+	<data name="ForceRespawnDinos" xml:space="preserve">
+  <value>Forzar Reaparición de Dinos</value>
+  <comment>Label for forcing dino respawn</comment>
+</data>
+	<data name="PreventSpawnAnimation" xml:space="preserve">
+  <value>Prevenir Animación de Aparición</value>
+  <comment>Label for preventing spawn animation</comment>
+</data>
+	<data name="CreateServer" xml:space="preserve">
+  <value>Crear Servidor</value>
+  <comment>Button to create the server</comment>
+</data>
+	<data name="ProfileName" xml:space="preserve">
+  <value>Nombre del Perfil</value>
+  <comment>Label for the profile name</comment>
+</data>
+	<data name="ServerPath" xml:space="preserve">
+  <value>Ruta del Servidor</value>
+  <comment>Label for the server path</comment>
+</data>
+	<data name="Browse" xml:space="preserve">
+  <value>Examinar...</value>
+  <comment>Button to browse folders</comment>
+</data>
+	<data name="ServerName" xml:space="preserve">
+  <value>Nombre del Servidor</value>
+  <comment>Label for the server name</comment>
+</data>
+	<data name="SelectMap" xml:space="preserve">
+  <value>Seleccionar Mapa</value>
+  <comment>Label for selecting map</comment>
+</data>
+	<data name="ListenPort" xml:space="preserve">
+  <value>Puerto de Escucha</value>
+  <comment>Label for the listen port</comment>
+</data>
+	<data name="RCONPort" xml:space="preserve">
+  <value>Puerto Rcon</value>
+  <comment>Label for the RCON port</comment>
+</data>
+	<data name="Mods" xml:space="preserve">
+  <value>Mods (separados por comas)</value>
+  <comment>Label for mods input</comment>
+</data>
+	<data name="AdminPassword" xml:space="preserve">
+  <value>Contraseña de Administrador</value>
+  <comment>Label for the admin password</comment>
+</data>
+	<data name="ServerPassword" xml:space="preserve">
+  <value>Contraseña del Servidor</value>
+  <comment>Label for the server password</comment>
+</data>
+	<data name="MaxPlayerCount" xml:space="preserve">
+  <value>Máximo Número de Jugadores</value>
+  <comment>Label for the max player count</comment>
+</data>
+	<data name="UseBattleye" xml:space="preserve">
+  <value>Usar Battleye</value>
+  <comment>Checkbox for using Battleye</comment>
+</data>
+	<data name="ForceRespawnDinos" xml:space="preserve">
+  <value>Forzar Reaparición de Dinos</value>
+  <comment>Checkbox for forcing respawn of dinos</comment>
+</data>
+	<data name="PreventSpawnAnimation" xml:space="preserve">
+  <value>Prevenir Animación de Aparición</value>
+  <comment>Checkbox for preventing spawn animation</comment>
+</data>
+	<data name="ImportServer" xml:space="preserve">
+  <value>Importar Servidor</value>
+  <comment>Button to import server</comment>
+</data>
+	<data name="DiscordBotSettings" xml:space="preserve">
+  <value>Configuración del Bot de Discord</value>
+  <comment>GroupBox header for Discord bot settings</comment>
+</data>
+	<data name="DiscordBotToken" xml:space="preserve">
+  <value>Token del Bot de Discord:</value>
+  <comment>Label for Discord Bot Token</comment>
+</data>
+	<data name="LoggerWebhookUrl" xml:space="preserve">
+  <value>URL del Webhook del Logger de Discord:</value>
+  <comment>Label for Logger Discord Webhook URL</comment>
+</data>
+	<data name="GuildID" xml:space="preserve">
+  <value>ID del Gremio:</value>
+  <comment>Label for Guild ID</comment>
+</data>
+	<data name="AuthorizedRoles" xml:space="preserve">
+  <value>Qué Rol Puede Usar este Bot:</value>
+  <comment>Label for authorized roles</comment>
+</data>
+	<data name="CrossChatWebhook" xml:space="preserve">
+  <value>Webhook de CrossChat:</value>
+  <comment>Label for CrossChat Webhook</comment>
+</data>
+	<data name="IgnoreMessages" xml:space="preserve">
+  <value>Ignorar Mensajes que Contengan:</value>
+  <comment>Label for ignoring messages</comment>
+</data>
+	<data name="EnableVerboseLogging" xml:space="preserve">
+  <value>Habilitar Registro Detallado:</value>
+  <comment>Label for enabling verbose logging</comment>
+</data>
+	<data name="DiscordActions" xml:space="preserve">
+  <value>Acciones de Discord</value>
+  <comment>GroupBox header for Discord actions</comment>
+</data>
+	<data name="SaveDiscordInfo" xml:space="preserve">
+  <value>Guardar Información de Discord</value>
+  <comment>Button to save Discord information</comment>
+</data>
+	<data name="StartBot" xml:space="preserve">
+  <value>Iniciar Bot</value>
+  <comment>Button to start the bot</comment>
+</data>
+	<data name="StopBot" xml:space="preserve">
+  <value>Detener Bot</value>
+  <comment>Button to stop the bot</comment>
+</data>
+	<data name="BotStatus" xml:space="preserve">
+  <value>Estado del Bot: Desconectado</value>
+  <comment>TextBlock for bot status</comment>
+</data>
+	<data name="IssueTitle" xml:space="preserve">
+  <value>Título del Problema:</value>
+  <comment>Label for the issue title input</comment>
+</data>
+	<data name="DiscordUsername" xml:space="preserve">
+  <value>Nombre de Usuario en Discord:</value>
+  <comment>Label for the Discord username input</comment>
+</data>
+	<data name="IssueDescription" xml:space="preserve">
+  <value>Descripción del Problema:</value>
+  <comment>Label for the issue description input</comment>
+</data>
+	<data name="AttachmentLink" xml:space="preserve">
+  <value>Adjunto (enlace URL):</value>
+  <comment>Label for the attachment link input</comment>
+</data>
+	<data name="AdditionalInformation" xml:space="preserve">
+  <value>Información Adicional:</value>
+  <comment>Label for the additional information input</comment>
+</data>
+	<data name="Submit" xml:space="preserve">
+  <value>Enviar</value>
+  <comment>Button to submit the form</comment>
+</data>
+	<data name="RestoreSelectedBackup" xml:space="preserve">
+  <value>Restaurar Copia de Seguridad Seleccionada</value>
+  <comment>Button to restore the selected backup</comment>
+</data>
+	<data name="SelectBackup" xml:space="preserve">
+  <value>Seleccionar una Copia de Seguridad:</value>
+  <comment>Label for selecting a backup from the ComboBox</comment>
+</data>
+	<data name="CreateServer" xml:space="preserve">
+  <value>Crear Servidor</value>
+  <comment>Button to create a new server</comment>
+</data>
+	<data name="SyncServers" xml:space="preserve">
+  <value>Sincronizar Servidores</value>
+  <comment>Button to sync servers</comment>
+</data>
+	<data name="ImportServers" xml:space="preserve">
+  <value>Importar Servidor</value>
+  <comment>Button to import a server</comment>
+</data>
+	<data name="UpdateAllServers" xml:space="preserve">
+  <value>Actualizar Todos los Servidores</value>
+  <comment>Button to update all servers</comment>
+</data>
+	<data name="StopAllServers" xml:space="preserve">
+  <value>Detener Todos los Servidores</value>
+  <comment>Button to stop all servers</comment>
+</data>
+	<data name="StartAllServers" xml:space="preserve">
+  <value>Iniciar Todos los Servidores</value>
+  <comment>Button to start all servers</comment>
+</data>
+	<data name="StartServerTooltip" xml:space="preserve">
+  <value>Iniciar Servidor</value>
+  <comment>Tooltip for the start server button</comment>
+</data>
+	<data name="RestartServerTooltip" xml:space="preserve">
+  <value>Reiniciar Servidor</value>
+  <comment>Tooltip for the restart server button</comment>
+</data>
+	<data name="StopServerTooltip" xml:space="preserve">
+  <value>Detener Servidor</value>
+  <comment>Tooltip for the stop server button</comment>
+</data>
+	<data name="UpdateServerTooltip" xml:space="preserve">
+  <value>Actualizar Servidor</value>
+  <comment>Tooltip for the update server button</comment>
+</data>
+	<data name="ReportIssue" xml:space="preserve">
+  <value>Informar Problema</value>
+  <comment>Button to report an issue</comment>
+</data>
+	<data name="FixServerVersion" xml:space="preserve">
+  <value>Corregir Versión del Servidor</value>
+  <comment>Button to fix server version</comment>
+</data>
+	<data name="UpdateAAM" xml:space="preserve">
+  <value>Actualizar AAM</value>
+  <comment>Button to update AAM</comment>
+</data>
+	<data name="OpenAppData" xml:space="preserve">
+  <value>Abrir Datos de la Aplicación AAM</value>
+  <comment>Button to open AAM app data folder</comment>
+</data>
+	<data name="Version" xml:space="preserve">
+  <value>Versión</value>
+  <comment>GroupBox header for version information</comment>
+</data>
+	<data name="ReleaseNotes" xml:space="preserve">
+  <value>Notas de la Versión</value>
+  <comment>GroupBox header for release notes</comment>
+</data>
+	<data name="ManagerSettings" xml:space="preserve">
+  <value>Configuración del Administrador</value>
+  <comment>GroupBox header for manager settings</comment>
+</data>
+	<data name="AutoUpdateServersOnReboot" xml:space="preserve">
+  <value>Actualizar Servidores Automáticamente al Reiniciar</value>
+  <comment>Text for auto update servers on reboot checkbox</comment>
+</data>
+	<data name="AutoUpdateServersWhenNewUpdateAvailable" xml:space="preserve">
+  <value>Actualizar Servidores Automáticamente cuando Hay una Nueva Actualización Disponible</value>
+  <comment>Text for auto update servers when new update available checkbox</comment>
+</data>
+	<data name="UpdateCountdownTimer" xml:space="preserve">
+  <value>Temporizador de Cuenta Regresiva de Actualización</value>
+  <comment>Label for update countdown timer</comment>
+</data>
+	<data name="UpdateIntervalTimer" xml:space="preserve">
+  <value>Intervalo para Comprobar Actualizaciones en Minutos - Se Requiere Reiniciar AAM para Implementar el Cambio</value>
+  <comment>Label for update interval timer</comment>
+</data>
+	<data name="Personalization" xml:space="preserve">
+  <value>Personalización</value>
+  <comment>GroupBox header for personalization</comment>
+</data>
+	<data name="Theme" xml:space="preserve">
+  <value>Tema</value>
+  <comment>Label for theme selection</comment>
+</data>
+	<data name="LightTheme" xml:space="preserve">
+  <value>Claro</value>
+  <comment>RadioButton content for light theme</comment>
+</data>
+	<data name="DarkTheme" xml:space="preserve">
+  <value>Oscuro</value>
+  <comment>RadioButton content for dark theme</comment>
+</data>
+	<data name="LanguageSettings" xml:space="preserve">
+  <value>Configuración de Idioma</value>
+  <comment>GroupBox header for language settings</comment>
+</data>
+	<data name="SelectLanguage" xml:space="preserve">
+  <value>Seleccionar Idioma</value>
+  <comment>Label for language selection</comment>
+</data>
+	<data name="UploadEngramData" xml:space="preserve">
+  <value>Subir Datos de Engram</value>
+  <comment>Button to upload engram data</comment>
+</data>
+	<data name="FileName" xml:space="preserve">
+  <value>Nombre del Archivo</value>
+  <comment>Header for file name column in ListView</comment>
+</data>
+	<data name="SyncServers" xml:space="preserve">
+  <value>Sincronizar Servidores</value>
+  <comment>Title of the Sync Servers page</comment>
+</data>
+	<data name="Servers" xml:space="preserve">
+  <value>Servidores</value>
+  <comment>TextBlock for Servers title</comment>
+</data>
+	<data name="Source" xml:space="preserve">
+  <value>Fuente</value>
+  <comment>Label for source server section</comment>
+</data>
+	<data name="Targets" xml:space="preserve">
+  <value>Destinos</value>
+  <comment>Label for target servers section</comment>
+</data>
+	<data name="Sync" xml:space="preserve">
+  <value>Sincronizar</value>
+  <comment>Button to initiate server sync</comment>
+</data>
+	<data name="EditCommandWindowTitle" xml:space="preserve">
+  <value>Editar Comando</value>
+  <comment>Window title for editing commands</comment>
+</data>
+	<data name="Cancel" xml:space="preserve">
+  <value>Cancelar</value>
+  <comment>Button to cancel the action</comment>
+</data>
+	<data name="Save" xml:space="preserve">
+  <value>Guardar</value>
+  <comment>Button to save the command</comment>
+</data>
+	<data name="RconWindowTitle" xml:space="preserve">
+  <value>Ventana Rcon</value>
+  <comment>Title of the Rcon window</comment>
+</data>
+	<data name="TabControlBackground" xml:space="preserve">
+  <value>Transparente</value>
+  <comment>Background for the TabControl</comment>
+</data>
+	<data name="CloseButtonText" xml:space="preserve">
+  <value>X</value>
+  <comment>Text for the close button</comment>
+</data>
+	<data name="IsSelectedBackground" xml:space="preserve">
+  <value>#007ACC</value>
+  <comment>Background color for selected tab</comment>
+</data>
+	<data name="IsMouseOverBackground" xml:space="preserve">
+  <value>#505050</value>
+  <comment>Background color for mouse over tab</comment>
+</data>
+	<data name="TabItemBackground" xml:space="preserve">
+  <value>#3C3F41</value>
+  <comment>Background color for tab item</comment>
+</data>
+	<data name="TabItemForeground" xml:space="preserve">
+  <value>Blanco</value>
+  <comment>Foreground color for tab item</comment>
+</data>
+	<data name="CloseButtonForeground" xml:space="preserve">
+  <value>Blanco</value>
+  <comment>Foreground color for close button</comment>
+</data>
+	<data name="CloseButtonMouseOverForeground" xml:space="preserve">
+  <value>Rojo</value>
+  <comment>Foreground color for close button when mouse is over</comment>
+</data>
+	<data name="ApplicationTitle" xml:space="preserve">
+  <value>Gestor Ascendido de Ark</value>
+  <comment>Title of the application</comment>
+</data>
+	<data name="Home" xml:space="preserve">
+  <value>Inicio</value>
+  <comment>Menu item for Home</comment>
+</data>
+	<data name="Servers" xml:space="preserve">
+  <value>Servidores</value>
+  <comment>Menu item for Servers</comment>
+</data>
+	<data name="Integrations" xml:space="preserve">
+  <value>Integraciones</value>
+  <comment>Menu item for Integrations</comment>
+</data>
+	<data name="Mods" xml:space="preserve">
+  <value>Mods</value>
+  <comment>Menu item for Mods</comment>
+</data>
+	<data name="Tasks" xml:space="preserve">
+  <value>Tareas</value>
+  <comment>Menu item for Tasks</comment>
+</data>
+	<data name="Settings" xml:space="preserve">
+  <value>Configuración</value>
+  <comment>Menu item for Settings</comment>
+</data>
+
+
+
+
 </root>

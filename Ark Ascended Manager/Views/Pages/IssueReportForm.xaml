@@ -1,29 +1,33 @@
 ﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.IssueReportForm"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
-        mc:Ignorable="d"
-        Title="IssueReportForm" Height="850" Width="800">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+      xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
+      mc:Ignorable="d"
+      Title="IssueReportForm" Height="850" Width="800">
+    <Page.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Page.Resources>
     <Grid>
         <StackPanel Margin="20">
-            <TextBlock Text="Issue Title:"/>
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=IssueTitle}"/>
             <TextBox x:Name="IssueTitle" Height="40" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Discord Username:"/>
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DiscordUsername}"/>
             <TextBox x:Name="DiscordUsername" Height="40" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Description of the Issue:"/>
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=IssueDescription}"/>
             <TextBox x:Name="IssueDescription" Height="100" TextWrapping="Wrap" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Attachment (link URL):"/>
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AttachmentLink}"/>
             <TextBox x:Name="AttachmentLink" Height="40" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Additional Information:"/>
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AdditionalInformation}"/>
             <TextBox x:Name="AdditionalInformation" Height="100" TextWrapping="Wrap" Margin="0,0,0,10"/>
 
-            <Button Content="Submit" Click="SubmitButton_Click" Margin="5"/>
+            <Button Content="{Binding Source={StaticResource Strings}, Path=Submit}" Click="SubmitButton_Click" Margin="5"/>
         </StackPanel>
     </Grid>
 </Page>

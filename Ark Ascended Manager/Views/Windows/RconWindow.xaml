@@ -1,10 +1,13 @@
 ﻿<Window x:Class="Ark_Ascended_Manager.Views.Windows.RconWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
         Title="RconWindow" Height="600" Width="1000"
         Background="#1E1E1E"
         Foreground="White">
     <Window.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+
         <!-- Modern TabItem Style -->
         <Style x:Key="ClosableTabItemStyle" TargetType="TabItem">
             <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -33,19 +36,19 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#007ACC"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Source={StaticResource Strings}, Path=IsSelectedBackground}"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Source={StaticResource Strings}, Path=IsSelectedBackground}"/>
+                                <Setter Property="Foreground" Value="{Binding Source={StaticResource Strings}, Path=TabItemForeground}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#505050"/>
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Source={StaticResource Strings}, Path=IsMouseOverBackground}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Background" Value="#3C3F41"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{Binding Source={StaticResource Strings}, Path=TabItemBackground}"/>
+            <Setter Property="Foreground" Value="{Binding Source={StaticResource Strings}, Path=TabItemForeground}"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
@@ -56,15 +59,15 @@
                     <ControlTemplate TargetType="Button">
                         <Border Background="Transparent"
                                 CornerRadius="0">
-                            <TextBlock Text="X"
-                                       Foreground="White"
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CloseButtonText}"
+                                       Foreground="{Binding Source={StaticResource Strings}, Path=CloseButtonForeground}"
                                        FontWeight="Bold"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="TextBlock.Foreground" Value="Red"/>
+                                <Setter Property="TextBlock.Foreground" Value="{Binding Source={StaticResource Strings}, Path=CloseButtonMouseOverForeground}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -112,7 +115,7 @@
     </Window.Resources>
 
     <Grid>
-        <TabControl x:Name="RconTabControl" Background="Transparent">
+        <TabControl x:Name="RconTabControl" Background="{Binding Source={StaticResource Strings}, Path=TabControlBackground}">
             <!-- Tabs will be added programmatically -->
         </TabControl>
     </Grid>

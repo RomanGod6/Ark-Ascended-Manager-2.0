@@ -4,12 +4,18 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+      xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="RestorePage">
 
+    <Page.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Page.Resources>
+
     <Grid>
         <!-- ComboBox for selecting a backup -->
+        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SelectBackup}" Margin="10,0,0,0"/>
         <ComboBox Name="cbBackups" SelectedValuePath="FileName" Height="228" Margin="10,0,10,0">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
@@ -21,8 +27,7 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-
         <!-- Button to restore the selected backup -->
-        <Button Content="Restore Selected Backup" VerticalAlignment="Bottom" Click="RestoreSelectedBackup_Click" Height="40" Margin="10" />
+        <Button Content="{Binding Source={StaticResource Strings}, Path=RestoreSelectedBackup}" VerticalAlignment="Bottom" Click="RestoreSelectedBackup_Click" Height="40" Margin="10" />
     </Grid>
 </Page>

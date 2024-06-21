@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Ark_Ascended_Manager.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
     Title="CreateServersPage"
     d:DataContext="{d:DesignInstance local:CreateServersPage,
                                      IsDesignTimeCreatable=False}"
@@ -17,67 +18,68 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
+    <Page.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Page.Resources>
 
-	<ScrollViewer VerticalScrollBarVisibility="Auto">
-    <StackPanel Margin="20">
-        
-        <Label Content="Profile Name"/>
-        <TextBox Text="{Binding ProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Server Path"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
-    <!-- Other controls... -->
-    
-        <Label Content="Server Path"/>
-        <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding ServerPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Width="300" />
-            <Button Content="Browse..."
-                    Margin="5,0,0,0"
-                    Click="BrowseFolderButton_Click" />
-        </StackPanel>
-    
-    <!-- Other controls... -->
-        </StackPanel>
-        <Label Content="Server Name"/>
-        <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Label Content="Select Map"/>
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ProfileName}"/>
+            <TextBox Text="{Binding ProfileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ServerPath}"/>
+            <StackPanel Margin="20">
+
+                <Label Content="{Binding Source={StaticResource Strings}, Path=ServerPath}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding ServerPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="300" />
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=Browse}"
+                        Margin="5,0,0,0"
+                        Click="BrowseFolderButton_Click" />
+                </StackPanel>
+
+            </StackPanel>
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ServerName}"/>
+            <TextBox Text="{Binding ServerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=SelectMap}"/>
             <ComboBox ItemsSource="{Binding OptionsList}"
-          SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
-          Width="742"/>
+              SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
+              Width="742"/>
 
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ListenPort}"/>
+            <TextBox Text="{Binding ListenPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Content="Listen Port"/>
-        <TextBox Text="{Binding ListenPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Rcon Port"/>
+            <Label Content="{Binding Source={StaticResource Strings}, Path=RCONPort}"/>
             <TextBox Text="{Binding RCONPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Mods (comma-separated)"/>
-        <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Admin Password"/>
-        <TextBox Text="{Binding AdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Server Password"/>
-        <TextBox Text="{Binding ServerPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Max Player Count"/>
-        <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Use Battleye"/>
-        <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Force Respawn Dinos"/>
-        <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <Label Content="Prevent Spawn Animation"/>
-        <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Button Content="Create Server" Click="CreateServer_Click" />
+            <Label Content="{Binding Source={StaticResource Strings}, Path=Mods}"/>
+            <TextBox Text="{Binding Mods, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=AdminPassword}"/>
+            <TextBox Text="{Binding AdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ServerPassword}"/>
+            <TextBox Text="{Binding ServerPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=MaxPlayerCount}"/>
+            <TextBox Text="{Binding MaxPlayerCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=UseBattleye}"/>
+            <CheckBox IsChecked="{Binding UseBattleye, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=ForceRespawnDinos}"/>
+            <CheckBox IsChecked="{Binding ForceRespawnDinos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="{Binding Source={StaticResource Strings}, Path=PreventSpawnAnimation}"/>
+            <CheckBox IsChecked="{Binding PreventSpawnAnimation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Button Content="{Binding Source={StaticResource Strings}, Path=CreateServer}" 
+                    Click="CreateServer_Click" />
 
         </StackPanel>
-</ScrollViewer>
+    </ScrollViewer>
 
 </Page>

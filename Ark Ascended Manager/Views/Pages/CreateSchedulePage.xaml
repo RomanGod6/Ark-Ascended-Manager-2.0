@@ -5,6 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
       mc:Ignorable="d"
       Title="Create Schedule"
       Background="#1E1E1E">
@@ -23,6 +24,7 @@
             <Setter Property="Padding" Value="5"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
+        <resources:LocalizedStrings x:Key="Strings" />
     </Page.Resources>
 
     <Grid Margin="20">
@@ -35,7 +37,8 @@
         </Grid.ColumnDefinitions>
 
         <!-- Create/Edit Schedule Section -->
-        <GroupBox Header="Create/Edit Schedule" Foreground="White"  Margin="5" Padding="10" Grid.Row="0" Grid.Column="0">
+        <GroupBox Header="{Binding Source={StaticResource Strings}, Path=CreateEditSchedule}" 
+                  Foreground="White" Margin="5" Padding="10" Grid.Row="0" Grid.Column="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -53,63 +56,79 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Schedule Nickname -->
-                <Label Grid.Row="0" Grid.Column="0" Content="Schedule Nickname:" Foreground="White" Margin="0,0,0,5"/>
-                <TextBox x:Name="nicknameTextBox" Grid.Row="0" Grid.Column="1" Margin="10" Background="#2D2D30" Foreground="White" BorderBrush="#444" />
+                <Label Grid.Row="0" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=ScheduleNickname}" 
+                       Foreground="White" Margin="0,0,0,5"/>
+                <TextBox x:Name="nicknameTextBox" Grid.Row="0" Grid.Column="1" Margin="10" 
+                         Background="#2D2D30" Foreground="White" BorderBrush="#444" />
 
                 <!-- Action Dropdown -->
-                <Label Grid.Row="1" Grid.Column="0" Content="Action:" Foreground="White" Margin="0,10,0,5"/>
-                <ComboBox x:Name="actionComboBox" Grid.Row="1" Grid.Column="1" Margin="10" Background="#2D2D30" Foreground="White" BorderBrush="#444" SelectionChanged="ActionComboBox_SelectionChanged">
-                    <ComboBoxItem Content="Shutdown"/>
-                    <ComboBoxItem Content="Restart"/>
-                    <ComboBoxItem Content="Custom RCON Command"/>
+                <Label Grid.Row="1" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=Action}" 
+                       Foreground="White" Margin="0,10,0,5"/>
+                <ComboBox x:Name="actionComboBox" Grid.Row="1" Grid.Column="1" Margin="10" 
+                          Background="#2D2D30" Foreground="White" BorderBrush="#444" SelectionChanged="ActionComboBox_SelectionChanged">
+                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=Shutdown}"/>
+                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=Restart}"/>
+                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=CustomRCONCommand}"/>
                     <!-- Additional actions here -->
                 </ComboBox>
 
-                <TextBox x:Name="rconCommandTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Background="#2D2D30" Foreground="White" BorderBrush="#444" Visibility="Collapsed"/>
+                <!-- RCON Command TextBox -->
+                <TextBox x:Name="rconCommandTextBox" Grid.Row="2" Grid.Column="1" Margin="10" 
+                         Background="#2D2D30" Foreground="White" BorderBrush="#444" Visibility="Collapsed"/>
 
                 <!-- Server Selection -->
-                <Label Grid.Row="3" Grid.Column="0" Content="Select Server:" Foreground="White" Margin="0,10,0,5"/>
-                <ComboBox x:Name="serverComboBox" Grid.Row="3" Grid.Column="1" Margin="10" Background="#2D2D30" Foreground="White" BorderBrush="#444"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=SelectServer}" 
+                       Foreground="White" Margin="0,10,0,5"/>
+                <ComboBox x:Name="serverComboBox" Grid.Row="3" Grid.Column="1" Margin="10" 
+                          Background="#2D2D30" Foreground="White" BorderBrush="#444"/>
 
                 <!-- Time and Day(s) Selection -->
-                <Label Grid.Row="4" Grid.Column="0" Content="Select Times:" Foreground="White" Margin="0,10,0,5"/>
+                <Label Grid.Row="4" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=SelectTimes}" 
+                       Foreground="White" Margin="0,10,0,5"/>
                 <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Vertical">
                     <ListBox x:Name="timePickerListBox" Margin="10" Background="#2D2D30" Foreground="White" BorderBrush="#444">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <xctk:TimePicker HorizontalAlignment="Left" Height="22" Width="100" Value="{Binding TimeOfDay}" Background="#2D2D30" Foreground="White"/>
+                                <xctk:TimePicker HorizontalAlignment="Left" Height="22" Width="100" 
+                                                 Value="{Binding TimeOfDay}" Background="#2D2D30" Foreground="White"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <StackPanel Orientation="Horizontal" Margin="10,0,0,10">
-                        <Button Content="Add Time" Width="100" Click="AddTimeButton_Click" HorizontalAlignment="Left" Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
-                        <Label Content="Reoccurs Every:" Foreground="White" Margin="10,0,0,0"/>
-                        <ComboBox x:Name="reoccurrenceIntervalTypeComboBox" Width="80" Margin="10,0,0,0" Background="#2D2D30" Foreground="White" BorderBrush="#444">
-                            <ComboBoxItem Content="Minutes"/>
-                            <ComboBoxItem Content="Hours"/>
+                        <Button Content="{Binding Source={StaticResource Strings}, Path=AddTime}" Width="100" 
+                                Click="AddTimeButton_Click" HorizontalAlignment="Left" Background="#007ACC" 
+                                Foreground="White" BorderBrush="#007ACC"/>
+                        <Label Content="{Binding Source={StaticResource Strings}, Path=ReoccursEvery}" 
+                               Foreground="White" Margin="10,0,0,0"/>
+                        <ComboBox x:Name="reoccurrenceIntervalTypeComboBox" Width="80" Margin="10,0,0,0" 
+                                  Background="#2D2D30" Foreground="White" BorderBrush="#444">
+                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=Minutes}"/>
+                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=Hours}"/>
                         </ComboBox>
-                        <TextBox x:Name="reoccurrenceIntervalTextBox" Width="50" Margin="10,0,0,0" Background="#2D2D30" Foreground="White" BorderBrush="#444"/>
+                        <TextBox x:Name="reoccurrenceIntervalTextBox" Width="50" Margin="10,0,0,0" 
+                                 Background="#2D2D30" Foreground="White" BorderBrush="#444"/>
                     </StackPanel>
                 </StackPanel>
 
-                <Label Grid.Row="5" Grid.Column="0" Content="Select Days:" Foreground="White" Margin="0,10,0,5"/>
+                <Label Grid.Row="5" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=SelectDays}" Foreground="White" Margin="0,10,0,5"/>
                 <StackPanel x:Name="daysPanel" Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="10">
-                    <CheckBox Content="Monday" Foreground="White"/>
-                    <CheckBox Content="Tuesday" Foreground="White"/>
-                    <CheckBox Content="Wednesday" Foreground="White"/>
-                    <CheckBox Content="Thursday" Foreground="White"/>
-                    <CheckBox Content="Friday" Foreground="White"/>
-                    <CheckBox Content="Saturday" Foreground="White"/>
-                    <CheckBox Content="Sunday" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Monday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Tuesday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Wednesday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Thursday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Friday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Saturday}" Foreground="White"/>
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=Sunday}" Foreground="White"/>
                 </StackPanel>
 
                 <!-- Save Button -->
-                <Button x:Name="saveButton" Grid.Row="6" Grid.Column="1" Content="Save" Width="100" Margin="5" Click="SaveButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC" HorizontalAlignment="Right"/>
+                <Button x:Name="saveButton" Grid.Row="6" Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=Save}" Width="100" Margin="5" Click="SaveButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC" HorizontalAlignment="Right"/>
+
             </Grid>
         </GroupBox>
 
         <!-- Existing Schedules Section -->
-        <GroupBox Header="Existing Schedules" Foreground="White"  Margin="5" Padding="10" Grid.Row="1" Grid.Column="0">
+        <GroupBox Header="{Binding Source={StaticResource Strings}, Path=ExistingSchedules}" Foreground="White" Margin="5" Padding="10" Grid.Row="1" Grid.Column="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -138,19 +157,19 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Action" Binding="{Binding Action}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="RconCommand" Binding="{Binding RconCommand}" IsReadOnly="{Binding IsNotCustomRconCommand}"/>
-                        <DataGridTextColumn Header="Times" Binding="{Binding Times}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Days" Binding="{Binding Days}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="ReoccurrenceIntervalType" Binding="{Binding ReoccurrenceIntervalType}" IsReadOnly="{Binding IsNotCustomRconCommand}"/>
-                        <DataGridTextColumn Header="ReoccurrenceInterval" Binding="{Binding ReoccurrenceInterval}" IsReadOnly="{Binding IsNotCustomRconCommand}"/>
-                        <DataGridTextColumn Header="Server" Binding="{Binding Server}" IsReadOnly="True"/>
-                        <DataGridTemplateColumn Header="Actions">
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Id}" Binding="{Binding Id}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Nickname}" Binding="{Binding Nickname}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Action}" Binding="{Binding Action}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=RconCommand}" Binding="{Binding RconCommand}" IsReadOnly="{Binding IsNotCustomRconCommand}"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Times}" Binding="{Binding Times}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Days}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ReoccurrenceIntervalType}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ReoccurrenceInterval}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=Server}" Binding="{Binding Server}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=EditButton}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Edit" Click="EditButton_Click" Background="#FFC107" Foreground="Black" BorderBrush="#FFC107" Margin="2"/>
+                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditButton}" Click="EditButton_Click" Background="#FFC107" Foreground="Black" BorderBrush="#FFC107" Margin="2"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -159,16 +178,16 @@
 
                 <!-- Buttons for Update and Delete -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-
-                    <Button Content="Delete" Width="100" Margin="5" Click="DeleteScheduleButton_Click" Background="#D32F2F" Foreground="White" BorderBrush="#D32F2F"/>
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=Delete}" Width="100" Margin="5" Click="DeleteScheduleButton_Click" Background="#D32F2F" Foreground="White" BorderBrush="#D32F2F"/>
                 </StackPanel>
 
                 <!-- Pagination controls -->
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                    <Button Content="Previous" Width="100" Margin="5" Click="PreviousPageButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=Previous}" Width="100" Margin="5" Click="PreviousPageButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
                     <TextBlock x:Name="pageNumberTextBlock" VerticalAlignment="Center" Foreground="White" Margin="10"/>
-                    <Button Content="Next" Width="100" Margin="5" Click="NextPageButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=Next}" Width="100" Margin="5" Click="NextPageButton_Click" Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
                 </StackPanel>
+
             </Grid>
         </GroupBox>
     </Grid>

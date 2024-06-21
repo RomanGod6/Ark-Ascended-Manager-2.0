@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Ark_Ascended_Manager.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
     Title="ServersPage"
     d:DataContext="{d:DesignInstance local:ServersPage, IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
@@ -17,6 +18,10 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="True"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <resources:LocalizedStrings x:Key="Strings" />
+    </Page.Resources>
 
     <Grid>
         <!-- Main ScrollViewer covering entire Grid except top 50 pixels for buttons -->
@@ -38,28 +43,28 @@
                                 <Button Command="{Binding DataContext.StartServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Start Server"/>
+                                        <ToolTip Content="{Binding Source={StaticResource Strings}, Path=StartServerTooltip}"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/play-solid.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.RestartServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Restart Server"/>
+                                        <ToolTip Content="{Binding Source={StaticResource Strings}, Path=RestartServerTooltip}"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/restart.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.StopServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Stop Server"/>
+                                        <ToolTip Content="{Binding Source={StaticResource Strings}, Path=StopServerTooltip}"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/stop-solid.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.UpdateServerCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                     CommandParameter="{Binding}" Margin="5">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Update Server"/>
+                                        <ToolTip Content="{Binding Source={StaticResource Strings}, Path=UpdateServerTooltip}"/>
                                     </Button.ToolTip>
                                     <Image Source="pack://application:,,,/Assets/circle-update-solid.png" Width="20" Height="20"/>
                                 </Button>
@@ -72,12 +77,12 @@
 
         <!-- Buttons at the top -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10,10,0"  PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-            <Button Content="Create Server" Margin="5,0" Click="CreateServer_Click" />
-            <Button Content="Sync Servers" Margin="5,0" Click="SyncServers_Click" />
-            <Button Content="Import Server" Margin="5,0" Click="ImportServers_Click" />
-            <Button Content="Update All Servers" Margin="5,0" Command="{Binding UpdateAllServersCommand}" />
-            <Button Content="Stop All Servers" Margin="5,0" Command="{Binding StopAllServersCommand}" />
-            <Button Content="Start All Servers" Margin="5,0" Command="{Binding StartAllServersCommand}" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=CreateServer}" Margin="5,0" Click="CreateServer_Click" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=SyncServers}" Margin="5,0" Click="SyncServers_Click" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=ImportServers}" Margin="5,0" Click="ImportServers_Click" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=UpdateAllServers}" Margin="5,0" Command="{Binding UpdateAllServersCommand}" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=StopAllServers}" Margin="5,0" Command="{Binding StopAllServersCommand}" />
+            <Button Content="{Binding Source={StaticResource Strings}, Path=StartAllServers}" Margin="5,0" Command="{Binding StartAllServersCommand}" />
         </StackPanel>
     </Grid>
 </Page>

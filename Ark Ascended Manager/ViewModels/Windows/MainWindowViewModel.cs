@@ -1,70 +1,79 @@
-﻿
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Drawing;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
+using Ark_Ascended_Manager.Resources;
 
 namespace Ark_Ascended_Manager.ViewModels.Windows
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private string _applicationTitle = "Ark Ascended Manager";
+        private readonly LocalizedStrings _localizedStrings = new LocalizedStrings();
 
         [ObservableProperty]
-        private ObservableCollection<object> _menuItems = new()
+        private string _applicationTitle;
+
+        public MainWindowViewModel()
         {
-            new NavigationViewItem()
-            {
-                Content = "Home",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-                TargetPageType = typeof(Views.Pages.DashboardPage)
-            },
-            new NavigationViewItem()
-            {
-                Content = "Servers",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ServerMultiple20 },
-                TargetPageType = typeof(Views.Pages.ServersPage)
-            },
-             new NavigationViewItem()
+            ApplicationTitle = _localizedStrings.ApplicationTitle;
 
+            MenuItems = new ObservableCollection<object>
             {
-                Content = "Integrations",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Power20 },
-                TargetPageType = typeof(Views.Pages.IntegrationsPage)
-            },
-                  new NavigationViewItem()
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Home,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
+                    TargetPageType = typeof(Views.Pages.DashboardPage)
+                },
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Servers,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.ServerMultiple20 },
+                    TargetPageType = typeof(Views.Pages.ServersPage)
+                },
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Integrations,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Power20 },
+                    TargetPageType = typeof(Views.Pages.IntegrationsPage)
+                },
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Mods,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Wrench20 },
+                    TargetPageType = typeof(Views.Pages.CurseForgeModPage)
+                },
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Tasks,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Timer12 },
+                    TargetPageType = typeof(Views.Pages.CreateSchedulePage)
+                }
+            };
+
+            FooterMenuItems = new ObservableCollection<object>
             {
-                Content = "Mods",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Wrench20},
-                TargetPageType = typeof(Views.Pages.CurseForgeModPage)
-            },
-                    new NavigationViewItem()
+                new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Settings,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
+                    TargetPageType = typeof(Views.Pages.SettingsPage)
+                }
+            };
+
+            TrayMenuItems = new ObservableCollection<MenuItem>
             {
-                Content = "Tasks",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Timer12},
-                TargetPageType = typeof(Views.Pages.CreateSchedulePage)
-            },
-
-
-
-        };
+                new MenuItem { Header = _localizedStrings.Home, Tag = "tray_home" }
+            };
+        }
 
         [ObservableProperty]
-        private ObservableCollection<object> _footerMenuItems = new()
-        {
-            new NavigationViewItem()
-            {
-                Content = "Settings",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
-                TargetPageType = typeof(Views.Pages.SettingsPage)
-            }
-        };
+        private ObservableCollection<object> _menuItems;
 
         [ObservableProperty]
-        private ObservableCollection<MenuItem> _trayMenuItems = new()
-        {
-            new MenuItem { Header = "Home", Tag = "tray_home" }
-        };
+        private ObservableCollection<object> _footerMenuItems;
+
+        [ObservableProperty]
+        private ObservableCollection<MenuItem> _trayMenuItems;
     }
 }

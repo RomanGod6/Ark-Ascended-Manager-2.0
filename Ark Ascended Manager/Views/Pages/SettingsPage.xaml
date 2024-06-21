@@ -1,26 +1,26 @@
-﻿<Page
-    x:Class="Ark_Ascended_Manager.Views.Pages.SettingsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers"
-    xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
-    xmlns:vm="clr-namespace:Ark_Ascended_Manager.ViewModels.Pages"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="SettingsPage"
-    d:DataContext="{d:DesignInstance vm:SettingsViewModel, IsDesignTimeCreatable=False}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
-    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    mc:Ignorable="d">
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:helpers="clr-namespace:Ark_Ascended_Manager.Helpers"
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+      xmlns:vm="clr-namespace:Ark_Ascended_Manager.ViewModels.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:resources="clr-namespace:Ark_Ascended_Manager.Resources"
+      Title="SettingsPage"
+      d:DataContext="{d:DesignInstance vm:SettingsViewModel, IsDesignTimeCreatable=False}"
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      mc:Ignorable="d">
 
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <resources:LocalizedStrings x:Key="Strings" />
     </Page.Resources>
-
 
     <Grid>
         <Grid.RowDefinitions>
@@ -30,109 +30,105 @@
 
         <!-- Top buttons aligned to the top-right -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Report Issue" Click="OpenIssueReportForm_Click" Margin="5"/>
-            <Button x:Name="updateButton" Content="Fix Server Version" Click="UpdateButton_Click" Margin="5"/>
-            <Button x:Name="UpdateApplicationButton" Content="Update AAM" Click="UpdateApplicationButton_Click" />
-            <Button Content="Open AAM App Data" Click="OpenAppDataFolder_Click" Margin="5"/>
+            <Button Content="{Binding Source={StaticResource Strings}, Path=ReportIssue}" Click="OpenIssueReportForm_Click" Margin="5"/>
+            <Button x:Name="updateButton" Content="{Binding Source={StaticResource Strings}, Path=FixServerVersion}" Click="UpdateButton_Click" Margin="5"/>
+            <Button x:Name="UpdateApplicationButton" Content="{Binding Source={StaticResource Strings}, Path=UpdateAAM}" Click="UpdateApplicationButton_Click" Margin="5"/>
+            <Button Content="{Binding Source={StaticResource Strings}, Path=OpenAppData}" Click="OpenAppDataFolder_Click" Margin="5"/>
         </StackPanel>
-
 
         <!-- Main content -->
         <StackPanel Grid.Row="1">
-            
-
             <!-- GroupBox for Version -->
-            <GroupBox Header="Version" Margin="5" Padding="5">
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=Version}" Margin="5" Padding="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock FontSize="20" FontWeight="Medium" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" Margin="5"/>
                     <TextBlock x:Name="VersionStatusTextBlock" FontSize="20" FontWeight="Medium" Margin="5"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Release Notes" Margin="5" Padding="5">
-            <ScrollViewer>
-                    <Expander Header="Release Notes">
+
+            <!-- GroupBox for Release Notes -->
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=ReleaseNotes}" Margin="5" Padding="5">
+                <ScrollViewer>
+                    <Expander Header="{Binding Source={StaticResource Strings}, Path=ReleaseNotes}">
                         <TextBlock x:Name="ReleaseNotesTextBlock" Text="{Binding ViewModel.ReleaseNotes, Mode=OneWay}" TextWrapping="Wrap" />
-                        </Expander>
+                    </Expander>
                 </ScrollViewer>
             </GroupBox>
 
-            <GroupBox Header="Manager Settings" Margin="5" Padding="5">
+            <!-- GroupBox for Manager Settings -->
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=ManagerSettings}" Margin="5" Padding="5">
                 <StackPanel>
                     <!-- Toggle for Auto Update Servers on Reboot -->
                     <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersOnReboot, Mode=TwoWay}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Auto Update Servers on Reboot" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AutoUpdateServersOnReboot}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </CheckBox>
 
                     <!-- Toggle for Auto Update Servers when New Update Available -->
                     <CheckBox Margin="5" IsChecked="{Binding ViewModel.AutoUpdateServersWhenNewUpdateAvailable, Mode=TwoWay}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Auto Update Servers when New Update Available" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AutoUpdateServersWhenNewUpdateAvailable}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </CheckBox>
 
                     <!-- Label for Update Countdown Timer -->
-                    <TextBlock Text="Update Countdown Timer" Margin="5" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UpdateCountdownTimer}" Margin="5" VerticalAlignment="Center"/>
 
                     <!-- TextBox for displaying Update Countdown Timer -->
                     <TextBox Margin="5" Text="{Binding ViewModel.UpdateCountdownTimer, Mode=TwoWay}" IsReadOnly="False"/>
 
                     <!-- Label for Update Interval Timer -->
-                    <TextBlock Text="Interval To Check For Updates In Minutes - Restart of AAM Required For Change to Implement" Margin="5" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=UpdateIntervalTimer}" Margin="5" VerticalAlignment="Center"/>
 
                     <!-- TextBox for displaying Update Interval Timer -->
                     <TextBox Margin="5" Text="{Binding ViewModel.UpdateCheckInterval, Mode=TwoWay}" IsReadOnly="False"/>
                 </StackPanel>
             </GroupBox>
 
-
-
-
             <!-- GroupBox for Personalization -->
-            <GroupBox Header="Personalization" Margin="5" Padding="5">
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=Personalization}" Margin="5" Padding="5">
                 <StackPanel>
-                    <TextBlock Text="Theme" Margin="5"/>
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Theme}" Margin="5"/>
                     <RadioButton
-            Margin="0,12,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_light"
-            Content="Light"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                        Margin="0,12,0,0"
+                        Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                        CommandParameter="theme_light"
+                        Content="{Binding Source={StaticResource Strings}, Path=LightTheme}"
+                        GroupName="themeSelect"
+                        IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
                     <RadioButton
-            Margin="0,8,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_dark"
-            Content="Dark"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" Width="89" />
+                        Margin="0,8,0,0"
+                        Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                        CommandParameter="theme_dark"
+                        Content="{Binding Source={StaticResource Strings}, Path=DarkTheme}"
+                        GroupName="themeSelect"
+                        IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" Width="89" />
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Header="Language Settings" Margin="5" Padding="5">
+            <!-- GroupBox for Language Settings -->
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=LanguageSettings}" Margin="5" Padding="5">
                 <StackPanel>
-                    <TextBlock Text="Select Language" Margin="5"/>
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SelectLanguage}" Margin="5"/>
                     <ComboBox 
-            Margin="5" 
-            SelectedValue="{Binding GlobalSettings.Language, Mode=TwoWay}" 
-            SelectionChanged="OnLanguageSelectionChanged">
+                        Margin="5" 
+                        SelectedValue="{Binding GlobalSettings.Language, Mode=TwoWay}" 
+                        SelectionChanged="OnLanguageSelectionChanged">
                         <ComboBoxItem Content="English" Tag="en" />
                         <ComboBoxItem Content="Spanish" Tag="es" />
                     </ComboBox>
                 </StackPanel>
             </GroupBox>
 
-
-
-            <!-- GroupBox for Stacking Overrides -->
-            <GroupBox Header="Engram Datas" Margin="5" Padding="5">
+            <!-- GroupBox for Engram Data -->
+            <GroupBox Header="{Binding Source={StaticResource Strings}, Path=EngramDatas}" Margin="5" Padding="5">
                 <StackPanel>
-                    <Button Content="Upload Engram Data" Click="UploadJson_Click" Margin="5"/>
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=UploadEngramData}" Click="UploadJson_Click" Margin="5"/>
                     <ListView x:Name="uploadedFilesList" Margin="5">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="File Name" DisplayMemberBinding="{Binding FileName}" />
+                                <GridViewColumn Header="{Binding Source={StaticResource Strings}, Path=FileName}" DisplayMemberBinding="{Binding FileName}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -141,3 +137,4 @@
         </StackPanel>
     </Grid>
 </Page>
+
