@@ -1025,6 +1025,15 @@
 
                             <Label Content="{Binding Source={StaticResource Strings}, Path=ServerIP}" ToolTip="{Binding Source={StaticResource Strings}, Path=ServerIPTooltip}" />
                             <TextBox Text="{Binding ServerIP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label Content="CPU Affinity" />
+                            <ListBox ItemsSource="{Binding CpuAffinity}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding ProcessorIndex}" IsChecked="{Binding IsChecked}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </StackPanel>
                     </ScrollViewer>
                     <!-- Put the controls related to Launch Parameters here -->

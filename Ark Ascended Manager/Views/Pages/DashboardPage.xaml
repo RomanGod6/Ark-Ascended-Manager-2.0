@@ -6,24 +6,51 @@
         <resources:LocalizedStrings x:Key="Strings" />
     </Page.Resources>
     <Grid>
-        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AdminWarning}"
-                   FontSize="14"
-                   FontWeight="Bold"
-                   Padding="10"
-                   Foreground="Red"
-                   Visibility="{Binding AdminWarningVisibility}"
-                   HorizontalAlignment="Center"
-                   Margin="10" />
-        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ComingSoon}"
-                   FontSize="24" 
-                   FontWeight="Bold" />
-        <Button Content="{Binding Source={StaticResource Strings}, Path=RunAsAdmin}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Padding="10"
-                Margin="20"
-                IsEnabled="True"
-                Visibility="{Binding AdminButtonVisibility}"
-                Click="OnRunAsAdminClick"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AdminWarning}"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Padding="10"
+                       Foreground="Red"
+                       Visibility="{Binding AdminWarningVisibility}"
+                       HorizontalAlignment="Center"
+                       Margin="10" />
+            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ComingSoon}"
+                       FontSize="24" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="10"/>
+            <Button Content="{Binding Source={StaticResource Strings}, Path=RunAsAdmin}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Padding="10"
+                    Margin="20"
+                    IsEnabled="True"
+                    Visibility="{Binding AdminButtonVisibility}"
+                    Click="OnRunAsAdminClick"/>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+            <TextBlock Text="Server Performance" FontSize="20" FontWeight="Bold" Margin="10"/>
+            <Button Content="Fetch Server Info"
+                    Command="{Binding FetchServerInfoCommand}"
+                    Padding="10"
+                    Margin="10"/>
+            <ItemsControl ItemsSource="{Binding Servers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="5">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Config.ServerName}" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="{Binding CpuAffinity}" Margin="5,0"/>
+                                <TextBlock Text="{Binding RamUsage, StringFormat='RAM Usage: {0} MB'}" Margin="5,0"/>
+                                <TextBlock Text="{Binding CpuUsage, StringFormat='CPU Usage: {0}%'}" Margin="5,0"/>
+                                <TextBlock Text="{Binding StorageSize, StringFormat='Storage Size: {0} MB'}" Margin="5,0"/>
+                                <TextBlock Text="{Binding RconConnection, StringFormat='RCON Connection: {0}'}" Margin="5,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
     </Grid>
 </Page>

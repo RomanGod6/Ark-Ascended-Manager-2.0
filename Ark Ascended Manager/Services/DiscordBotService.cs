@@ -1064,6 +1064,7 @@ public class DiscordServerConfig
         public int MaxPlayerCount { get; set; }
         public string AdminPassword { get; set; }
         public string ServerPassword { get; set; }
+
         public bool UseBattlEye { get; set; } 
         public bool ForceRespawnDinos { get; set; } 
         public bool PreventSpawnAnimation { get; set; } 

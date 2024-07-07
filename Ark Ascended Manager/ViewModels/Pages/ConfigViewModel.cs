@@ -162,6 +162,16 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 OnPropertyChanged(nameof(ScheduleTasks));
             }
         }
+        private ObservableCollection<ProcessorAffinityItem> _cpuAffinity;
+        public ObservableCollection<ProcessorAffinityItem> CpuAffinity
+        {
+            get => _cpuAffinity;
+            set
+            {
+                _cpuAffinity = value;
+                OnPropertyChanged(nameof(CpuAffinity));
+            }
+        }
 
 
 
@@ -204,6 +214,12 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
             StackSizeOverrides = new ObservableCollection<StackSizeOverride>();
             OnPropertyChanged(nameof(OptionsList));
+            CpuAffinity = new ObservableCollection<ProcessorAffinityItem>();
+            for (int i = 0; i < Environment.ProcessorCount; i++)
+            {
+                CpuAffinity.Add(new ProcessorAffinityItem { ProcessorIndex = i, IsChecked = true });
+            }
+
             ServerIcon = CurrentServerConfig.ServerIcon;
 
             if (CurrentServerConfig != null)
@@ -262,7 +278,36 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 }
             }
         }
+        public class ProcessorAffinityItem : INotifyPropertyChanged
+        {
+            private int _processorIndex;
+            public int ProcessorIndex
+            {
+                get => _processorIndex;
+                set
+                {
+                    _processorIndex = value;
+                    OnPropertyChanged(nameof(ProcessorIndex));
+                }
+            }
 
+            private bool _isChecked;
+            public bool IsChecked
+            {
+                get => _isChecked;
+                set
+                {
+                    _isChecked = value;
+                    OnPropertyChanged(nameof(IsChecked));
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
 
 
@@ -1627,7 +1672,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         private void UpdateLaunchParameters()
         {
             string servermap = CurrentServerConfig.MapName;
-         
+
             string serverPath = CurrentServerConfig.ServerPath;
             string batFilePath = Path.Combine(serverPath, "LaunchServer.bat");
             string modsSetting = string.IsNullOrEmpty(Mods) ? "" : $"-mods={Mods}";
@@ -1641,10 +1686,18 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string passiveMod = OverridePassiveMod;
             UpdateCurrentServerIPAddress();
 
+            // Retrieve the selected CPU affinity settings
+            int processorAffinity = 0;
+            foreach (var item in CpuAffinity)
+            {
+                if (item.IsChecked)
+                {
+                    processorAffinity |= (1 << item.ProcessorIndex);
+                }
+            }
 
             // Construct the batch file content
-            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, ServerIP, mapName, passiveMod, CustomLaunchOptions);
-
+            string newBatchFileContent = ConstructBatchFileContent(serverPath, executable, modsSetting, booleanSettings, serverPlatformSetting, ServerIP, mapName, passiveMod, CustomLaunchOptions, processorAffinity);
 
             // Write the updated content to the batch file
             File.WriteAllText(batFilePath, newBatchFileContent);
@@ -1807,18 +1860,20 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             return booleanSettings;
         }
 
-        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string serverIP, string mapName, string passiveMod, string customLaunchOptions)
-        {
-            string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
-            string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
-            string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
-            string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
-            string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
+        private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string serverIP, string mapName, string passiveMod, string customLaunchOptions, int processorAffinity)
+{
+    string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
+    string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
+    string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
+    string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
+    string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
 
-            // Check if modsSetting is not empty and construct modsArgument accordingly
-            string modsArgument = !string.IsNullOrWhiteSpace(modsSetting) ? $" -mods=%mods%" : "";
+    // Check if modsSetting is not empty and construct modsArgument accordingly
+    string modsArgument = !string.IsNullOrWhiteSpace(modsSetting) ? $" -mods=%mods%" : "";
 
-            string batchFileContent = $@"
+    string affinityArgument = processorAffinity != 0 ? $"/affinity {processorAffinity:X}" : "";
+
+    string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
 set ServerName={SessionName}
 set Port={ListenPort}
@@ -1830,11 +1885,12 @@ set customparameters={customLaunchOptionsArgument}
 set passivemod={passiveMod}
 set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -ActiveEvent=none -NoTransferFromFiltering -servergamelog -ServerRCONOutputTribeLogs -noundermeshkilling -nosteamclient -game -NoHangDetection -server -log{modsArgument} -passivemod=%passivemod%
 
-start {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
+start {affinityArgument} {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
-            BatchFilePreview = batchFileContent;
-            return batchFileContent;
-        }
+
+    BatchFilePreview = batchFileContent;
+    return batchFileContent;
+}
 
 
 

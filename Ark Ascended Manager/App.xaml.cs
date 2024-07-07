@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using Ark_Ascended_Manager.Services;
 using Ark_Ascended_Manager.Resources;
 using System.Diagnostics;
+using Ark_Ascended_Manager.ViewModels;
 
 namespace Ark_Ascended_Manager
 {
@@ -69,7 +70,7 @@ namespace Ark_Ascended_Manager
 
 
                 services.AddSingleton<DashboardPage>();
-                services.AddSingleton<DashboardViewModel>();
+                services.AddTransient<DashboardViewModel>();
                 services.AddSingleton<ServersPage>();
                 services.AddSingleton<ServersViewModel>();
                 services.AddSingleton<SettingsPage>();
