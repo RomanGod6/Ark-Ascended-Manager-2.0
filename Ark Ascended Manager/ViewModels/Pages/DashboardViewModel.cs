@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text.Json;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Management.Automation;
@@ -23,6 +23,22 @@ namespace Ark_Ascended_Manager.ViewModels
         public Visibility AdminButtonVisibility { get; private set; }
 
         public ObservableCollection<ServerInfo> Servers { get; set; }
+
+        private ServerInfo _selectedServer;
+        public ServerInfo SelectedServer
+        {
+            get => _selectedServer;
+            set
+            {
+                if (_selectedServer != value)
+                {
+                    _selectedServer = value;
+                    OnPropertyChanged(nameof(SelectedServer));
+                    // Fetch additional server info when a new server is selected
+                    FetchAdditionalServerInfoAsync();
+                }
+            }
+        }
 
         public ICommand FetchServerInfoCommand { get; }
 
@@ -117,7 +133,7 @@ namespace Ark_Ascended_Manager.ViewModels
                     server.RamUsage = processInfo.RamUsage;
                     server.CpuUsage = processInfo.CpuUsage;
                     server.StorageSize = GetStorageSize(baseServerPath);
-                    server.RconConnection = CheckRconConnection(server.Config.RCONPort);
+                    server.RconConnection = CheckRconConnection(server.Config.ServerIP, server.Config.RCONPort, server.Config.AdminPassword, baseServerPath);
 
                     Debug.WriteLine($"Updated info for server: {server.Config.ServerName}");
                 }
@@ -136,13 +152,10 @@ namespace Ark_Ascended_Manager.ViewModels
             }
         }
 
-
-
         private string CleanUpPath(string path)
         {
             return path.Replace(@"\\", @"\");
         }
-
 
         private ProcessInfo GetProcessInfoUsingPowerShell(string executablePath)
         {
@@ -156,10 +169,10 @@ namespace Ark_Ascended_Manager.ViewModels
                     string normalizedPath = executablePath.Replace("\\", "\\");
 
                     string script = $@"
-                Get-Process | 
-                Where-Object {{ $_.Path -eq '{normalizedPath}' }} | 
-                Select-Object Id, Path, WorkingSet, ProcessorAffinity
-            ";
+                    Get-Process | 
+                    Where-Object {{ $_.Path -eq '{normalizedPath}' }} | 
+                    Select-Object Id, Path, WorkingSet, ProcessorAffinity
+                ";
                     ps.AddScript(script);
 
                     var results = ps.Invoke();
@@ -198,12 +211,6 @@ namespace Ark_Ascended_Manager.ViewModels
             return null;
         }
 
-
-
-
-
-
-
         private double GetCpuUsageWMI(int processId)
         {
             var process = Process.GetProcessById(processId);
@@ -229,10 +236,53 @@ namespace Ark_Ascended_Manager.ViewModels
             }
         }
 
-        private bool CheckRconConnection(int rconPort)
+        private bool CheckRconConnection(string serverIP, int rconPort, string password, string serverPath)
         {
-            // Implement RCON connection check logic
-            return false;
+            try
+            {
+                string ip = string.IsNullOrEmpty(serverIP) ? "127.0.0.1" : serverIP;
+                using (var arkRconService = new ArkRCONService(ip, (ushort)rconPort, password, serverPath))
+                {
+                    arkRconService.ConnectAsync().Wait();
+                    var result = arkRconService.SendCommandAsync("listplayers").Result;
+                    return !string.IsNullOrEmpty(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error checking RCON connection: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task FetchAdditionalServerInfoAsync()
+        {
+            if (SelectedServer == null || SelectedServer.Config == null)
+            {
+                Debug.WriteLine("No selected server or server config to fetch additional info");
+                return;
+            }
+
+            try
+            {
+                string ip = string.IsNullOrEmpty(SelectedServer.Config.ServerIP) ? "127.0.0.1" : SelectedServer.Config.ServerIP;
+                using (var arkRconService = new ArkRCONService(ip, (ushort)SelectedServer.Config.RCONPort, SelectedServer.Config.AdminPassword, SelectedServer.Config.ServerPath))
+                {
+                    await arkRconService.ConnectAsync();
+                    SelectedServer.RconConnection = true;
+                    SelectedServer.PlayerInfo = await arkRconService.ListPlayersAsync();
+                    SelectedServer.ChatHistory = await arkRconService.GetServerChatAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching additional server info: {ex.Message}");
+                SelectedServer.RconConnection = false;
+                SelectedServer.PlayerInfo = "Unable to fetch player info";
+                SelectedServer.ChatHistory = "Unable to fetch chat history";
+            }
+
+            OnPropertyChanged(nameof(SelectedServer));
         }
     }
 
@@ -243,6 +293,8 @@ namespace Ark_Ascended_Manager.ViewModels
         private double cpuUsage;
         private long storageSize;
         private bool rconConnection;
+        private string playerInfo;
+        private string chatHistory;
 
         public DiscordServerConfig Config { get; set; }
 
@@ -293,6 +345,26 @@ namespace Ark_Ascended_Manager.ViewModels
             {
                 rconConnection = value;
                 OnPropertyChanged(nameof(RconConnection));
+            }
+        }
+
+        public string PlayerInfo
+        {
+            get => playerInfo;
+            set
+            {
+                playerInfo = value;
+                OnPropertyChanged(nameof(PlayerInfo));
+            }
+        }
+
+        public string ChatHistory
+        {
+            get => chatHistory;
+            set
+            {
+                chatHistory = value;
+                OnPropertyChanged(nameof(ChatHistory));
             }
         }
 
