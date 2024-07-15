@@ -50,7 +50,10 @@ namespace Ark_Ascended_Manager.ViewModels
 
             Servers = new ObservableCollection<ServerInfo>();
             LoadServerConfigs();
-            FetchServerInfoCommand = new RelayCommand(FetchServerInfo);
+            FetchServerInfoCommand = new RelayCommand(async () => await FetchServerInfoAsync());
+
+            // Auto-fetch server info after loading configurations
+            StartServerCycleAsync();
         }
 
         private void LoadServerConfigs()
@@ -89,17 +92,23 @@ namespace Ark_Ascended_Manager.ViewModels
                 {
                     Config = config,
                     CpuAffinity = "Not fetched",
-                    RamUsage = -1,
+                    RamUsage = "N/A",
                     CpuUsage = -1,
-                    StorageSize = -1,
+                    StorageSize = "N/A",
                     RconConnection = false
                 });
             }
 
             Debug.WriteLine($"Loaded {Servers.Count} server configurations");
+
+            // Automatically select the first server
+            if (Servers.Count > 0)
+            {
+                SelectedServer = Servers[0];
+            }
         }
 
-        private void FetchServerInfo()
+        private async Task FetchServerInfoAsync()
         {
             Debug.WriteLine("FetchServerInfo called");
 
@@ -109,12 +118,12 @@ namespace Ark_Ascended_Manager.ViewModels
                 return;
             }
 
-            foreach (var server in Servers)
+            var tasks = Servers.Select(async server =>
             {
                 if (server.Config == null)
                 {
                     Debug.WriteLine("Server config is null");
-                    continue;
+                    return;
                 }
 
                 Debug.WriteLine($"Processing server: {server.Config.ServerName}");
@@ -126,29 +135,40 @@ namespace Ark_Ascended_Manager.ViewModels
                 Debug.WriteLine($"{fullPathArk}");
                 Debug.WriteLine($"{fullPathAsa}");
 
-                var processInfo = GetProcessInfoUsingPowerShell(fullPathArk) ?? GetProcessInfoUsingPowerShell(fullPathAsa);
+                var processInfo = await Task.Run(() => GetProcessInfoUsingPowerShell(fullPathArk)) ?? await Task.Run(() => GetProcessInfoUsingPowerShell(fullPathAsa));
                 if (processInfo != null)
                 {
-                    server.CpuAffinity = processInfo.CpuAffinity;
-                    server.RamUsage = processInfo.RamUsage;
-                    server.CpuUsage = processInfo.CpuUsage;
-                    server.StorageSize = GetStorageSize(baseServerPath);
-                    server.RconConnection = CheckRconConnection(server.Config.ServerIP, server.Config.RCONPort, server.Config.AdminPassword, baseServerPath);
+                    server.CpuAffinity = ConvertCpuAffinityToReadable(processInfo.CpuAffinity);
+                    server.RamUsage = FormatRamUsage(processInfo.RamUsage);
+                    server.CpuUsage = Math.Round(processInfo.CpuUsage, 2);
+                    server.StorageSize = await Task.Run(() => GetFormattedStorageSize(baseServerPath));
+                    server.RconConnection = await Task.Run(() => CheckRconConnection(server.Config.ServerIP, server.Config.RCONPort, server.Config.AdminPassword, baseServerPath));
 
                     Debug.WriteLine($"Updated info for server: {server.Config.ServerName}");
                 }
                 else
                 {
                     server.CpuAffinity = "Server process not found.";
-                    server.RamUsage = -1;
+                    server.RamUsage = "N/A";
                     server.CpuUsage = -1;
-                    server.StorageSize = -1;
+                    server.StorageSize = "N/A";
                     server.RconConnection = false;
 
                     Debug.WriteLine($"Process not found for server: {server.Config.ServerName}");
                 }
 
                 OnPropertyChanged(nameof(Servers));
+            });
+
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task StartServerCycleAsync()
+        {
+            while (true)
+            {
+                await FetchServerInfoAsync();
+                await Task.Delay(TimeSpan.FromMinutes(5)); // Adjust the interval as needed
             }
         }
 
@@ -157,7 +177,7 @@ namespace Ark_Ascended_Manager.ViewModels
             return path.Replace(@"\\", @"\");
         }
 
-        private ProcessInfo GetProcessInfoUsingPowerShell(string executablePath)
+        private async Task<ProcessInfo> GetProcessInfoUsingPowerShell(string executablePath)
         {
             try
             {
@@ -175,7 +195,7 @@ namespace Ark_Ascended_Manager.ViewModels
                 ";
                     ps.AddScript(script);
 
-                    var results = ps.Invoke();
+                    var results = await Task.Run(() => ps.Invoke());
 
                     if (ps.Streams.Error.Count > 0)
                     {
@@ -196,7 +216,7 @@ namespace Ark_Ascended_Manager.ViewModels
                         {
                             CpuAffinity = coresUsed,
                             RamUsage = ramUsage,
-                            CpuUsage = GetCpuUsageWMI(processId)
+                            CpuUsage = await Task.Run(() => GetCpuUsageWMI(processId))
                         };
                     }
                 }
@@ -211,40 +231,57 @@ namespace Ark_Ascended_Manager.ViewModels
             return null;
         }
 
-        private double GetCpuUsageWMI(int processId)
+        private async Task<double> GetCpuUsageWMI(int processId)
         {
             var process = Process.GetProcessById(processId);
             var processName = process.ProcessName.Replace(".exe", "");
 
             var cpuCounter = new PerformanceCounter("Process", "% Processor Time", processName, true);
             cpuCounter.NextValue();
-            System.Threading.Thread.Sleep(1000);
+            await Task.Delay(1000);
             return cpuCounter.NextValue() / Environment.ProcessorCount;
         }
 
-        private long GetStorageSize(string serverPath)
+        private async Task<string> GetFormattedStorageSize(string serverPath)
         {
             try
             {
                 var driveInfo = new DriveInfo(Path.GetPathRoot(serverPath));
-                return driveInfo.TotalSize / 1024 / 1024; // Convert bytes to MB
+                var totalSizeGB = driveInfo.TotalSize / 1024.0 / 1024 / 1024;
+                var folderSize = await Task.Run(() => GetDirectorySize(serverPath)) / 1024.0 / 1024 / 1024;
+                return $"{Math.Round(folderSize, 2)} GB / {Math.Round(totalSizeGB, 2)} GB";
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error getting storage size: {ex.Message}\nStackTrace: {ex.StackTrace}\nSource: {ex.Source}");
-                return -1;
+                return "N/A";
             }
         }
 
-        private bool CheckRconConnection(string serverIP, int rconPort, string password, string serverPath)
+        private long GetDirectorySize(string folderPath)
+        {
+            long size = 0;
+            try
+            {
+                var dirInfo = new DirectoryInfo(folderPath);
+                size = dirInfo.EnumerateFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error getting directory size: {ex.Message}");
+            }
+            return size;
+        }
+
+        private async Task<bool> CheckRconConnection(string serverIP, int rconPort, string password, string serverPath)
         {
             try
             {
                 string ip = string.IsNullOrEmpty(serverIP) ? "127.0.0.1" : serverIP;
                 using (var arkRconService = new ArkRCONService(ip, (ushort)rconPort, password, serverPath))
                 {
-                    arkRconService.ConnectAsync().Wait();
-                    var result = arkRconService.SendCommandAsync("listplayers").Result;
+                    await arkRconService.ConnectAsync();
+                    var result = await arkRconService.SendCommandAsync("listplayers");
                     return !string.IsNullOrEmpty(result);
                 }
             }
@@ -284,14 +321,40 @@ namespace Ark_Ascended_Manager.ViewModels
 
             OnPropertyChanged(nameof(SelectedServer));
         }
+
+        private string ConvertCpuAffinityToReadable(string cpuAffinity)
+        {
+            var cores = new List<int>();
+            for (int i = 0; i < cpuAffinity.Length; i++)
+            {
+                if (cpuAffinity[i] == '1')
+                {
+                    cores.Add(i);
+                }
+            }
+            return string.Join(", ", cores);
+        }
+
+        private string FormatRamUsage(long ramUsage)
+        {
+            if (ramUsage < 1024)
+            {
+                return $"{ramUsage} MB";
+            }
+            else
+            {
+                var ramInGB = ramUsage / 1024.0;
+                return $"{Math.Round(ramInGB, 2)} GB";
+            }
+        }
     }
 
     public class ServerInfo : INotifyPropertyChanged
     {
         private string cpuAffinity;
-        private long ramUsage;
+        private string ramUsage;
         private double cpuUsage;
-        private long storageSize;
+        private string storageSize;
         private bool rconConnection;
         private string playerInfo;
         private string chatHistory;
@@ -308,7 +371,7 @@ namespace Ark_Ascended_Manager.ViewModels
             }
         }
 
-        public long RamUsage
+        public string RamUsage
         {
             get => ramUsage;
             set
@@ -328,7 +391,7 @@ namespace Ark_Ascended_Manager.ViewModels
             }
         }
 
-        public long StorageSize
+        public string StorageSize
         {
             get => storageSize;
             set
