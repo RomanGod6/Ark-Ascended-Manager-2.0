@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace Ark_Ascended_Manager.ViewModels
 {
     public class DashboardViewModel : ObservableObject
     {
+        private readonly string _dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "serverMetrics.db");
+
         public Visibility AdminWarningVisibility { get; private set; }
         public Visibility AdminButtonVisibility { get; private set; }
 
@@ -51,6 +54,8 @@ namespace Ark_Ascended_Manager.ViewModels
             Servers = new ObservableCollection<ServerInfo>();
             LoadServerConfigs();
             FetchServerInfoCommand = new RelayCommand(async () => await FetchServerInfoAsync());
+
+            InitializeDatabase();
 
             // Auto-fetch server info after loading configurations
             StartServerCycleAsync();
@@ -145,6 +150,9 @@ namespace Ark_Ascended_Manager.ViewModels
                     server.RconConnection = await Task.Run(() => CheckRconConnection(server.Config.ServerIP, server.Config.RCONPort, server.Config.AdminPassword, baseServerPath));
 
                     Debug.WriteLine($"Updated info for server: {server.Config.ServerName}");
+
+                    // Log metrics to database
+                    LogMetricsToDatabase(server);
                 }
                 else
                 {
@@ -345,6 +353,52 @@ namespace Ark_Ascended_Manager.ViewModels
             {
                 var ramInGB = ramUsage / 1024.0;
                 return $"{Math.Round(ramInGB, 2)} GB";
+            }
+        }
+
+        private void InitializeDatabase()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_dbPath));
+
+            using (var connection = new SQLiteConnection($"Data Source={_dbPath};Version=3;"))
+            {
+                connection.Open();
+                string createTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS ServerMetrics (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        ServerName TEXT,
+                        Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        CpuAffinity TEXT,
+                        RamUsage TEXT,
+                        CpuUsage REAL,
+                        StorageSize TEXT,
+                        RconConnection INTEGER
+                    )";
+                using (var command = new SQLiteCommand(createTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void LogMetricsToDatabase(ServerInfo server)
+        {
+            using (var connection = new SQLiteConnection($"Data Source={_dbPath};Version=3;"))
+            {
+                connection.Open();
+                string insertQuery = @"
+                    INSERT INTO ServerMetrics (ServerName, CpuAffinity, RamUsage, CpuUsage, StorageSize, RconConnection)
+                    VALUES (@ServerName, @CpuAffinity, @RamUsage, @CpuUsage, @StorageSize, @RconConnection)";
+                using (var command = new SQLiteCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@ServerName", server.Config.ServerName);
+                    command.Parameters.AddWithValue("@CpuAffinity", server.CpuAffinity);
+                    command.Parameters.AddWithValue("@RamUsage", server.RamUsage);
+                    command.Parameters.AddWithValue("@CpuUsage", server.CpuUsage);
+                    command.Parameters.AddWithValue("@StorageSize", server.StorageSize);
+                    command.Parameters.AddWithValue("@RconConnection", server.RconConnection ? 1 : 0);
+                    command.ExecuteNonQuery();
+                }
             }
         }
     }
