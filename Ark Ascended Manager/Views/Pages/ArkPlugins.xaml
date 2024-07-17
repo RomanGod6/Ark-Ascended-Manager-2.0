@@ -1,0 +1,46 @@
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.ArkPlugins"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Helpers"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ArkPlugins">
+
+    <Page.Resources>
+        <local:NullToDefaultImageConverter x:Key="NullToDefaultImageConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel>
+            <TextBox x:Name="SearchBox" Width="200" Margin="10" />
+            <Button Content="Search" Click="Search_Click" Width="100" Margin="10"/>
+            <ListView x:Name="PluginsListView">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="5">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding IconURL, Converter={StaticResource NullToDefaultImageConverter}}" Width="100" Height="100" Margin="5"/>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16"/>
+                                    <TextBlock Text="{Binding ResourceID, StringFormat='ID: {0}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding Version, StringFormat='Version: {0}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding AltSupportURL, StringFormat='Support URL: {0}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding RatingAvg, StringFormat='Rating: {0:F1}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding Tags, StringFormat='Tags: {0}'}" FontSize="14"/>
+                                    <TextBlock Text="{Binding Price, StringFormat='Price: {0}'}" FontSize="14"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Button Content="Previous" Click="PreviousPage_Click" Width="100" Margin="5"/>
+                <TextBlock x:Name="PageInfo" VerticalAlignment="Center" Margin="5"/>
+                <Button Content="Next" Click="NextPage_Click" Width="100" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

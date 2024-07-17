@@ -54,15 +54,14 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<ImportServersPage>();
                 services.AddSingleton<IssueReportForm>();
                 services.AddSingleton<IntegrationsPage>();
-                services.AddTransient<PluginManagementPage>();
                 services.AddSingleton<SteamVersionControl>();
                 services.AddSingleton<ServerUpdateService>();
                 services.AddSingleton<CreateSchedulePage>();
                 services.AddSingleton<RestorePage>();
                 services.AddSingleton<CurseForgeModPage>();
                 services.AddTransient<CurseForgeCurrentModPage>();
+                services.AddTransient<ArkPlugins>();
                 services.AddTransient<AddModToServerPage>();
-                services.AddTransient<PluginManagementAutoInstallPage>();
                 services.AddSingleton<ISettingsService, SettingsService>();
                 services.AddHostedService<ServerMonitoringService>();
              /*   services.AddSingleton<RconWindow>(); */

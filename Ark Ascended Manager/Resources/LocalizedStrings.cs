@@ -532,6 +532,8 @@ namespace Ark_Ascended_Manager.Resources
         public string Tasks => _resourceManager.GetString("Tasks", CultureInfo.CurrentCulture);
         public string Settings => _resourceManager.GetString("Settings", CultureInfo.CurrentCulture);
 
+        public string Plugins => _resourceManager.GetString("Plugins", CultureInfo.CurrentCulture);
+
 
     }
 }

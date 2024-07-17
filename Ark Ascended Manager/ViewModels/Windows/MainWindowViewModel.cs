@@ -48,6 +48,12 @@ namespace Ark_Ascended_Manager.ViewModels.Windows
                     Content = _localizedStrings.Tasks,
                     Icon = new SymbolIcon { Symbol = SymbolRegular.Timer12 },
                     TargetPageType = typeof(Views.Pages.CreateSchedulePage)
+                },
+                 new NavigationViewItem()
+                {
+                    Content = _localizedStrings.Plugins,
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.PuzzlePiece16 },
+                    TargetPageType = typeof(Views.Pages.ArkPlugins)
                 }
             };
 
