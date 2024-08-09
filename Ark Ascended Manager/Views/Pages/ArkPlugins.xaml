@@ -3,43 +3,83 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ark_Ascended_Manager.Helpers"
       mc:Ignorable="d" 
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Helpers"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ArkPlugins">
-
     <Page.Resources>
         <local:NullToDefaultImageConverter x:Key="NullToDefaultImageConverter" />
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Background" Value="#F9F9F9"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
     </Page.Resources>
 
     <Grid>
-        <StackPanel>
-            <TextBox x:Name="SearchBox" Width="200" Margin="10" />
-            <Button Content="Search" Click="Search_Click" Width="100" Margin="10"/>
-            <ListView x:Name="PluginsListView">
+        <StackPanel Margin="10">
+            <TextBox x:Name="SearchBox" Width="200" Margin="0,0,0,10" Height="30" VerticalContentAlignment="Center" FontSize="14"  />
+            <Button Content="Search" Click="Search_Click" Width="100" Height="30" Margin="0,0,0,20" Background="#007ACC" Foreground="White" BorderBrush="Transparent" />
+
+            <ListView x:Name="PluginsListView" Padding="10" SelectionChanged="PluginsListView_SelectionChanged">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="5">
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding IconURL, Converter={StaticResource NullToDefaultImageConverter}}" Width="100" Height="100" Margin="5"/>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock Text="{Binding ResourceID, StringFormat='ID: {0}'}" FontSize="14"/>
-                                    <TextBlock Text="{Binding Version, StringFormat='Version: {0}'}" FontSize="14"/>
-                                    <TextBlock Text="{Binding AltSupportURL, StringFormat='Support URL: {0}'}" FontSize="14"/>
-                                    <TextBlock Text="{Binding RatingAvg, StringFormat='Rating: {0:F1}'}" FontSize="14"/>
-                                    <TextBlock Text="{Binding Tags, StringFormat='Tags: {0}'}" FontSize="14"/>
-                                    <TextBlock Text="{Binding Price, StringFormat='Price: {0}'}" FontSize="14"/>
+                        <Border BorderBrush="Gray" BorderThickness="0.5" Margin="5" Padding="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Source="{Binding IconURL, Converter={StaticResource NullToDefaultImageConverter}}" Width="100" Height="100" Grid.Column="0" Margin="0,0,10,0"/>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="18" Foreground="#007ACC"/>
+                                    <TextBlock Text="{Binding ResourceID, StringFormat='Resource ID: {0}'}" />
+                                    <TextBlock Text="{Binding Version, StringFormat='Version: {0}'}" />
+                                    <TextBlock Text="{Binding AltSupportURL, StringFormat='Support URL: {0}'}" />
+                                    <TextBlock Text="{Binding RatingAvg, StringFormat='Rating: {0}'}" />
+                                    <TextBlock Text="{Binding Price, StringFormat='Price: {0}'}" />
+                                    <TextBlock Text="{Binding TagLine, StringFormat='Description: {0}'}" />
+                                    <TextBlock Text="External URL:" />
+                                    <TextBlock>
+                                        <Hyperlink NavigateUri="{Binding ExternalURL}" RequestNavigate="Hyperlink_RequestNavigate">
+                                            <TextBlock Text="{Binding ExternalURL}" />
+                                        </Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Text="View URL:" />
+                                    <TextBlock>
+                                        <Hyperlink NavigateUri="{Binding ViewURL}" RequestNavigate="Hyperlink_RequestNavigate">
+                                            <TextBlock Text="{Binding ViewURL}" />
+                                        </Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock Text="Tags:" />
+                                    <ItemsControl ItemsSource="{Binding Tags}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#007ACC" CornerRadius="3" Padding="3" Margin="2">
+                                                    <TextBlock Text="{Binding}" Foreground="White" />
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </StackPanel>
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button Content="Previous" Click="PreviousPage_Click" Width="100" Margin="5"/>
-                <TextBlock x:Name="PageInfo" VerticalAlignment="Center" Margin="5"/>
-                <Button Content="Next" Click="NextPage_Click" Width="100" Margin="5"/>
+                <Button Content="Previous" Click="PreviousPage_Click" Width="100" Height="30" Margin="5" Background="#007ACC" Foreground="White" BorderBrush="Transparent"/>
+                <TextBlock x:Name="PageInfo" VerticalAlignment="Center" Margin="5" FontSize="16"/>
+                <Button Content="Next" Click="NextPage_Click" Width="100" Height="30" Margin="5" Background="#007ACC" Foreground="White" BorderBrush="Transparent"/>
             </StackPanel>
         </StackPanel>
     </Grid>

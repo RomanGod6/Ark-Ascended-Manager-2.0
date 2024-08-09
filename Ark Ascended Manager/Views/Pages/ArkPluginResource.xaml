@@ -1,0 +1,70 @@
+﻿<Page x:Class="Ark_Ascended_Manager.Views.Pages.ArkPluginResource"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ark_Ascended_Manager.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ArkPluginResource">
+    
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="24" Foreground="#007ACC" Margin="0,0,0,10"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding ResourceID, StringFormat='Resource ID: {0}'}" />
+                    <TextBlock Text="{Binding Version, StringFormat='Version: {0}'}" />
+                    <TextBlock Text="{Binding AltSupportURL, StringFormat='Support URL: {0}'}" />
+                    <TextBlock Text="{Binding RatingAvg, StringFormat='Rating: {0}'}" />
+                    <TextBlock Text="{Binding Price, StringFormat='Price: {0}'}" />
+                    <TextBlock Text="{Binding TagLine, StringFormat='Description: {0}'}" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="External URL:" FontWeight="Bold"/>
+                    <TextBlock Margin="0,0,0,10">
+                        <Hyperlink NavigateUri="{Binding ExternalURL}" RequestNavigate="Hyperlink_RequestNavigate">
+                            <TextBlock Text="{Binding ExternalURL}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <TextBlock Text="View URL:" FontWeight="Bold"/>
+                    <TextBlock Margin="0,0,0,10">
+                        <Hyperlink NavigateUri="{Binding ViewURL}" RequestNavigate="Hyperlink_RequestNavigate">
+                            <TextBlock Text="{Binding ViewURL}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <TextBlock Text="Tags:" FontWeight="Bold" />
+                    <ItemsControl ItemsSource="{Binding Tags}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#007ACC" CornerRadius="3" Padding="3" Margin="2">
+                                    <TextBlock Text="{Binding}" Foreground="White" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,0,0">
+                    <Button Content="Download" Width="100" Height="30" Background="#007ACC" Foreground="White" BorderBrush="Transparent" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="Status:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Installed" Visibility="{Binding IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="Green"/>
+                    <TextBlock Text="Not Installed" Visibility="{Binding IsInstalled, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Foreground="Red"/>
+
+                    <TextBlock Text="Update Status:" FontWeight="Bold" Margin="10,0,0,5"/>
+                    <TextBlock Text="Up to Date" Visibility="{Binding IsUpToDate, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="Green"/>
+                    <TextBlock Text="Out of Date" Visibility="{Binding IsUpToDate, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Foreground="Red"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

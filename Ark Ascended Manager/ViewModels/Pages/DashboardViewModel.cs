@@ -15,6 +15,7 @@ using System.Management.Automation;
 using Ark_Ascended_Manager.Resources;
 using Ark_Ascended_Manager.Services;
 using Ark_Ascended_Manager.ViewModels.Windows;
+using YourNamespace.Helpers;
 
 namespace Ark_Ascended_Manager.ViewModels
 {
@@ -63,55 +64,52 @@ namespace Ark_Ascended_Manager.ViewModels
 
         private void LoadServerConfigs()
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-
-            if (!File.Exists(path))
-            {
-                Debug.WriteLine($"Server config file not found at: {path}");
-                return;
-            }
-
-            var json = File.ReadAllText(path);
-            Debug.WriteLine($"Server config file content: {json}");
-
-            List<DiscordServerConfig> serverConfigs = null;
             try
             {
-                serverConfigs = JsonSerializer.Deserialize<List<DiscordServerConfig>>(json);
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+
+                if (!File.Exists(path))
+                {
+                    Debug.WriteLine($"Server config file not found at: {path}");
+                    return;
+                }
+
+                // Read the JSON file using JsonHelper
+                List<DiscordServerConfig> serverConfigs = JsonHelper.ReadJsonFile<List<DiscordServerConfig>>(path);
+
+                if (serverConfigs == null || serverConfigs.Count == 0)
+                {
+                    Debug.WriteLine("No server configurations found in the JSON file");
+                    return;
+                }
+
+                foreach (var config in serverConfigs)
+                {
+                    Servers.Add(new ServerInfo
+                    {
+                        Config = config,
+                        CpuAffinity = "Not fetched",
+                        RamUsage = "N/A",
+                        CpuUsage = -1,
+                        StorageSize = "N/A",
+                        RconConnection = false
+                    });
+                }
+
+                Debug.WriteLine($"Loaded {Servers.Count} server configurations");
+
+                // Automatically select the first server
+                if (Servers.Count > 0)
+                {
+                    SelectedServer = Servers[0];
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error deserializing JSON: {ex.Message}");
-                return;
-            }
-
-            if (serverConfigs == null || serverConfigs.Count == 0)
-            {
-                Debug.WriteLine("No server configurations found in the JSON file");
-                return;
-            }
-
-            foreach (var config in serverConfigs)
-            {
-                Servers.Add(new ServerInfo
-                {
-                    Config = config,
-                    CpuAffinity = "Not fetched",
-                    RamUsage = "N/A",
-                    CpuUsage = -1,
-                    StorageSize = "N/A",
-                    RconConnection = false
-                });
-            }
-
-            Debug.WriteLine($"Loaded {Servers.Count} server configurations");
-
-            // Automatically select the first server
-            if (Servers.Count > 0)
-            {
-                SelectedServer = Servers[0];
+                Debug.WriteLine($"Error loading server configurations: {ex.Message}");
             }
         }
+
 
         private async Task FetchServerInfoAsync()
         {

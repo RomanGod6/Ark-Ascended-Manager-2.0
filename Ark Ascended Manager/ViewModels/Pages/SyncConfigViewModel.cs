@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using Ark_Ascended_Manager.Models;
 using System.Windows.Input;
+using YourNamespace.Helpers;
 
 public class SyncConfigViewModel : INotifyPropertyChanged
 {
@@ -60,16 +61,11 @@ public class SyncConfigViewModel : INotifyPropertyChanged
         string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         string filePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
 
-        if (File.Exists(filePath))
-        {
-            string jsonContent = File.ReadAllText(filePath);
-            ServerProfiles = JsonConvert.DeserializeObject<ObservableCollection<ServerProfile>>(jsonContent) ?? new ObservableCollection<ServerProfile>();
-        }
-        else
-        {
-            ServerProfiles = new ObservableCollection<ServerProfile>();
-        }
+        // Use JsonHelper to load the list of ServerProfile objects from the JSON file
+        ServerProfiles = JsonHelper.ReadJsonFile<ObservableCollection<ServerProfile>>(filePath)
+                         ?? new ObservableCollection<ServerProfile>();
     }
+
 
     private void FilterTargetServers()
     {

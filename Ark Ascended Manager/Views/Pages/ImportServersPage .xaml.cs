@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YourNamespace.Helpers;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -173,17 +174,15 @@ namespace Ark_Ascended_Manager.Views.Pages
                 string applicationFolderPath = Path.Combine(appDataPath, "Ark Ascended Manager");
                 Directory.CreateDirectory(applicationFolderPath);
                 string serversFilePath = Path.Combine(applicationFolderPath, "servers.json");
-                List<ServerConfig> servers = new List<ServerConfig>();
 
-                if (File.Exists(serversFilePath))
-                {
-                    string existingJson = File.ReadAllText(serversFilePath);
-                    servers = JsonSerializer.Deserialize<List<ServerConfig>>(existingJson) ?? new List<ServerConfig>();
-                }
+                // Read existing list from file using JsonHelper
+                List<ServerConfig> servers = JsonHelper.ReadJsonFile<List<ServerConfig>>(serversFilePath) ?? new List<ServerConfig>();
 
+                // Add the new server config
                 servers.Add(config);
-                string updatedJson = JsonSerializer.Serialize(servers, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(serversFilePath, updatedJson);
+
+                // Write updated list to file using JsonHelper
+                JsonHelper.WriteJsonFile(serversFilePath, servers);
 
                 System.Windows.MessageBox.Show("Server configuration saved successfully.", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
@@ -192,6 +191,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 System.Windows.MessageBox.Show($"Failed to save server configuration: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
+
 
         private void SaveImportedServer()
         {

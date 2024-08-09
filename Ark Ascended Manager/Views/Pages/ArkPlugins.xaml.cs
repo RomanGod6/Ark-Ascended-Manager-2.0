@@ -1,9 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Diagnostics;
+using Ark_Ascended_Manager.Helpers;
+using System.Windows.Navigation;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
@@ -14,13 +18,20 @@ namespace Ark_Ascended_Manager.Views.Pages
         private ObservableCollection<Resource> currentPlugins;
         private int currentPage = 1;
         private int itemsPerPage = 10;
+        private DatabaseHelper databaseHelper;
 
         public ArkPlugins()
         {
             InitializeComponent();
+            databaseHelper = new DatabaseHelper();
+            LoadPluginsFromDatabase();
             LoadPlugins();
         }
-
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
         private async void LoadPlugins()
         {
             try
@@ -28,8 +39,9 @@ namespace Ark_Ascended_Manager.Views.Pages
                 using (HttpClient client = new HttpClient())
                 {
                     var response = await client.GetStringAsync(ApiUrl);
-                    System.IO.File.WriteAllText("debug.json", response); // Write the response to a file for debugging
+                    string currentDirectory = Directory.GetCurrentDirectory();
                     allPlugins = JsonConvert.DeserializeObject<ObservableCollection<Resource>>(response);
+                    databaseHelper.SavePlugins(allPlugins);
                     DisplayPage(currentPage);
                 }
             }
@@ -39,11 +51,25 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
         }
 
+        private void LoadPluginsFromDatabase()
+        {
+            allPlugins = databaseHelper.LoadPlugins();
+            Debug.WriteLine($"Loaded {allPlugins.Count} plugins from database.");
+            DisplayPage(currentPage);
+        }
+        private void PluginsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PluginsListView.SelectedItem is Resource selectedResource)
+            {
+                var resourcePage = new ArkPluginResource(selectedResource);
+                NavigationService.Navigate(resourcePage);
+            }
+        }
         private void DisplayPage(int pageNumber)
         {
             int start = (pageNumber - 1) * itemsPerPage;
             int count = Math.Min(itemsPerPage, allPlugins.Count - start);
-            currentPlugins = new ObservableCollection<Resource>(allPlugins.SubList(start, count));
+            currentPlugins = new ObservableCollection<Resource>(allPlugins.Skip(start).Take(count));
             PluginsListView.ItemsSource = currentPlugins;
             PageInfo.Text = $"Page {currentPage} of {Math.Ceiling((double)allPlugins.Count / itemsPerPage)}";
         }
@@ -69,40 +95,18 @@ namespace Ark_Ascended_Manager.Views.Pages
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             string query = SearchBox.Text.ToLower();
-            var filteredPlugins = allPlugins.FindAll(p => p.Title.ToLower().Contains(query) || p.TagLine.ToLower().Contains(query) || (p.Tags != null && p.Tags.Exists(tag => tag.ToLower().Contains(query))));
+            var filteredPlugins = allPlugins.Where(p => p.Title.ToLower().Contains(query) ||
+                                                         p.TagLine.ToLower().Contains(query) ||
+                                                         (p.Tags != null && p.Tags.Any(tag => tag.ToLower().Contains(query)))).ToList();
             allPlugins = new ObservableCollection<Resource>(filteredPlugins);
             currentPage = 1;
             DisplayPage(currentPage);
         }
     }
 
-    public static class Extensions
-    {
-        public static ObservableCollection<T> SubList<T>(this ObservableCollection<T> collection, int index, int count)
-        {
-            var result = new ObservableCollection<T>();
-            for (int i = index; i < index + count && i < collection.Count; i++)
-            {
-                result.Add(collection[i]);
-            }
-            return result;
-        }
 
-        public static List<T> FindAll<T>(this ObservableCollection<T> collection, Predicate<T> match)
-        {
-            var result = new List<T>();
-            foreach (var item in collection)
-            {
-                if (match(item))
-                {
-                    result.Add(item);
-                }
-            }
-            return result;
-        }
-    }
 
-    public class User
+public class User
     {
         public Dictionary<string, string> AvatarURLs { get; set; }
         public bool CanBan { get; set; }
@@ -137,40 +141,68 @@ namespace Ark_Ascended_Manager.Views.Pages
 
     public class Resource
     {
+        [JsonProperty("alt_support_url")]
         public string AltSupportURL { get; set; }
-        public bool CanDownload { get; set; }
-        public bool CanEdit { get; set; }
-        public bool CanEditIcon { get; set; }
-        public bool CanEditTags { get; set; }
-        public bool CanHardDelete { get; set; }
-        public bool CanSoftDelete { get; set; }
-        public bool CanViewDescriptionAttachments { get; set; }
-        public string Currency { get; set; }
-        public Dictionary<string, object> CustomFields { get; set; }
-        public int DownloadCount { get; set; }
-        public string ExternalURL { get; set; }
+
+        [JsonProperty("icon_url")]
         public string IconURL { get; set; }
-        public bool IsWatching { get; set; }
-        public int LastUpdate { get; set; }
-        public string Prefix { get; set; }
-        public int PrefixID { get; set; }
-        public string Price { get; set; }
-        public double RatingAvg { get; set; }
-        public int RatingCount { get; set; }
-        public double RatingWeighted { get; set; }
-        public int ResourceCategoryID { get; set; }
-        public int ResourceDate { get; set; }
-        public int ResourceID { get; set; }
-        public string ResourceState { get; set; }
-        public string ResourceType { get; set; }
-        public string TagLine { get; set; }
-        public List<string> Tags { get; set; }
+
+        [JsonProperty("title")]
         public string Title { get; set; }
-        public User User { get; set; }
-        public int UserID { get; set; }
-        public string Username { get; set; }
+
+        [JsonProperty("resource_id")]
+        public string ResourceID { get; set; }
+
+        [JsonProperty("version")]
         public string Version { get; set; }
-        public int ViewCount { get; set; }
+
+        [JsonProperty("rating_avg")]
+        public double RatingAvg { get; set; }
+
+        [JsonProperty("price")]
+        public string Price { get; set; }
+
+        [JsonProperty("tag_line")]
+        public string TagLine { get; set; }
+
+        [JsonProperty("external_url")]
+        public string ExternalURL { get; set; }
+
+        [JsonProperty("view_url")]
         public string ViewURL { get; set; }
+
+        [JsonProperty("tags")]
+        public List<string> Tags { get; set; }
+
+        [JsonProperty("user_id")]
+        public int UserID { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("view_count")]
+        public int ViewCount { get; set; }
+
+        [JsonProperty("download_count")]
+        public int DownloadCount { get; set; }
+
+        [JsonProperty("rating_count")]
+        public int RatingCount { get; set; }
+
+        [JsonProperty("rating_weighted")]
+        public double RatingWeighted { get; set; }
+
+        [JsonProperty("resource_category_id")]
+        public int ResourceCategoryID { get; set; }
+
+        [JsonProperty("resource_date")]
+        public long ResourceDate { get; set; }
+
+        [JsonProperty("resource_state")]
+        public string ResourceState { get; set; }
+
+        [JsonProperty("resource_type")]
+        public string ResourceType { get; set; }
     }
+
 }

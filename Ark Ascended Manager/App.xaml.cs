@@ -61,6 +61,7 @@ namespace Ark_Ascended_Manager
                 services.AddSingleton<CurseForgeModPage>();
                 services.AddTransient<CurseForgeCurrentModPage>();
                 services.AddTransient<ArkPlugins>();
+                services.AddTransient<ArkPluginResource>();
                 services.AddTransient<AddModToServerPage>();
                 services.AddSingleton<ISettingsService, SettingsService>();
                 services.AddHostedService<ServerMonitoringService>();

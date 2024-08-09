@@ -30,6 +30,7 @@ using System.Net.Http;
 using Ark_Ascended_Manager.Services;
 using ServerConfig = Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig;
 using Ark_Ascended_Manager.ViewModels.Windows;
+using YourNamespace.Helpers;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -331,41 +332,88 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 string appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 string fullPath = Path.Combine(appDataRoamingPath, "Ark Ascended Manager", "schedules.json");
 
-                // Serialize the updated list to JSON
-                string updatedJson = JsonConvert.SerializeObject(ScheduleTasks.ToList());
-
-                // Write the updated JSON back to the file
-                File.WriteAllText(fullPath, updatedJson);
+                try
+                {
+                    // Use JsonHelper to write the updated ScheduleTasks to the JSON file
+                    JsonHelper.WriteJsonFile(fullPath, ScheduleTasks.ToList());
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during writing
+                    Debug.WriteLine("Error updating JSON file: " + ex.Message);
+                }
             }
             catch (Exception ex)
             {
-                // Handle or log the error
-                Debug.WriteLine("Error updating JSON file: " + ex.Message);
+                // Handle or log errors related to path generation
+                Debug.WriteLine("Error generating file path: " + ex.Message);
             }
         }
+
         private void LoadAndDisplaySchedules()
         {
-            var schedules = ReadAndParseJson(@"\AppData\Roaming\Ark Ascended Manager\schedules.json");
-            _currentServer = CurrentServerConfig.ProfileName; // Implement this method
-            ScheduleTasks = new ObservableCollection<ScheduleTask>(
-                schedules.Where(s => s.Server == _currentServer));
+            try
+            {
+                string appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string fullPath = Path.Combine(appDataRoamingPath, "Ark Ascended Manager", "schedules.json");
 
+                try
+                {
+                    // Use JsonHelper to read the schedules from the JSON file
+                    var schedules = JsonHelper.ReadJsonFile<List<ScheduleTask>>(fullPath);
+
+                    // Filter schedules based on the current server profile name
+                    _currentServer = CurrentServerConfig?.ProfileName; // Ensure CurrentServerConfig is not null
+                    if (_currentServer != null)
+                    {
+                        ScheduleTasks = new ObservableCollection<ScheduleTask>(
+                            schedules.Where(s => s.Server == _currentServer));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during reading
+                    Debug.WriteLine("Error loading schedules from JSON file: " + ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log errors related to path generation
+                Debug.WriteLine("Error generating file path: " + ex.Message);
+            }
         }
-        
+
         private void InitializeFileWatcher()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string fullPath = Path.Combine(appDataPath, "Ark Ascended Manager", "schedules.json");
-
-            if (!File.Exists(fullPath))
+            try
             {
-                return;
-            }
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string fullPath = Path.Combine(appDataPath, "Ark Ascended Manager", "schedules.json");
 
-            _fileWatcher = new FileSystemWatcher(Path.GetDirectoryName(fullPath), Path.GetFileName(fullPath));
-            _fileWatcher.Changed += (sender, e) => LoadAndDisplaySchedules();
-            _fileWatcher.EnableRaisingEvents = true;
+                if (!File.Exists(fullPath))
+                {
+                    return;
+                }
+
+                try
+                {
+                    _fileWatcher = new FileSystemWatcher(Path.GetDirectoryName(fullPath), Path.GetFileName(fullPath));
+                    _fileWatcher.Changed += (sender, e) => LoadAndDisplaySchedules();
+                    _fileWatcher.EnableRaisingEvents = true;
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during file watcher initialization
+                    Debug.WriteLine("Error initializing file watcher: " + ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log errors related to path generation
+                Debug.WriteLine("Error generating file path: " + ex.Message);
+            }
         }
+
 
 
         private List<ScheduleTask> ReadAndParseJson(string fileName)
@@ -434,17 +482,36 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void LoadJsonForSelectedPlugin(string selectedPlugin)
         {
-            string jsonFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+            try
+            {
+                string jsonFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
 
-            if (File.Exists(jsonFilePath))
-            {
-                SelectedPluginConfig = File.ReadAllText(jsonFilePath);
+                if (File.Exists(jsonFilePath))
+                {
+                    try
+                    {
+                        SelectedPluginConfig = File.ReadAllText(jsonFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle or log the error during file reading
+                        Debug.WriteLine($"Error reading JSON file for plugin '{selectedPlugin}': {ex.Message}");
+                        SelectedPluginConfig = "Error loading configuration.";
+                    }
+                }
+                else
+                {
+                    SelectedPluginConfig = "File not found.";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                SelectedPluginConfig = "File not found.";
+                // Handle or log errors related to path generation or other unexpected issues
+                Debug.WriteLine($"Error generating file path for plugin '{selectedPlugin}': {ex.Message}");
+                SelectedPluginConfig = "Error loading configuration.";
             }
         }
+
         private void SaveAllSettings()
         {
             if (CurrentServerConfig.ServerStatus == "Online")
@@ -466,43 +533,78 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public async Task UpdateCurrentServerIPAddress()
         {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-
-            List<ServerConfig> serverConfigs;
-
-            // Read existing configs or initialize a new list if none exist
-            if (File.Exists(filePath))
+            try
             {
-                string existingJson = File.ReadAllText(filePath);
-                serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(existingJson) ?? new List<ServerConfig>();
-            }
-            else
-            {
-                serverConfigs = new List<ServerConfig>();
-            }
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
 
-            // Find the current server config in the list or add it if it doesn't exist
-            var serverConfig = serverConfigs.FirstOrDefault(sc => sc.ServerName == CurrentServerConfig.ServerName);
-            if (serverConfig == null)
-            {
-                serverConfig = new ServerConfig(); // Assuming ServerConfig is a constructor of your config class
-                serverConfigs.Add(serverConfig);
-            }
+                List<ServerConfig> serverConfigs;
 
-            // Update the IP address
-            if (string.IsNullOrWhiteSpace(ServerIP))
-            {
-                serverConfig.ServerIP = await FetchExternalIPAddress();
-            }
-            else
-            {
-                serverConfig.ServerIP = ServerIP;
-            }
+                try
+                {
+                    // Read existing configs or initialize a new list if none exist
+                    if (File.Exists(filePath))
+                    {
+                        string existingJson = File.ReadAllText(filePath);
+                        serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(existingJson) ?? new List<ServerConfig>();
+                    }
+                    else
+                    {
+                        serverConfigs = new List<ServerConfig>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during reading or deserialization
+                    Debug.WriteLine($"Error reading or deserializing JSON file: {ex.Message}");
+                    return; // Exit the method if an error occurs during reading
+                }
 
-            // Serialize the updated list to JSON
-            string json = JsonConvert.SerializeObject(serverConfigs, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+                // Find the current server config in the list or add it if it doesn't exist
+                var serverConfig = serverConfigs.FirstOrDefault(sc => sc.ServerName == CurrentServerConfig?.ServerName);
+                if (serverConfig == null)
+                {
+                    serverConfig = new ServerConfig(); // Assuming ServerConfig is a constructor of your config class
+                    serverConfigs.Add(serverConfig);
+                }
+
+                try
+                {
+                    // Update the IP address
+                    if (string.IsNullOrWhiteSpace(ServerIP))
+                    {
+                        serverConfig.ServerIP = await FetchExternalIPAddress();
+                    }
+                    else
+                    {
+                        serverConfig.ServerIP = ServerIP;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during IP address fetching or assignment
+                    Debug.WriteLine($"Error updating server IP address: {ex.Message}");
+                    return; // Exit the method if an error occurs during IP address update
+                }
+
+                try
+                {
+                    // Serialize the updated list to JSON
+                    string json = JsonConvert.SerializeObject(serverConfigs, Formatting.Indented);
+                    File.WriteAllText(filePath, json);
+                }
+                catch (Exception ex)
+                {
+                    // Handle or log the error during serialization or writing
+                    Debug.WriteLine($"Error serializing or writing JSON file: {ex.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log any unexpected errors
+                Debug.WriteLine($"Unexpected error in UpdateCurrentServerIPAddress: {ex.Message}");
+            }
         }
+
 
 
 
@@ -672,41 +774,77 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         public void LoadSelectedPluginConfig(string selectedPlugin)
         {
-            var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
-
-            if (File.Exists(configFilePath))
-            {
-                var json = File.ReadAllText(configFilePath);
-                Ark_Ascended_Manager.Services.Logger.Log("JSON Content: " + json); // This will print the content to the Output window
-                UpdateSelectedPluginConfig(json);
-            }
-            else
-            {
-                // Handle the case where the config file doesn't exist
-                Ark_Ascended_Manager.Services.Logger.Log("Config file does not exist.");
-            }
-        }
-
-        private void ExecuteLoadJson()
-        {
-            
-            LoadSelectedPluginConfig(SelectedPlugin);
-        }
-
-        public void SaveSelectedPluginConfig(string selectedPlugin, string configContent)
-        {
-            var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
-
             try
             {
-                File.WriteAllText(configFilePath, configContent);
-                // Handle post-save operations (e.g., notify user of success)
+                var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+                if (File.Exists(configFilePath))
+                {
+                    try
+                    {
+                        var json = File.ReadAllText(configFilePath);
+                        Ark_Ascended_Manager.Services.Logger.Log("JSON Content: " + json); // This will print the content to the Output window
+                        UpdateSelectedPluginConfig(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle or log the error during file reading or updating the configuration
+                        Ark_Ascended_Manager.Services.Logger.Log($"Error reading or updating plugin config for '{selectedPlugin}': {ex.Message}");
+                    }
+                }
+                else
+                {
+                    // Handle the case where the config file doesn't exist
+                    Ark_Ascended_Manager.Services.Logger.Log("Config file does not exist.");
+                }
             }
             catch (Exception ex)
             {
-                // Handle exceptions (e.g., write access issues)
+                // Handle or log any unexpected errors
+                Ark_Ascended_Manager.Services.Logger.Log($"Unexpected error in LoadSelectedPluginConfig for '{selectedPlugin}': {ex.Message}");
             }
         }
+
+
+        private void ExecuteLoadJson()
+        {
+            try
+            {
+                LoadSelectedPluginConfig(SelectedPlugin);
+            }
+            catch (Exception ex)
+            {
+                // Handle or log any unexpected errors during the execution of LoadSelectedPluginConfig
+                Ark_Ascended_Manager.Services.Logger.Log($"Unexpected error in ExecuteLoadJson: {ex.Message}");
+            }
+        }
+
+
+        public void SaveSelectedPluginConfig(string selectedPlugin, string configContent)
+        {
+            try
+            {
+                var configFilePath = Path.Combine(CurrentServerConfig.ServerPath, "ShooterGame", "Binaries", "Win64", "ArkApi", "Plugins", selectedPlugin, "config.json");
+
+                try
+                {
+                    File.WriteAllText(configFilePath, configContent);
+                    // Handle post-save operations (e.g., notify user of success)
+                    Ark_Ascended_Manager.Services.Logger.Log($"Config for '{selectedPlugin}' saved successfully.");
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions (e.g., write access issues)
+                    Ark_Ascended_Manager.Services.Logger.Log($"Error saving plugin config for '{selectedPlugin}': {ex.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log any unexpected errors
+                Ark_Ascended_Manager.Services.Logger.Log($"Unexpected error in SaveSelectedPluginConfig for '{selectedPlugin}': {ex.Message}");
+            }
+        }
+
 
 
         private void WipeServer()
@@ -793,7 +931,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        // This method combines the deletion of the server folder and the removal from servers.json
+
+
         private void RemoveServerAndFolder(string serverName)
         {
             // Path to servers.json
@@ -803,36 +942,49 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 "servers.json"
             );
 
-            // Load servers from JSON
-            string json = File.ReadAllText(jsonFilePath);
-            List<ServerConfig> servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
-
-            // Find the server
-            ServerConfig serverConfig = servers.FirstOrDefault(s => s.ServerName.Equals(serverName, StringComparison.OrdinalIgnoreCase));
-            if (serverConfig != null)
+            try
             {
-                // Delete the server folder
-                string serverFolderPath = serverConfig.ServerPath;
-                if (Directory.Exists(serverFolderPath))
+                // Use JsonHelper to read the servers from the JSON file
+                List<ServerConfig> servers = JsonHelper.ReadJsonFile<List<ServerConfig>>(jsonFilePath);
+
+                // Find the server
+                ServerConfig serverConfig = servers.FirstOrDefault(s => s.ServerName.Equals(serverName, StringComparison.OrdinalIgnoreCase));
+                if (serverConfig != null)
                 {
-                    Directory.Delete(serverFolderPath, recursive: true);
+                    try
+                    {
+                        // Delete the server folder
+                        string serverFolderPath = serverConfig.ServerPath;
+                        if (Directory.Exists(serverFolderPath))
+                        {
+                            Directory.Delete(serverFolderPath, recursive: true);
+                        }
+
+                        // Remove the server from the list
+                        servers.Remove(serverConfig);
+
+                        // Use JsonHelper to save the updated server list back to the JSON file
+                        JsonHelper.WriteJsonFile(jsonFilePath, servers);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show($"Error deleting server folder or updating configuration: {ex.Message}");
+                    }
                 }
-
-                // Remove the server from the list
-                servers.Remove(serverConfig);
-
-                // Save the updated server list to JSON
-                json = JsonConvert.SerializeObject(servers, Formatting.Indented);
-                File.WriteAllText(jsonFilePath, json);
-
-                
+                else
+                {
+                    // Server was not found in the configuration
+                    System.Windows.MessageBox.Show("Server not found in the configuration. No action taken.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Server was not found in the configuration
-                System.Windows.MessageBox.Show("Server not found in the configuration. No action taken.");
+                System.Windows.MessageBox.Show($"Error reading or updating JSON: {ex.Message}");
             }
         }
+
+
+
 
         // Implement the ShowConfirmationDialog method
         private string ShowConfirmationDialog(string message)
@@ -854,38 +1006,22 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             Logger.Log("Loading server profile.");
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "currentServerConfig.json");
 
-            if (File.Exists(filePath))
+            try
             {
-                try
-                {
-                    Logger.Log($"Reading server profile from {filePath}");
-                    string json = File.ReadAllText(filePath);
-                    CurrentServerConfig = JsonConvert.DeserializeObject<ServerConfig>(json);
+                // Use JsonHelper to read the server profile from the JSON file
+                CurrentServerConfig = JsonHelper.ReadJsonFile<ServerConfig>(filePath);
 
-                    if (CurrentServerConfig == null)
-                    {
-                        Logger.Log("Failed to deserialize server profile. CurrentServerConfig is null.");
-                        return;
-                    }
+                if (CurrentServerConfig == null)
+                {
+                    Logger.Log("Failed to deserialize server profile. CurrentServerConfig is null.");
+                    return;
+                }
 
-                    Logger.Log($"Loaded server profile for {CurrentServerConfig.ServerName}");
-                }
-                catch (Newtonsoft.Json.JsonException ex)
-                {
-                    Logger.Log($"JSON Exception occurred while reading server profile: {ex.Message}");
-                }
-                catch (IOException ex)
-                {
-                    Logger.Log($"IO Exception occurred while reading server profile: {ex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log($"Exception occurred while reading server profile: {ex.Message}");
-                }
+                Logger.Log($"Loaded server profile for {CurrentServerConfig.ServerName}");
             }
-            else
+            catch (Exception ex)
             {
-                Logger.Log("Server profile file not found.");
+                Logger.Log($"Exception occurred while reading server profile: {ex.Message}");
             }
 
             // Ensure CurrentServerConfig is not null before proceeding
@@ -907,6 +1043,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Logger.Log("CurrentServerConfig is null after deserialization.");
             }
         }
+
 
 
         // Ensure this method is in the ConfigPageViewModel if that's where it's being called
@@ -960,19 +1097,27 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
 
-            if (File.Exists(jsonFilePath))
+            try
             {
-                string json = File.ReadAllText(jsonFilePath);
-                var monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
+                // Use JsonHelper to read the monitoring information from the JSON file
+                var monitoringInfos = JsonHelper.ReadJsonFile<List<MonitoringInfo>>(jsonFilePath);
 
                 if (monitoringInfos != null)
                 {
+                    // Remove all entries that match the specified server directory
                     monitoringInfos.RemoveAll(info => info.ServerDirectory.Equals(serverDirectory, StringComparison.OrdinalIgnoreCase));
-                    json = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
-                    File.WriteAllText(jsonFilePath, json);
+
+                    // Use JsonHelper to write the updated monitoring information back to the JSON file
+                    JsonHelper.WriteJsonFile(jsonFilePath, monitoringInfos);
                 }
             }
+            catch (Exception ex)
+            {
+                // Handle or log any unexpected errors
+                Debug.WriteLine($"Error removing server from monitoring: {ex.Message}");
+            }
         }
+
 
         public bool IsServerRunning(ServerConfig serverConfig)
         {
@@ -1171,27 +1316,34 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private string GetAppIdForMapFromJson(string mapName)
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
-
-            if (File.Exists(jsonFilePath))
+            try
             {
-                string json = File.ReadAllText(jsonFilePath);
-                List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "servers.json");
+
+                // Use JsonHelper to read the server configurations from the JSON file
+                List<ServerConfig> serverConfigs = JsonHelper.ReadJsonFile<List<ServerConfig>>(jsonFilePath);
 
                 foreach (var serverConfig in serverConfigs)
                 {
-                    if (serverConfig.MapName == mapName)
+                    if (serverConfig.MapName.Equals(mapName, StringComparison.OrdinalIgnoreCase))
                     {
                         Ark_Ascended_Manager.Services.Logger.Log($"App ID for {mapName} is {serverConfig.AppId}");
                         return serverConfig.AppId;
                     }
                 }
-            }
 
-            Ark_Ascended_Manager.Services.Logger.Log($"Map name {mapName} not found in servers.json");
-            return null; // Or your default app ID
+                Ark_Ascended_Manager.Services.Logger.Log($"Map name {mapName} not found in servers.json");
+                return null; // Or return a default App ID if appropriate
+            }
+            catch (Exception ex)
+            {
+                // Handle or log any unexpected errors
+                Ark_Ascended_Manager.Services.Logger.Log($"Error retrieving App ID for map {mapName}: {ex.Message}");
+                return null; // Or return a default App ID if appropriate
+            }
         }
+
 
 
         public void UpdateServerBasedOnJson()
@@ -1327,18 +1479,10 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                if (File.Exists(filePath))
-                {
-                    string json = File.ReadAllText(filePath);
-                    Debug.WriteLine("ReadAllServerConfigs: JSON content read successfully.");
-                    List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
-                    return serverConfigs ?? new List<ServerConfig>();
-                }
-                else
-                {
-                    Debug.WriteLine("ReadAllServerConfigs: JSON file does not exist.");
-                    return new List<ServerConfig>();
-                }
+                // Use JsonHelper to read the server configurations from the JSON file
+                List<ServerConfig> serverConfigs = JsonHelper.ReadJsonFile<List<ServerConfig>>(filePath);
+                Debug.WriteLine("ReadAllServerConfigs: JSON content read successfully.");
+                return serverConfigs ?? new List<ServerConfig>();
             }
             catch (Exception ex)
             {
@@ -1346,6 +1490,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 return new List<ServerConfig>();
             }
         }
+
 
         private void WriteAllServerConfigs(List<ServerConfig> configs)
         {
@@ -1364,8 +1509,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                string json = JsonConvert.SerializeObject(configs, Formatting.Indented);
-                File.WriteAllText(filePath, json);
+                // Use JsonHelper to write the server configurations to the JSON file
+                JsonHelper.WriteJsonFile(filePath, configs);
                 Debug.WriteLine("WriteAllServerConfigs: JSON file written successfully.");
             }
             catch (Exception ex)
@@ -1373,6 +1518,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 Debug.WriteLine($"WriteAllServerConfigs: Exception occurred - {ex.Message}");
             }
         }
+
 
 
 
@@ -1468,24 +1614,24 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string jsonFilePath = Path.Combine(appDataPath, "Ark Ascended Manager", "crashdetection.json");
 
-            // You can decide whether to append to the file if it exists or overwrite it
-            List<MonitoringInfo> monitoringInfos;
-            if (File.Exists(jsonFilePath))
+            try
             {
-                string json = File.ReadAllText(jsonFilePath);
-                monitoringInfos = JsonConvert.DeserializeObject<List<MonitoringInfo>>(json);
-                if (monitoringInfos == null) monitoringInfos = new List<MonitoringInfo>();
+                // Use JsonHelper to read the existing monitoring information from the JSON file
+                List<MonitoringInfo> monitoringInfos = JsonHelper.ReadJsonFile<List<MonitoringInfo>>(jsonFilePath) ?? new List<MonitoringInfo>();
+
+                // Add the new monitoring info
+                monitoringInfos.Add(info);
+
+                // Use JsonHelper to write the updated monitoring information back to the JSON file
+                JsonHelper.WriteJsonFile(jsonFilePath, monitoringInfos);
             }
-            else
+            catch (Exception ex)
             {
-                monitoringInfos = new List<MonitoringInfo>();
+                // Handle or log any unexpected errors
+                Debug.WriteLine($"Error saving monitoring info: {ex.Message}");
             }
-
-            monitoringInfos.Add(info);
-
-            string newJson = JsonConvert.SerializeObject(monitoringInfos, Formatting.Indented);
-            File.WriteAllText(jsonFilePath, newJson);
         }
+
         public class MonitoringInfo
         {
             public string ServerDirectory { get; set; }
@@ -1507,6 +1653,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 string[] batFileLines = File.ReadAllLines(batFilePath);
                 foreach (var line in batFileLines)
                 {
+                    Debug.WriteLine($"Processing line: {line}");
+
                     if (line.StartsWith("set ", StringComparison.OrdinalIgnoreCase))
                     {
                         var splitLine = line.Substring(4).Split(new[] { '=' }, 2);
@@ -1514,6 +1662,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         {
                             var key = splitLine[0].Trim();
                             var value = splitLine[1].Trim();
+                            Debug.WriteLine($"Extracted key: {key}, value: {value}");
 
                             switch (key)
                             {
@@ -1538,10 +1687,6 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "customparameters":
                                     CustomLaunchOptions = value;
                                     break;
-
-
-
-
                                     // Add cases for any other 'set' values you need to parse
                             }
                         }
@@ -1561,32 +1706,43 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                         ClusterID = ExtractParameterValue(line, "-clusterid");
                         ClusterDirOverride = ExtractParameterValue(line, "-ClusterDirOverride");
 
-                        // Map name and other parameters extraction from the command
-                        var commandParts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (commandParts.Length > 1)
+                        // Extract affinity settings
+                        var affinityMatch = Regex.Match(line, @"/affinity (\w+)");
+                        if (affinityMatch.Success)
                         {
-                            var args = commandParts[2].Split('?');
-                            if (args.Length > 0)
-                            {
-                                var mapNameWithParams = args[0];
+                            string affinityHex = affinityMatch.Groups[1].Value;
+                            int processorAffinity = Convert.ToInt32(affinityHex, 16);
+                            Debug.WriteLine($"Extracted processor affinity: {processorAffinity}");
+                            // Update your processor affinity logic here
+                        }
 
-                                // Check if mapNameWithParams is an official map
-                                if (mapNameWithParams.EndsWith("_WP") && OptionsList.ContainsKey(mapNameWithParams))
-                                {
-                                    // It's an official map, so no override is needed
-                                    OverrideMapName = null;
-                                    OverrideEnabled = false;
-                                }
-                                else
-                                {
-                                    // It's not an official map, or doesn't follow the naming convention
-                                    OverrideMapName = mapNameWithParams;
-                                    OverrideEnabled = true;
-                                }
+                        // Extract map name and other parameters from the command
+                        var exeIndex = line.IndexOf(".exe");
+                        if (exeIndex != -1)
+                        {
+                            var startIndex = exeIndex + 4; // Position right after '.exe'
+                            var mapNameStartIndex = line.IndexOf(' ', startIndex) + 1;
+                            var mapNameEndIndex = line.IndexOf('?', mapNameStartIndex);
+                            if (mapNameEndIndex == -1) mapNameEndIndex = line.Length;
+
+                            var mapNameWithParams = line.Substring(mapNameStartIndex, mapNameEndIndex - mapNameStartIndex);
+                            Debug.WriteLine($"Extracted map name with params: {mapNameWithParams}");
+
+                            // Check if mapNameWithParams is an official map
+                            if (mapNameWithParams.EndsWith("_WP") && OptionsList.ContainsKey(mapNameWithParams))
+                            {
+                                // It's an official map, so no override is needed
+                                OverrideMapName = null;
+                                OverrideEnabled = false;
+                            }
+                            else
+                            {
+                                // It's not an official map, or doesn't follow the naming convention
+                                OverrideMapName = mapNameWithParams;
+                                OverrideEnabled = true;
                             }
                         }
                     }
-
                 }
             }
 
@@ -1607,7 +1763,11 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(nameof(PluginsEnabled));
             OnPropertyChanged(nameof(ClusterID));
             OnPropertyChanged(nameof(ClusterDirOverride));
+            OnPropertyChanged(nameof(OverrideMapName));
         }
+
+
+
 
         private string ExtractParameterValue(string line, string parameterName)
         {
@@ -1620,6 +1780,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
             return match.Success ? match.Groups[1].Value : string.Empty;
         }
+
 
 
 
@@ -1831,18 +1992,51 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                                 case "mods":
                                     CurrentServerConfig.Mods = value.Split(',').ToList();
                                     break;
-
-
+                                case "customparameters":
+                                    CustomLaunchOptions = value;
+                                    break;
                                     // Add cases for any other 'set' values you need to parse
                             }
+                        }
+                    }
+                    else if (line.Trim().StartsWith("start ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Existing settings extraction
+                        UseBattleye = line.Contains("-UseBattleye");
+                        UseOldConsole = line.Contains("-oldconsole");
+                        DisableCustomCosmetics = line.Contains("-DisableCustomCosmetics");
+                        AutoDestroyStructures = line.Contains("-AutoDestroyStructures");
+                        NotifyAdminCommandsInChat = line.Contains("-NotifyAdminCommandsInChat");
+                        ForceRespawnDinos = line.Contains("-ForceRespawnDinos");
+                        ServerPlatformSetting = ExtractParameterValue(line, "-ServerPlatform");
+                        ServerIP = ExtractParameterValue(line, "-ServerIP");
+                        PluginsEnabled = line.Contains("AsaApiLoader.exe");
+                        ClusterID = ExtractParameterValue(line, "-clusterid");
+                        ClusterDirOverride = ExtractParameterValue(line, "-ClusterDirOverride");
+
+                        // Extract map name
+                        var mapMatch = Regex.Match(line, @"\?(.+?)\?");
+                        if (mapMatch.Success)
+                        {
+                            CurrentServerConfig.MapName = mapMatch.Groups[1].Value;
+                        }
+
+                        // Extract affinity settings
+                        var affinityMatch = Regex.Match(line, @"/affinity (\w+)");
+                        if (affinityMatch.Success)
+                        {
+                            string affinityHex = affinityMatch.Groups[1].Value;
+                            int processorAffinity = Convert.ToInt32(affinityHex, 16);
+                            // Update your processor affinity logic here
                         }
                     }
                 }
             }
         }
 
+
         // Then you call SaveServerConfigToJson to save the updated ServerConfig to servers.json
-        
+
 
 
 
@@ -1861,19 +2055,19 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         }
 
         private string ConstructBatchFileContent(string serverPath, string executable, string modsSetting, string booleanSettings, string serverPlatformSetting, string serverIP, string mapName, string passiveMod, string customLaunchOptions, int processorAffinity)
-{
-    string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
-    string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
-    string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
-    string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
-    string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
+        {
+            string serverIPArgument = !string.IsNullOrWhiteSpace(serverIP) ? $" -ServerIP={serverIP}" : "";
+            string serverPlatformArgument = !string.IsNullOrWhiteSpace(serverPlatformSetting) ? $" -ServerPlatform={serverPlatformSetting}" : "";
+            string clusterArguments = !string.IsNullOrWhiteSpace(ClusterID) ? $" -clusterid={ClusterID}" : "";
+            string clusterDirOverrideArgument = !string.IsNullOrWhiteSpace(ClusterDirOverride) ? $" -ClusterDirOverride=\"{ClusterDirOverride}\"" : "";
+            string customLaunchOptionsArgument = !string.IsNullOrWhiteSpace(customLaunchOptions) ? $" {customLaunchOptions}" : "";
 
-    // Check if modsSetting is not empty and construct modsArgument accordingly
-    string modsArgument = !string.IsNullOrWhiteSpace(modsSetting) ? $" -mods=%mods%" : "";
+            // Check if modsSetting is not empty and construct modsArgument accordingly
+            string modsArgument = !string.IsNullOrWhiteSpace(modsSetting) ? $" -mods=%mods%" : "";
 
-    string affinityArgument = processorAffinity != 0 ? $"/affinity {processorAffinity:X}" : "";
+            string affinityArgument = processorAffinity != 0 ? $"/affinity {processorAffinity:X}" : "";
 
-    string batchFileContent = $@"
+            string batchFileContent = $@"
 cd /d ""{serverPath}\\ShooterGame\\Binaries\\Win64""
 set ServerName={SessionName}
 set Port={ListenPort}
@@ -1888,9 +2082,9 @@ set AdditionalSettings=-WinLiveMaxPlayers=%MaxPlayers% -SecureSendArKPayload -Ac
 start {affinityArgument} {executable} {mapName}?listen?RCONEnabled=True?Port=%Port%?RCONPort=%RconPort%?MultiHome=%MultiHome%{booleanSettings}{serverIPArgument}{serverPlatformArgument}{clusterArguments}{clusterDirOverrideArgument}{customLaunchOptionsArgument} %AdditionalSettings%
 ".Trim();
 
-    BatchFilePreview = batchFileContent;
-    return batchFileContent;
-}
+            BatchFilePreview = batchFileContent;
+            return batchFileContent;
+        }
 
 
 

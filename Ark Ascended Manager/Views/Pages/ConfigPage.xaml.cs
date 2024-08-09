@@ -64,6 +64,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 var spawnClassEntries = JsonConvert.DeserializeObject<List<SpawnClassEntry>>(spawnClassContent);
                 var creatureIdContent = File.ReadAllText(creatureIdsPath);
                 var creatureIdEntries = JsonConvert.DeserializeObject<List<CreatureIdEntry>>(creatureIdContent);
+
             }
             catch (Exception ex)
             {
@@ -430,6 +431,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 StackSizeOverrides = new ObservableCollection<StackSizeOverride>(items);
             }
         }
+
 
         private void SaveConfig_Click(object sender, RoutedEventArgs e)
         {
@@ -1050,7 +1052,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             SaveServerConfigToJson(serverConfig);
         }
 
-        private void SaveServerConfigToJson(Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig serverConfig) 
+        private void SaveServerConfigToJson(Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig serverConfig)
         {
             Debug.WriteLine($"Saving ServerConfig with MapName: {serverConfig.MapName ?? "null"}");
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -1069,6 +1071,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             _navigationService.Navigate(typeof(RestorePage));
         }
+
 
 
         public void OnNavigatedTo(object parameter)
@@ -1214,6 +1217,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
 
 
+
         private List<string> GetAllServerPaths()
         {
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -1226,6 +1230,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             }
             return new List<string>();
         }
+
 
         private bool SaveJsonToServerPlugin(string serverPath, string pluginName, string jsonContent)
         {
@@ -1250,6 +1255,7 @@ namespace Ark_Ascended_Manager.Views.Pages
                 return false; // Directory does not exist, operation skipped
             }
         }
+
 
 
 

@@ -14,6 +14,7 @@ using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using Newtonsoft.Json;
 using Ark_Ascended_Manager.Services;
+using YourNamespace.Helpers;
 
 
 namespace Ark_Ascended_Manager.Views.Pages
@@ -74,35 +75,22 @@ namespace Ark_Ascended_Manager.Views.Pages
             // Combine the AppData path with your application's specific folder
             string applicationFolderPath = Path.Combine(appDataFolderPath, "Ark Ascended Manager");
 
-            // Ensure the directory exists
-            Directory.CreateDirectory(applicationFolderPath);
-
             // Define the file path for servers.json within the application's folder
             string filePath = Path.Combine(applicationFolderPath, "servers.json");
 
-            List<ServerConfig> servers;
+            // Ensure the directory exists
+            Directory.CreateDirectory(applicationFolderPath);
 
-            if (File.Exists(filePath))
-            {
-                // Read existing list from file
-                string json = File.ReadAllText(filePath);
-                servers = JsonConvert.DeserializeObject<List<ServerConfig>>(json) ?? new List<ServerConfig>();
-            }
-            else
-            {
-                servers = new List<ServerConfig>();
-            }
+            // Read existing list from file
+            var servers = JsonHelper.ReadJsonFile<List<ServerConfig>>(filePath) ?? new List<ServerConfig>();
 
-        
             // Add the new server config
             servers.Add(config);
 
             // Write updated list to file
-            string updatedJson = JsonConvert.SerializeObject(servers, Formatting.Indented);
-
-            File.WriteAllText(filePath, updatedJson);
-         
+            JsonHelper.WriteJsonFile(filePath, servers);
         }
+
 
         private string FindSteamCmdPath()
         {

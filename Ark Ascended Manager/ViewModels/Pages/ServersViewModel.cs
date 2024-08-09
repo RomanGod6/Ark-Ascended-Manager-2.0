@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using static Ark_Ascended_Manager.ViewModels.Pages.ConfigPageViewModel;
 using Ark_Ascended_Manager.Services;
 using ServerConfig = Ark_Ascended_Manager.Views.Pages.CreateServersPage.ServerConfig;
+using YourNamespace.Helpers;
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
     public partial class ServersViewModel : ObservableObject, INavigationAware
@@ -334,24 +335,35 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
         private void SaveServerConfigs(List<ServerConfig> servers)
         {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-            string json = JsonConvert.SerializeObject(servers, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+            try
+            {
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+                JsonHelper.WriteJsonFile(filePath, servers);
+                System.Windows.MessageBox.Show("Server configurations saved successfully.", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to save server configurations: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
+
 
 
         // Helper method to get server status from JSON for a specific server profile
         private bool GetServerStatusFromJson(string profileName)
         {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-            if (File.Exists(filePath))
+            try
             {
-                string json = File.ReadAllText(filePath);
-                var servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json);
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+                var servers = JsonHelper.ReadJsonFile<List<ServerConfig>>(filePath);
                 var server = servers?.FirstOrDefault(s => s.ProfileName == profileName);
                 return server != null && server.ServerStatus == "Online";
             }
-            return false;
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error retrieving server status: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return false;
+            }
         }
 
         public void SetCurrentServerInfo(ServerConfig serverInfo)
@@ -674,16 +686,15 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
 
             try
             {
-                if (File.Exists(filePath))
+                var serverConfigs = JsonHelper.ReadJsonFile<List<ServerConfig>>(filePath);
+                if (serverConfigs != null)
                 {
-                    string json = File.ReadAllText(filePath);
                     Debug.WriteLine("ReadAllServerConfigs: JSON content read successfully.");
-                    List<ServerConfig> serverConfigs = JsonConvert.DeserializeObject<List<ServerConfig>>(json);
-                    return serverConfigs ?? new List<ServerConfig>();
+                    return serverConfigs;
                 }
                 else
                 {
-                    Debug.WriteLine("ReadAllServerConfigs: JSON file does not exist.");
+                    Debug.WriteLine("ReadAllServerConfigs: JSON file does not exist or contains no data.");
                     return new List<ServerConfig>();
                 }
             }
@@ -693,6 +704,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                 return new List<ServerConfig>();
             }
         }
+
 
         private void WriteAllServerConfigs(List<ServerConfig> configs)
         {
@@ -883,40 +895,35 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             // Define the path where you want to save the JSON
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "currentServerConfig.json");
 
-            // Serialize the ServerConfig object to JSON
-            string json = System.Text.Json.JsonSerializer.Serialize(serverConfig);
-
-            // Write the JSON to a file
-            File.WriteAllText(filePath, json);
+            // Use JsonHelper to save the ServerConfig object to a JSON file
+            JsonHelper.WriteJsonFile(filePath, serverConfig);
 
             // Navigate to the ConfigPage
             _navigationService.Navigate(typeof(ConfigPage));
         }
 
 
+
         public List<ServerConfig> LoadServerConfigs()
         {
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
-            List<ServerConfig> servers = new List<ServerConfig>();
 
-            if (File.Exists(filePath))
+            // Use JsonHelper to load the list of ServerConfig objects from the JSON file
+            var servers = JsonHelper.ReadJsonFile<List<ServerConfig>>(filePath) ?? new List<ServerConfig>();
+
+            if (servers != null)
             {
-                string json = File.ReadAllText(filePath);
-                servers = System.Text.Json.JsonSerializer.Deserialize<List<ServerConfig>>(json) ?? new List<ServerConfig>();
-
-                if (servers != null)
+                ServerConfigs.Clear(); // Clear existing configs before loading new ones
+                foreach (var server in servers)
                 {
-                    ServerConfigs.Clear(); // Clear existing configs before loading new ones
-                    foreach (var server in servers)
-                    {
-                        ServerConfigs.Add(server);
-                    }
+                    ServerConfigs.Add(server);
                 }
             }
 
             return servers;
         }
-        
+
+
 
 
 
