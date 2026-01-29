@@ -29,6 +29,7 @@ namespace Ark_Ascended_Manager.Views.Pages
             this.uploadedFilesList.ItemsSource = UploadedFiles;
             Loaded += async (s, e) => await CheckAndUpdateVersionStatusAsync();
             Loaded += SettingsPage_Loaded;
+            Loaded += (s, e) => LoadMapsList();
             CheckForUpdatesAsync();
             LoadUploadedFilesList();
         }
@@ -324,6 +325,126 @@ namespace Ark_Ascended_Manager.Views.Pages
                 {
                     Debug.WriteLine("Failed to check for updates.", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        // Custom Maps Management Methods
+        private void LoadMapsList()
+        {
+            try
+            {
+                lstCustomMaps.ItemsSource = MapService.Instance.GetAllMaps();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading maps list: {ex.Message}");
+            }
+        }
+
+        private void AddCustomMap_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                string mapCode = txtMapCode.Text.Trim();
+                string displayName = txtDisplayName.Text.Trim();
+                string appId = txtAppId.Text.Trim();
+
+                if (string.IsNullOrEmpty(mapCode) || string.IsNullOrEmpty(displayName))
+                {
+                    System.Windows.MessageBox.Show("Please enter both Map Code and Display Name.", "Validation Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var newMap = new Models.MapInfo
+                {
+                    MapCode = mapCode,
+                    DisplayName = displayName,
+                    AppId = string.IsNullOrEmpty(appId) ? "2430930" : appId,
+                    IsCustom = true,
+                    IsOfficial = false
+                };
+
+                MapService.Instance.AddCustomMap(newMap);
+
+                System.Windows.MessageBox.Show($"Custom map '{displayName}' added successfully!\n\nThe map will now appear in all map selection dropdowns.", "Success", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Clear input fields
+                txtMapCode.Clear();
+                txtDisplayName.Clear();
+                txtAppId.Text = "2430930";
+
+                // Refresh the list
+                RefreshMapsList_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error adding custom map: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RemoveCustomMap_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                if (lstCustomMaps.SelectedItem is Models.MapInfo selectedMap)
+                {
+                    if (selectedMap.IsOfficial)
+                    {
+                        System.Windows.MessageBox.Show("Cannot remove official maps.", "Not Allowed", System.Windows.MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    var result = System.Windows.MessageBox.Show($"Are you sure you want to remove the custom map '{selectedMap.DisplayName}'?", "Confirm Removal", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                    if (result == System.Windows.MessageBoxResult.Yes)
+                    {
+                        MapService.Instance.RemoveCustomMap(selectedMap.MapCode);
+                        System.Windows.MessageBox.Show($"Custom map '{selectedMap.DisplayName}' removed successfully!", "Success", System.Windows.MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        RefreshMapsList_Click(sender, e);
+                    }
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Please select a custom map to remove.", "No Selection", System.Windows.MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error removing custom map: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RefreshMapsList_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                MapService.Instance.ReloadMaps();
+                lstCustomMaps.ItemsSource = MapService.Instance.GetAllMaps();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error refreshing maps list: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OpenMapsConfig_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                string configPath = MapService.Instance.GetMapsConfigPath();
+                if (File.Exists(configPath))
+                {
+                    Process.Start(new ProcessStartInfo(configPath) { UseShellExecute = true });
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show($"Maps configuration file not found at:\n{configPath}", "File Not Found", System.Windows.MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error opening maps config: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

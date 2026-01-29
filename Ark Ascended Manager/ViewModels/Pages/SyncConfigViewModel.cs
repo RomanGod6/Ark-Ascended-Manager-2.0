@@ -109,11 +109,3 @@ public class SyncConfigViewModel : INotifyPropertyChanged
         }
     }
 }
-
-public class ServerProfile
-{
-    public string ServerName { get; set; }
-    public string ServerPath { get; set; }
-    public bool IsMapNameOverridden { get; set; }
-  
-}

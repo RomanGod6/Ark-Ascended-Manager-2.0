@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using Ark_Ascended_Manager.Models; // Ensure this is the correct namespace for ServerConfig
+using Ark_Ascended_Manager.Services;
 using static Ark_Ascended_Manager.Views.Pages.CreateServersPage;
 using System.IO;
 using System.Diagnostics;
@@ -67,6 +68,67 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
         public ICommand DeleteServerCommand { get; }
         public ICommand WipeServerCommand { get; }
         public ICommand LoadJsonCommand { get; private set; }
+        public ICommand BackupNowCommand { get; private set; }
+
+        // Backup-related properties
+        private bool _enableAutoBackup;
+        public bool EnableAutoBackup
+        {
+            get => _enableAutoBackup;
+            set
+            {
+                if (_enableAutoBackup != value)
+                {
+                    _enableAutoBackup = value;
+                    OnPropertyChanged(nameof(EnableAutoBackup));
+                    SaveBackupSettings();
+                }
+            }
+        }
+
+        private int _backupIntervalMinutes;
+        public int BackupIntervalMinutes
+        {
+            get => _backupIntervalMinutes;
+            set
+            {
+                if (_backupIntervalMinutes != value)
+                {
+                    _backupIntervalMinutes = value;
+                    OnPropertyChanged(nameof(BackupIntervalMinutes));
+                    SaveBackupSettings();
+                }
+            }
+        }
+
+        private int _maxBackupCount;
+        public int MaxBackupCount
+        {
+            get => _maxBackupCount;
+            set
+            {
+                if (_maxBackupCount != value)
+                {
+                    _maxBackupCount = value;
+                    OnPropertyChanged(nameof(MaxBackupCount));
+                    SaveBackupSettings();
+                }
+            }
+        }
+
+        private string _lastBackupTime;
+        public string LastBackupTime
+        {
+            get => _lastBackupTime;
+            set
+            {
+                if (_lastBackupTime != value)
+                {
+                    _lastBackupTime = value;
+                    OnPropertyChanged(nameof(LastBackupTime));
+                }
+            }
+        }
 
         private string _iniContent;
         private CoreRCON.RCON rcon;
@@ -186,13 +248,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             {
                 _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             }
-            OptionsList = new Dictionary<string, string>
-    {
-        { "TheIsland_WP", "The Island" },
-        { "ScorchedEarth_WP", "Scorched Earth" },
-                {"TheCenter_WP", "The Center" }
-        // ... Add other maps as needed
-    };
+            // Load maps from centralized MapService
+            OptionsList = MapService.Instance.GetMapDictionary();
             LoadServerProfile();
             
             InitializeFileWatcher();
@@ -210,6 +267,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             DeleteServerCommand = new RelayCommand(DeleteServer);
             WipeServerCommand = new RelayCommand(WipeServer);
             DeleteScheduleCommand = new RelayCommand<ScheduleTask>(DeleteSchedule);
+            BackupNowCommand = new RelayCommand(async () => await ExecuteBackupNow());
             LoadPlugins();
             _overrideEnabled = true;
             LoadJsonCommand = new RelayCommand(ExecuteLoadJson);
@@ -1032,6 +1090,7 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
                     LoadIniFile();
                     LoadGameIniFile();
                     LoadLaunchServerSettings();
+                    LoadBackupSettings();
                 }
                 catch (Exception ex)
                 {
@@ -1041,6 +1100,144 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             else
             {
                 Logger.Log("CurrentServerConfig is null after deserialization.");
+            }
+        }
+
+        private void LoadBackupSettings()
+        {
+            try
+            {
+                string serversJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+                if (!File.Exists(serversJsonPath))
+                {
+                    return;
+                }
+
+                string serversJson = File.ReadAllText(serversJsonPath);
+                var servers = JsonConvert.DeserializeObject<List<ServerProfile>>(serversJson);
+                var currentServer = servers?.FirstOrDefault(s => s.ProfileName == CurrentServerConfig.ProfileName);
+
+                if (currentServer != null)
+                {
+                    _enableAutoBackup = currentServer.EnableAutoBackup;
+                    _backupIntervalMinutes = currentServer.BackupIntervalMinutes;
+                    _maxBackupCount = currentServer.MaxBackupCount;
+
+                    OnPropertyChanged(nameof(EnableAutoBackup));
+                    OnPropertyChanged(nameof(BackupIntervalMinutes));
+                    OnPropertyChanged(nameof(MaxBackupCount));
+
+                    UpdateLastBackupTime();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error loading backup settings: {ex.Message}");
+            }
+        }
+
+        private void UpdateLastBackupTime()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(CurrentServerConfig?.ServerPath))
+                {
+                    LastBackupTime = "Never";
+                    return;
+                }
+
+                string lastBackupFile = Path.Combine(CurrentServerConfig.ServerPath, "last_backup.txt");
+                if (File.Exists(lastBackupFile))
+                {
+                    string lastBackupText = File.ReadAllText(lastBackupFile);
+                    LastBackupTime = lastBackupText;
+                }
+                else
+                {
+                    LastBackupTime = "Never";
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error reading last backup time: {ex.Message}");
+                LastBackupTime = "Unknown";
+            }
+        }
+
+        private void SaveBackupSettings()
+        {
+            try
+            {
+                string serversJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+                if (!File.Exists(serversJsonPath) || CurrentServerConfig == null)
+                {
+                    return;
+                }
+
+                string serversJson = File.ReadAllText(serversJsonPath);
+                var servers = JsonConvert.DeserializeObject<List<ServerProfile>>(serversJson);
+                var currentServer = servers?.FirstOrDefault(s => s.ProfileName == CurrentServerConfig.ProfileName);
+
+                if (currentServer != null)
+                {
+                    currentServer.EnableAutoBackup = EnableAutoBackup;
+                    currentServer.BackupIntervalMinutes = BackupIntervalMinutes;
+                    currentServer.MaxBackupCount = MaxBackupCount;
+
+                    JsonHelper.WriteJsonFile(serversJsonPath, servers);
+                    Logger.Log($"Backup settings saved for server '{CurrentServerConfig.ProfileName}'.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error saving backup settings: {ex.Message}");
+            }
+        }
+
+        private async Task ExecuteBackupNow()
+        {
+            try
+            {
+                if (CurrentServerConfig == null)
+                {
+                    System.Windows.MessageBox.Show("No server configuration loaded.");
+                    return;
+                }
+
+                Logger.Log($"Manual backup initiated for server '{CurrentServerConfig.ProfileName}'.");
+                System.Windows.MessageBox.Show($"Backup started for server '{CurrentServerConfig.ProfileName}'. This may take a few moments...", "Backup Started", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+
+                // Get the BackupService instance and trigger backup
+                var backupService = App.GetService<BackupService>();
+                if (backupService == null)
+                {
+                    Logger.Log("BackupService not available.");
+                    System.Windows.MessageBox.Show("Backup service is not available.");
+                    return;
+                }
+
+                // Load server profile from servers.json to pass to backup service
+                string serversJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ark Ascended Manager", "servers.json");
+                string serversJson = File.ReadAllText(serversJsonPath);
+                var servers = JsonConvert.DeserializeObject<List<ServerProfile>>(serversJson);
+                var serverProfile = servers?.FirstOrDefault(s => s.ProfileName == CurrentServerConfig.ProfileName);
+
+                if (serverProfile != null)
+                {
+                    await backupService.PerformBackup(serverProfile);
+                    UpdateLastBackupTime();
+                    System.Windows.MessageBox.Show($"Backup completed successfully for server '{CurrentServerConfig.ProfileName}'.", "Backup Complete", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                }
+                else
+                {
+                    Logger.Log($"Could not find server profile for '{CurrentServerConfig.ProfileName}'.");
+                    System.Windows.MessageBox.Show("Could not find server profile.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Error during manual backup: {ex.Message}");
+                System.Windows.MessageBox.Show($"Error during backup: {ex.Message}", "Backup Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
 

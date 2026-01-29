@@ -23,6 +23,11 @@ namespace Ark_Ascended_Manager.Models
         public bool ForceRespawnDinos { get; set; }
         public bool PreventSpawnAnimation { get; set; }
 
+        // Backup settings
+        public bool EnableAutoBackup { get; set; } = false;
+        public int BackupIntervalMinutes { get; set; } = 120; // Default 2 hours
+        public int MaxBackupCount { get; set; } = 24; // Default keep 24 backups
+
         // Property to hold scheduling data for this server profile
         public List<ScheduleEntry> SchedulingData { get; set; }
 

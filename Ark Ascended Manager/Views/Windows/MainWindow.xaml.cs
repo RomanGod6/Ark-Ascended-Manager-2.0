@@ -58,10 +58,24 @@ namespace Ark_Ascended_Manager.Views.Windows
 
             _notifyIcon = new System.Windows.Forms.NotifyIcon
             {
-                Icon = new Icon(System.Windows.Application.GetResourceStream(resourceUri).Stream),
                 Visible = true,
                 Text = "Ark Ascended Manager"
             };
+
+            // Try to load icon, but don't crash if it's not found
+            try
+            {
+                var resourceStream = System.Windows.Application.GetResourceStream(resourceUri);
+                if (resourceStream != null)
+                {
+                    _notifyIcon.Icon = new Icon(resourceStream.Stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log but don't crash - the app can run without the icon
+                System.Diagnostics.Debug.WriteLine($"Could not load notify icon: {ex.Message}");
+            }
 
             _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
 

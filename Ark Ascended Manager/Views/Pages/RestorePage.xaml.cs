@@ -1,18 +1,20 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Ark_Ascended_Manager.Views.Pages
 {
     public partial class RestorePage : Page
     {
         private ObservableCollection<BackupInfo> backupsList = new ObservableCollection<BackupInfo>();
-        private ServerConfigs serverConfig; // ServerConfigs as a field within the class
+        private ServerConfigs serverConfig;
         private readonly INavigationService _navigationService;
+
         public RestorePage(INavigationService navigationService)
         {
             InitializeComponent();
@@ -36,7 +38,7 @@ namespace Ark_Ascended_Manager.Views.Pages
 
             // Read the JSON content from the configuration file
             string serverConfigJson = File.ReadAllText(jsonFilePath);
-            serverConfig = JsonConvert.DeserializeObject<ServerConfigs>(serverConfigJson); // Assigning to the field
+            serverConfig = JsonConvert.DeserializeObject<ServerConfigs>(serverConfigJson);
 
             // Check if the deserialization was successful
             if (serverConfig == null)
@@ -45,26 +47,46 @@ namespace Ark_Ascended_Manager.Views.Pages
                 return;
             }
 
-            // Construct the path to the backup folder
-            string backupFolderPath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Saved", "SavedArks", serverConfig.MapName);
+            // Construct the path to the NEW backup folder structure
+            string backupRootPath = Path.Combine(serverConfig.ServerPath, "Backups");
 
             // Ensure the backup directory exists
-            if (!Directory.Exists(backupFolderPath))
+            if (!Directory.Exists(backupRootPath))
             {
-                MessageBox.Show("Backup directory does not exist.");
+                MessageBox.Show("No backups found. The Backups directory does not exist.");
                 return;
             }
 
-            // Get the directory info and list all .ark files except the current one
-            DirectoryInfo di = new DirectoryInfo(backupFolderPath);
-            FileInfo currentArkFile = di.GetFiles("TheIsland_WP.ark").FirstOrDefault();
+            // Get all timestamped backup directories
+            DirectoryInfo backupRoot = new DirectoryInfo(backupRootPath);
+            var backupDirectories = backupRoot.GetDirectories()
+                .OrderByDescending(d => d.CreationTime)
+                .ToList();
 
-            foreach (FileInfo file in di.GetFiles("*.ark"))
+            if (!backupDirectories.Any())
             {
-                if (currentArkFile == null || !file.FullName.Equals(currentArkFile.FullName, StringComparison.OrdinalIgnoreCase))
+                MessageBox.Show("No backup directories found.");
+                return;
+            }
+
+            foreach (var backupDir in backupDirectories)
+            {
+                // Each backup directory should contain SavedArks folder
+                string savedArksPath = Path.Combine(backupDir.FullName, "SavedArks");
+                if (Directory.Exists(savedArksPath))
                 {
-                    backupsList.Add(new BackupInfo { FileName = file.Name, BackupDate = file.LastWriteTime });
+                    backupsList.Add(new BackupInfo
+                    {
+                        FileName = backupDir.Name,
+                        BackupDate = backupDir.CreationTime,
+                        BackupPath = backupDir.FullName
+                    });
                 }
+            }
+
+            if (!backupsList.Any())
+            {
+                MessageBox.Show("No valid backups found in the Backups directory.");
             }
 
             // Bind the backups list to the ComboBox's ItemsSource
@@ -73,43 +95,95 @@ namespace Ark_Ascended_Manager.Views.Pages
 
         private void RestoreSelectedBackup_Click(object sender, RoutedEventArgs e)
         {
-            if (cbBackups.SelectedItem is BackupInfo selectedBackup && serverConfig != null) // Ensure serverConfig is not null
+            if (cbBackups.SelectedItem is BackupInfo selectedBackup && serverConfig != null)
             {
-                string backupFolderPath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Saved", "SavedArks", serverConfig.MapName);
-                string currentArkPath = Path.Combine(backupFolderPath, "TheIsland_WP.ark");
-                string selectedBackupPath = Path.Combine(backupFolderPath, selectedBackup.FileName);
+                var result = MessageBox.Show(
+                    $"Are you sure you want to restore the backup from {selectedBackup.BackupDate}?\n\n" +
+                    "WARNING: This will overwrite your current save data. Make sure the server is stopped before proceeding.",
+                    "Confirm Restore",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes)
+                {
+                    return;
+                }
 
                 try
                 {
-                    if (File.Exists(currentArkPath))
+                    // Source: the SavedArks folder inside the backup directory
+                    string sourceBackupPath = Path.Combine(selectedBackup.BackupPath, "SavedArks");
+
+                    // Destination: the current SavedArks folder
+                    string destinationPath = Path.Combine(serverConfig.ServerPath, "ShooterGame", "Saved", "SavedArks");
+
+                    if (!Directory.Exists(sourceBackupPath))
                     {
-                        string backupCurrentArkPath = $"{currentArkPath}_{DateTime.Now.ToString("ddMMyyyy_HHmmss")}.bak";
-                        File.Move(currentArkPath, backupCurrentArkPath);
+                        MessageBox.Show($"Backup data not found at: {sourceBackupPath}");
+                        return;
                     }
 
-                    File.Copy(selectedBackupPath, currentArkPath, true);
-                    MessageBox.Show($"Successfully restored backup: {selectedBackup.FileName}");
+                    // Create a backup of the current state before restoring
+                    string emergencyBackupPath = Path.Combine(serverConfig.ServerPath, "Backups", $"PreRestore_{DateTime.Now:yyyyMMdd_HHmmss}");
+                    Directory.CreateDirectory(emergencyBackupPath);
+                    CopyDirectory(destinationPath, Path.Combine(emergencyBackupPath, "SavedArks"));
+
+                    // Delete current SavedArks content
+                    if (Directory.Exists(destinationPath))
+                    {
+                        Directory.Delete(destinationPath, true);
+                    }
+
+                    // Restore from backup
+                    Directory.CreateDirectory(destinationPath);
+                    CopyDirectory(sourceBackupPath, destinationPath);
+
+                    MessageBox.Show(
+                        $"Successfully restored backup from {selectedBackup.BackupDate}.\n\n" +
+                        $"A pre-restore backup was saved to:\n{emergencyBackupPath}",
+                        "Restore Complete",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
                     _navigationService.GoBack();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error restoring backup: {ex.Message}");
+                    MessageBox.Show($"Error restoring backup: {ex.Message}", "Restore Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Please select a backup file to restore.");
+                MessageBox.Show("Please select a backup to restore.");
             }
         }
 
-        // Classes moved outside the RestorePage class for better organization
+        private void CopyDirectory(string sourceDir, string destDir)
+        {
+            Directory.CreateDirectory(destDir);
+
+            // Copy all files
+            foreach (string file in Directory.GetFiles(sourceDir))
+            {
+                string destFile = Path.Combine(destDir, Path.GetFileName(file));
+                File.Copy(file, destFile, true);
+            }
+
+            // Copy all subdirectories
+            foreach (string dir in Directory.GetDirectories(sourceDir))
+            {
+                string destSubDir = Path.Combine(destDir, Path.GetFileName(dir));
+                CopyDirectory(dir, destSubDir);
+            }
+        }
     }
 
-    // Define the BackupInfo class with properties for FileName and BackupDate
+    // Define the BackupInfo class with properties for FileName, BackupDate, and BackupPath
     public class BackupInfo
     {
         public string FileName { get; set; }
         public DateTime BackupDate { get; set; }
+        public string BackupPath { get; set; }
     }
 
     // Define the ServerConfigs class with properties that match your JSON structure
@@ -118,6 +192,5 @@ namespace Ark_Ascended_Manager.Views.Pages
         public string ProfileName { get; set; }
         public string ServerPath { get; set; }
         public string MapName { get; set; }
-        // ... other properties ...
     }
 }

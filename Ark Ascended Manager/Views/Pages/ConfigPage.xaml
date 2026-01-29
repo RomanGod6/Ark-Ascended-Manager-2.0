@@ -1081,9 +1081,67 @@
                 </Grid>
             </TabItem>
 
+            <!-- Backups Tab -->
+            <TabItem Header="Backups">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <GroupBox Header="Backup Settings" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <!-- Enable Auto Backup -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Label Content="Enable Auto Backup:" Width="200" VerticalAlignment="Center"/>
+                                    <CheckBox IsChecked="{Binding EnableAutoBackup, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                </StackPanel>
 
+                                <!-- Backup Interval -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Label Content="Backup Interval (minutes):" Width="200" VerticalAlignment="Center"
+                                           ToolTip="How often to perform automatic backups, in minutes. Default is 120 (2 hours)."/>
+                                    <TextBox Text="{Binding BackupIntervalMinutes, Mode=TwoWay}" Width="100" VerticalAlignment="Center"/>
+                                </StackPanel>
 
+                                <!-- Max Backup Count -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Label Content="Max Backups to Keep:" Width="200" VerticalAlignment="Center"
+                                           ToolTip="Maximum number of backups to retain. Older backups will be deleted automatically."/>
+                                    <TextBox Text="{Binding MaxBackupCount, Mode=TwoWay}" Width="100" VerticalAlignment="Center"/>
+                                </StackPanel>
 
+                                <!-- Last Backup Time -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Label Content="Last Backup:" Width="200" VerticalAlignment="Center"/>
+                                    <Label Content="{Binding LastBackupTime}" VerticalAlignment="Center" FontWeight="Bold"/>
+                                </StackPanel>
+
+                                <!-- Backup Now Button -->
+                                <Button Content="Backup Now" Command="{Binding BackupNowCommand}" Width="150"
+                                        HorizontalAlignment="Left" Margin="0,10,0,0"
+                                        ToolTip="Perform an immediate backup of this server"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Backup Information" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
+                                    Backups are stored in: ServerPath\Backups\{timestamp}\SavedArks
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
+                                    • Automatic backups will occur at the specified interval when enabled
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
+                                    • The server will be saved via RCON before creating a backup
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
+                                    • Old backups are automatically deleted to maintain the max count
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
+                                    • Use the "Restore Backup" button in the toolbar to restore from a backup
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
         </TabControl>
     </Grid>

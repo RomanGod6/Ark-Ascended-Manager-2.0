@@ -833,4 +833,30 @@ namespace Ark_Ascended_Manager.Services
         public string ReoccurrenceIntervalType { get; set; }
         public int ReoccurrenceInterval { get; set; }
     }
+
+    public class Server
+    {
+        public string ProfileName { get; set; }
+        public string ServerStatus { get; set; }
+        public string ServerPath { get; set; }
+        public string MapName { get; set; }
+        public string AppId { get; set; }
+        public string ServerIP { get; set; }
+        public bool IsRunning { get; set; }
+        public string ServerName { get; set; }
+        public int ListenPort { get; set; }
+        public int RCONPort { get; set; }
+        public List<string> Mods { get; set; }
+        public int MaxPlayerCount { get; set; }
+        public string AdminPassword { get; set; }
+        public string ServerIcon { get; set; }
+        public string ServerPassword { get; set; }
+        public bool UseBattlEye { get; set; }
+        public bool ForceRespawnDinos { get; set; }
+        public bool PreventSpawnAnimation { get; set; }
+        public int ChangeNumber { get; set; }
+        public string ChangeNumberStatus { get; set; }
+        public bool IsServerRunning { get; set; }
+        public bool UpdateOnRestart { get; set; }
+    }
 }

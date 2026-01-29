@@ -19,6 +19,7 @@
 
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <helpers:MapTypeConverter x:Key="MapTypeConverter" />
         <resources:LocalizedStrings x:Key="Strings" />
     </Page.Resources>
 
@@ -132,6 +133,73 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- GroupBox for Custom Maps -->
+            <GroupBox Header="Custom Maps Management" Margin="5" Padding="5">
+                <StackPanel>
+                    <TextBlock Text="Manage custom/mod maps that appear in map selection dropdowns." TextWrapping="Wrap" Margin="5,0,5,10"/>
+
+                    <!-- Add New Map Section -->
+                    <GroupBox Header="Add New Custom Map" Margin="0,0,0,10">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Map Code:" VerticalAlignment="Center" Margin="0,5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtMapCode" Margin="5"
+                                     ToolTip="e.g., MyCustomMap_WP"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Display Name:" VerticalAlignment="Center" Margin="0,5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtDisplayName" Margin="5"
+                                     ToolTip="e.g., My Custom Map"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="App ID:" VerticalAlignment="Center" Margin="0,5"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtAppId" Text="2430930" Margin="5"
+                                     ToolTip="Steam App ID (default: 2430930 for ASA)"/>
+
+                            <Button Grid.Row="3" Grid.Column="1" Content="Add Custom Map" Click="AddCustomMap_Click"
+                                    HorizontalAlignment="Left" Margin="5" Padding="10,5"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <!-- Existing Custom Maps List -->
+                    <TextBlock Text="Existing Custom Maps:" FontWeight="Bold" Margin="5,0"/>
+                    <ListView x:Name="lstCustomMaps" Height="200" Margin="5">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Map Code" Width="180" DisplayMemberBinding="{Binding MapCode}"/>
+                                <GridViewColumn Header="Display Name" Width="180" DisplayMemberBinding="{Binding DisplayName}"/>
+                                <GridViewColumn Header="App ID" Width="100" DisplayMemberBinding="{Binding AppId}"/>
+                                <GridViewColumn Header="Type" Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding IsOfficial, Converter={StaticResource MapTypeConverter}}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Button Content="Remove Selected" Click="RemoveCustomMap_Click" Margin="0,0,10,0" Padding="10,5"/>
+                        <Button Content="Refresh List" Click="RefreshMapsList_Click" Padding="10,5"/>
+                        <Button Content="Open Maps Config" Click="OpenMapsConfig_Click" Margin="10,0,0,0" Padding="10,5"
+                                ToolTip="Opens maps.json in your default text editor"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Note: Official maps cannot be removed. Changes take effect immediately."
+                               TextWrapping="Wrap" Margin="5,10,5,0" FontStyle="Italic" Foreground="Gray"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>

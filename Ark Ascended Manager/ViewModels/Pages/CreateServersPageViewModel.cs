@@ -2,6 +2,8 @@ using Wpf.Ui.Controls;
 using System.Collections.Generic; // If using collections
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Linq;
+using Ark_Ascended_Manager.Services;
 
 namespace Ark_Ascended_Manager.ViewModels.Pages
 {
@@ -112,7 +114,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             OnPropertyChanged(propertyName);
         }
 
-        private List<string> _optionsList = new List<string> { "TheIsland_WP", "ScorchedEarth_WP", "TheCenter_WP" }; // Example options
+        // Load maps from centralized MapService
+        private List<string> _optionsList = MapService.Instance.GetAllMaps().Select(m => m.MapCode).ToList();
         public List<string> OptionsList
         {
             get { return _optionsList; }
@@ -164,13 +167,8 @@ namespace Ark_Ascended_Manager.ViewModels.Pages
             }
         }
 
-        private Dictionary<string, string> _mapToAppId = new Dictionary<string, string>()
-        {
-            { "TheIsland_WP", "2430930" },
-            { "TheCenter_WP", "2430930" },
-            { "ScorchedEarth_WP", "2430930" }
-            // Add more mappings here
-        };
+        // Load map to AppId mapping from centralized MapService
+        private Dictionary<string, string> _mapToAppId = MapService.Instance.GetMapToAppIdDictionary();
 
         public Dictionary<string, string> MapToAppId
         {
