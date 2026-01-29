@@ -16,7 +16,7 @@
   <ItemGroup>
     <Content Include="Assets\AAM_Icon_exe.ico" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-	  <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.0" />
+	  <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.6" />
   </ItemGroup>
 
   <ItemGroup>
